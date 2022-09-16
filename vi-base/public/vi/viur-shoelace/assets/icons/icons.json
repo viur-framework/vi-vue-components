@@ -1,0 +1,2032 @@
+[
+  {
+    "name": "add-box",
+    "title": "add-box",
+    "categories": [
+      "add-box"
+    ],
+    "tags": [
+      "add-box"
+    ]
+  },
+  {
+    "name": "add-file",
+    "title": "add-file",
+    "categories": [
+      "add-file"
+    ],
+    "tags": [
+      "add-file"
+    ]
+  },
+  {
+    "name": "aircraft",
+    "title": "aircraft",
+    "categories": [
+      "aircraft"
+    ],
+    "tags": [
+      "aircraft"
+    ]
+  },
+  {
+    "name": "archive",
+    "title": "archive",
+    "categories": [
+      "archive"
+    ],
+    "tags": [
+      "archive"
+    ]
+  },
+  {
+    "name": "arrow-clockwise",
+    "title": "arrow-clockwise",
+    "categories": [
+      "arrow-clockwise"
+    ],
+    "tags": [
+      "arrow-clockwise"
+    ]
+  },
+  {
+    "name": "arrow-counterclockwise",
+    "title": "arrow-counterclockwise",
+    "categories": [
+      "arrow-counterclockwise"
+    ],
+    "tags": [
+      "arrow-counterclockwise"
+    ]
+  },
+  {
+    "name": "arrow-down",
+    "title": "arrow-down",
+    "categories": [
+      "arrow-down"
+    ],
+    "tags": [
+      "arrow-down"
+    ]
+  },
+  {
+    "name": "arrow-left-right",
+    "title": "arrow-left-right",
+    "categories": [
+      "arrow-left-right"
+    ],
+    "tags": [
+      "arrow-left-right"
+    ]
+  },
+  {
+    "name": "arrow-left",
+    "title": "arrow-left",
+    "categories": [
+      "arrow-left"
+    ],
+    "tags": [
+      "arrow-left"
+    ]
+  },
+  {
+    "name": "arrow-repeat",
+    "title": "arrow-repeat",
+    "categories": [
+      "arrow-repeat"
+    ],
+    "tags": [
+      "arrow-repeat"
+    ]
+  },
+  {
+    "name": "arrow-right",
+    "title": "arrow-right",
+    "categories": [
+      "arrow-right"
+    ],
+    "tags": [
+      "arrow-right"
+    ]
+  },
+  {
+    "name": "arrow-up",
+    "title": "arrow-up",
+    "categories": [
+      "arrow-up"
+    ],
+    "tags": [
+      "arrow-up"
+    ]
+  },
+  {
+    "name": "audio-file",
+    "title": "audio-file",
+    "categories": [
+      "audio-file"
+    ],
+    "tags": [
+      "audio-file"
+    ]
+  },
+  {
+    "name": "audio",
+    "title": "audio",
+    "categories": [
+      "audio"
+    ],
+    "tags": [
+      "audio"
+    ]
+  },
+  {
+    "name": "basket",
+    "title": "basket",
+    "categories": [
+      "basket"
+    ],
+    "tags": [
+      "basket"
+    ]
+  },
+  {
+    "name": "bell",
+    "title": "bell",
+    "categories": [
+      "bell"
+    ],
+    "tags": [
+      "bell"
+    ]
+  },
+  {
+    "name": "billing-file",
+    "title": "billing-file",
+    "categories": [
+      "billing-file"
+    ],
+    "tags": [
+      "billing-file"
+    ]
+  },
+  {
+    "name": "billing",
+    "title": "billing",
+    "categories": [
+      "billing"
+    ],
+    "tags": [
+      "billing"
+    ]
+  },
+  {
+    "name": "book",
+    "title": "book",
+    "categories": [
+      "book"
+    ],
+    "tags": [
+      "book"
+    ]
+  },
+  {
+    "name": "box-arrow-up-right",
+    "title": "box-arrow-up-right",
+    "categories": [
+      "box-arrow-up-right"
+    ],
+    "tags": [
+      "box-arrow-up-right"
+    ]
+  },
+  {
+    "name": "box",
+    "title": "box",
+    "categories": [
+      "box"
+    ],
+    "tags": [
+      "box"
+    ]
+  },
+  {
+    "name": "briefcase",
+    "title": "briefcase",
+    "categories": [
+      "briefcase"
+    ],
+    "tags": [
+      "briefcase"
+    ]
+  },
+  {
+    "name": "bug",
+    "title": "bug",
+    "categories": [
+      "bug"
+    ],
+    "tags": [
+      "bug"
+    ]
+  },
+  {
+    "name": "calendar-check",
+    "title": "calendar-check",
+    "categories": [
+      "calendar-check"
+    ],
+    "tags": [
+      "calendar-check"
+    ]
+  },
+  {
+    "name": "calendar-event",
+    "title": "calendar-event",
+    "categories": [
+      "calendar-event"
+    ],
+    "tags": [
+      "calendar-event"
+    ]
+  },
+  {
+    "name": "calendar-x",
+    "title": "calendar-x",
+    "categories": [
+      "calendar-x"
+    ],
+    "tags": [
+      "calendar-x"
+    ]
+  },
+  {
+    "name": "calendar",
+    "title": "calendar",
+    "categories": [
+      "calendar"
+    ],
+    "tags": [
+      "calendar"
+    ]
+  },
+  {
+    "name": "cart",
+    "title": "cart",
+    "categories": [
+      "cart"
+    ],
+    "tags": [
+      "cart"
+    ]
+  },
+  {
+    "name": "categories-box",
+    "title": "categories-box",
+    "categories": [
+      "categories-box"
+    ],
+    "tags": [
+      "categories-box"
+    ]
+  },
+  {
+    "name": "chat-left",
+    "title": "chat-left",
+    "categories": [
+      "chat-left"
+    ],
+    "tags": [
+      "chat-left"
+    ]
+  },
+  {
+    "name": "chat",
+    "title": "chat",
+    "categories": [
+      "chat"
+    ],
+    "tags": [
+      "chat"
+    ]
+  },
+  {
+    "name": "check-all",
+    "title": "check-all",
+    "categories": [
+      "check-all"
+    ],
+    "tags": [
+      "check-all"
+    ]
+  },
+  {
+    "name": "check-circle",
+    "title": "check-circle",
+    "categories": [
+      "check-circle"
+    ],
+    "tags": [
+      "check-circle"
+    ]
+  },
+  {
+    "name": "check-square-outline",
+    "title": "check-square-outline",
+    "categories": [
+      "check-square-outline"
+    ],
+    "tags": [
+      "check-square-outline"
+    ]
+  },
+  {
+    "name": "check-square",
+    "title": "check-square",
+    "categories": [
+      "check-square"
+    ],
+    "tags": [
+      "check-square"
+    ]
+  },
+  {
+    "name": "check",
+    "title": "check",
+    "categories": [
+      "check"
+    ],
+    "tags": [
+      "check"
+    ]
+  },
+  {
+    "name": "chevron-down",
+    "title": "chevron-down",
+    "categories": [
+      "chevron-down"
+    ],
+    "tags": [
+      "chevron-down"
+    ]
+  },
+  {
+    "name": "chevron-left",
+    "title": "chevron-left",
+    "categories": [
+      "chevron-left"
+    ],
+    "tags": [
+      "chevron-left"
+    ]
+  },
+  {
+    "name": "chevron-right",
+    "title": "chevron-right",
+    "categories": [
+      "chevron-right"
+    ],
+    "tags": [
+      "chevron-right"
+    ]
+  },
+  {
+    "name": "chevron-up",
+    "title": "chevron-up",
+    "categories": [
+      "chevron-up"
+    ],
+    "tags": [
+      "chevron-up"
+    ]
+  },
+  {
+    "name": "clock",
+    "title": "clock",
+    "categories": [
+      "clock"
+    ],
+    "tags": [
+      "clock"
+    ]
+  },
+  {
+    "name": "clone",
+    "title": "clone",
+    "categories": [
+      "clone"
+    ],
+    "tags": [
+      "clone"
+    ]
+  },
+  {
+    "name": "cloud",
+    "title": "cloud",
+    "categories": [
+      "cloud"
+    ],
+    "tags": [
+      "cloud"
+    ]
+  },
+  {
+    "name": "code-slash",
+    "title": "code-slash",
+    "categories": [
+      "code-slash"
+    ],
+    "tags": [
+      "code-slash"
+    ]
+  },
+  {
+    "name": "component",
+    "title": "component",
+    "categories": [
+      "component"
+    ],
+    "tags": [
+      "component"
+    ]
+  },
+  {
+    "name": "configuration",
+    "title": "configuration",
+    "categories": [
+      "configuration"
+    ],
+    "tags": [
+      "configuration"
+    ]
+  },
+  {
+    "name": "cut",
+    "title": "cut",
+    "categories": [
+      "cut"
+    ],
+    "tags": [
+      "cut"
+    ]
+  },
+  {
+    "name": "dash",
+    "title": "dash",
+    "categories": [
+      "dash"
+    ],
+    "tags": [
+      "dash"
+    ]
+  },
+  {
+    "name": "dashboard",
+    "title": "dashboard",
+    "categories": [
+      "dashboard"
+    ],
+    "tags": [
+      "dashboard"
+    ]
+  },
+  {
+    "name": "database",
+    "title": "database",
+    "categories": [
+      "database"
+    ],
+    "tags": [
+      "database"
+    ]
+  },
+  {
+    "name": "delivery-note",
+    "title": "delivery-note",
+    "categories": [
+      "delivery-note"
+    ],
+    "tags": [
+      "delivery-note"
+    ]
+  },
+  {
+    "name": "delivery",
+    "title": "delivery",
+    "categories": [
+      "delivery"
+    ],
+    "tags": [
+      "delivery"
+    ]
+  },
+  {
+    "name": "desktop",
+    "title": "desktop",
+    "categories": [
+      "desktop"
+    ],
+    "tags": [
+      "desktop"
+    ]
+  },
+  {
+    "name": "diagnosis",
+    "title": "diagnosis",
+    "categories": [
+      "diagnosis"
+    ],
+    "tags": [
+      "diagnosis"
+    ]
+  },
+  {
+    "name": "dot",
+    "title": "dot",
+    "categories": [
+      "dot"
+    ],
+    "tags": [
+      "dot"
+    ]
+  },
+  {
+    "name": "download-file",
+    "title": "download-file",
+    "categories": [
+      "download-file"
+    ],
+    "tags": [
+      "download-file"
+    ]
+  },
+  {
+    "name": "download",
+    "title": "download",
+    "categories": [
+      "download"
+    ],
+    "tags": [
+      "download"
+    ]
+  },
+  {
+    "name": "draggable",
+    "title": "draggable",
+    "categories": [
+      "draggable"
+    ],
+    "tags": [
+      "draggable"
+    ]
+  },
+  {
+    "name": "droplet",
+    "title": "droplet",
+    "categories": [
+      "droplet"
+    ],
+    "tags": [
+      "droplet"
+    ]
+  },
+  {
+    "name": "e-commerce",
+    "title": "e-commerce",
+    "categories": [
+      "e-commerce"
+    ],
+    "tags": [
+      "e-commerce"
+    ]
+  },
+  {
+    "name": "edit-box",
+    "title": "edit-box",
+    "categories": [
+      "edit-box"
+    ],
+    "tags": [
+      "edit-box"
+    ]
+  },
+  {
+    "name": "envelope-open",
+    "title": "envelope-open",
+    "categories": [
+      "envelope-open"
+    ],
+    "tags": [
+      "envelope-open"
+    ]
+  },
+  {
+    "name": "envelope",
+    "title": "envelope",
+    "categories": [
+      "envelope"
+    ],
+    "tags": [
+      "envelope"
+    ]
+  },
+  {
+    "name": "error-file",
+    "title": "error-file",
+    "categories": [
+      "error-file"
+    ],
+    "tags": [
+      "error-file"
+    ]
+  },
+  {
+    "name": "error",
+    "title": "error",
+    "categories": [
+      "error"
+    ],
+    "tags": [
+      "error"
+    ]
+  },
+  {
+    "name": "euro-circle",
+    "title": "euro-circle",
+    "categories": [
+      "euro-circle"
+    ],
+    "tags": [
+      "euro-circle"
+    ]
+  },
+  {
+    "name": "exclamation-octagon",
+    "title": "exclamation-octagon",
+    "categories": [
+      "exclamation-octagon"
+    ],
+    "tags": [
+      "exclamation-octagon"
+    ]
+  },
+  {
+    "name": "exclamation-triangle",
+    "title": "exclamation-triangle",
+    "categories": [
+      "exclamation-triangle"
+    ],
+    "tags": [
+      "exclamation-triangle"
+    ]
+  },
+  {
+    "name": "eye-slash",
+    "title": "eye-slash",
+    "categories": [
+      "eye-slash"
+    ],
+    "tags": [
+      "eye-slash"
+    ]
+  },
+  {
+    "name": "eye",
+    "title": "eye",
+    "categories": [
+      "eye"
+    ],
+    "tags": [
+      "eye"
+    ]
+  },
+  {
+    "name": "file-earmark-arrow-up",
+    "title": "file-earmark-arrow-up",
+    "categories": [
+      "file-earmark-arrow-up"
+    ],
+    "tags": [
+      "file-earmark-arrow-up"
+    ]
+  },
+  {
+    "name": "file-earmark-check",
+    "title": "file-earmark-check",
+    "categories": [
+      "file-earmark-check"
+    ],
+    "tags": [
+      "file-earmark-check"
+    ]
+  },
+  {
+    "name": "file-earmark-image",
+    "title": "file-earmark-image",
+    "categories": [
+      "file-earmark-image"
+    ],
+    "tags": [
+      "file-earmark-image"
+    ]
+  },
+  {
+    "name": "file-earmark-lightning",
+    "title": "file-earmark-lightning",
+    "categories": [
+      "file-earmark-lightning"
+    ],
+    "tags": [
+      "file-earmark-lightning"
+    ]
+  },
+  {
+    "name": "file-earmark-minus",
+    "title": "file-earmark-minus",
+    "categories": [
+      "file-earmark-minus"
+    ],
+    "tags": [
+      "file-earmark-minus"
+    ]
+  },
+  {
+    "name": "file-earmark-pdf",
+    "title": "file-earmark-pdf",
+    "categories": [
+      "file-earmark-pdf"
+    ],
+    "tags": [
+      "file-earmark-pdf"
+    ]
+  },
+  {
+    "name": "file-earmark-play",
+    "title": "file-earmark-play",
+    "categories": [
+      "file-earmark-play"
+    ],
+    "tags": [
+      "file-earmark-play"
+    ]
+  },
+  {
+    "name": "file-earmark-zip",
+    "title": "file-earmark-zip",
+    "categories": [
+      "file-earmark-zip"
+    ],
+    "tags": [
+      "file-earmark-zip"
+    ]
+  },
+  {
+    "name": "file-earmark",
+    "title": "file-earmark",
+    "categories": [
+      "file-earmark"
+    ],
+    "tags": [
+      "file-earmark"
+    ]
+  },
+  {
+    "name": "file-system",
+    "title": "file-system",
+    "categories": [
+      "file-system"
+    ],
+    "tags": [
+      "file-system"
+    ]
+  },
+  {
+    "name": "flag",
+    "title": "flag",
+    "categories": [
+      "flag"
+    ],
+    "tags": [
+      "flag"
+    ]
+  },
+  {
+    "name": "folder-back",
+    "title": "folder-back",
+    "categories": [
+      "folder-back"
+    ],
+    "tags": [
+      "folder-back"
+    ]
+  },
+  {
+    "name": "folder-plus",
+    "title": "folder-plus",
+    "categories": [
+      "folder-plus"
+    ],
+    "tags": [
+      "folder-plus"
+    ]
+  },
+  {
+    "name": "folder",
+    "title": "folder",
+    "categories": [
+      "folder"
+    ],
+    "tags": [
+      "folder"
+    ]
+  },
+  {
+    "name": "fullscreen-exit",
+    "title": "fullscreen-exit",
+    "categories": [
+      "fullscreen-exit"
+    ],
+    "tags": [
+      "fullscreen-exit"
+    ]
+  },
+  {
+    "name": "fullscreen",
+    "title": "fullscreen",
+    "categories": [
+      "fullscreen"
+    ],
+    "tags": [
+      "fullscreen"
+    ]
+  },
+  {
+    "name": "funnel",
+    "title": "funnel",
+    "categories": [
+      "funnel"
+    ],
+    "tags": [
+      "funnel"
+    ]
+  },
+  {
+    "name": "gear",
+    "title": "gear",
+    "categories": [
+      "gear"
+    ],
+    "tags": [
+      "gear"
+    ]
+  },
+  {
+    "name": "gift",
+    "title": "gift",
+    "categories": [
+      "gift"
+    ],
+    "tags": [
+      "gift"
+    ]
+  },
+  {
+    "name": "globe",
+    "title": "globe",
+    "categories": [
+      "globe"
+    ],
+    "tags": [
+      "globe"
+    ]
+  },
+  {
+    "name": "grip-vertical",
+    "title": "grip-vertical",
+    "categories": [
+      "grip-vertical"
+    ],
+    "tags": [
+      "grip-vertical"
+    ]
+  },
+  {
+    "name": "hashtag",
+    "title": "hashtag",
+    "categories": [
+      "hashtag"
+    ],
+    "tags": [
+      "hashtag"
+    ]
+  },
+  {
+    "name": "heart-fill",
+    "title": "heart-fill",
+    "categories": [
+      "heart-fill"
+    ],
+    "tags": [
+      "heart-fill"
+    ]
+  },
+  {
+    "name": "heart",
+    "title": "heart",
+    "categories": [
+      "heart"
+    ],
+    "tags": [
+      "heart"
+    ]
+  },
+  {
+    "name": "hierarchy",
+    "title": "hierarchy",
+    "categories": [
+      "hierarchy"
+    ],
+    "tags": [
+      "hierarchy"
+    ]
+  },
+  {
+    "name": "house",
+    "title": "house",
+    "categories": [
+      "house"
+    ],
+    "tags": [
+      "house"
+    ]
+  },
+  {
+    "name": "image",
+    "title": "image",
+    "categories": [
+      "image"
+    ],
+    "tags": [
+      "image"
+    ]
+  },
+  {
+    "name": "inbox",
+    "title": "inbox",
+    "categories": [
+      "inbox"
+    ],
+    "tags": [
+      "inbox"
+    ]
+  },
+  {
+    "name": "info-circle",
+    "title": "info-circle",
+    "categories": [
+      "info-circle"
+    ],
+    "tags": [
+      "info-circle"
+    ]
+  },
+  {
+    "name": "interface",
+    "title": "interface",
+    "categories": [
+      "interface"
+    ],
+    "tags": [
+      "interface"
+    ]
+  },
+  {
+    "name": "invert-selection",
+    "title": "invert-selection",
+    "categories": [
+      "invert-selection"
+    ],
+    "tags": [
+      "invert-selection"
+    ]
+  },
+  {
+    "name": "justify-left",
+    "title": "justify-left",
+    "categories": [
+      "justify-left"
+    ],
+    "tags": [
+      "justify-left"
+    ]
+  },
+  {
+    "name": "justify-right",
+    "title": "justify-right",
+    "categories": [
+      "justify-right"
+    ],
+    "tags": [
+      "justify-right"
+    ]
+  },
+  {
+    "name": "justify",
+    "title": "justify",
+    "categories": [
+      "justify"
+    ],
+    "tags": [
+      "justify"
+    ]
+  },
+  {
+    "name": "key-chubb",
+    "title": "key-chubb",
+    "categories": [
+      "key-chubb"
+    ],
+    "tags": [
+      "key-chubb"
+    ]
+  },
+  {
+    "name": "key-cylinder",
+    "title": "key-cylinder",
+    "categories": [
+      "key-cylinder"
+    ],
+    "tags": [
+      "key-cylinder"
+    ]
+  },
+  {
+    "name": "kiosk",
+    "title": "kiosk",
+    "categories": [
+      "kiosk"
+    ],
+    "tags": [
+      "kiosk"
+    ]
+  },
+  {
+    "name": "labels",
+    "title": "labels",
+    "categories": [
+      "labels"
+    ],
+    "tags": [
+      "labels"
+    ]
+  },
+  {
+    "name": "laptop",
+    "title": "laptop",
+    "categories": [
+      "laptop"
+    ],
+    "tags": [
+      "laptop"
+    ]
+  },
+  {
+    "name": "lightbulb",
+    "title": "lightbulb",
+    "categories": [
+      "lightbulb"
+    ],
+    "tags": [
+      "lightbulb"
+    ]
+  },
+  {
+    "name": "lightning",
+    "title": "lightning",
+    "categories": [
+      "lightning"
+    ],
+    "tags": [
+      "lightning"
+    ]
+  },
+  {
+    "name": "link-45deg",
+    "title": "link-45deg",
+    "categories": [
+      "link-45deg"
+    ],
+    "tags": [
+      "link-45deg"
+    ]
+  },
+  {
+    "name": "list-item",
+    "title": "list-item",
+    "categories": [
+      "list-item"
+    ],
+    "tags": [
+      "list-item"
+    ]
+  },
+  {
+    "name": "list-ul",
+    "title": "list-ul",
+    "categories": [
+      "list-ul"
+    ],
+    "tags": [
+      "list-ul"
+    ]
+  },
+  {
+    "name": "loader",
+    "title": "loader",
+    "categories": [
+      "loader"
+    ],
+    "tags": [
+      "loader"
+    ]
+  },
+  {
+    "name": "locations",
+    "title": "locations",
+    "categories": [
+      "locations"
+    ],
+    "tags": [
+      "locations"
+    ]
+  },
+  {
+    "name": "lock",
+    "title": "lock",
+    "categories": [
+      "lock"
+    ],
+    "tags": [
+      "lock"
+    ]
+  },
+  {
+    "name": "logbook",
+    "title": "logbook",
+    "categories": [
+      "logbook"
+    ],
+    "tags": [
+      "logbook"
+    ]
+  },
+  {
+    "name": "login",
+    "title": "login",
+    "categories": [
+      "login"
+    ],
+    "tags": [
+      "login"
+    ]
+  },
+  {
+    "name": "logout",
+    "title": "logout",
+    "categories": [
+      "logout"
+    ],
+    "tags": [
+      "logout"
+    ]
+  },
+  {
+    "name": "megaphone",
+    "title": "megaphone",
+    "categories": [
+      "megaphone"
+    ],
+    "tags": [
+      "megaphone"
+    ]
+  },
+  {
+    "name": "menu",
+    "title": "menu",
+    "categories": [
+      "menu"
+    ],
+    "tags": [
+      "menu"
+    ]
+  },
+  {
+    "name": "message-news",
+    "title": "message-news",
+    "categories": [
+      "message-news"
+    ],
+    "tags": [
+      "message-news"
+    ]
+  },
+  {
+    "name": "minus",
+    "title": "minus",
+    "categories": [
+      "minus"
+    ],
+    "tags": [
+      "minus"
+    ]
+  },
+  {
+    "name": "moon",
+    "title": "moon",
+    "categories": [
+      "moon"
+    ],
+    "tags": [
+      "moon"
+    ]
+  },
+  {
+    "name": "notes",
+    "title": "notes",
+    "categories": [
+      "notes"
+    ],
+    "tags": [
+      "notes"
+    ]
+  },
+  {
+    "name": "order-cancelled",
+    "title": "order-cancelled",
+    "categories": [
+      "order-cancelled"
+    ],
+    "tags": [
+      "order-cancelled"
+    ]
+  },
+  {
+    "name": "order-coupon",
+    "title": "order-coupon",
+    "categories": [
+      "order-coupon"
+    ],
+    "tags": [
+      "order-coupon"
+    ]
+  },
+  {
+    "name": "order-error",
+    "title": "order-error",
+    "categories": [
+      "order-error"
+    ],
+    "tags": [
+      "order-error"
+    ]
+  },
+  {
+    "name": "order-return",
+    "title": "order-return",
+    "categories": [
+      "order-return"
+    ],
+    "tags": [
+      "order-return"
+    ]
+  },
+  {
+    "name": "order-shipped",
+    "title": "order-shipped",
+    "categories": [
+      "order-shipped"
+    ],
+    "tags": [
+      "order-shipped"
+    ]
+  },
+  {
+    "name": "order",
+    "title": "order",
+    "categories": [
+      "order"
+    ],
+    "tags": [
+      "order"
+    ]
+  },
+  {
+    "name": "otp-authentification",
+    "title": "otp-authentification",
+    "categories": [
+      "otp-authentification"
+    ],
+    "tags": [
+      "otp-authentification"
+    ]
+  },
+  {
+    "name": "paragraph-slash",
+    "title": "paragraph-slash",
+    "categories": [
+      "paragraph-slash"
+    ],
+    "tags": [
+      "paragraph-slash"
+    ]
+  },
+  {
+    "name": "paragraph",
+    "title": "paragraph",
+    "categories": [
+      "paragraph"
+    ],
+    "tags": [
+      "paragraph"
+    ]
+  },
+  {
+    "name": "pause",
+    "title": "pause",
+    "categories": [
+      "pause"
+    ],
+    "tags": [
+      "pause"
+    ]
+  },
+  {
+    "name": "pdf",
+    "title": "pdf",
+    "categories": [
+      "pdf"
+    ],
+    "tags": [
+      "pdf"
+    ]
+  },
+  {
+    "name": "pencil",
+    "title": "pencil",
+    "categories": [
+      "pencil"
+    ],
+    "tags": [
+      "pencil"
+    ]
+  },
+  {
+    "name": "person",
+    "title": "person",
+    "categories": [
+      "person"
+    ],
+    "tags": [
+      "person"
+    ]
+  },
+  {
+    "name": "personae",
+    "title": "personae",
+    "categories": [
+      "personae"
+    ],
+    "tags": [
+      "personae"
+    ]
+  },
+  {
+    "name": "phone-book",
+    "title": "phone-book",
+    "categories": [
+      "phone-book"
+    ],
+    "tags": [
+      "phone-book"
+    ]
+  },
+  {
+    "name": "phone",
+    "title": "phone",
+    "categories": [
+      "phone"
+    ],
+    "tags": [
+      "phone"
+    ]
+  },
+  {
+    "name": "photo",
+    "title": "photo",
+    "categories": [
+      "photo"
+    ],
+    "tags": [
+      "photo"
+    ]
+  },
+  {
+    "name": "pin",
+    "title": "pin",
+    "categories": [
+      "pin"
+    ],
+    "tags": [
+      "pin"
+    ]
+  },
+  {
+    "name": "play-circle",
+    "title": "play-circle",
+    "categories": [
+      "play-circle"
+    ],
+    "tags": [
+      "play-circle"
+    ]
+  },
+  {
+    "name": "play",
+    "title": "play",
+    "categories": [
+      "play"
+    ],
+    "tags": [
+      "play"
+    ]
+  },
+  {
+    "name": "plus",
+    "title": "plus",
+    "categories": [
+      "plus"
+    ],
+    "tags": [
+      "plus"
+    ]
+  },
+  {
+    "name": "power",
+    "title": "power",
+    "categories": [
+      "power"
+    ],
+    "tags": [
+      "power"
+    ]
+  },
+  {
+    "name": "press",
+    "title": "press",
+    "categories": [
+      "press"
+    ],
+    "tags": [
+      "press"
+    ]
+  },
+  {
+    "name": "pricelist",
+    "title": "pricelist",
+    "categories": [
+      "pricelist"
+    ],
+    "tags": [
+      "pricelist"
+    ]
+  },
+  {
+    "name": "print",
+    "title": "print",
+    "categories": [
+      "print"
+    ],
+    "tags": [
+      "print"
+    ]
+  },
+  {
+    "name": "puzzle",
+    "title": "puzzle",
+    "categories": [
+      "puzzle"
+    ],
+    "tags": [
+      "puzzle"
+    ]
+  },
+  {
+    "name": "qr-code",
+    "title": "qr-code",
+    "categories": [
+      "qr-code"
+    ],
+    "tags": [
+      "qr-code"
+    ]
+  },
+  {
+    "name": "question",
+    "title": "question",
+    "categories": [
+      "question"
+    ],
+    "tags": [
+      "question"
+    ]
+  },
+  {
+    "name": "quote",
+    "title": "quote",
+    "categories": [
+      "quote"
+    ],
+    "tags": [
+      "quote"
+    ]
+  },
+  {
+    "name": "rename",
+    "title": "rename",
+    "categories": [
+      "rename"
+    ],
+    "tags": [
+      "rename"
+    ]
+  },
+  {
+    "name": "ribbon",
+    "title": "ribbon",
+    "categories": [
+      "ribbon"
+    ],
+    "tags": [
+      "ribbon"
+    ]
+  },
+  {
+    "name": "scale",
+    "title": "scale",
+    "categories": [
+      "scale"
+    ],
+    "tags": [
+      "scale"
+    ]
+  },
+  {
+    "name": "search",
+    "title": "search",
+    "categories": [
+      "search"
+    ],
+    "tags": [
+      "search"
+    ]
+  },
+  {
+    "name": "send",
+    "title": "send",
+    "categories": [
+      "send"
+    ],
+    "tags": [
+      "send"
+    ]
+  },
+  {
+    "name": "share",
+    "title": "share",
+    "categories": [
+      "share"
+    ],
+    "tags": [
+      "share"
+    ]
+  },
+  {
+    "name": "shield-check",
+    "title": "shield-check",
+    "categories": [
+      "shield-check"
+    ],
+    "tags": [
+      "shield-check"
+    ]
+  },
+  {
+    "name": "shield-slash",
+    "title": "shield-slash",
+    "categories": [
+      "shield-slash"
+    ],
+    "tags": [
+      "shield-slash"
+    ]
+  },
+  {
+    "name": "shield-warning",
+    "title": "shield-warning",
+    "categories": [
+      "shield-warning"
+    ],
+    "tags": [
+      "shield-warning"
+    ]
+  },
+  {
+    "name": "shield-x",
+    "title": "shield-x",
+    "categories": [
+      "shield-x"
+    ],
+    "tags": [
+      "shield-x"
+    ]
+  },
+  {
+    "name": "slash-square",
+    "title": "slash-square",
+    "categories": [
+      "slash-square"
+    ],
+    "tags": [
+      "slash-square"
+    ]
+  },
+  {
+    "name": "smartphone",
+    "title": "smartphone",
+    "categories": [
+      "smartphone"
+    ],
+    "tags": [
+      "smartphone"
+    ]
+  },
+  {
+    "name": "sound-off",
+    "title": "sound-off",
+    "categories": [
+      "sound-off"
+    ],
+    "tags": [
+      "sound-off"
+    ]
+  },
+  {
+    "name": "sound-on",
+    "title": "sound-on",
+    "categories": [
+      "sound-on"
+    ],
+    "tags": [
+      "sound-on"
+    ]
+  },
+  {
+    "name": "star-fill",
+    "title": "star-fill",
+    "categories": [
+      "star-fill"
+    ],
+    "tags": [
+      "star-fill"
+    ]
+  },
+  {
+    "name": "star",
+    "title": "star",
+    "categories": [
+      "star"
+    ],
+    "tags": [
+      "star"
+    ]
+  },
+  {
+    "name": "statistics",
+    "title": "statistics",
+    "categories": [
+      "statistics"
+    ],
+    "tags": [
+      "statistics"
+    ]
+  },
+  {
+    "name": "stop",
+    "title": "stop",
+    "categories": [
+      "stop"
+    ],
+    "tags": [
+      "stop"
+    ]
+  },
+  {
+    "name": "sun",
+    "title": "sun",
+    "categories": [
+      "sun"
+    ],
+    "tags": [
+      "sun"
+    ]
+  },
+  {
+    "name": "table",
+    "title": "table",
+    "categories": [
+      "table"
+    ],
+    "tags": [
+      "table"
+    ]
+  },
+  {
+    "name": "tablet",
+    "title": "tablet",
+    "categories": [
+      "tablet"
+    ],
+    "tags": [
+      "tablet"
+    ]
+  },
+  {
+    "name": "text-center",
+    "title": "text-center",
+    "categories": [
+      "text-center"
+    ],
+    "tags": [
+      "text-center"
+    ]
+  },
+  {
+    "name": "text-file",
+    "title": "text-file",
+    "categories": [
+      "text-file"
+    ],
+    "tags": [
+      "text-file"
+    ]
+  },
+  {
+    "name": "text-indent",
+    "title": "text-indent",
+    "categories": [
+      "text-indent"
+    ],
+    "tags": [
+      "text-indent"
+    ]
+  },
+  {
+    "name": "text-left",
+    "title": "text-left",
+    "categories": [
+      "text-left"
+    ],
+    "tags": [
+      "text-left"
+    ]
+  },
+  {
+    "name": "text-outdent",
+    "title": "text-outdent",
+    "categories": [
+      "text-outdent"
+    ],
+    "tags": [
+      "text-outdent"
+    ]
+  },
+  {
+    "name": "text-right",
+    "title": "text-right",
+    "categories": [
+      "text-right"
+    ],
+    "tags": [
+      "text-right"
+    ]
+  },
+  {
+    "name": "three-dots",
+    "title": "three-dots",
+    "categories": [
+      "three-dots"
+    ],
+    "tags": [
+      "three-dots"
+    ]
+  },
+  {
+    "name": "trash",
+    "title": "trash",
+    "categories": [
+      "trash"
+    ],
+    "tags": [
+      "trash"
+    ]
+  },
+  {
+    "name": "truck",
+    "title": "truck",
+    "categories": [
+      "truck"
+    ],
+    "tags": [
+      "truck"
+    ]
+  },
+  {
+    "name": "type-bold",
+    "title": "type-bold",
+    "categories": [
+      "type-bold"
+    ],
+    "tags": [
+      "type-bold"
+    ]
+  },
+  {
+    "name": "type-h1",
+    "title": "type-h1",
+    "categories": [
+      "type-h1"
+    ],
+    "tags": [
+      "type-h1"
+    ]
+  },
+  {
+    "name": "type-h2",
+    "title": "type-h2",
+    "categories": [
+      "type-h2"
+    ],
+    "tags": [
+      "type-h2"
+    ]
+  },
+  {
+    "name": "type-h3",
+    "title": "type-h3",
+    "categories": [
+      "type-h3"
+    ],
+    "tags": [
+      "type-h3"
+    ]
+  },
+  {
+    "name": "type-h4",
+    "title": "type-h4",
+    "categories": [
+      "type-h4"
+    ],
+    "tags": [
+      "type-h4"
+    ]
+  },
+  {
+    "name": "type-italic",
+    "title": "type-italic",
+    "categories": [
+      "type-italic"
+    ],
+    "tags": [
+      "type-italic"
+    ]
+  },
+  {
+    "name": "type-underline",
+    "title": "type-underline",
+    "categories": [
+      "type-underline"
+    ],
+    "tags": [
+      "type-underline"
+    ]
+  },
+  {
+    "name": "unlock",
+    "title": "unlock",
+    "categories": [
+      "unlock"
+    ],
+    "tags": [
+      "unlock"
+    ]
+  },
+  {
+    "name": "upload",
+    "title": "upload",
+    "categories": [
+      "upload"
+    ],
+    "tags": [
+      "upload"
+    ]
+  },
+  {
+    "name": "user-accounts",
+    "title": "user-accounts",
+    "categories": [
+      "user-accounts"
+    ],
+    "tags": [
+      "user-accounts"
+    ]
+  },
+  {
+    "name": "user-contacts",
+    "title": "user-contacts",
+    "categories": [
+      "user-contacts"
+    ],
+    "tags": [
+      "user-contacts"
+    ]
+  },
+  {
+    "name": "users",
+    "title": "users",
+    "categories": [
+      "users"
+    ],
+    "tags": [
+      "users"
+    ]
+  },
+  {
+    "name": "wifi",
+    "title": "wifi",
+    "categories": [
+      "wifi"
+    ],
+    "tags": [
+      "wifi"
+    ]
+  },
+  {
+    "name": "wrench",
+    "title": "wrench",
+    "categories": [
+      "wrench"
+    ],
+    "tags": [
+      "wrench"
+    ]
+  },
+  {
+    "name": "x-circle",
+    "title": "x-circle",
+    "categories": [
+      "x-circle"
+    ],
+    "tags": [
+      "x-circle"
+    ]
+  },
+  {
+    "name": "x",
+    "title": "x",
+    "categories": [
+      "x"
+    ],
+    "tags": [
+      "x"
+    ]
+  },
+  {
+    "name": "zoom-in",
+    "title": "zoom-in",
+    "categories": [
+      "zoom-in"
+    ],
+    "tags": [
+      "zoom-in"
+    ]
+  },
+  {
+    "name": "zoom-out",
+    "title": "zoom-out",
+    "categories": [
+      "zoom-out"
+    ],
+    "tags": [
+      "zoom-out"
+    ]
+  }
+]

@@ -1,0 +1,232 @@
+//@ts-nocheck
+
+import {reactive, computed, Component} from 'vue';
+import {defineStore, StoreDefinition} from "pinia";
+
+export interface ModuleInfo {
+    name: string,
+    display: string,
+    sortIndex: number,
+    module: string,
+    view_number: number,
+    parententry: string,
+    parentrepo: string,
+    icon: string,
+    handler: string,
+    url: null | Object,
+    children: Array<ModuleInfo>,
+    views?: Array<ModuleInfo>,
+    group?: string
+}
+
+function adminTreeLayer(itemList: Array<ModuleInfo>, parent: ModuleInfo): Array<ModuleInfo> {
+    let listOfNodes = []
+    let i = 0
+
+    for (let conf of itemList) {
+        // hide hidden
+        if (Object.keys(conf).includes("display") && conf["display"] === "hidden") {
+            continue
+        }
+        // set index as sortindex if missing
+        if (!Object.keys(conf).includes("sortIndex")) {
+            conf["sortIndex"] = i
+        }
+        // if module is missing (views) update parent with conf
+        if (!Object.keys(conf).includes("module")) {
+            conf = {...parent, ...conf}
+            delete conf["views"] //remove views from parent
+            conf["view_number"] = i
+        }
+
+        // add parentmodule as parententry... component expects this
+        conf["parententry"] = parent["module"]
+        conf["parentrepo"] = "root"
+
+        // add empty icon if missing or construct library prefixed icon if needed
+        if (!Object.keys(conf).includes("icon")) {
+            conf["icon"] = ""
+        } else if (!conf["icon"].includes("___") && conf["icon"] !== "") {
+            conf["icon"] = "default___" + conf["icon"].replace("icon-", "").replace("icons-", "")
+        }
+        // build url by handler
+        if (!Object.keys(conf).includes("handler")) {
+            conf["url"] = null // if handler is missing, this is a moduleGroup
+        } else if (conf["handler"] === "list.grouped") {
+            let group = Object.keys(conf).includes("group") ? conf["group"] : "all"
+            conf["url"] = {"path": `/${conf["module"]}/list/${group}`}
+        } else if (conf["handler"] === "list" || conf["handler"].startsWith("list.")) {
+            conf["url"] = {"path": `/${conf["module"]}/list`}
+        } else if (conf["handler"] === "tree" || conf["handler"].startsWith("tree.")) {
+            conf["url"] = {"path": `/${conf["module"]}/tree`}
+        } else if (conf["handler"] === "singleton" || conf["handler"].startsWith("singleton.")) {
+            conf["url"] = {"path": `/${conf["module"]}`}
+        }
+
+        if (Object.keys(conf).includes("view_number") && Object.keys(conf).includes("handler") && conf["handler"]) {
+            //@ts-ignore
+            conf["url"]["query"] = {"view": conf["view_number"]}
+        }
+
+        // append children (moduleGroups)
+        if (!Object.keys(conf).includes("children")) {
+            conf["children"] = []
+        } else if (conf["children"].length > 0) {
+            conf["children"].concat(adminTreeLayer(conf["children"], conf))
+        }
+
+        //append children (views)
+        //@ts-ignore
+        if (Object.keys(conf).includes("views") && conf["views"]?.length > 0) {
+            //@ts-ignore
+            conf["children"] = conf["children"].concat(adminTreeLayer(conf["views"], conf))
+        }
+
+        listOfNodes.push(conf)
+        i += 1
+    }
+    listOfNodes.sort((a, b) => (a["sortIndex"] > b["sortIndex"] ? 1 : -1))
+    return listOfNodes
+}
+
+function flattenTree(tree) {
+    const flattened = {}
+    for (let mod of tree) {
+        if (mod["children"]?.length > 0) {
+            Object.assign(flattened, flattenTree(mod["children"]))
+        }
+
+        let modname = mod["module"]
+        if (Object.keys(mod).includes("view_number")) {
+            modname += `_${mod["view_number"]}`
+        }
+        Object.assign(flattened, {[modname]: mod})
+    }
+
+    return flattened
+}
+
+export const useAppStore = defineStore("app", () => {
+    const state = reactive({
+        //vi section
+        "vi.version": [3, 5, 0],
+        "vi.access.open": ["root", "admin"],
+        //requested with /vi/config
+        "vi.name": "Administration",
+        "vi.modules.groups": {},
+        "vi.modules": {},
+
+
+        //core section
+        "core.version": null,
+        "core.version.min": [3, 0, 0],
+        "core.version.max": [3, 2, 0],
+
+        //lists
+        "list.amount.default": 30,
+
+        //storesMap
+        "stores.map": {},
+
+        //handlers
+        "handlers": {},
+
+        //topactions
+        "topbar.actions": [],
+
+        //dynamic child buckets
+        "handlers.opened": {}, // {'url','name','library'}
+
+        //drawer
+        "skeldrawer.opened": false,
+        "skeldrawer.entry": {},
+        "skeldrawer.structure": {}
+    })
+    const modulesTree = computed(() => {
+        let groups = {}
+        for (let moduleGroup in state["vi.modules.groups"]) {
+            let groupconf = state["vi.modules.groups"][moduleGroup]
+            groupconf["module"] = moduleGroup
+            groups[moduleGroup] = groupconf
+        }
+
+        let itemList = []
+        for (let modulename in state["vi.modules"]) {
+            let moduleconf = state["vi.modules"][modulename]
+            moduleconf["module"] = modulename
+
+            if (Object.keys(moduleconf).includes("moduleGroup") && groups[moduleconf["moduleGroup"]]) {
+                if (Object.keys(groups[moduleconf["moduleGroup"]]).includes("children")) {
+                    groups[moduleconf["moduleGroup"]]["children"].push(moduleconf)
+                } else {
+                    groups[moduleconf["moduleGroup"]]["children"] = [moduleconf]
+                }
+            } else {
+                itemList.push(moduleconf)
+            }
+        }
+        for (let group in groups) {
+            itemList.push(groups[group])
+        }
+        //@ts-ignore
+        let adminInfoTree: Array<ModuleInfo> = adminTreeLayer(itemList, {"module": "start"})
+        return adminInfoTree
+    })
+
+    const modulesList = computed(() => {
+        return flattenTree(modulesTree.value)
+    })
+
+    function getConfByRoute(route): ModuleInfo | null {
+        //ts-ignore
+        return getConf(route.params.module, Object.keys(route.query).includes("view") ? route.query['view'] : null)
+    }
+
+
+    function getConf(module: string, view = null) {
+        let conf = null
+        let name = module
+        if (view)
+            name += "_" + view
+        conf = modulesList.value?.[name]
+        return conf
+    }
+
+    function setListStore(store: StoreDefinition) {
+        state["stores.map"][store.$id] = store
+    }
+
+    function addTopBarAction(action: Component) {
+        state["topbar.actions"].push(action)
+    }
+
+    function addOpened(url: string, module: string, view = null, name = "", icon = "", library = "") {
+        let currentConf = getConf(module, view)
+        let moduleIconData = currentConf["icon"].split("___")
+
+        let entry = {
+            "to": url,
+            "icon": icon ? icon : moduleIconData[1],
+            "library": library ? library : moduleIconData[2],
+            "name": name ? name : currentConf["name"]
+        }
+
+        state["handlers.opened"][url] = entry
+    }
+
+    function removeOpened(url: string) {
+        delete state["handlers.opened"][url]
+    }
+
+    return {
+        state,
+        modulesTree,
+        modulesList,
+        getConf,
+        getConfByRoute,
+        setListStore,
+        addTopBarAction,
+        addOpened,
+        removeOpened
+    }
+})
