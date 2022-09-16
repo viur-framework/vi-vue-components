@@ -16,6 +16,7 @@
   "dependencies": {
     "@viur/viur-shoelace": "^2.0.0-beta.82-viur-11",
     "@viur/viur-vue-utils": "^0.5.9",
+    "logics-js": "^0.1.0",
     "pinia": "^2.0.22",
     "vue": "^3.2.39",
     "vue-i18n": "^9.2.2",
