@@ -1,3 +1,5 @@
 ﻿vi-base/node_modules
 vi/node_modules
 .idea
+vi/dist
+vi-base/dist

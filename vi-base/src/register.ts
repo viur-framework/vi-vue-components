@@ -7,7 +7,7 @@ import en from "./translations/en"
 import de from "./translations/de"
 import {createApp} from 'vue'
 
-function createInstance(App){
+function createInstance(App:any){
     const app = createApp(App)
     app.use(router)
 
