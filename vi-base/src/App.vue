@@ -14,7 +14,6 @@ export default defineComponent({
         const userStore = useUserStore()
         onBeforeMount(() => {
             //userStore.googleInit("") //please provide googel clientid
-
         })
         return {
             userStore

@@ -197,7 +197,10 @@ export const useAppStore = defineStore("app", () => {
     }
 
     function addTopBarAction(action: Component) {
-        state["topbar.actions"].push(action)
+        if( !state["topbar.actions"].includes(action)){
+            state["topbar.actions"].push(action)
+        }
+
     }
 
     function addOpened(url: string, module: string, view = null, name = "", icon = "", library = "") {

@@ -61,9 +61,7 @@ export default defineComponent({
 
         onBeforeMount(() => {
             collectViurConfig()
-            if (appStore.state["topbar.actions"].length === 0) {
-                initTopBarActions()
-            }
+            initTopBarActions()
         })
 
         return {
