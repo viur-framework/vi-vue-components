@@ -49,7 +49,7 @@ export default defineComponent({
         const state = reactive({
             actions: computed(() => {
                 let listActions = {
-                    "default": [["add", "selectfields"], ["reload", "setamount", "overlay"]],
+                    "default": [["add", "selectfields"], ["reload", "setamount", "overlay","edittable"]],
                     "entry": [["edit", "clone", "delete"], ["preview"]]
                 }
                 const treeActions = {
