@@ -161,7 +161,7 @@ export default defineComponent({
 
 		function updateValue(event: Object) {
 
-			state.formValues[event.detail.boneName] = event.detail.formData
+			state.formValues[event.detail.boneName] = event.detail.formValue;
 
 		}
 

@@ -8,13 +8,12 @@
     >
 
     </sl-table>-->
-
     <sl-table moveablecolumns
               :rowselect="true"
               :structure="currentlist.structure"
               :skellist="currentlist.state.skellist"
               :module="module"
-              :editable="state.editableTable"
+              :editabletable="state.editableTable"
               @sl-selectionChanged="entrySelected"
 
     >

@@ -30,6 +30,7 @@ import "@viur/viur-shoelace/dist/components/tab-panel/tab-panel"
 import "@viur/viur-shoelace/dist/components/tree/tree"
 import "@viur/viur-shoelace/dist/components/details/details"
 import "@viur/viur-shoelace/dist/components/switch/switch"
+import "@viur/viur-shoelace/dist/components/combobox/combobox"
 
 import '@viur/viur-shoelace/dist/components/bone/bone';
 

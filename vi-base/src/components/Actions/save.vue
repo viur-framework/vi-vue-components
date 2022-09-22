@@ -10,6 +10,7 @@ import {reactive, defineComponent, inject, computed} from 'vue'
 import {useRoute, useRouter} from "vue-router";
 import {useAppStore} from "../../stores/app";
 import {Request} from "@viur/viur-vue-utils";
+import {useMessageStore} from "../../stores/message";
 
 export default defineComponent({
   props: {
@@ -29,11 +30,12 @@ export default defineComponent({
   },
   components: {},
   setup(props, context) {
-    const handlerState: any = inject("state")
-    const router = useRouter()
-    const route = useRoute()
-    const appStore = useAppStore()
-    const state = reactive({})
+    const handlerState: any = inject("state");
+    const router = useRouter();
+    const route = useRoute();
+    const appStore = useAppStore();
+    const state = reactive({});
+    const messageStore = useMessageStore();
 
     function save() {
       //Send request
@@ -63,18 +65,20 @@ export default defineComponent({
 
       Request.securePost(url, {dataObj: obj}).then(async (resp: object) => {
         let responsedata = await resp.json()
-         handlerState.errors =[];
+        handlerState.errors = [];
         if (handlerState.action === "edit") {
           if (responsedata["action"] === "edit") {//Something went wrong we must thorw (show) errors
             handlerState.errors = responsedata["errors"];
+          } else {
+            messageStore.addMessage("success", `Edit`, "Entry edited successfully");
+            if (props.close) {
+              appStore.removeOpened(route.fullPath);
+
+            }
           }
         }
 
       })
-      if (props.close) {
-        appStore.removeOpened(route.fullPath)
-        router.push({"name": "home"})
-      }
 
 
     }
