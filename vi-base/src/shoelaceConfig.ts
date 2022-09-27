@@ -34,7 +34,7 @@ import "@viur/viur-shoelace/dist/components/combobox/combobox"
 
 import '@viur/viur-shoelace/dist/components/bone/bone';
 
-
+//@ts-nocheck
 import {setBasePath} from '@viur/viur-shoelace/dist/utilities/base-path';
 
 setBasePath(`/vi/viur-shoelace`)

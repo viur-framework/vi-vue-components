@@ -6,12 +6,12 @@
 </template>
 
 <script lang="ts">
+//@ts-nocheck
 import {reactive, defineComponent, inject, computed} from 'vue'
 import {useRoute, useRouter} from "vue-router";
 import {useAppStore} from "../../stores/app";
 import {Request} from "@viur/viur-vue-utils";
 import {useMessageStore} from "../../stores/message";
-
 export default defineComponent({
   props: {
     close: {
@@ -56,14 +56,14 @@ export default defineComponent({
         obj[[key]] = formData.getAll(key);
 
       }
-      let url = `/vi/${handlerState.module}/${handlerState.action}`
+      let url = `/vi/${handlerState.module}/${handlerState.action==="clone"?"add": handlerState.action}`;
 
       if (handlerState.action === "edit") {
         url += `/${handlerState.skelkey}`
       }
 
 
-      Request.securePost(url, {dataObj: obj}).then(async (resp: object) => {
+      Request.securePost(url, {dataObj: obj}).then(async (resp: Response) => {
         let responsedata = await resp.json()
         handlerState.errors = [];
         if (handlerState.action === "edit") {
@@ -77,7 +77,7 @@ export default defineComponent({
             }
           }
         }
-        if (handlerState.action === "add") {
+        if (handlerState.action === "add"|| handlerState.action === "clone") {
           if (responsedata["action"] === "add") {//Something went wrong we must thorw (show) errors
             handlerState.errors = responsedata["errors"];
           } else {

@@ -126,10 +126,11 @@ export default defineComponent({
 		}
 
 		function fetchData() {
-			let url = `/vi/${props.module}/${props.action}`
+			let url = `/vi/${props.module}/${props.action==="clone"?"edit": props.action}`;
+      console.log("new url ",url)
 			if (props.group) url + `/${props.group}`
 
-			if (props.action === "edit") {
+			if (props.action === "edit"||props.action === "clone") {
 				url += `/${props.skelkey}`
 			}
 
