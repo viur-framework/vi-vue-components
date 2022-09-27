@@ -24,7 +24,7 @@
 
 <script lang="ts">
 //@ts-nocheck
-import {reactive, defineComponent, computed, provide, onBeforeMount} from 'vue'
+import {reactive, defineComponent, computed, provide, onBeforeMount, onUpdated, onMounted} from 'vue'
 import HandlerBar from "../../components/Bars/HandlerBar.vue";
 import {ListRequest} from '@viur/viur-vue-utils'
 import {useAppStore} from '../../stores/app'
@@ -56,7 +56,8 @@ export default defineComponent({
       module: computed(() => props.module),
       group: computed(() => props.group),
       view: computed(() => props.view),
-      editableTable:false
+      editableTable: false,
+
     })
     provide("state", state)
     const currentlist = ListRequest(state.storeName, {
@@ -82,6 +83,8 @@ export default defineComponent({
         messageStore.addMessage("error", `${error.message}`, error.response.url)
       })
     })
+
+
 
     function entrySelected(e: Event) {
       state.currentSelection = e.detail.data

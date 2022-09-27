@@ -73,7 +73,18 @@ export default defineComponent({
             messageStore.addMessage("success", `Edit`, "Entry edited successfully");
             if (props.close) {
               appStore.removeOpened(route.fullPath);
-
+              router.push({name: "list"}); //fixme reload List
+            }
+          }
+        }
+        if (handlerState.action === "add") {
+          if (responsedata["action"] === "add") {//Something went wrong we must thorw (show) errors
+            handlerState.errors = responsedata["errors"];
+          } else {
+            messageStore.addMessage("success", `Add`, "Added edited successfully");
+            if (props.close) {
+              appStore.removeOpened(route.fullPath);
+              router.push({name: "list"});//fixme reload List
             }
           }
         }

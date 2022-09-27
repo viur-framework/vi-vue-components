@@ -196,6 +196,18 @@ export const useAppStore = defineStore("app", () => {
         state["stores.map"][store.$id] = store
     }
 
+  function getListStoreByRoute(route): ModuleInfo | null {
+    //ts-ignore
+
+    const conf = getConfByRoute(route)
+
+    let name: string = `module___${conf.module}`
+    if (conf.view) {
+      name += `___${conf.view}`
+    }
+    return state["stores.map"][name];
+
+  }
     function addTopBarAction(action: Component) {
         if( !state["topbar.actions"].includes(action)){
             state["topbar.actions"].push(action)
@@ -228,6 +240,7 @@ export const useAppStore = defineStore("app", () => {
         getConf,
         getConfByRoute,
         setListStore,
+        getListStoreByRoute,
         addTopBarAction,
         addOpened,
         removeOpened
