@@ -69,7 +69,7 @@ export default defineComponent({
 
 
     function reloadAction() {
-      return currentlist.fetch().catch((error) => {
+      return currentlist. fetch().catch((error) => {
         messageStore.addMessage("error", `${error.message}`, error.response.url)
       }).then((resp) => {
         messageStore.addMessage("success", `Reload`, "Message Test")

@@ -35,9 +35,11 @@ import "@viur/viur-shoelace/dist/components/combobox/combobox"
 import '@viur/viur-shoelace/dist/components/bone/bone';
 
 //@ts-nocheck
+
 import {setBasePath} from '@viur/viur-shoelace/dist/utilities/base-path';
 
 setBasePath(`/vi/viur-shoelace`)
+
 /*
 import {registerIconLibrary} from '@viviur/viur-shoelace/dist/utilities/icon-library';
 // Register a custom icons repository for this app

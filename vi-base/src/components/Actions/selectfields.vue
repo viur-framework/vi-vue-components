@@ -4,7 +4,7 @@
     {{ $t("actions.selectfields") }}
   </sl-button>
 
-  <sl-dialog :label='$t("actions.selectfields")' id="dialog">
+  <sl-dialog :label='$t("actions.selectfields")' id="dialog-selectfields">
     <sl-switch v-for="(bone,boneName) in state.structure" :checked="bone['visible']" @sl-change="visibleChange(boneName)">
       {{ bone["descr"] !== "" ? bone["descr"] : boneName }}
     </sl-switch>
@@ -31,7 +31,7 @@ export default defineComponent({
 
     function openSelectDialog() {
       let store = appStore.getListStoreByRoute(route);
-      const dialog = document.getElementById("dialog");
+      const dialog = document.getElementById("dialog-selectfields");
       state.structure = store.structure;
       dialog.show();
     }

@@ -1,4 +1,5 @@
 <template>
+  <!--
     <span v-if="!skel?.[boneName]">-</span>
     <div class="img-wrapper" v-else-if="skel[boneName]['dest']['mimetype'].startsWith('image/')">
         <img
@@ -11,6 +12,7 @@
             <bone-base :skel="skel" :structure="structure" :boneName="boneName"></bone-base>
         </a>
     </template>
+    -->
 </template>
 
 <script lang="ts">

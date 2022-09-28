@@ -1,1 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="9 11 43 39"><path opacity=".75" fill="currentcolor" d="m44.2 14.3 3.7 9.8H13.2l3.7-9.8h27.3m1.7-2.5H15.2L9.6 26.6h42l-5.7-14.8z"/><path opacity=".25" fill="#FFF" d="m44.2 14.3 3.7 9.8H13.2l3.8-9.8h27.2"/><path fill="currentcolor" d="m9.5 26.6 2.5 23h37.7l1.8-23h-42z"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="9 11 43 39">
+<path opacity="0.75" fill="currentcolor" d="M44.2,14.3l3.7,9.8H13.2l3.7-9.8H44.2 M45.9,11.8H15.2L9.6,26.6h42L45.9,11.8L45.9,11.8z"/>
+<polyline opacity="0.25" fill="#FFFFFF" points="44.2,14.3 47.9,24.1 13.2,24.1 17,14.3 44.2,14.3 "/>
+<path fill="currentcolor" d="M9.5,26.6l2.5,23h37.7l1.8-23H9.5z"/>
+</svg>
