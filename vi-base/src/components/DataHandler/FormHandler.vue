@@ -26,6 +26,7 @@
 						:renderLabel="true"
 						@sl-boneChange="updateValue"
             :errors="state.errors"
+            v-if="state.structure[bone['boneName']]['visible']"
 				>
 				</sl-bone>
 
@@ -92,6 +93,7 @@ export default defineComponent({
 							"boneValue": state.skel[boneName]
 						})
 					} else {
+            if(!bone?.params?.visible)continue;//Only add the group when we can show something
 						groups[category] = {
 							"name": category, "bones": [{
 								"boneName": boneName,

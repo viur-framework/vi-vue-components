@@ -85,7 +85,7 @@ export default defineComponent({
                             }
                         }
                     }
-                    console.log(actions)
+
 
                     confActions = confActions.split("\n")
 
@@ -95,6 +95,7 @@ export default defineComponent({
                     }
 
                 }
+                 console.log(actions)
                 return actions
             })
         })

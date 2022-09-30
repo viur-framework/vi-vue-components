@@ -15,6 +15,7 @@
               :module="module"
               :editabletable="state.editableTable"
               @sl-selectionChanged="entrySelected"
+              @sl-dblclick="openEditor"
 
     >
 
@@ -29,6 +30,7 @@ import HandlerBar from "../../components/Bars/HandlerBar.vue";
 import {ListRequest} from '@viur/viur-vue-utils'
 import {useAppStore} from '../../stores/app'
 import {useMessageStore} from "../../stores/message";
+import router from "../../routes";
 
 export default defineComponent({
   props: {
@@ -97,11 +99,19 @@ export default defineComponent({
       }
 
     }
+    function openEditor(e:Event)
+    {
+      const url = `/${state.module}/edit/${e.detail.cell.getRow().getData().key}?_=${new Date().getTime()}`;
+      appStore.addOpened(url, state.module, state.view);
+      router.push(url);
+    }
 
     return {
       state,
       currentlist,
-      entrySelected
+      entrySelected,
+      openEditor
+
     }
   }
 })
