@@ -18,7 +18,7 @@ DO NOT COMMIT THIS CLIENT ID
 
 ###
 you need to add this to your main.py
-`import os
+```import os
 from viur.core import request
 from viur.core.utils import currentRequest
 
@@ -30,4 +30,4 @@ if os.environ['GAE_ENV'] == "localdev":
 		currentRequest.get().response.headers["Access-Control-Allow-Credentials"] = "true"
 		return (path)
 
-	conf["viur.requestPreprocessor"] = preprocessRequestHandler`
+	conf["viur.requestPreprocessor"] = preprocessRequestHandler```
