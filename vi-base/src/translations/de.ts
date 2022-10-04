@@ -22,5 +22,10 @@ export default {
     },
     skeldrawer: {
         noentry: "Kein Eintrag ausgewählt"
+    },
+    selectfields: {
+      selectall:"Alle auswählen",
+      unselectall:"Alle abwählen",
+      invertselect:"Auswahl umkehren",
     }
 }
