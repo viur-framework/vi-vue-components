@@ -16,6 +16,7 @@
               :editabletable="state.editableTable"
               @sl-selectionChanged="entrySelected"
               @sl-dblclick="openEditor"
+              height="500px"
 
     >
 
@@ -31,6 +32,7 @@ import {ListRequest} from '@viur/viur-vue-utils'
 import {useAppStore} from '../../stores/app'
 import {useMessageStore} from "../../stores/message";
 import router from "../../routes";
+import {an} from "vitest/dist/global-d05ffb3f";
 
 export default defineComponent({
   props: {
@@ -71,21 +73,28 @@ export default defineComponent({
 
 
     function reloadAction() {
-      return currentlist. fetch().catch((error) => {
+      return currentlist.fetch().catch((error) => {
         messageStore.addMessage("error", `${error.message}`, error.response.url)
       }).then((resp) => {
         messageStore.addMessage("success", `Reload`, "Message Test")
       })
     }
 
-    provide("reloadAction", reloadAction)
+    provide("reloadAction", reloadAction);
+
+    function setLimit(limit:any) {
+      currentlist.state.params["limit"]=limit;
+      currentlist.reset();
+      currentlist.fetch();
+    }
+
+    provide("setLimit", setLimit)
 
     onBeforeMount(() => {
       currentlist.fetch().catch((error) => {
         messageStore.addMessage("error", `${error.message}`, error.response.url)
       })
     })
-
 
 
     function entrySelected(e: Event) {
@@ -99,8 +108,8 @@ export default defineComponent({
       }
 
     }
-    function openEditor(e:Event)
-    {
+
+    function openEditor(e: Event) {
       const url = `/${state.module}/edit/${e.detail.cell.getRow().getData().key}?_=${new Date().getTime()}`;
       appStore.addOpened(url, state.module, state.view);
       router.push(url);
