@@ -42,8 +42,8 @@ export default defineComponent({
     },
     components: {...actions},
     setup(props, context) {
-        const appStore = useAppStore();
-        const route = useRoute();
+        const appStore = useAppStore()
+        const route = useRoute()
 
 
         const state = reactive({
@@ -64,8 +64,6 @@ export default defineComponent({
                 let conf = appStore.getConfByRoute(route)
 
                 let actions = {...listActions}
-                //fixme
-                return actions;
                 if (!conf) return actions
 
 

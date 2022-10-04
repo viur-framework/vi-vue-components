@@ -1,1 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 10 40 40"><path d="M21 10.1V21H10.1v3H24V10.1zM49.9 21H39V10.1h-3V24h13.9zM39 49.9V39h10.9v-3H36v13.9zM10.1 39H21v10.9h3V36H10.1z" fill="currentcolor"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 10 40 40">
+<g>
+	<polygon fill="currentcolor" points="21,10.1 21,21 10.1,21 10.1,24 24,24 24,10.1  "/>
+	<polygon fill="currentcolor" points="49.9,21 39,21 39,10.1 36,10.1 36,24 49.9,24  "/>
+	<polygon fill="currentcolor" points="39,49.9 39,39 49.9,39 49.9,36 36,36 36,49.9  "/>
+	<polygon fill="currentcolor" points="10.1,39 21,39 21,49.9 24,49.9 24,36 10.1,36  "/>
+</g>
+</svg>
