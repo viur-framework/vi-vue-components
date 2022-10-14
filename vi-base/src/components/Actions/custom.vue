@@ -1,5 +1,5 @@
 <template>
-    <sl-button>
+    <sl-button size="small">
         <sl-icon slot="prefix" name="error"></sl-icon>
         custom
     </sl-button>

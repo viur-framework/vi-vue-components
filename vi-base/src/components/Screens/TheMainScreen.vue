@@ -74,16 +74,20 @@ export default defineComponent({
 <style scoped lang="less">
 sl-split-panel {
     --min: 300px;
-    --max: 50%;
-    height: 100vh;
+    --max: 40%;
+    flex: 1;
+  height: 0;
+
+    &::part(panel){
+      display: flex;
+      flex-direction: column;
+    }
 }
 
 .content {
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
-    max-height: 100%;
-    height: 100%;
+    flex: 1;
     background-color: #fff;
 
     &::-webkit-scrollbar-track {

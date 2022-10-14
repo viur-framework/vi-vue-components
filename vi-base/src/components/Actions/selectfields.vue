@@ -1,5 +1,5 @@
 <template>
-  <sl-button @click="openSelectDialog">
+  <sl-button @click="openSelectDialog" size="small">
     <sl-icon slot="prefix" name="list-ul"></sl-icon>
     {{ $t("actions.selectfields") }}
   </sl-button>

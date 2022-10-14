@@ -1,5 +1,5 @@
 <template>
-  <sl-button variant="danger" :disabled="!state.active" @click="openDeletePopup">
+  <sl-button variant="danger" size="small" :disabled="!state.active" @click="openDeletePopup">
     <sl-icon slot="prefix" name="trash"></sl-icon>
     {{ $t("actions.delete") }}
   </sl-button>

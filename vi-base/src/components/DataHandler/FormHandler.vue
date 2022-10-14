@@ -1,12 +1,19 @@
 <template>
-  {{ module }}
-  {{ action }}
-  {{ group }}
-  {{ skelkey }}
-	<entry-bar :module="module" :action="action" :skelkey="skelkey"
-	></entry-bar>
 
-	<template v-for="(group,key) in state.formGroups">
+  <div class="topbar">
+    <div class="top-headline">
+      {{ module }}
+      {{ action }}
+      {{ group }}
+      {{ skelkey }}
+    </div>
+
+    <entry-bar :module="module" :action="action" :skelkey="skelkey"
+    ></entry-bar>
+  </div>
+
+  <div class="scroll-content">
+    <template v-for="(group,key) in state.formGroups">
 		<sl-details :summary="group['name']">
 			<template v-for="bone in group['bones']">
 				<!--<label>{{ bone['boneStructure']["descr"] }}</label>
@@ -35,13 +42,14 @@
 		</sl-details>
 	</template>
 
-	<sl-details summary="DEBUG: Formdata">
-		{{ state.formValues }}
-	</sl-details>
-  <sl-details summary="DEBUG: Errors">
-		{{ state.errors }}
-	</sl-details>
+    <sl-details summary="DEBUG: Formdata">
+      {{ state.formValues }}
+    </sl-details>
+    <sl-details summary="DEBUG: Errors">
+      {{ state.errors }}
+    </sl-details>
 
+  </div>
 
 </template>
 
@@ -184,5 +192,55 @@ export default defineComponent({
 </script>
 
 <style scoped lang="less">
+
+.topbar{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: var(--sl-spacing-small);
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, .25);
+  z-index: 1;
+}
+
+.top-headline{
+  margin-right: auto;
+  color: var(--sl-color-primary-500);
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.scroll-content{
+  flex: 1;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar-track {
+        background-color: transparent;
+    }
+
+    &::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+        background-color: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: transparent;
+        border-radius: 3px;
+    }
+
+    &:hover {
+        &::-webkit-scrollbar-thumb {
+            background-color: #afafaf;
+        }
+    }
+}
+
+sl-details{
+  &::part(base){
+    border-radius: 0;
+  }
+}
 
 </style>

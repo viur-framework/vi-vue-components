@@ -1,5 +1,5 @@
 <template>
-  <sl-button variant="success" @click="save">
+  <sl-button variant="success" size="small" @click="save" >
     <sl-icon slot="prefix" :name="icon"></sl-icon>
     {{ $t(name) }}
   </sl-button>

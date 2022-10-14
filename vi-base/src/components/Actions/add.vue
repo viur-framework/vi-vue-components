@@ -1,6 +1,6 @@
 <template>
     <router-link :to="state.url" custom v-slot="{navigate}">
-        <sl-button variant="success" @click="createAndNavigate(navigate)">
+        <sl-button variant="success" @click="createAndNavigate(navigate)" size="small">
             <sl-icon slot="prefix" name="plus"></sl-icon>
             {{ $t("actions.add") }}
         </sl-button>

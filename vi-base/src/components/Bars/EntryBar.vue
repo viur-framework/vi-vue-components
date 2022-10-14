@@ -27,4 +27,8 @@ export default defineComponent({
 
 <style scoped lang="less">
 
+sl-button{
+  margin-left: 5px;
+}
+
 </style>

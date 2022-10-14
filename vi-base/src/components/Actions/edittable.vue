@@ -1,6 +1,6 @@
 <template>
   <sl-switch @sl-change="changeeditState">
-    {{ $t("actions.edittable") }}
+    <span>{{ $t("actions.edittable") }}</span>
   </sl-switch>
 </template>
 
@@ -32,5 +32,9 @@ export default defineComponent({
 </script>
 
 <style scoped lang="less">
+
+span{
+  font-size: .9em;
+}
 
 </style>
