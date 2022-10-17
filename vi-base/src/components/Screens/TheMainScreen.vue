@@ -9,9 +9,7 @@
 
         <div class="content" slot="end">
             <router-view v-slot="{ Component }">
-                <keep-alive>
-                    <component :is="Component" :key="route.fullPath"/>
-                </keep-alive>
+                <view-wrapper :component="Component"></view-wrapper>
             </router-view>
         </div>
 
@@ -38,9 +36,10 @@ import ViAction from "../../components/TopBarActions/vi.vue";
 import LogAction from "../../components/TopBarActions/log.vue";
 import MessageDrawer from "../Messaging/MessageDrawer.vue";
 import TheMainScreenSkelDrawer from "../TheMainScreenSkelDrawer.vue";
+import ViewWrapper from "../ViewWrapper.vue";
 
 export default defineComponent({
-    components: {TheMainScreenSkelDrawer, MessageDrawer, TheTopbar, TheSidebar},
+    components: {ViewWrapper, TheMainScreenSkelDrawer, MessageDrawer, TheTopbar, TheSidebar},
     setup() {
         const route = useRoute()
         const appStore = useAppStore()
