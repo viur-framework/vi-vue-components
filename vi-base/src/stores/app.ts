@@ -2,6 +2,7 @@
 
 import {reactive, computed, Component} from 'vue';
 import {defineStore, StoreDefinition} from "pinia";
+import {useViewStore} from "./views";
 
 export interface ModuleInfo {
     name: string,
@@ -107,6 +108,7 @@ function flattenTree(tree) {
 }
 
 export const useAppStore = defineStore("app", () => {
+    const viewStore = useViewStore()
     const state = reactive({
         //vi section
         "vi.version": [3, 5, 0],
@@ -231,6 +233,7 @@ export const useAppStore = defineStore("app", () => {
 
     function removeOpened(url: string) {
         delete state["handlers.opened"][url]
+        viewStore.destroy(url)
     }
 
     return {
