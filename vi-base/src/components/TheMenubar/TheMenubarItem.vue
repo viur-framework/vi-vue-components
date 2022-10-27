@@ -14,6 +14,7 @@
             <sl-icon v-if="closeable"
                      sprite
                      name="x"
+                     class="icon-end"
                      @click.stop="removeItem">
             </sl-icon>
 
@@ -215,6 +216,11 @@ export default defineComponent({
         .name {
             color: var(--sl-color-primary-500);
         }
+    }
+
+    .icon-end{
+      font-size: .75em;
+      padding-right: 10px;
     }
 }
 
