@@ -154,8 +154,11 @@ export default defineComponent({
 
         function removeItem() {
             // @ts-ignore
-            appStore.removeOpened(props.to)
-            router.push({"name": "home"})
+            router.push({"name": "home"}).then(()=>{
+                appStore.removeOpened(props.to)
+            })
+
+
         }
 
 
