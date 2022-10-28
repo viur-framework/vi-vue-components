@@ -16,11 +16,13 @@
 
     </sl-split-panel>
 
-    <the-main-screen-skel-drawer>
-
-    </the-main-screen-skel-drawer>
+    <the-main-screen-skel-drawer></the-main-screen-skel-drawer>
 
     <message-drawer></message-drawer>
+
+    <div id="dialogs">
+
+    </div>
 </template>
 
 <script lang="ts">

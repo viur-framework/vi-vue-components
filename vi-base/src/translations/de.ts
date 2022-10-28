@@ -22,5 +22,9 @@ export default {
     },
     skeldrawer: {
         noentry: "Kein Eintrag ausgewählt"
+    },
+    tab:{
+        amount_warning: "Du hast bereits x Einträge geöffnet. Möchtest du trotzdem einen weiteren öffnen?"
     }
+
 }
