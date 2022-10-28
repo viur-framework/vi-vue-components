@@ -2,12 +2,12 @@
     <router-link v-if="to" :to="to" custom v-slot="{navigate}">
         <div class="item">
 
-            <sl-avatar shape="rounded" @click="navigate"
+            <sl-avatar shape="rounded" @click="openItem(navigate)"
                        :initials="icon?'':state.initials">
                 <sl-icon slot="icon" v-if="icon" :name="icon" :library="library" sprite></sl-icon>
             </sl-avatar>
 
-            <div class="name" @click="navigate">
+            <div class="name" @click="openItem(navigate)">
                 {{ name }}
             </div>
 
@@ -133,6 +133,7 @@ export default defineComponent({
     setup(props, context) {
         const appStore = useAppStore()
         const router = useRouter()
+        const route = useRoute()
 
         const state = reactive({
             open: !props.closed,
@@ -160,6 +161,11 @@ export default defineComponent({
 
         }
 
+        function openItem(navigate){
+            navigate().then(()=>{
+                appStore.addOpened(route.fullPath,route.params["module"], route.query["view"])
+            })
+        }
 
         onMounted(() => {
             state.slotitems = Utils.getSlotLength(context.slots.default)
@@ -173,7 +179,8 @@ export default defineComponent({
             state,
             openGroup,
             appStore,
-            removeItem
+            removeItem,
+            openItem
         }
     }
 })
