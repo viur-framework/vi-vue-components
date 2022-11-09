@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "vite --port=8081",
     "build": "vue-tsc --noEmit && vite build",
+    "build-watch": "vue-tsc --noEmit && vite build --watch",
     "check": "vue-tsc --noEmit",
     "preview": "vite preview",
     "test": "vitest",
@@ -14,7 +15,7 @@
     "src/*"
   ],
   "dependencies": {
-    "@viur/viur-shoelace": "^2.0.0-beta.82-viur-11",
+    "@viur/viur-shoelace": "v2.0.0-beta.83-viur-13",
     "@viur/viur-vue-utils": "^0.5.9",
     "logics-js": "^0.1.0",
     "pinia": "^2.0.22",

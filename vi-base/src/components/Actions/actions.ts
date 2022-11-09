@@ -10,6 +10,7 @@ import selectfields_action from './selectfields.vue'
 import setamount_action from './setamount.vue'
 import space_action from './space.vue'
 import custom_action from './custom.vue'
+import edittable_action from './edittable.vue'
 
 export default {
     add_action,
@@ -23,5 +24,6 @@ export default {
     selectfields_action,
     setamount_action,
     space_action,
-    custom_action
+    custom_action,
+    edittable_action
 }

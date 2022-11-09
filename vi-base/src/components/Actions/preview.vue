@@ -1,5 +1,5 @@
 <template>
-    <sl-button :disabled="!state.active">
+    <sl-button :disabled="!state.active" size="small">
         <sl-icon slot="prefix" name="eye"></sl-icon>
         {{ $t("actions.preview") }}
     </sl-button>

@@ -1,6 +1,6 @@
 <template>
     <div class="wrapper">
-        <sl-card style="width:457px">
+        <sl-card>
             <img class="logo" src="/vi/logo.svg">
 
             <sl-alert v-if="userStore.state['user.loggedin']==='error'" open variant="danger">
@@ -28,8 +28,7 @@
                               @sl-clear="state.name=''"></sl-input>
                     <sl-input @keydown.enter="userLogin" type="password" name="password" v-model="state.password"
                               placeholder="password" @sl-clear="state.password=''" toggle-password></sl-input>
-                    <br>
-                    <sl-button @click="userLogin"
+                    <sl-button @click="userLogin" variant="primary"
                                v-if="['no', 'loading', 'error'].includes(userStore.state['user.loggedin'])"
                                :disabled="!state.userDataFilled"
                                :loading="userStore.state['user.loggedin']==='loading'"
@@ -40,13 +39,13 @@
                 </sl-tab-panel>
                 <sl-tab-panel name="google">
                     <div id="google_oauth"></div>
-                    <sl-button @click="googleLogin"
+                    <sl-button @click="googleLogin" variant="primary"
                                v-if="['no', 'loading', 'error'].includes(userStore.state['user.loggedin'])"
                                :loading="userStore.state['user.loggedin']==='loading'"
                     >
                         Mit Google anmelden
                     </sl-button>
-                    <sl-button @click="logout" v-else :loading="state.waitForLogout">Logout</sl-button>
+                    <sl-button @click="logout" variant="primary" v-else :loading="state.waitForLogout">Logout</sl-button>
                 </sl-tab-panel>
                 <!--<sl-tab-panel name="sso">Login with Mausbrand SSO</sl-tab-panel>-->
             </sl-tab-group>
@@ -142,6 +141,9 @@ sl-button {
 
 sl-card {
     z-index: 10;
+    min-width: 300px;
+    max-width: 500px;
+    width: 30vw;
 
     &::part(body) {
         display: flex;
@@ -154,6 +156,23 @@ sl-card {
 .init-spinner {
     display: flex;
     justify-content: center;
+}
+
+sl-tab{
+  &::part(base){
+    padding: 10px 20px;
+  }
+}
+
+sl-tab-panel{
+  &::part(base){
+    padding: 20px 0 0 0;
+    border: none;
+  }
+}
+
+sl-input{
+  margin-bottom: 10px;
 }
 
 </style>

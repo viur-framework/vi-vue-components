@@ -1,5 +1,5 @@
 <template>
-    <sl-button @click="reload" :loading="state.loading">
+    <sl-button @click="reload" :loading="state.loading" size="small">
         <sl-icon slot="prefix" name="arrow-repeat"></sl-icon>
         {{ $t("actions.reload") }}
     </sl-button>
