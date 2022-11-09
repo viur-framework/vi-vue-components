@@ -8,6 +8,7 @@
         </div>
 
         <div class="content" slot="end">
+            <the-main-screen-tabbar></the-main-screen-tabbar>
             <router-view v-slot="{ Component }">
                 <view-wrapper :component="Component"></view-wrapper>
             </router-view>
@@ -15,11 +16,13 @@
 
     </sl-split-panel>
 
-    <the-main-screen-skel-drawer>
-
-    </the-main-screen-skel-drawer>
+    <the-main-screen-skel-drawer></the-main-screen-skel-drawer>
 
     <message-drawer></message-drawer>
+
+    <div id="dialogs">
+
+    </div>
 </template>
 
 <script lang="ts">
@@ -37,9 +40,10 @@ import LogAction from "../../components/TopBarActions/log.vue";
 import MessageDrawer from "../Messaging/MessageDrawer.vue";
 import TheMainScreenSkelDrawer from "../TheMainScreenSkelDrawer.vue";
 import ViewWrapper from "../ViewWrapper.vue";
+import TheMainScreenTabbar from "../TheMainScreenTabbar.vue";
 
 export default defineComponent({
-    components: {ViewWrapper, TheMainScreenSkelDrawer, MessageDrawer, TheTopbar, TheSidebar},
+    components: {TheMainScreenTabbar, ViewWrapper, TheMainScreenSkelDrawer, MessageDrawer, TheTopbar, TheSidebar},
     setup() {
         const route = useRoute()
         const appStore = useAppStore()

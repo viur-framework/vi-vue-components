@@ -2,6 +2,7 @@
 
 import {reactive, computed, Component} from 'vue';
 import {defineStore, StoreDefinition} from "pinia";
+import {useRouter} from "vue-router";
 import {useViewStore} from "./views";
 
 export interface ModuleInfo {
@@ -109,6 +110,7 @@ function flattenTree(tree) {
 
 export const useAppStore = defineStore("app", () => {
     const viewStore = useViewStore()
+    const router = useRouter()
     const state = reactive({
         //vi section
         "vi.version": [3, 5, 0],
@@ -138,6 +140,7 @@ export const useAppStore = defineStore("app", () => {
 
         //dynamic child buckets
         "handlers.opened": {}, // {'url','name','library'}
+        "handlers.opened.max":5,
 
         //drawer
         "skeldrawer.opened": false,
@@ -217,21 +220,31 @@ export const useAppStore = defineStore("app", () => {
 
     }
 
-    function addOpened(url: string, module: string, view = null, name = "", icon = "", library = "") {
+    function addOpened(route, module: string, view = null, name = "", icon = "", library = "") {
         let currentConf = getConf(module, view)
         let moduleIconData = currentConf["icon"].split("___")
-
+        let url = route.fullPath
+        console.log(currentConf)
         let entry = {
-            "to": url,
+            "to": route,
             "icon": icon ? icon : moduleIconData[1],
             "library": library ? library : moduleIconData[2],
             "name": name ? name : currentConf["name"]
         }
 
-        state["handlers.opened"][url] = entry
+        let tabNames = Object.keys(state["handlers.opened"]).filter(name => name.startsWith(route.path+"?_="))
+
+        if(state["handlers.opened.max"]>tabNames.length){
+            state["handlers.opened"][url] = entry
+            router.push(entry["to"])
+        }else{
+            return false
+        }
+        return true
     }
 
-    function removeOpened(url: string) {
+    function removeOpened(route) {
+        let url = route.fullPath
         delete state["handlers.opened"][url]
         viewStore.destroy(url)
     }

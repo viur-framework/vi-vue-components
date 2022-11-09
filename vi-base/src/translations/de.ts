@@ -27,5 +27,10 @@ export default {
       selectall:"Alle auswählen",
       unselectall:"Alle abwählen",
       invertselect:"Auswahl umkehren",
+    },
+    tab:{
+        amount_warning: "Du hast bereits x Einträge geöffnet. Möchtest du trotzdem einen weiteren öffnen?"
     }
+
 }
+

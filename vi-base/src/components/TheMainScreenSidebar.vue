@@ -1,6 +1,6 @@
 <template>
     <nav>
-        <the-menubar-group :name="$t('sidebar.workspace')">
+        <!--<the-menubar-group :name="$t('sidebar.workspace')">
             <the-menubar-item v-for="entry in appStore.state['handlers.opened']" closeable
                               :to="entry['to']"
                               :name="entry['name']"
@@ -8,7 +8,7 @@
                               :library="entry['library']"
             >
             </the-menubar-item>
-        </the-menubar-group>
+        </the-menubar-group>-->
 
         <the-menubar-group :name="$t('sidebar.administration')">
             <menu-tree :tree="appStore.modulesTree"></menu-tree>

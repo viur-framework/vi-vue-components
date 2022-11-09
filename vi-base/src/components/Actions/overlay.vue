@@ -3,10 +3,6 @@
         <sl-icon slot="prefix" name="file-earmark-pdf"></sl-icon>
         {{ $t("actions.overlay") }}
     </sl-button>
-    <teleport to="#skeldrawer">
-        <div>test</div>
-    </teleport>
-
 </template>
 
 <script lang="ts">

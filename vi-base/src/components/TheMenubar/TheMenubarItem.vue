@@ -1,13 +1,13 @@
 <template>
-    <router-link v-if="to" :to="to" custom v-slot="{navigate}">
+    <router-link v-if="to" :to="to" custom v-slot="{route}">
         <div class="item">
 
-            <sl-avatar shape="rounded" @click="navigate"
+            <sl-avatar shape="rounded" @click="openItem(route)"
                        :initials="icon?'':state.initials">
                 <sl-icon slot="icon" v-if="icon" :name="icon" :library="library" sprite></sl-icon>
             </sl-avatar>
 
-            <div class="name" @click="navigate">
+            <div class="name" @click="openItem(route)">
                 {{ name }}
             </div>
 
@@ -32,6 +32,13 @@
             <slot>
             </slot>
         </div>
+
+        <teleport v-if="state.maxtabsReached" to="#dialogs" :disabled="!state.maxtabsReached">
+          <sl-dialog open label="Max tabs">
+            {{ $t("tab.amount_warning") }}
+            <sl-button slot="footer" @click="openItem(route)">öffnen</sl-button>
+          </sl-dialog>
+        </teleport>
 
     </router-link>
     <a v-else-if="href" :href="href">
@@ -87,13 +94,15 @@
         </div>
     </div>
 
+
+
 </template>
 
 <script lang="ts">
-import {computed, reactive, onMounted, onUpdated, defineComponent, getCurrentInstance} from "vue";
+import {computed, reactive, onMounted, onUpdated, defineComponent, unref} from "vue";
 import Utils from '../../utils';
 import {useAppStore} from "../../stores/app";
-import {useRoute, useRouter} from "vue-router";
+import {useRoute, useRouter } from "vue-router";
 
 export default defineComponent({
     name: "TheMenubarItem",
@@ -145,8 +154,13 @@ export default defineComponent({
                     layer = 2
                 }
                 return (1 - (layer * 0.1)).toString() + "em"
-            })
+            }),
+          maxtabsReached:false
         });
+
+        function getRoute(){
+          return {...props.to, "query":{...props.to?.query, "_":new Date().getTime()}}
+        }
 
         function openGroup() {
             state.open = !state.open;
@@ -157,10 +171,14 @@ export default defineComponent({
             router.push({"name": "home"}).then(()=>{
                 appStore.removeOpened(props.to)
             })
-
-
         }
 
+        function openItem(route){
+          route.query["_"]=new Date().getTime()
+          let new_route = router.resolve(unref(route))
+
+          state.maxtabsReached = !appStore.addOpened(new_route, route.params["module"], route.query["view"])
+        }
 
         onMounted(() => {
             state.slotitems = Utils.getSlotLength(context.slots.default)
@@ -174,7 +192,9 @@ export default defineComponent({
             state,
             openGroup,
             appStore,
-            removeItem
+            removeItem,
+            openItem,
+            getRoute
         }
     }
 })
