@@ -145,7 +145,17 @@ export const useAppStore = defineStore("app", () => {
         //drawer
         "skeldrawer.opened": false,
         "skeldrawer.entry": {},
-        "skeldrawer.structure": {}
+        "skeldrawer.structure": {},
+
+		//settings
+		"admin.name":" Administartion",
+    	"admin.logo":"",
+    	"admin.login.background":"",
+    	"admin.login.logo":"",
+    	"admin.color.primary":"",
+    	"admin.color.secondary":"",
+
+
     })
     const modulesTree = computed(() => {
         let groups = {}
