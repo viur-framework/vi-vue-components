@@ -1,8 +1,9 @@
 <template>
-    <div class="bar" style="z-index: 50">
+    <div class="bar">
         <template v-for="(actionlist,index) in state.actions['default']">
             <component v-for="action in actionlist"
                        :is="`${action}_action`"
+                       size="small"
             >
                 <custom_action></custom_action>
             </component>
@@ -10,10 +11,11 @@
         </template>
     </div>
 
-    <div class="bar">
+    <div class="bar bottombar">
         <template v-for="(actionlist,index) in state.actions['entry']">
             <component v-for="action in actionlist"
                        :is="`${action}_action`"
+                       size="small"
             >
             </component>
             <space_action v-if="index<(state.actions['entry'].length-1)"></space_action>
@@ -49,7 +51,7 @@ export default defineComponent({
         const state = reactive({
             actions: computed(() => {
                 let listActions = {
-                    "default": [["add", "selectfields"], ["reload", "setamount", "overlay"]],
+                    "default": [["add", "selectfields"], ["setamount", "reload"], ["overlay","edittable"]],
                     "entry": [["edit", "clone", "delete"], ["preview"]]
                 }
                 const treeActions = {
@@ -85,7 +87,7 @@ export default defineComponent({
                             }
                         }
                     }
-                    console.log(actions)
+
 
                     confActions = confActions.split("\n")
 
@@ -95,6 +97,7 @@ export default defineComponent({
                     }
 
                 }
+                 console.log(actions)
                 return actions
             })
         })
@@ -105,17 +108,18 @@ export default defineComponent({
 
 <style scoped lang="less">
 .bar {
-    align-items: stretch;
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    position: relative;
-    text-align: center;
-    justify-content: space-between;
-    padding: 5px 10px;
-    background-color: #f0f0f0;
-    box-shadow: 0 1px 3px rgb(0 0 0 / 12%), 0 1px 2px rgb(0 0 0 / 24%);
+    flex-wrap: nowrap;
+    padding: var(--sl-spacing-small);
+    gap: var(--sl-spacing-small);
     width: 100%;
+    background-color: #fff;
+    z-index: 1;
+}
+
+.bottombar{
+  padding-top: 0;
+  border-bottom: 2px solid var(--sl-color-neutral-200)
 }
 
 .spacer {

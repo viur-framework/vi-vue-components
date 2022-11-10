@@ -1,1 +1,3 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="13 13 34 34"><path fill="currentcolor" d="M13.5 13.5h33v33h-33z"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="13 13 34 34">
+<rect x="13.5" y="13.5" fill="currentcolor" width="33" height="33"/>
+</svg>

@@ -6,6 +6,7 @@
 
 html{
   overflow: hidden;
+  font-size: 16px !important;
 }
 
 body {
@@ -13,5 +14,14 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 #app {
+  display: flex;
+  flex-direction: column;
   height: 100vh;
+}
+
+sl-input,
+sl-select{
+  &::part(base){
+    box-shadow: none;
+  }
 }
