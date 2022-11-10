@@ -1,5 +1,5 @@
 <template>
-  <sl-button variant="danger" size="small" :disabled="!state.active" @click="openDeletePopup">
+  <sl-button variant="danger" size="small" :disabled="!state.active || !state.canDelete" @click="openDeletePopup">
     <sl-icon slot="prefix" name="trash"></sl-icon>
     {{ $t("actions.delete") }}
   </sl-button>
@@ -15,6 +15,8 @@
 import {reactive, defineComponent, inject, computed} from 'vue'
 import {Request} from "@viur/viur-vue-utils";
 import {useMessageStore} from "../../stores/message";
+import {useAppStore} from "../../stores/app";
+import {useRoute} from "vue-router";
 
 export default defineComponent({
   props: {},
@@ -22,6 +24,8 @@ export default defineComponent({
   setup(props, context) {
     const handlerState: any = inject("state");
     const messageStore = useMessageStore();
+    const appStore = useAppStore();
+    const route = useRoute();
     const state = reactive({
       active: computed(() => {
         return handlerState.currentSelection && handlerState.currentSelection.length > 0
@@ -31,6 +35,12 @@ export default defineComponent({
           return handlerState.currentSelection.length;
         }
         return 0
+      }),
+      canDelete: computed(() => {
+        if (appStore.getConfByRoute(route)) {
+          return appStore.getConfByRoute(route)['canDelete']
+        }
+        return true;
       })
     })
 
@@ -51,7 +61,7 @@ export default defineComponent({
     }
 
     function openDeletePopup() {
-     const dialog = document.getElementById("dialog-delete");
+      const dialog = document.getElementById("dialog-delete");
       if (dialog !== null) {
         dialog.show();
       }

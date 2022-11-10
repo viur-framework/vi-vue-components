@@ -1,7 +1,7 @@
 <template>
 
     <router-link :to="state.url" custom v-slot="{route}">
-        <sl-button variant="success" @click="createAndNavigate(route)">
+        <sl-button variant="success" @click="createAndNavigate(route)" :disabled="!state.canAdd">
 
             <sl-icon slot="prefix" name="plus"></sl-icon>
             {{ $t("actions.add") }}
@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import {reactive, defineComponent, inject, computed} from 'vue'
+import {reactive, defineComponent, inject, computed, h} from 'vue'
 import {useRoute} from "vue-router";
 import {useAppStore} from "../../stores/app";
 
@@ -19,12 +19,19 @@ export default defineComponent({
     components: {},
     setup(props, context) {
         const handlerState: any = inject("state")
-        const appStore = useAppStore()
+        const appStore = useAppStore();
         const route = useRoute()
         const state = reactive({
             url: computed(() => {
                 return `/${route.params.module}/add?_=${new Date().getTime()}`
-            })
+            }),
+          canAdd: computed(() => {
+            if (appStore.getConfByRoute(route))
+            {
+              return appStore.getConfByRoute(route)['canAdd']
+            }
+            return true;
+          })
 
         })
 
@@ -34,7 +41,7 @@ export default defineComponent({
 
         return {
             state,
-            createAndNavigate
+            createAndNavigate,
         }
     }
 })
