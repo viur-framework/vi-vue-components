@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <sl-card style="width:457px">
+    <sl-card>
       <img class="logo" :src="logo">
 
       <sl-alert v-if="userStore.state['user.loggedin']==='error'" open variant="danger">
@@ -78,7 +78,7 @@ export default defineComponent({
     })
 
     const backgroundImage = computed(() => `url('${appStore.state["admin.login.background"]}'`);
-    const logo = computed(() => appStore.state["admin.logo"]);
+    const logo = computed(() => appStore.state["admin.login.logo"]);
 
     function googleLogin() {
       state.waitForLogout = false
@@ -154,19 +154,19 @@ sl-button {
 }
 
 sl-card {
-< < < < < < < HEAD z-index: 10;
-= = = = = = = z-index: 10;
+  z-index: 10;
   min-width: 300px;
   max-width: 500px;
   width: 30vw;
 
-  > > > > > > > main
+
   &::part(body) {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: stretch;
   }
+
 }
 
 .init-spinner {

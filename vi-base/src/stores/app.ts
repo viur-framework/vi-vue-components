@@ -148,10 +148,10 @@ export const useAppStore = defineStore("app", () => {
         "skeldrawer.structure": {},
 
 		//settings
-		"admin.name":" Administartion",
+		  "admin.name":" Administartion",
     	"admin.logo":"",
     	"admin.login.background":"",
-    	"admin.login.logo":"",
+    	"admin.login.logo":"/vi/logo_test.svg",
     	"admin.color.primary":"",
     	"admin.color.secondary":"",
 
