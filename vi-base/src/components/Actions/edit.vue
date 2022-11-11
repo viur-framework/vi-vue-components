@@ -11,13 +11,15 @@
 import {reactive, defineComponent, inject, computed} from 'vue'
 import {useRoute} from "vue-router";
 import {useAppStore} from "../../stores/app";
+import {useUserStore} from "../../stores/user";
 
 export default defineComponent({
   props: {},
   components: {},
   setup(props, context) {
     const handlerState: any = inject("state")
-    const appStore = useAppStore()
+    const appStore = useAppStore();
+    const userStore = useUserStore();
     const route = useRoute()
     const state = reactive({
       active: computed(() => {
@@ -28,10 +30,11 @@ export default defineComponent({
         return `/${route.params.module}/edit/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
       }),
       canEdit: computed(() => {
-        if (appStore.getConfByRoute(route)) {
-          return appStore.getConfByRoute(route)['canEdit']
-        }
-        return true;
+       if(userStore.state.user.access.indexOf("root") !== -1 )
+       {
+         return true;
+       }
+       return userStore.state.user.access.indexOf(`${route.params.module}-edit`)>-1;
       })
     })
 

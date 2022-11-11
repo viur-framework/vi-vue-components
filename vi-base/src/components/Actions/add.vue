@@ -13,6 +13,7 @@
 import {reactive, defineComponent, inject, computed, h} from 'vue'
 import {useRoute} from "vue-router";
 import {useAppStore} from "../../stores/app";
+import {useUserStore} from "../../stores/user";
 
 export default defineComponent({
     props: {},
@@ -20,17 +21,20 @@ export default defineComponent({
     setup(props, context) {
         const handlerState: any = inject("state")
         const appStore = useAppStore();
+        const userStore = useUserStore();
+
+        console.log(userStore.state.user)
         const route = useRoute()
         const state = reactive({
             url: computed(() => {
                 return `/${route.params.module}/add?_=${new Date().getTime()}`
             }),
           canAdd: computed(() => {
-            if (appStore.getConfByRoute(route))
+            if(userStore.state.user.access.indexOf("root") !== -1 )
             {
-              return appStore.getConfByRoute(route)['canAdd']
+              return true;
             }
-            return true;
+            return userStore.state.user.access.indexOf(`${route.params.module}-add`)>-1;
           })
 
         })

@@ -17,6 +17,7 @@ import {Request} from "@viur/viur-vue-utils";
 import {useMessageStore} from "../../stores/message";
 import {useAppStore} from "../../stores/app";
 import {useRoute} from "vue-router";
+import {useUserStore} from "../../stores/user";
 
 export default defineComponent({
   props: {},
@@ -24,7 +25,7 @@ export default defineComponent({
   setup(props, context) {
     const handlerState: any = inject("state");
     const messageStore = useMessageStore();
-    const appStore = useAppStore();
+    const userStore = useUserStore();
     const route = useRoute();
     const state = reactive({
       active: computed(() => {
@@ -37,10 +38,11 @@ export default defineComponent({
         return 0
       }),
       canDelete: computed(() => {
-        if (appStore.getConfByRoute(route)) {
-          return appStore.getConfByRoute(route)['canDelete']
-        }
-        return true;
+       if(userStore.state.user.access.indexOf("root") !== -1 )
+       {
+         return true;
+       }
+       return userStore.state.user.access.indexOf(`${route.params.module}-delete`)>-1;
       })
     })
 
