@@ -60,6 +60,11 @@ export const useUserStore = defineStore("user", () => {
 
     function googleInit(ClientId: string) {
         return new Promise((resolve, reject) => {
+            if (!ClientId){
+              reject("missing clientid");
+              return;
+            }
+
             state["google.api.clientid"] = ClientId
             if (!state["google.api.loaded"]) {
                 const script = document.createElement("script");

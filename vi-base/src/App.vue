@@ -13,7 +13,10 @@ export default defineComponent({
     setup() {
         const userStore = useUserStore()
         onBeforeMount(() => {
-            //userStore.googleInit("") //please provide googel clientid
+          userStore.googleInit("").catch(()=>{
+            console.error("ERROR: please insert a valid clientid")
+          })
+
         })
         return {
             userStore
