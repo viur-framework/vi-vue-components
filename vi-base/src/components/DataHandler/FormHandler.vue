@@ -11,7 +11,9 @@
     <entry-bar :module="module" :action="action" :skelkey="skelkey"
     ></entry-bar>
   </div>
-
+   <sl-details open summary="Info" v-if="modulesStore.state.loaded && modulesStore.state.modules[module][`help_text_${action}`]">
+    {{modulesStore.state.modules[module][`help_text_${action}`]}}
+  </sl-details>
   <div class="scroll-content">
     <template v-for="(group,key) in state.formGroups">
 		<sl-details :summary="group['name']">
@@ -61,6 +63,7 @@ import {useAppStore} from "../../stores/app";
 import {useRoute} from "vue-router";
 import bone from "../../components/Bones/edit/bone.vue";
 import EntryBar from "../Bars/EntryBar.vue";
+import {useModulesStore} from "../../stores/modules";
 
 export default defineComponent({
 	props: {
@@ -76,8 +79,9 @@ export default defineComponent({
 	},
 	components: {EntryBar, bone},
 	setup(props, context) {
-		const appStore = useAppStore()
-		const route = useRoute()
+		const appStore = useAppStore();
+		const route = useRoute();
+    const modulesStore = useModulesStore();
 		const values = reactive({})
 		const state = reactive({
 			skel: {},
@@ -185,7 +189,8 @@ export default defineComponent({
 			state,
 			values,
 			getWidget,
-			updateValue
+			updateValue,
+      modulesStore
 		}
 	}
 })

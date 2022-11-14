@@ -2,7 +2,7 @@ import {reactive} from "vue";
 import {defineStore} from "pinia";
 
 
-export const useColorStore = defineStore("messageStore", () => {
+export const useColorStore = defineStore("colorStore", () => {
   const state = reactive({
     primaryColor: "#d00f1c",
     secondaryColor:"#333333"

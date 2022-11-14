@@ -7,6 +7,10 @@
   >
 
   </sl-table>-->
+
+  <sl-details open summary="Info" v-if="modulesStore.state.loaded && modulesStore.state.modules[module]['help_text']">
+    {{modulesStore.state.modules[module]["help_text"]}}
+  </sl-details>
   <sl-table moveablecolumns
             :rowselect="true"
             :structure="currentlist.structure"
@@ -31,6 +35,7 @@ import {useAppStore} from '../../stores/app'
 import {useMessageStore} from "../../stores/message";
 import router from "../../routes";
 import {an} from "vitest/dist/global-d05ffb3f";
+import {useModulesStore} from "../../stores/modules";
 
 export default defineComponent({
   props: {
@@ -43,8 +48,9 @@ export default defineComponent({
   },
   components: {HandlerBar},
   setup(props, context) {
-    const appStore = useAppStore()
-    const messageStore = useMessageStore()
+    const appStore = useAppStore();
+    const messageStore = useMessageStore();
+    const modulesStore = useModulesStore();
 
     const state = reactive({
       storeName: computed(() => {
@@ -117,7 +123,8 @@ export default defineComponent({
       state,
       currentlist,
       entrySelected,
-      openEditor
+      openEditor,
+      modulesStore
 
     }
   }

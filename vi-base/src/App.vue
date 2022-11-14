@@ -10,6 +10,7 @@ import {computed, defineComponent, onBeforeMount} from "vue"
 import {Request} from "@viur/viur-vue-utils";
 import {useAppStore} from "./stores/app";
 import {useColorStore} from "./stores/color";
+import {useModulesStore} from "./stores/modules";
 
 export default defineComponent({
   components: {TheLoginScreen, TheMainScreen},
@@ -17,6 +18,7 @@ export default defineComponent({
     const userStore = useUserStore();
     const appStore = useAppStore();
     const colorStore = useColorStore();
+    useModulesStore().setmodules();
 
     Request.get("/vi/settings").then(
       async (resp: Response) => {
