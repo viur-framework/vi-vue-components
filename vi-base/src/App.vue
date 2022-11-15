@@ -1,6 +1,6 @@
 <template>
-    <the-main-screen v-if="userStore.state['user.loggedin']==='yes'"></the-main-screen>
-    <the-login-screen v-else></the-login-screen>
+  <the-main-screen v-if="userStore.state['user.loggedin']==='yes'"></the-main-screen>
+  <the-login-screen v-else></the-login-screen>
 </template>
 <script lang="ts">
 import TheLoginScreen from "./components/Screens/TheLoginScreen.vue"
@@ -9,19 +9,21 @@ import {useUserStore} from "./stores/user"
 import {defineComponent, onBeforeMount} from "vue"
 
 export default defineComponent({
-    components: {TheLoginScreen, TheMainScreen},
-    setup() {
-        const userStore = useUserStore()
-        onBeforeMount(() => {
-          userStore.googleInit("").catch(()=>{
-            console.error("ERROR: please insert a valid clientid")
-          })
+  components: {TheLoginScreen, TheMainScreen},
+  setup() {
+    const userStore = useUserStore()
+    onBeforeMount(() => {
+      userStore.googleInit("").catch(() => {
+        throw new Error(
+          "clientId is required since the plugin is not initialized with a Client Id"
+        );
+      })
 
-        })
-        return {
-            userStore
-        }
+    })
+    return {
+      userStore
     }
+  }
 })
 </script>
 <style lang="less">
