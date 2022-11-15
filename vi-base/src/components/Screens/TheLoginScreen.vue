@@ -107,6 +107,12 @@ export default defineComponent({
 
 <style scoped lang="less">
 
+#google_oauth{
+  display:flex;
+  justify-content: center;
+  padding-bottom: 20px;
+}
+
 .wrapper {
     height: 100%;
     display: flex;

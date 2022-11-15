@@ -50,6 +50,7 @@ export const useUserStore = defineStore("user", () => {
     //google stuff
     "google.api.loaded": false,
     "google.api.clientid": "",
+    "google.api.renderButton":true
   })
 
   function resetLoginInformation() {
@@ -77,7 +78,6 @@ export const useUserStore = defineStore("user", () => {
             ux_mode: "popup",
             prompt_parent_id: "google_oauth",
             callback: (response: CredentialPopupResponse) => {
-              console.log("PENIS")
               if (response.credential) {
                 Request.securePost("/json/user/auth_googleaccount/login", {
                   dataObj: {"token": response.credential}
@@ -124,29 +124,13 @@ export const useUserStore = defineStore("user", () => {
     return new Promise((resolve, reject) => {
       state["user.loggedin"] = "loading"
       // @ts-ignore
+      console.log(window.google.accounts)
       window.google.accounts.id.prompt((notification) => {
-        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-          window.google.accounts.oauth2.initTokenClient({
-            client_id: state["google.api.clientid"],
-            scope: googleConfig.scopes,
-            callback: (response: TokenPopupResponse) => {
-              if (response.access_token) {
-                console.log(response)
-                // @ts-ignore
-                window.google.accounts.id.prompt()
-                resolve(response)
-              } else {
-                resetLoginInformation()
-                state["user.loggedin"] = "error"
-                reject(response);
-              }
-            },
-            error_callback: (error) => {
-              resetLoginInformation()
-              state["user.loggedin"] = "error"
-              reject(error);
-            }
-          }).requestAccessToken();
+        if (["suppressed_by_user","opt_out_or_no_session","undefined"].includes(notification.getNotDisplayedReason())){
+          console.log("Please delete the g_state cookie")
+          let div = document.getElementById("google_oauth")
+          window.google.accounts.id.renderButton(div,{ theme: 'outline', size: 'large' })
+
         }
       })
     });
