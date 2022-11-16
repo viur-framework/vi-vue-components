@@ -5,7 +5,9 @@
                :name="x['name']"
                :layer="layer"
                :to="x['url']"
-               :closed="x['parententry']!==x['parentrepo']">
+               :closed="x['parententry']!==x['parentrepo']"
+               :moduleInfo="x"
+            >
         <menu-tree v-if="Object.keys(x).includes('children') && x['children'].length>0" :tree="x['children']"
                    :layer="layer+1"></menu-tree>
     </component>

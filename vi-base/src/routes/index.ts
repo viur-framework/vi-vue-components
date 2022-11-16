@@ -5,6 +5,7 @@ import treeview from '../views/tree.vue'
 import singletonview from '../views/singleton.vue'
 import editview from '../views/edit.vue'
 import homeview from '../views/home.vue'
+import {useUserStore} from "../stores/user";
 
 const routes = [
     {
@@ -65,5 +66,8 @@ const router = createRouter({
     history: createWebHashHistory(import.meta.env.BASE_URL),
     routes
 })
-
+router.afterEach((to,from)=>{
+  console.log("changeTo=>",to)
+ useUserStore().addAction();
+})
 export default router

@@ -18,7 +18,8 @@ export default {
     },
     sidebar: {
         workspace: "Workspace",
-        administration: "Administration"
+        administration: "Administration",
+        favorites: "Favorites"
     },
     skeldrawer: {
         noentry: "no entry selected"

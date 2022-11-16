@@ -34,7 +34,6 @@ import {ListRequest} from '@viur/viur-vue-utils'
 import {useAppStore} from '../../stores/app'
 import {useMessageStore} from "../../stores/message";
 import router from "../../routes";
-import {an} from "vitest/dist/global-d05ffb3f";
 import {useModulesStore} from "../../stores/modules";
 
 export default defineComponent({

@@ -2,6 +2,8 @@ import {reactive, computed} from 'vue';
 import {defineStore} from "pinia";
 import {Request} from "@viur/viur-vue-utils";
 import utils from '../utils'
+import {useAppStore} from "./app";
+import {useRoute} from "vue-router";
 
 const googleConfig = {
   library: "https://accounts.google.com/gsi/client",
@@ -41,16 +43,22 @@ interface TokenPopupResponse {
 }
 
 export const useUserStore = defineStore("user", () => {
+  const route = useRoute();
   const state = reactive({
     //user related
     "user": null,
     "user.loggedin": "no", // "yes", "no", "loading"
     "user.login.type": "no", // "no","user", "google", "sso"
+    "favoriteModules": [],
+    "lastActions": [],
+
 
     //google stuff
     "google.api.loaded": false,
     "google.api.clientid": "",
-    "google.api.renderButton":true
+    "google.api.renderButton": true,
+
+
   })
 
   function resetLoginInformation() {
@@ -126,10 +134,10 @@ export const useUserStore = defineStore("user", () => {
       // @ts-ignore
       console.log(window.google.accounts)
       window.google.accounts.id.prompt((notification) => {
-        if (["suppressed_by_user","opt_out_or_no_session","undefined"].includes(notification.getNotDisplayedReason())){
+        if (["suppressed_by_user", "opt_out_or_no_session", "undefined"].includes(notification.getNotDisplayedReason())) {
           console.log("Please delete the g_state cookie")
           let div = document.getElementById("google_oauth")
-          window.google.accounts.id.renderButton(div,{ theme: 'outline', size: 'large' })
+          window.google.accounts.id.renderButton(div, {theme: 'outline', size: 'large'})
 
         }
       })
@@ -197,6 +205,16 @@ export const useUserStore = defineStore("user", () => {
           state["user.loggedin"] = "yes"
           state["user"] = data.values
           state["user.login.type"] = "user"
+          if (data.values["adminconfig"]) {
+            const obj = JSON.parse(data.values["adminconfig"]);
+            if (obj !== null) {
+              for (const key in obj["lastActions"])//back to array
+              {
+                state.lastActions.push(obj["lastActions"][key])
+              }
+
+            }
+          }
           resolve(resp)
         }).catch(
         (error: Error) => {
@@ -207,6 +225,46 @@ export const useUserStore = defineStore("user", () => {
 
 
     })
+
+  }
+
+  function addAction() {
+
+    if (route) {
+      const appStore = useAppStore();
+      const conf = appStore.getConfByRoute(route);
+      const action = {"url": route.fullPath, "module": conf["module"]}
+      if (state.lastActions.length == 5) {
+        state.lastActions.pop();
+      }
+      for (const lastaction of state.lastActions) {
+        if (lastaction["url"] === action["url"]) // we have a duplicate
+        {
+          console.log("we have a duplicate")
+          return;
+        }
+      }
+
+      state.lastActions.unshift(action)
+
+      let configObj = JSON.parse(state.user["adminconfig"]);
+      if (configObj === null) {
+        configObj = {"lastActions": state.lastActions};
+      } else {
+        configObj["lastActions"] = state.lastActions
+      }
+
+      state.user["adminconfig"] = JSON.stringify(configObj);
+      //todo Maybe we should update only all 5 sec or so?
+      Request.securePost("/json/user/edit", {
+        dataObj: {
+          "key": state.user.key,
+          "adminconfig": state.user["adminconfig"]
+        }
+      }).then((resp: object) => {
+        console.log("Update Userconfig Succesfully")
+      })
+    }
 
   }
 
@@ -234,6 +292,34 @@ export const useUserStore = defineStore("user", () => {
       return state.user["lastname"]
     }
   })
+  const favoriteModules = computed(() => {
+    //return the modules
+    const appStore = useAppStore();
+    let configObj = JSON.parse(state.user["adminconfig"]);
+    if (configObj === null) {
+      configObj = {"favoriteModules": []};
+    }
+    state.favoriteModules = [];
+
+    for (const module of appStore.modulesTree) {
+      if (configObj["favoriteModules"].indexOf(module["module"]) > -1) {
+        state.favoriteModules.push(module);
+
+      }
+    }
+
+    return state.favoriteModules;
+  })
+  const favoriteModules_keys = computed(() => {
+    //return the names
+    const obj = [];
+    for (const module of state.favoriteModules) {
+      obj.push(module["module"]);
+    }
+
+    return obj;
+  })
+
 
   return {
     state,
@@ -243,6 +329,9 @@ export const useUserStore = defineStore("user", () => {
     googleInit,
     googleLogin,
     userLogin,
-    logout
+    logout,
+    favoriteModules,
+    favoriteModules_keys,
+    addAction
   }
 })
