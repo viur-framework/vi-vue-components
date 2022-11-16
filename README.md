@@ -24,7 +24,6 @@ from viur.core.utils import currentRequest
 
 if os.environ['GAE_ENV'] == "localdev":
 	"Whitelist vueJs Frontend server"
-	request.BrowseHandler.requestValidators = []
 	def preprocessRequestHandler(path):
 		currentRequest.get().response.headers["Access-Control-Allow-Origin"] = "http://localhost:8081"
 		currentRequest.get().response.headers["Access-Control-Allow-Credentials"] = "true"
