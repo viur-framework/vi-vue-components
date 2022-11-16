@@ -47,7 +47,11 @@ export default defineComponent({
       console.log("Viur settings not Found")
     })
     onBeforeMount(() => {
-      //userStore.googleInit("") //please provide googel clientid
+     userStore.googleInit("").catch(() => {
+        throw new Error(
+          "clientId is required since the plugin is not initialized with a Client Id"
+        );
+      })
     })
 
     function getPrimaryColor(lightness) {
