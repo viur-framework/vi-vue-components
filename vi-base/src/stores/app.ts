@@ -234,7 +234,7 @@ export const useAppStore = defineStore("app", () => {
         let currentConf = getConf(module, view)
         let moduleIconData = currentConf["icon"].split("___")
         let url = route.fullPath
-        console.log(currentConf)
+
         let entry = {
             "to": route,
             "icon": icon ? icon : moduleIconData[1],

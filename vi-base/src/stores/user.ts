@@ -44,6 +44,7 @@ interface TokenPopupResponse {
 
 export const useUserStore = defineStore("user", () => {
   const route = useRoute();
+
   const state = reactive({
     //user related
     "user": null,
@@ -51,6 +52,8 @@ export const useUserStore = defineStore("user", () => {
     "user.login.type": "no", // "no","user", "google", "sso"
     "favoriteModules": [],
     "lastActions": [],
+    "syncedlastActions": [],
+    "lastSynced": new Date().getTime(),
 
 
     //google stuff
@@ -210,7 +213,8 @@ export const useUserStore = defineStore("user", () => {
             if (obj !== null) {
               for (const key in obj["lastActions"])//back to array
               {
-                state.lastActions.push(obj["lastActions"][key])
+                state.lastActions.push(obj["lastActions"][key]);
+                state.syncedlastActions.push(obj["lastActions"][key]);
               }
 
             }
@@ -233,7 +237,8 @@ export const useUserStore = defineStore("user", () => {
     if (route) {
       const appStore = useAppStore();
       const conf = appStore.getConfByRoute(route);
-      const action = {"url": route.fullPath, "module": conf["module"]}
+      if (!conf) return;
+      const action = {"url": route.fullPath, "module": conf["module"], "date": new Date().getTime()}
       if (state.lastActions.length == 5) {
         state.lastActions.pop();
       }
@@ -246,27 +251,42 @@ export const useUserStore = defineStore("user", () => {
       }
 
       state.lastActions.unshift(action)
-
       let configObj = JSON.parse(state.user["adminconfig"]);
       if (configObj === null) {
         configObj = {"lastActions": state.lastActions};
       } else {
         configObj["lastActions"] = state.lastActions
       }
+      state.user["adminconfig"] = JSON.stringify(configObj)
+      if (new Date().getTime() - state.lastSynced > 30 * 1000) { // trigger sync only when the last sync is older than 30 sec
+        synclastActions();
+      }
 
-      state.user["adminconfig"] = JSON.stringify(configObj);
-      //todo Maybe we should update only all 5 sec or so?
-      Request.securePost("/json/user/edit", {
+    }
+
+  }
+
+   function synclastActions() {
+    if (JSON.stringify(state.lastActions) !== JSON.stringify(state.syncedlastActions)) {
+      state.syncedlastActions = JSON.parse(JSON.stringify(state.lastActions));// Delete referenc
+      state.lastSynced = new Date().getTime();
+       Request.securePost("/json/user/edit", {
         dataObj: {
           "key": state.user.key,
           "adminconfig": state.user["adminconfig"]
         }
-      }).then((resp: object) => {
-        console.log("Update Userconfig Succesfully")
-      })
+      }).then(()=>{
+         console.log("sync success")
+       })
+    } else {
+      console.log("nothing to sync")
     }
 
   }
+
+  setInterval(synclastActions, 1000 * 30)//30 sec
+  //TODO SYNC when close
+
 
   const getUser = computed(() => {
     if (state["user.loggedin"] === 'no') { //destroy userinfos
