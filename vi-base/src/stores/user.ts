@@ -238,7 +238,14 @@ export const useUserStore = defineStore("user", () => {
       const appStore = useAppStore();
       const conf = appStore.getConfByRoute(route);
       if (!conf) return;
-      const action = {"url": route.fullPath, "module": conf["module"], "date": new Date().getTime()}
+      console.log("icon", conf)
+      const action = {
+        "url": route.fullPath,
+        "module": conf["module"],
+        "time": new Date().getTime(),
+        "icon": conf["icon"],
+        "name": conf["name"]
+      }
       if (state.lastActions.length == 5) {
         state.lastActions.pop();
       }
@@ -266,18 +273,18 @@ export const useUserStore = defineStore("user", () => {
 
   }
 
-   function synclastActions() {
+  function synclastActions() {
     if (JSON.stringify(state.lastActions) !== JSON.stringify(state.syncedlastActions)) {
       state.syncedlastActions = JSON.parse(JSON.stringify(state.lastActions));// Delete referenc
       state.lastSynced = new Date().getTime();
-       Request.securePost("/json/user/edit", {
+      Request.securePost("/json/user/edit", {
         dataObj: {
           "key": state.user.key,
           "adminconfig": state.user["adminconfig"]
         }
-      }).then(()=>{
-         console.log("sync success")
-       })
+      }).then(() => {
+        console.log("sync success")
+      })
     } else {
       console.log("nothing to sync")
     }
@@ -315,7 +322,8 @@ export const useUserStore = defineStore("user", () => {
   const favoriteModules = computed(() => {
     //return the modules
     const appStore = useAppStore();
-    let configObj = JSON.parse(state.user["adminconfig"]);
+
+    let configObj = JSON.parse(state.user["adminconfig"]); //maybe we can use the
     if (configObj === null) {
       configObj = {"favoriteModules": []};
     }
