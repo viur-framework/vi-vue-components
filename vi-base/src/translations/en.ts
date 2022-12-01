@@ -9,7 +9,9 @@ export default {
         preview: "preview",
         reload: "reload",
         selectfields: "fields",
-        setamount: "amount"
+        setamount: "amount",
+        filter: "filter",
+        reset: "reset"
 
     },
     bone: {

@@ -233,12 +233,13 @@ export const useUserStore = defineStore("user", () => {
   }
 
   function addAction() {
-
+    if (!state.user["adminconfig"]) {
+      return
+    }
     if (route) {
       const appStore = useAppStore();
       const conf = appStore.getConfByRoute(route);
       if (!conf) return;
-      console.log("icon", conf)
       const action = {
         "url": route.fullPath,
         "module": conf["module"],
@@ -274,6 +275,9 @@ export const useUserStore = defineStore("user", () => {
   }
 
   function synclastActions() {
+    if (!state.user["adminconfig"]) {
+      return
+    }
     if (JSON.stringify(state.lastActions) !== JSON.stringify(state.syncedlastActions)) {
       state.syncedlastActions = JSON.parse(JSON.stringify(state.lastActions));// Delete referenc
       state.lastSynced = new Date().getTime();
@@ -322,7 +326,7 @@ export const useUserStore = defineStore("user", () => {
   const favoriteModules = computed(() => {
     //return the modules
     const appStore = useAppStore();
-
+    if (!state.user["adminconfig"]) return;
     let configObj = JSON.parse(state.user["adminconfig"]); //maybe we can use the
     if (configObj === null) {
       configObj = {"favoriteModules": []};

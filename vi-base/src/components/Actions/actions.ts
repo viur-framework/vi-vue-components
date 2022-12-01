@@ -11,19 +11,22 @@ import setamount_action from './setamount.vue'
 import space_action from './space.vue'
 import custom_action from './custom.vue'
 import edittable_action from './edittable.vue'
+import filter_action from './filter.vue'
+
 
 export default {
-    add_action,
-    addnode_action,
-    clone_action,
-    delete_action,
-    edit_action,
-    overlay_action,
-    preview_action,
-    reload_action,
-    selectfields_action,
-    setamount_action,
-    space_action,
-    custom_action,
-    edittable_action
+  add_action,
+  addnode_action,
+  clone_action,
+  delete_action,
+  edit_action,
+  overlay_action,
+  preview_action,
+  reload_action,
+  selectfields_action,
+  setamount_action,
+  space_action,
+  custom_action,
+  edittable_action,
+  filter_action
 }

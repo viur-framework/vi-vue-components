@@ -51,7 +51,7 @@ export default defineComponent({
         const state = reactive({
             actions: computed(() => {
                 let listActions = {
-                    "default": [["add", "selectfields"], ["setamount", "reload"], ["overlay","edittable"]],
+                    "default": [["add", "selectfields"], ["setamount", "reload"], ["overlay","filter","edittable"]],
                     "entry": [["edit", "clone", "delete"], ["preview"]]
                 }
                 const treeActions = {
@@ -114,7 +114,7 @@ export default defineComponent({
     gap: var(--sl-spacing-small);
     width: 100%;
     background-color: #fff;
-    z-index: 1;
+    //z-index: 1; //todo
 }
 
 .bottombar{
