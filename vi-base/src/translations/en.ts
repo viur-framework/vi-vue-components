@@ -10,7 +10,10 @@ export default {
         reload: "reload",
         selectfields: "fields",
         setamount: "amount",
-        filter: "filter",
+        filter: {
+          text: "filter",
+          nofilter: "There are no filter for this module"
+        },
         reset: "reset"
 
     },

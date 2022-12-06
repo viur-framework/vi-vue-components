@@ -1,14 +1,14 @@
 <template>
   <sl-button @click="openFilterDrawer" size="small">
     <sl-icon slot="prefix" name="search"></sl-icon>
-    {{ $t("actions.filter") }}
+    {{ $t("actions.filter.text") }}
   </sl-button>
-  <sl-drawer :label="$t('actions.filter')" id="filter-drawer" style="--size: 30%;">
-    <div v-for="(boneStructure,boneName) in state.structure" :disabled="state.disabledCache[boneName]">
+  <sl-drawer :label="$t('actions.filter.text')" id="filter-drawer" style="--size: 30%;">
+    <div v-for="(boneStructure,boneName) in state.structure" >
       <label>{{ boneName }}</label>
       <sl-select v-if="hasSelector(boneStructure)" :id="boneName+'-selector'"
-                 @sl-change="selectorChange" :disabled="state.disabledSelectorCache[boneName]">
-        <sl-menu-item value="eq" checked>==</sl-menu-item>
+                 @sl-change="selectorChange" :disabled="state.disabledSelectorCache[boneName]" defaultValue="eq">
+        <sl-menu-item value="eq" selected>==</sl-menu-item> <!--TODO select not work-->
         <sl-menu-item value="gt">&gt;</sl-menu-item>
         <sl-menu-item value="ge">&gt;=</sl-menu-item>
         <sl-menu-item value="lt">&lt;</sl-menu-item>
@@ -19,11 +19,12 @@
         :boneStructure="boneStructure"
         renderType="edit"
         :id="boneName"
+        :disabled="state.disabledCache[boneName]"
       ></sl-bone>
-
     </div>
+    <div v-show="Object.keys(state.structure).length===0">{{ $t('actions.filter.nofilter') }}</div>
 
-    <sl-button slot="footer" variant="success" @click="filter">{{ $t("actions.filter") }}</sl-button>
+    <sl-button slot="footer" variant="success" @click="filter">{{ $t("actions.filter.text") }}</sl-button>
     <sl-button slot="footer" variant="danger" @click="reset">{{ $t("actions.reset") }}</sl-button>
   </sl-drawer>
 
@@ -52,15 +53,38 @@ export default defineComponent({
 
       if (!state.openBefore) {
         const listStore = appStore.getListStoreByRoute(route);
+        console.log(listStore.structure)
         for (const key in listStore.structure) {
           const boneStructure = listStore.structure[key];
+          let orderfields = []
+          console.log("Here?")
+          if (listStore.state.orders !== null) {
+            orderfields = listStore.state.orders.map((order) => order[0]); //returns the names
+          }
+          console.log("orderfields", orderfields)
+
           if (boneStructure["indexed"] && boneStructure["visible"]) {
-            if (["bool", "numeric", "select"].indexOf(boneStructure["type"]) != -1 || boneStructure["type"].startsWith("str")) {
-              state.disabledCache[key] = false;
-              state.disabledSelectorCache[key] = false;
-              //enforce readonly === false so we can edit the filter
-              boneStructure["readonly"] = false;
-              state.structure[key] = boneStructure;
+            if (["bool", "numeric", "select", "date"].indexOf(boneStructure["type"]) != -1 || boneStructure["type"].startsWith("str")|| boneStructure["type"].startsWith("relational")) {
+              let canFilter = true;
+              for (const name of orderfields) {
+                let inIndexes = false;
+                for (const index of conf["indexes"]) {
+                  if (index["properties"].indexOf(name) !== -1 && index["properties"].indexOf(key) !== -1) {
+                    inIndexes = true;
+                  }
+                }
+                canFilter = inIndexes;
+
+              }
+
+              if (canFilter) {
+                state.disabledCache[key] = false;
+                state.disabledSelectorCache[key] = false;
+                //enforce readonly === false so we can edit the filter
+                boneStructure["readonly"] = false;
+                state.structure[key] = boneStructure;
+              }
+
             }
 
           }
@@ -87,7 +111,7 @@ export default defineComponent({
             filterObj[key] = bone.getBoneValue;
           }
         } else {
-
+          console.log("get bv,", bone.getBoneValue,key)
           if (bone.getBoneValue !== undefined && bone.getBoneValue.toString().length > 0) {
             if (hasSelector(boneStructure)) {
               const selector = document.querySelector(`#${key}-selector`);
@@ -100,7 +124,15 @@ export default defineComponent({
 
 
             } else {
-              filterObj[key] = bone.getBoneValue;
+              if(boneStructure["type"].startsWith("relational"))
+              {
+                  filterObj[`${key}.dest.key`] = bone.getBoneValue;
+              }
+              else
+              {
+                filterObj[key] = bone.getBoneValue;
+              }
+
             }
 
           }
@@ -119,7 +151,7 @@ export default defineComponent({
       state.openBefore = false;
       const listStore = appStore.getListStoreByRoute(route);
       listStore.reset();
-      listStore.fetch();
+      listStore.filter({}); //reset filter
       drawer.hide();
     }
 
@@ -132,7 +164,6 @@ export default defineComponent({
         for (const key of Object.keys(state.disabledCache)) {
           if (key !== targetName) {
             state.disabledSelectorCache[key] = true;
-            console.log("setr")
             const selector = document.querySelector(`#${key}-selector`);
             if (selector) {
               selector.value = "eq";
@@ -168,13 +199,11 @@ export default defineComponent({
     }
 
     function hasSelector(boneStructure) {
-      if (['numeric', 'str'].indexOf(boneStructure['type']) > -1) {
+      if (['numeric', 'str', "date"].indexOf(boneStructure['type']) > -1) {
         return true
       }
-      if (boneStructure['type'].startsWith("str")) {
-        return true;
-      }
-      return false;
+      return boneStructure['type'].startsWith("str");
+
 
     }
 

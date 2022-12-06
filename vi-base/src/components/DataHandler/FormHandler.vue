@@ -16,6 +16,7 @@
   </sl-details>
   <div class="scroll-content">
     <template v-for="(group,key) in state.formGroups">
+     
 		<sl-details :summary="group['name']">
 			<template v-for="bone in group['bones']">
 				<!--<label>{{ bone['boneStructure']["descr"] }}</label>
@@ -105,7 +106,7 @@ export default defineComponent({
 							"boneValue": state.skel[boneName]
 						})
 					} else {
-            if(!bone?.params?.visible)continue;//Only add the group when we can show something
+            if(!bone?.visible)continue;//Only add the group when we can show something
 						groups[category] = {
 							"name": category, "bones": [{
 								"boneName": boneName,
