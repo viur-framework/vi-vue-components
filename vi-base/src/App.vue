@@ -20,37 +20,36 @@ export default defineComponent({
     const colorStore = useColorStore();
     useModulesStore().setmodules();
 
-    Request.get("/vi/settings").then(
-      async (resp: Response) => {
-        let data = await resp.json();
-        console.log(data)
-        for (const key in data) {
-          if (data[key] !== undefined || data[key] !== null) {
-            if (data[key].length > 0) {
-              appStore.state[key] = data[key];
-            }
-            if (key === "admin.color.primary") {
-              colorStore.state.primaryColor = appStore.state[key];
-            }
-            if (key === "admin.color.secondary") {
-              colorStore.state.secondaryColor = appStore.state[key];
+
+    onBeforeMount(() => {
+      Request.get("/vi/settings").then(
+        async (resp: Response) => {
+          let data = await resp.json();
+
+          for (const key in data) {
+            if (data[key] !== undefined || data[key] !== null) {
+              if (data[key].length > 0) {
+                appStore.state[key] = data[key];
+              }
+              if (key === "admin.color.primary") {
+                colorStore.state.primaryColor = appStore.state[key];
+              }
+              if (key === "admin.color.secondary") {
+                colorStore.state.secondaryColor = appStore.state[key];
+              }
             }
 
           }
+          document.title = data["admin.name"];
 
+          userStore.googleInit(data["admin.user.google.clientID"]).catch(() => {
+            throw new Error(
+              "clientId is required since the plugin is not initialized with a Client Id"
+            );
+          })
         }
-        document.title = data["admin.name"];
-
-
-      }
-    ).catch(()=>{
-      console.log("Viur settings not Found")
-    })
-    onBeforeMount(() => {
-     userStore.googleInit("").catch(() => {
-        throw new Error(
-          "clientId is required since the plugin is not initialized with a Client Id"
-        );
+      ).catch(()=>{
+        console.log("Viur settings not Found")
       })
     })
 

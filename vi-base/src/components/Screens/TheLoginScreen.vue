@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <sl-card>
-      <img class="logo" :src="logo">
+      <img class="logo" :src="state.logo">
 
       <sl-alert v-if="userStore.state['user.loggedin']==='error'" open variant="danger">
         Fehler beim Anmelden
@@ -75,10 +75,9 @@ export default defineComponent({
       userDataFilled: computed(() => state.name && state.password),
       waitForLogout: false,
       waitForInit: true,
+      backgroundImage:computed(() => `url('${appStore.state["admin.login.background"]}'`),
+      logo:computed(() => appStore.state["admin.login.logo"])
     })
-
-    const backgroundImage = computed(() => `url('${appStore.state["admin.login.background"]}'`);
-    const logo = computed(() => appStore.state["admin.login.logo"]);
 
     function googleLogin() {
       state.waitForLogout = false
@@ -109,9 +108,6 @@ export default defineComponent({
       userStore,
       userLogin,
       state,
-      backgroundImage,
-      logo,
-
     }
   },
 
@@ -132,7 +128,7 @@ export default defineComponent({
   display: flex;
   justify-content: center;
   align-items: center;
-  background-image: v-bind(backgroundImage);
+  background-image: v-bind("state.backgroundImage");
   background-position: center center;
   background-size: cover;
 }
@@ -145,8 +141,7 @@ export default defineComponent({
   bottom: 0;
   left: 0;
   right: 0;
-  background: -webkit-gradient(linear, right top, left top, from(#ff5d36), to(#d00f1c));
-  background: linear-gradient(to left, #ff5d36, #d00f1c);
+  background: linear-gradient(to left, var(--sl-color-primary-300), var(--sl-color-primary-500));
 }
 
 .logo {

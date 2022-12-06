@@ -150,8 +150,8 @@ export const useAppStore = defineStore("app", () => {
 		//settings
 		  "admin.name":" Administartion",
     	"admin.logo":"",
-    	"admin.login.background":"",
-    	"admin.login.logo":"/vi/logo_test.svg",
+    	"admin.login.background":"vi/login-background.jpg",
+    	"admin.login.logo":"vi/logo.svg",
     	"admin.color.primary":"",
     	"admin.color.secondary":"",
 
