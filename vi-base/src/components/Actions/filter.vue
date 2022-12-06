@@ -111,7 +111,6 @@ export default defineComponent({
             filterObj[key] = bone.getBoneValue;
           }
         } else {
-          console.log("get bv,", bone.getBoneValue,key)
           if (bone.getBoneValue !== undefined && bone.getBoneValue.toString().length > 0) {
             if (hasSelector(boneStructure)) {
               const selector = document.querySelector(`#${key}-selector`);
