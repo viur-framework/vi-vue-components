@@ -16,21 +16,12 @@
   </sl-details>
   <div class="scroll-content">
     <template v-for="(group,key) in state.formGroups">
-		<sl-details :summary="group['name']">
+		<sl-details :summary="group['name']" v-show="group['groupVisible']">
 			<template v-for="bone in group['bones']">
-				<!--<label>{{ bone['boneStructure']["descr"] }}</label>
-
-				<bone
-					:name="bone['boneName']"
-					:structure="state.structure"
-					:skel="state.skel"
-					@change="updateValue"
-			></bone>-->
-
 				<sl-bone
 						:boneName="bone['boneName']"
 						:boneStructure="state.structure[bone['boneName']]"
-						:boneValue="state.skel[bone['boneName']]"
+						:boneValue="toRaw(state.skel[bone['boneName']])"
 						renderType="edit"
 						:renderLabel="true"
 						@sl-boneChange="updateValue"
@@ -38,8 +29,6 @@
             v-if="state.structure[bone['boneName']]['visible']"
 				>
 				</sl-bone>
-
-
 			</template>
 		</sl-details>
 	</template>
@@ -57,7 +46,7 @@
 
 <script lang="ts">
 //@ts-nocheck
-import {reactive, defineComponent, onBeforeMount, computed, provide} from 'vue'
+import {reactive, defineComponent, onBeforeMount, computed, provide,toRaw} from 'vue'
 import {Request} from "@viur/viur-vue-utils";
 import {useAppStore} from "../../stores/app";
 import {useRoute} from "vue-router";
@@ -91,29 +80,35 @@ export default defineComponent({
 				return appStore.getConfByRoute(route)
 			}),
 			formGroups: computed(() => {
-				let groups = {"default": {"name": "Allgemein", "bones": []}}
+				let groups = {"default": {"name": "Allgemein", "bones": [], "groupVisible":false}}
 				for (const [boneName, bone] of Object.entries(state.structure)) {
 					let category = "default"
-					if (bone?.params?.category) {
+          let boneStructure = state.structure[boneName]
+          let boneValue = state.skel[boneName]
+          if (bone?.params?.category) {
 						category = bone.params.category
 					}
+
 
 					if (Object.keys(groups).includes(category)) {
 						groups[category]["bones"].push({
 							"boneName": boneName,
-							"boneStructure": state.structure[boneName],
-							"boneValue": state.skel[boneName]
+							"boneStructure": boneStructure,
+							"boneValue": boneValue
 						})
 					} else {
-            if(!bone?.params?.visible)continue;//Only add the group when we can show something
+            console.log(bone?.params)
 						groups[category] = {
 							"name": category, "bones": [{
 								"boneName": boneName,
-								"boneStructure": state.structure[boneName],
-								"boneValue": state.skel[boneName]
+								"boneStructure": boneStructure,
+								"boneValue": boneValue
 							}]
 						}
 					}
+          if (boneStructure["visible"]===true){
+            groups[category]["groupVisible"]=true
+          }
 
 
 				}
@@ -190,7 +185,8 @@ export default defineComponent({
 			values,
 			getWidget,
 			updateValue,
-      modulesStore
+      modulesStore,
+      toRaw
 		}
 	}
 })
