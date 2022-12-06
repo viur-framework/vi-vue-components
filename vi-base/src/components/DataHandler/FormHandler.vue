@@ -97,7 +97,6 @@ export default defineComponent({
 							"boneValue": boneValue
 						})
 					} else {
-            console.log(bone?.params)
 						groups[category] = {
 							"name": category, "bones": [{
 								"boneName": boneName,

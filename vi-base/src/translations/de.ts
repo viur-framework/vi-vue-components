@@ -10,7 +10,10 @@ export default {
         reload: "Neuladen",
         selectfields: "Felder",
         setamount: "Anzahl",
-        filter: "Filter",
+        filter: {
+          text: "Filter",
+          nofilter: "Für dieses Modul sind keine Filter vorhanden"
+        },
         reset: "Zurücksetzen"
 
     },
