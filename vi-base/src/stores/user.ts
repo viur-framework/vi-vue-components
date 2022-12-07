@@ -157,20 +157,30 @@ export const useUserStore = defineStore("user", () => {
             "password": password
           }
         }
-      ).then((resp: Response) => {
-        Request.get("/json/user/view/self").then(
-          async (resp: Response) => {
-            let data = await resp.json()
-            state["user.loggedin"] = "yes"
-            state["user"] = data.values
-            state["user.login.type"] = "user"
-          }).catch(
-          (error: Error) => {
-            resetLoginInformation()
-            state["user.loggedin"] = "error"
-            reject(resp);
-          }
-        )
+      ).then(async (respLogin: Response) => {
+        const logindata = await respLogin.json()
+        if (logindata === "OKAY") {
+          Request.get("/json/user/view/self").then(
+            async (resp: Response) => {
+              let data = await resp.json()
+              state["user.loggedin"] = "yes"
+              state["user"] = data.values
+              state["user.login.type"] = "user"
+            }).catch(
+            (error: Error) => {
+              resetLoginInformation()
+              state["user.loggedin"] = "error"
+              reject(respLogin);
+            }
+          )
+        } else if (logindata["action"] === "authenticatorOTP")//We have a second factor
+        {
+          state["user.loggedin"] = "secound_factor_authenticator_otp"
+          state["user.login.type"] = logindata["action"].toLowerCase()
+
+        }
+
+
       }).catch(
         (error: Error) => {
           resetLoginInformation()
@@ -178,6 +188,28 @@ export const useUserStore = defineStore("user", () => {
           reject(error);
         }
       )
+    })
+  }
+
+  function userSecondFactor(otp: string) {
+    return new Promise((resolve, reject) => {
+      state["user.loggedin"] = "loading"
+      Request.securePost(`/json/user/f2_${state["user.login.type"]}/verify`, {dataObj: {"otp": otp}})
+        .then((resp) => {
+          Request.get("/json/user/view/self").then(
+            async (resp: Response) => {
+              let data = await resp.json()
+              state["user.loggedin"] = "yes"
+              state["user"] = data.values
+              state["user.login.type"] = "user"
+            }).catch(
+            (error: Error) => {
+              resetLoginInformation()
+              state["user.loggedin"] = "error"
+              reject(respLogin);
+            }
+          )
+        })
     })
   }
 
@@ -361,6 +393,7 @@ export const useUserStore = defineStore("user", () => {
     googleInit,
     googleLogin,
     userLogin,
+    userSecondFactor,
     logout,
     favoriteModules,
     favoriteModules_keys,

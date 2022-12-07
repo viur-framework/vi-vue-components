@@ -57,11 +57,9 @@ export default defineComponent({
         for (const key in listStore.structure) {
           const boneStructure = listStore.structure[key];
           let orderfields = []
-          console.log("Here?")
           if (listStore.state.orders !== null) {
             orderfields = listStore.state.orders.map((order) => order[0]); //returns the names
           }
-          console.log("orderfields", orderfields)
 
           if (boneStructure["indexed"] && boneStructure["visible"]) {
             if (["bool", "numeric", "select", "date"].indexOf(boneStructure["type"]) != -1 || boneStructure["type"].startsWith("str")|| boneStructure["type"].startsWith("relational")) {

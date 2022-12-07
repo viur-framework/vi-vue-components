@@ -24,18 +24,34 @@
         <!--<sl-tab slot="nav" panel="sso">Mausbrand-SSO</sl-tab>-->
 
         <sl-tab-panel name="userpassword">
-          <sl-input type="text" name="name" v-model="state.name" placeholder="username" clearable
-                    @sl-clear="state.name=''"></sl-input>
-          <sl-input @keydown.enter="userLogin" type="password" name="password" v-model="state.password"
-                    placeholder="password" @sl-clear="state.password=''" toggle-password></sl-input>
-          <sl-button @click="userLogin" variant="primary"
-                     v-if="['no', 'loading', 'error'].includes(userStore.state['user.loggedin'])"
-                     :disabled="!state.userDataFilled"
-                     :loading="userStore.state['user.loggedin']==='loading'"
-          >
-            Login
-          </sl-button>
-          <sl-button @click="logout" v-else>Logout</sl-button>
+          <div v-show="userStore.state['user.loggedin']==='no'">
+
+            <sl-input type="text" name="name" v-model="state.name" placeholder="username" clearable
+                      @sl-clear="state.name=''"></sl-input>
+            <sl-input @keydown.enter="userLogin" type="password" name="password" v-model="state.password"
+                      placeholder="password" @sl-clear="state.password=''" toggle-password></sl-input>
+            <sl-button @click="userLogin" variant="primary"
+                       v-if="['no', 'loading', 'error'].includes(userStore.state['user.loggedin'])"
+                       :disabled="!state.userDataFilled"
+                       :loading="userStore.state['user.loggedin']==='loading'"
+            >
+              Login
+
+            </sl-button>
+            <sl-button @click="logout" v-else>Logout</sl-button>
+          </div>
+           <div v-show="userStore.state['user.loggedin']==='secound_factor_authenticator_otp'">
+
+            <sl-input type="text" name="otp" v-model="state.otp" placeholder="OTP" clearable></sl-input>
+
+            <sl-button @click="userSecondFactor" variant="primary"
+                       :loading="userStore.state['user.loggedin']==='loading'">
+              Login
+            </sl-button>
+
+          </div>
+
+
         </sl-tab-panel>
         <sl-tab-panel name="google">
           <div id="google_oauth"></div>
@@ -76,7 +92,8 @@ export default defineComponent({
       waitForLogout: false,
       waitForInit: true,
       backgroundImage:computed(() => `url('${appStore.state["admin.login.background"]}'`),
-      logo:computed(() => appStore.state["admin.login.logo"])
+      logo:computed(() => appStore.state["admin.login.logo"]),
+      otp:"",
     })
 
     function googleLogin() {
@@ -93,6 +110,11 @@ export default defineComponent({
       state.waitForLogout = false
       userStore.userLogin(state.name, state.password)
     }
+    function userSecondFactor() {
+      state.waitForLogout = false
+      userStore.userSecondFactor(state.otp)
+    }
+
 
     onBeforeMount(() => {
       userStore.updateUser().then(() => {
@@ -108,6 +130,7 @@ export default defineComponent({
       userStore,
       userLogin,
       state,
+      userSecondFactor
     }
   },
 
@@ -117,8 +140,8 @@ export default defineComponent({
 
 <style scoped lang="less">
 
-#google_oauth{
-  display:flex;
+#google_oauth {
+  display: flex;
   justify-content: center;
   padding-bottom: 20px;
 }
