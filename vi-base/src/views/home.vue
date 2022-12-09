@@ -1,19 +1,14 @@
 <template>
   <div class="home">
-    <h1 class="main-headline">Hallo Username!</h1>
+    <h1 class="main-headline">Hallo {{state.name}}</h1>
 
     <h2 class="headline">Deine Favoriten</h2>
 
     <div class="home-grid">
-        <div class="home-box" v-for="i in 6">
-            <div class="icon-wrap">
-              <sl-icon name="trash"></sl-icon>
-            </div>
-            <div class="home-name">
-              Dies ist ein Testmodul
-            </div>
-          </div>
-      </div>
+      <widget-small v-for="i in 4">
+
+      </widget-small>
+    </div>
 
     <br>
     <br>
@@ -21,14 +16,9 @@
     <h2 class="headline">Zuletzt geöffnet</h2>
 
     <div class="home-grid">
-        <div class="home-box" v-for="n in 6">
-            <div class="icon-wrap">
-              <sl-icon name="trash"></sl-icon>
-            </div>
-            <div class="home-name">
-              Dies ist ein Testmodul
-            </div>
-          </div>
+       <widget-small v-for="i in 4">
+
+      </widget-small>
       </div>
     </div>
   <router-link :to="action.url" v-for="action in userStore.state.lastActions">
@@ -44,20 +34,33 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, reactive} from 'vue'
+import {defineComponent, reactive,computed} from 'vue'
 import {useRoute} from "vue-router";
 import {useUserStore} from "../stores/user";
 import TheMenubarItem from "../components/TheMenubar/TheMenubarItem.vue";
 import Utils from "../utils";
+import WidgetSmall from "../components/Dashboard/WidgetSmall.vue";
 
 export default defineComponent({
   props: {},
-  components: {TheMenubarItem},
+  components: {WidgetSmall, TheMenubarItem},
   setup(props, context) {
 
     const route = useRoute();
     const userStore = useUserStore();
-    const state = reactive({});
+    const state = reactive({
+      name: computed(()=>{
+        let name = ""
+        if (!userStore.state.user) return name
+
+        if (userStore.state.user["firstname"] && userStore.state.user["lastname"]){
+          name = userStore.state.user["firstname"] + " "+userStore.state.user["lastname"]
+        }else{
+          name = userStore.state.user["name"]
+        }
+        return name
+      })
+    });
 
     function createInitials(name: string) {
       return Utils.nameToInitials(name);
@@ -96,43 +99,4 @@ export default defineComponent({
   grid-template-columns: repeat(2, minmax(0, 1fr));
   grid-gap: 15px;
 }
-
-.home-box{
-  display: flex;
-  flex-direction: row;
-  overflow: hidden;
-  border-radius: var(--sl-border-radius-medium);
-  border: 1px solid var(--sl-color-neutral-200);
-  cursor: pointer;
-  background-color: #fff;
-  transition: all ease .3s;
-
-  &:hover{
-    background-color: var(--sl-color-neutral-50);
-    border: 1px solid var(--sl-color-neutral-300);
-    color: @mainColor;
-  }
-}
-
-.home-name{
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding: 15px;
-}
-
-.icon-wrap{
-  background-color: @mainColor;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  aspect-ratio: 1;
-
-  sl-icon{
-    color: #fff;
-    font-size: 1.3em;
-  }
-}
-
 </style>
