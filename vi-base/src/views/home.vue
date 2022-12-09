@@ -79,6 +79,8 @@ export default defineComponent({
   margin: 0 auto;
   width: 100%;
   max-width: 1280px;
+  flex: 1;
+  overflow-y: auto;
 }
 
 .main-headline{
