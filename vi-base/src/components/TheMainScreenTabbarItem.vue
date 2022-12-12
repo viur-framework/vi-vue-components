@@ -4,7 +4,7 @@
             :key="to"
             @sl-close="onTabClose"
     >
-        <router-link :to="to">
+        <router-link class="link-wrap" :to="to">
             <sl-icon v-if="state.icon"
                      @sl-error="onIconError"
                      :library="library"
@@ -72,7 +72,48 @@ export default defineComponent({
 </script>
 
 <style scoped lang="less">
+
+sl-tab{
+  &::part(base){
+    display: flex;
+    padding: 5px 12px;
+  }
+
+  &::part(close-button){
+    opacity: .5;
+    font-size: 1.2em;
+    margin: 0 -6px 0 5px;
+    transition: all ease .3s;
+  }
+
+  &:hover{
+    &::part(close-button){
+      opacity: 1;
+    }
+
+    .link-wrap{
+      color: var(--sl-color-primary-500);
+    }
+  }
+
+  &[aria-selected="true"]{
+    background-color: #fff;
+
+    .link-wrap{
+      color: var(--sl-color-primary-500);
+    }
+  }
+}
+
+.link-wrap{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  color: @textColor;
+}
+
 sl-icon{
-    margin-right:5px
+  font-size: .8em;
+    margin-right: 10px
 }
 </style>

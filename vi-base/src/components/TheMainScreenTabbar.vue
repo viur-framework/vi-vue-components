@@ -37,5 +37,15 @@ export default defineComponent({
 </script>
 
 <style scoped lang="less">
+  sl-tab-group{
+    --track-width: 0;
 
+    &::part(base){
+      background-color: var(--sl-color-neutral-100);
+    }
+  }
+
+  .router-link-active{
+    background-color: #fff;
+  }
 </style>
