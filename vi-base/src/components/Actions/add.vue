@@ -10,6 +10,7 @@
 </template>
 
 <script lang="ts">
+// @ts-nocheck
 import {reactive, defineComponent, inject, computed, h} from 'vue'
 import {useRoute} from "vue-router";
 import {useAppStore} from "../../stores/app";

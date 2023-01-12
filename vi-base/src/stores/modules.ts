@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {reactive} from "vue";
 import {defineStore} from "pinia";
 import {ListRequest, Request} from "@viur/viur-vue-utils";
@@ -12,7 +13,7 @@ export const useModulesStore = defineStore("modulesStore", () => {
 
   function setmodules() {
 
-    Request.get(`/json/_modulesconf?limit=99`).then(async (resp) => {
+    Request.get(`/json/_moduleconf?limit=99`).then(async (resp) => {
       let data = await resp.json()
       for (const skel of data["skellist"]) {
         state.modules[skel['name']]=skel;

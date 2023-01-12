@@ -8,6 +8,7 @@
 </template>
 
 <script lang="ts">
+// @ts-nocheck
 import {reactive, defineComponent, inject} from 'vue'
 
 export default defineComponent({

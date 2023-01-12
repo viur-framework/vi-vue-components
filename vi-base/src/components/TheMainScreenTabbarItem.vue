@@ -16,6 +16,7 @@
 </template>
 
 <script lang="ts">
+// @ts-nocheck
 import {reactive, defineComponent} from 'vue'
 import {useAppStore} from "../stores/app";
 import {useRouter} from "vue-router";

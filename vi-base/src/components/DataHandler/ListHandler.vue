@@ -7,7 +7,6 @@
   >
 
   </sl-table>-->
-
   <sl-details open summary="Info" v-if="modulesStore.state.loaded && modulesStore.state.modules[module]['help_text']">
     {{modulesStore.state.modules[module]["help_text"]}}
   </sl-details>

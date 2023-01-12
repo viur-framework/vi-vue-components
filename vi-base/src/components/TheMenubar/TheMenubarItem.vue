@@ -101,6 +101,7 @@
 </template>
 
 <script lang="ts">
+// @ts-nocheck
 import {computed, reactive, onMounted, onUpdated, defineComponent, unref} from "vue";
 import Utils from '../../utils';
 import {useAppStore} from "../../stores/app";

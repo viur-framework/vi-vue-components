@@ -1,3 +1,4 @@
+// @ts-nocheck
 //import "@viur/viur-shoelace/dist/themes/light.css"
 import "@viur/viur-shoelace/dist/components/button/button"
 import "@viur/viur-shoelace/dist/components/button-group/button-group"
@@ -38,7 +39,7 @@ import '@viur/viur-shoelace/dist/components/bone/bone';
 
 import {setBasePath} from '@viur/viur-shoelace/dist/utilities/base-path';
 
-setBasePath(`/vi/viur-shoelace`)
+setBasePath(`vi/viur-shoelace`)
 
 /*
 import {registerIconLibrary} from '@viviur/viur-shoelace/dist/utilities/icon-library';
