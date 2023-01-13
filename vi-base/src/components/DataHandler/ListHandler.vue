@@ -18,7 +18,7 @@
             :editabletable="state.editableTable"
             @sl-selectionChanged="entrySelected"
             @sl-dblclick="openEditor"
-            height="500px"
+            height="100%"
 
   >
 
@@ -130,8 +130,12 @@ export default defineComponent({
 </script>
 
 <style scoped lang="less">
-sl-table{
-  &::part(base){
+sl-table {
+  flex: 1;
+  display: flex;
+  height: 0;
+
+  &::part(base) {
     margin-top: 0;
     border: none;
     border-radius: 0;

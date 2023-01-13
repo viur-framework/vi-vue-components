@@ -5,7 +5,7 @@
             :structure="state.structure"
             :nodes='state.nodes'
             :module="state.module"
-            height="500px"
+            height="100%"
             mode="hierarchy"
             v-on:table-fetchNodes="fetchNodesEvent"
             v-on:table-rowMovedDataTree="rowMovedDataTree"
@@ -254,6 +254,10 @@ sl-split-panel {
 }
 
 sl-table {
+  flex: 1;
+  display: flex;
+  height: 0;
+
   &::part(base) {
     margin-top: 0;
     border: none;
