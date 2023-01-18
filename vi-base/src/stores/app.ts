@@ -139,8 +139,9 @@ export const useAppStore = defineStore("app", () => {
         "topbar.actions": [],
 
         //dynamic child buckets
-        "handlers.opened": {}, // {'url','name','library'}
+        "handlers.opened": [{"to":{'name': 'home'},"url":"/","name":"Dashboard","icon":"dashboard","closeable":false}], // {'url','name','library'}
         "handlers.opened.max":5,
+        "handlers.active":0, //current active index
 
         //drawer
         "skeldrawer.opened": false,
@@ -237,15 +238,20 @@ export const useAppStore = defineStore("app", () => {
 
         let entry = {
             "to": route,
+            "url": url,
             "icon": icon ? icon : moduleIconData[1],
             "library": library ? library : moduleIconData[2],
-            "name": name ? name : currentConf["name"]
+            "name": name ? name : currentConf["name"],
+            "closeable":true
         }
 
-        let tabNames = Object.keys(state["handlers.opened"]).filter(name => name.startsWith(route.path+"?_="))
+        let tabNames = state["handlers.opened"].map(e=>e["url"]).filter(name => name.startsWith(route.path+"?_="))
 
         if(state["handlers.opened.max"]>tabNames.length){
-            state["handlers.opened"][url] = entry
+            state["handlers.opened"].push(entry)
+
+            state["handlers.active"] = state["handlers.opened"].indexOf(entry)
+
             router.push(entry["to"])
         }else{
             return false
@@ -255,8 +261,22 @@ export const useAppStore = defineStore("app", () => {
 
     function removeOpened(route) {
         let url = route.fullPath
-        delete state["handlers.opened"][url]
-        viewStore.destroy(url)
+        let idx = state["handlers.opened"].findIndex(e=>e["url"]===url)
+        if(idx===state["handlers.active"]){
+             router.push(state["handlers.opened"][idx-1]["to"]).then(() => {
+                state["handlers.opened"].splice(idx, 1)
+                viewStore.destroy(url)
+                state["handlers.active"] = idx-1
+            })
+        }else if (idx<state["handlers.active"]){
+            state["handlers.opened"].splice(idx, 1)
+            viewStore.destroy(url)
+            state["handlers.active"] = state["handlers.active"]-1 //update to new idx
+        }else if (idx>state["handlers.active"]){
+            state["handlers.opened"].splice(idx, 1)
+            viewStore.destroy(url)
+        }
+
     }
 
     return {

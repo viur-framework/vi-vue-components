@@ -1,18 +1,15 @@
 <template>
-    <sl-tab-group size="small">
+    <sl-tab-group size="small"
+                  @sl-tab-show="onTabShown"
+    >
         <the-main-screen-tabbar-item
-            slot="nav"
-            icon="dashboard"
-            :to="{'name': 'home'}"
-            :closeable="false">
-            Dashboard
-        </the-main-screen-tabbar-item>
-
-        <the-main-screen-tabbar-item
-            v-for="entry in appStore.state['handlers.opened']"
+            v-for="(entry,idx) in appStore.state['handlers.opened']"
             :to="entry['to']"
             :icon="entry['icon']"
             :library="entry['library']"
+            :active="appStore.state['handlers.active']===idx"
+            :closeable="entry['closeable']"
+            :position="idx"
         >
             {{ entry['name'] }}
         </the-main-screen-tabbar-item>
@@ -31,7 +28,16 @@ export default defineComponent({
         const appStore = useAppStore()
 
         const state = reactive({})
-        return {state, appStore}
+
+        function onTabShown(e){
+          appStore.state['handlers.active'] = parseInt(e.target.activeTab.dataset.id)
+        }
+
+        return {
+          state,
+          appStore,
+          onTabShown
+        }
     }
 })
 </script>

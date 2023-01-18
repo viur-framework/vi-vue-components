@@ -33,7 +33,7 @@ export default defineComponent({
         const route = useRoute()
 
         watch(() => appStore.state["vi.modules"], (newVal, oldVal) => { //wait till modules loaded
-            if (!utils.objectEmpty(newVal) && !Object.keys(appStore.state["handlers.opened"]).includes(route.fullPath)) {
+            if (!utils.objectEmpty(newVal) && appStore.state["handlers.opened"].filter(e=>e["url"]===route.fullPath).length<=0) {
                 appStore.addOpened(route.fullPath, props.module, route.query?.["view"])
             }
         })

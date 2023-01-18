@@ -3,6 +3,7 @@
             :closable="closeable"
             :key="to"
             @sl-close="onTabClose"
+            :data-id="position"
     >
         <router-link class="link-wrap" :to="to">
             <sl-icon v-if="state.icon"
@@ -42,6 +43,10 @@ export default defineComponent({
         closeable: {
             type: Boolean,
             default: true
+        },
+        position:{
+          type:Number,
+          required: true,
         }
     },
     components: {},
@@ -57,9 +62,7 @@ export default defineComponent({
 
         function onTabClose(){
             // @ts-ignore
-            router.push({"name": "home"}).then(()=>{
-                appStore.removeOpened(props.to)
-            })
+            appStore.removeOpened(props.to)
         }
 
         return {
