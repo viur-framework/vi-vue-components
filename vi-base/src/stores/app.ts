@@ -236,12 +236,26 @@ export const useAppStore = defineStore("app", () => {
         let moduleIconData = currentConf["icon"].split("___")
         let url = route.fullPath
 
+        let mode = "view"
+        if (url){
+          if (url.includes("/add/")){
+            mode = "add"
+          }else if (url.includes("/edit/")){
+            mode = "edit"
+          }else if (url.includes("/clone/")){
+            mode = "clone"
+          }
+        }
+
         let entry = {
             "to": route,
             "url": url,
             "icon": icon ? icon : moduleIconData[1],
             "library": library ? library : moduleIconData[2],
             "name": name ? name : currentConf["name"],
+            "module":module,
+            "mode":mode,
+            "moduleDescr":currentConf["name"],
             "closeable":true
         }
 
@@ -282,6 +296,8 @@ export const useAppStore = defineStore("app", () => {
     function getActiveTab(){
       return state["handlers.opened"][state["handlers.active"]]
     }
+
+
 
     return {
         state,

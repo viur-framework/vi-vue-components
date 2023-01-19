@@ -10,6 +10,7 @@
             :active="appStore.state['handlers.active']===idx"
             :closeable="entry['closeable']"
             :position="idx"
+            :mode="entry['mode']"
         >
             {{ entry['name'] }}
         </the-main-screen-tabbar-item>

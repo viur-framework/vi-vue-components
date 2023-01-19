@@ -53,6 +53,7 @@ import {useRoute} from "vue-router";
 import bone from "../../components/Bones/edit/bone.vue";
 import EntryBar from "../Bars/EntryBar.vue";
 import {useModulesStore} from "../../stores/modules";
+import app from "../../App.vue";
 
 export default defineComponent({
 	props: {
@@ -169,8 +170,12 @@ export default defineComponent({
 			 */
 
 		function updateValue(event: Object) {
-
 			state.formValues[event.detail.boneName] = event.detail.formValue;
+      if (event.detail.boneName==="name"){
+        let currentTab = appStore.getActiveTab()
+        appStore.getActiveTab()["name"] = `${currentTab["moduleDescr"]}: ${event.detail.formValue.map(e=>e['name'].toString()).join(", ")}`
+      }
+
 
 		}
 

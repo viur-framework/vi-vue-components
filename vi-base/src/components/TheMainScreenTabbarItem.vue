@@ -12,12 +12,16 @@
                      :name="icon"
                      sprite></sl-icon>
             <slot></slot>
+            <sl-icon class="mode-icon" v-if="mode!=='view'"
+                     :name="state.modeIcon"
+                     sprite></sl-icon>
+
         </router-link>
     </sl-tab>
 </template>
 
 <script lang="ts">
-import {reactive, defineComponent} from 'vue'
+import {reactive, defineComponent, computed} from 'vue'
 import {useAppStore} from "../stores/app";
 import {useRouter} from "vue-router";
 
@@ -47,6 +51,10 @@ export default defineComponent({
         position:{
           type:Number,
           required: true,
+        },
+        mode:{
+          type:String,
+          default:"view"
         }
     },
     components: {},
@@ -54,7 +62,12 @@ export default defineComponent({
         const appStore = useAppStore()
         const router = useRouter()
         const state = reactive({
-            icon:true
+            icon:true,
+            modeIcon:computed(()=>{
+              if (props.mode ==="add") return "plus"
+              if (props.mode ==="edit") return "pencil"
+              if (props.mode ==="clone") return "clone"
+            })
         })
         function onIconError(){
             state.icon=false
@@ -117,6 +130,13 @@ sl-tab{
 
 sl-icon{
   font-size: .8em;
-    margin-right: 10px
+  margin-right: 10px;
 }
+
+.mode-icon{
+    font-size: .7em;
+    margin-right: 0px;
+    margin-left: 3px;
+    margin-bottom: 5px;
+  }
 </style>
