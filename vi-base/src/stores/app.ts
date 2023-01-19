@@ -279,6 +279,10 @@ export const useAppStore = defineStore("app", () => {
 
     }
 
+    function getActiveTab(){
+      return state["handlers.opened"][state["handlers.active"]]
+    }
+
     return {
         state,
         modulesTree,
@@ -289,6 +293,7 @@ export const useAppStore = defineStore("app", () => {
         getListStoreByRoute,
         addTopBarAction,
         addOpened,
-        removeOpened
+        removeOpened,
+        getActiveTab
     }
 })

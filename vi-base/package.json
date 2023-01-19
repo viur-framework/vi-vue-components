@@ -16,11 +16,12 @@
   ],
   "dependencies": {
     "@viur/viur-shoelace": "^2.0.0-beta.86-viur-17",
-    "@viur/viur-vue-utils": "^0.5.12",
+    "@viur/viur-vue-utils": "^0.5.15",
     "logics-js": "^0.3.4",
     "pinia": "^2.0.29",
     "vue": "^3.2.45",
     "vue-i18n": "^9.2.2",
+    "vue-json-pretty": "^2.2.3",
     "vue-router": "^4.1.6"
   },
   "devDependencies": {
