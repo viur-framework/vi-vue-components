@@ -1,51 +1,50 @@
 <template>
   <div class="home">
-    <h1 class="main-headline">Hallo {{state.name}}</h1>
+    <h1 class="main-headline">Hallo {{ state.name }}</h1>
 
     <template v-if="useageStore.state.favorites.length>0">
 
-    <h2 class="headline">Deine Favoriten</h2>
-
-    <div class="home-grid">
-
+      <h2 class="headline">Deine Favoriten</h2>
+      <div class="home-grid">
         <widget-small v-for="i in useageStore.state.favorites"
-                       :icon="i['icon']"
-                       :library="i['library']"
-                       :to="i['to']"
-         >
-           {{i['name']}}
+                      :icon="i['icon']"
+                      :library="i['library']"
+                      :to="i['to']"
+        >
+          {{ i['name'] }}
         </widget-small>
-    </div>
-
-    <br>
-    <br>
-    </template>
-    <h2 class="headline">Zuletzt geöffnet</h2>
-
-    <div class="home-grid">
-       <widget-small v-for="i in useageStore.state.last"
-                     :icon="i['icon']"
-                     :library="i['library']"
-                     :to="i['to']"
-       >
-         {{i['name']}}
-      </widget-small>
       </div>
-    </div>
-  <router-link :to="action.url" v-for="action in userStore.state.lastActions">
-    <sl-avatar :initials="action.icon!==''?'':createInitials(action.name)">
-      <sl-icon slot="icon"
-               :name="action.icon.split('___')[1]"
-               :library="action.icon.split('___')[0]"
-               v-if="action.icon.length>0"></sl-icon>
-    </sl-avatar>
+    </template>
+    <br>
+    <br>
+    <template v-if="useageStore.state.favorites.length>0">
+      <h2 class="headline">Zuletzt geöffnet</h2>
 
-    {{ `(${new Date(action.time).toLocaleString()}) ${action.name}` }}
-  </router-link>
+      <div class="home-grid">
+        <widget-small v-for="i in useageStore.state.last"
+                      :icon="i['icon']"
+                      :library="i['library']"
+                      :to="i['to']"
+        >
+          {{ i['name'] }}
+        </widget-small>
+      </div>
+    </template>
+  </div>
+<router-link :to="action.url" v-for="action in userStore.state.lastActions">
+<sl-avatar :initials="action.icon!==''?'':createInitials(action.name)">
+  <sl-icon slot="icon"
+           :name="action.icon.split('___')[1]"
+           :library="action.icon.split('___')[0]"
+           v-if="action.icon.length>0"></sl-icon>
+</sl-avatar>
+
+{{ `(${new Date(action.time).toLocaleString()}) ${action.name}` }}
+</router-link>
 </template>
 
 <script lang="ts">
-import {defineComponent, reactive,computed} from 'vue'
+import {computed, defineComponent, reactive} from 'vue'
 import {useRoute} from "vue-router";
 import {useUsagestore} from "../stores/usage";
 import {useUserStore} from "../stores/user";
@@ -61,13 +60,13 @@ export default defineComponent({
     const route = useRoute();
     const userStore = useUserStore();
     const state = reactive({
-      name: computed(()=>{
+      name: computed(() => {
         let name = ""
         if (!userStore.state.user) return name
 
-        if (userStore.state.user["firstname"] && userStore.state.user["lastname"]){
-          name = userStore.state.user["firstname"] + " "+userStore.state.user["lastname"]
-        }else{
+        if (userStore.state.user["firstname"] && userStore.state.user["lastname"]) {
+          name = userStore.state.user["firstname"] + " " + userStore.state.user["lastname"]
+        } else {
           name = userStore.state.user["name"]
         }
         return name
@@ -84,14 +83,15 @@ export default defineComponent({
       route,
       userStore,
       useageStore,
-      createInitials}
+      createInitials
+    }
   }
 })
 </script>
 
 <style scoped lang="less">
 
-.home{
+.home {
   padding: 15px 30px;
   margin: 0 auto;
   width: 100%;
@@ -100,20 +100,20 @@ export default defineComponent({
   overflow-y: auto;
 }
 
-.main-headline{
+.main-headline {
   font-size: 2em;
   color: var(--sl-color-primary-500);
   margin-bottom: 15px;
   font-weight: 600;
 }
 
-.headline{
+.headline {
   font-size: 1.3em;
   margin-bottom: 15px;
   font-weight: 600;
 }
 
-.home-grid{
+.home-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   grid-gap: 15px;

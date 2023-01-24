@@ -54,6 +54,11 @@ export default defineComponent({
                 appStore.state["vi.name"] = data["configuration"]["vi.name"]
                 appStore.state["vi.modules.groups"] = data["configuration"]["moduleGroups"]
                 appStore.state["vi.modules"] = data["modules"]
+
+                if(route.path !== "/"){
+                  appStore.addOpened(route, route.params["module"], route.query["view"])
+                }
+
             })
         }
 
