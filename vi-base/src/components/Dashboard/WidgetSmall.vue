@@ -1,24 +1,39 @@
 <template>
-<div class="home-box">
-  <div class="icon-wrap">
-    <sl-icon name="trash"></sl-icon>
-  </div>
-  <div class="home-name">
-    Dies ist ein Testmodul
-  </div>
-</div>
+      <div class="home-box" @click="openTab">
+        <div class="icon-wrap">
+          <sl-icon name="trash"></sl-icon>
+        </div>
+        <div class="home-name">
+          <slot></slot>
+        </div>
+      </div>
 </template>
 
 <script lang="ts">
 import {reactive, defineComponent} from 'vue'
-
+import {useAppStore} from "../../stores/app";
 export default defineComponent({
-  props: [],
+  props: {
+    icon:String,
+    library:{
+      type:String,
+      default:"default"
+    },
+    to:Object
+
+  },
   components: {},
   setup(props, context) {
     const state = reactive({})
+    const appStore = useAppStore()
+
+    function openTab(){
+      appStore.addOpened(props.to, props.to.params["module"], props.to.query["view"])
+    }
+
     return {
-      state
+      state,
+      openTab
     }
   }
 })
@@ -52,7 +67,7 @@ export default defineComponent({
   &:hover{
     background-color: var(--sl-color-neutral-50);
     border: 1px solid var(--sl-color-neutral-300);
-    color: @mainColor;
+    color: var(--sl-color-primary-500);
   }
 }
 

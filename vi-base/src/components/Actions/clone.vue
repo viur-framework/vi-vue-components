@@ -1,6 +1,6 @@
 <template>
-  <router-link :to="state.url" custom v-slot="{navigate}">
-    <sl-button :disabled="!state.active" @click="createAndNavigate(navigate)" size="small">
+  <router-link :to="state.url" custom v-slot="{route}">
+    <sl-button :disabled="!state.active" @click="createAndNavigate(route)" size="small">
       <sl-icon slot="prefix" name="clone"></sl-icon>
       {{ $t("actions.clone") }}
     </sl-button>
@@ -29,8 +29,8 @@ export default defineComponent({
       })
     })
 
-    function createAndNavigate(navigate: any) {
-      appStore.addOpened(state.url, handlerState["module"], handlerState["view"])
+    function createAndNavigate(route: any) {
+      appStore.addOpened(route, handlerState["module"], handlerState["view"])
       navigate()
     }
 

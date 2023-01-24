@@ -4,6 +4,8 @@ import {reactive, computed, Component} from 'vue';
 import {defineStore, StoreDefinition} from "pinia";
 import {useRouter} from "vue-router";
 import {useViewStore} from "./views";
+import {useUserStore} from "./user";
+import {useUsagestore} from "./usage";
 
 export interface ModuleInfo {
     name: string,
@@ -110,6 +112,7 @@ function flattenTree(tree) {
 
 export const useAppStore = defineStore("app", () => {
     const viewStore = useViewStore()
+    const useageStore = useUsagestore()
     const router = useRouter()
     const state = reactive({
         //vi section
@@ -198,7 +201,6 @@ export const useAppStore = defineStore("app", () => {
         return getConf(route.params.module, Object.keys(route.query).includes("view") ? route.query['view'] : null)
     }
 
-
     function getConf(module: string, view = null) {
         let conf = null
         let name = module
@@ -212,7 +214,7 @@ export const useAppStore = defineStore("app", () => {
         state["stores.map"][store.$id] = store
     }
 
-  function getListStoreByRoute(route): ModuleInfo | null {
+    function getListStoreByRoute(route): ModuleInfo | null {
     //ts-ignore
 
     const conf = getConfByRoute(route)
@@ -224,6 +226,7 @@ export const useAppStore = defineStore("app", () => {
     return state["stores.map"][name];
 
   }
+
     function addTopBarAction(action: Component) {
         if( !state["topbar.actions"].includes(action)){
             state["topbar.actions"].push(action)
@@ -237,8 +240,9 @@ export const useAppStore = defineStore("app", () => {
         let url = route.fullPath
 
         let mode = "view"
+        console.log(url)
         if (url){
-          if (url.includes("/add/")){
+          if (url.includes("/add")){
             mode = "add"
           }else if (url.includes("/edit/")){
             mode = "edit"
@@ -258,6 +262,9 @@ export const useAppStore = defineStore("app", () => {
             "moduleDescr":currentConf["name"],
             "closeable":true
         }
+
+
+        useageStore.addToLast(entry)
 
         let tabNames = state["handlers.opened"].map(e=>e["url"]).filter(name => name.startsWith(route.path+"?_="))
 

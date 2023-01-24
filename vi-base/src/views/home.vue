@@ -2,22 +2,33 @@
   <div class="home">
     <h1 class="main-headline">Hallo {{state.name}}</h1>
 
+    <template v-if="useageStore.state.favorites.length>0">
+
     <h2 class="headline">Deine Favoriten</h2>
 
     <div class="home-grid">
-      <widget-small v-for="i in 4">
 
-      </widget-small>
+        <widget-small v-for="i in useageStore.state.favorites"
+                       :icon="i['icon']"
+                       :library="i['library']"
+                       :to="i['to']"
+         >
+           {{i['name']}}
+        </widget-small>
     </div>
 
     <br>
     <br>
-
+    </template>
     <h2 class="headline">Zuletzt geöffnet</h2>
 
     <div class="home-grid">
-       <widget-small v-for="i in 4">
-
+       <widget-small v-for="i in useageStore.state.last"
+                     :icon="i['icon']"
+                     :library="i['library']"
+                     :to="i['to']"
+       >
+         {{i['name']}}
       </widget-small>
       </div>
     </div>
@@ -36,6 +47,7 @@
 <script lang="ts">
 import {defineComponent, reactive,computed} from 'vue'
 import {useRoute} from "vue-router";
+import {useUsagestore} from "../stores/usage";
 import {useUserStore} from "../stores/user";
 import TheMenubarItem from "../components/TheMenubar/TheMenubarItem.vue";
 import Utils from "../utils";
@@ -45,7 +57,7 @@ export default defineComponent({
   props: {},
   components: {WidgetSmall, TheMenubarItem},
   setup(props, context) {
-
+    const useageStore = useUsagestore()
     const route = useRoute();
     const userStore = useUserStore();
     const state = reactive({
@@ -67,7 +79,12 @@ export default defineComponent({
     }
 
 
-    return {state, route, userStore, createInitials}
+    return {
+      state,
+      route,
+      userStore,
+      useageStore,
+      createInitials}
   }
 })
 </script>
@@ -85,7 +102,7 @@ export default defineComponent({
 
 .main-headline{
   font-size: 2em;
-  color: @mainColor;
+  color: var(--sl-color-primary-500);
   margin-bottom: 15px;
   font-weight: 600;
 }

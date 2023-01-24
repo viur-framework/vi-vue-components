@@ -25,6 +25,7 @@
 						renderType="edit"
 						:renderLabel="true"
 						@sl-boneChange="updateValue"
+            @sl-boneInit="updateValue"
             :errors="state.errors"
             v-if="state.structure[bone['boneName']]['visible']"
 				>

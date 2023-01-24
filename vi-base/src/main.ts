@@ -16,10 +16,12 @@ import {createPinia} from 'pinia'
 import {createI18n} from "vue-i18n";
 import en from "./translations/en"
 import de from "./translations/de"
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
 const pinia = createPinia()
 app.use(pinia)
 
+pinia.use(piniaPluginPersistedstate)
 app.use(router)
 
 
