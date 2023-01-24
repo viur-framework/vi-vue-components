@@ -29,9 +29,9 @@
 //@ts-nocheck
 import TheTopbar from "../TheMainScreenTopbar.vue";
 import TheSidebar from "../TheMainScreenSidebar.vue";
-import {useRoute} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import {Request} from "@viur/viur-vue-utils";
-import {defineComponent, onBeforeMount} from "vue";
+import {defineComponent, onBeforeMount, unref} from "vue";
 import {useAppStore} from "../../stores/app";
 
 //default top actions
@@ -46,6 +46,7 @@ export default defineComponent({
     components: {TheMainScreenTabbar, ViewWrapper, TheMainScreenSkelDrawer, MessageDrawer, TheTopbar, TheSidebar},
     setup() {
         const route = useRoute()
+        const router = useRouter()
         const appStore = useAppStore()
 
         function collectViurConfig() {
@@ -56,7 +57,8 @@ export default defineComponent({
                 appStore.state["vi.modules"] = data["modules"]
 
                 if(route.path !== "/"){
-                  appStore.addOpened(route, route.params["module"], route.query["view"])
+                  let new_route = router.resolve(unref(route))
+                  appStore.addOpened(new_route, new_route.params["module"], new_route.query["view"])
                 }
 
             })

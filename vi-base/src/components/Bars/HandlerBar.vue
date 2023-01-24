@@ -3,7 +3,7 @@
         <template v-for="(actionlist,index) in state.actions['default']">
             <component v-for="action in actionlist"
                        :is="`${action}_action`"
-                       size="small"
+
             >
                 <custom_action :name="action"></custom_action>
             </component>
@@ -15,7 +15,6 @@
         <template v-for="(actionlist,index) in state.actions['entry']">
             <component v-for="action in actionlist"
                        :is="`${action}_action`"
-                       size="small"
             >
             </component>
             <space_action v-if="index<(state.actions['entry'].length-1)"></space_action>
