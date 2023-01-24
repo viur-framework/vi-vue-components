@@ -22,7 +22,7 @@
 
 <script lang="ts">
 // @ts-nocheck
-import {reactive, defineComponent} from 'vue'
+import {reactive, defineComponent, computed} from 'vue'
 import {useAppStore} from "../stores/app";
 import {useRouter} from "vue-router";
 
