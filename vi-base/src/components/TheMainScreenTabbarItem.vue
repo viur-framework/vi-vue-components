@@ -6,16 +6,19 @@
             :data-id="position"
     >
         <router-link class="link-wrap" :to="to">
-            <sl-icon v-if="state.icon"
+          <sl-avatar label="Rounded avatar">
+            <sl-icon class="mode-icon" v-if="mode!=='view'"
+                     :name="state.modeIcon"
+                     slot="icon"
+                     sprite></sl-icon>
+            <sl-icon v-else-if="state.icon"
                      @sl-error="onIconError"
                      :library="library"
                      :name="icon"
+                     slot="icon"
                      sprite></sl-icon>
+          </sl-avatar>
             <slot></slot>
-            <sl-icon class="mode-icon" v-if="mode!=='view'"
-                     :name="state.modeIcon"
-                     sprite></sl-icon>
-
         </router-link>
     </sl-tab>
 </template>
@@ -98,7 +101,7 @@ sl-tab{
 
   &::part(close-button){
     opacity: .5;
-    font-size: 1.2em;
+    font-size: .9em;
     margin: 0 -6px 0 5px;
     transition: all ease .3s;
   }
@@ -110,6 +113,14 @@ sl-tab{
 
     .link-wrap{
       color: var(--sl-color-primary-500);
+      opacity: .8;
+    }
+
+    sl-avatar {
+      &::part(base) {
+        background-color: var(--sl-color-primary-500);
+      }
+
     }
   }
 
@@ -118,8 +129,16 @@ sl-tab{
 
     .link-wrap{
       color: var(--sl-color-primary-500);
+      opacity: 1;
+    }
+
+    sl-avatar{
+      &::part(base){
+        background-color: var(--sl-color-primary-500);
+      }
     }
   }
+
 }
 
 .link-wrap{
@@ -127,17 +146,24 @@ sl-tab{
   flex-direction: row;
   align-items: center;
   color: @textColor;
+  opacity: .6;
 }
 
-sl-icon{
-  font-size: .8em;
-  margin-right: 10px;
-}
+sl-avatar{
+  --size: 1.6em;
+  margin-right: var(--sl-spacing-x-small);
+  border-radius: 2px;
+  align-self: center;
 
-.mode-icon{
-    font-size: .7em;
-    margin-right: 0px;
-    margin-left: 3px;
-    margin-bottom: 5px;
+  sl-icon{
+    font-size: .8em;
   }
+
+  &::part(base){
+  transition: all ease .3s;
+    margin-top: -2px;
+    border-radius: 3px;
+    background-color: var(--sl-color-neutral-900);
+  }
+}
 </style>

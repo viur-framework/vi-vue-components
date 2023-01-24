@@ -5,16 +5,16 @@
   </sl-button>
 
   <sl-dialog :label='$t("actions.selectfields")' id="dialog-selectfields">
-    <sl-switch v-for="(bone,boneName) in state.structure" :checked="bone['visible']"
+    <sl-checkbox v-for="(bone,boneName) in state.structure" :checked="bone['visible']"
                @sl-change="visibleChange(boneName)" class="selectfieldswitch">
       {{ bone["descr"] !== "" ? bone["descr"] : boneName }}
-    </sl-switch>
+    </sl-checkbox>
 
-    <sl-button @click="selectall">{{ $t("selectfields.selectall") }}</sl-button>
-    <sl-button @click="unselectall">{{ $t("selectfields.unselectall") }}</sl-button>
-    <sl-button @click="invertselect">{{ $t("selectfields.invertselect") }}</sl-button>
-
-    <sl-button slot="footer" variant="primary">Close</sl-button>
+    <sl-button-group slot="footer">
+      <sl-button @click="selectall">{{ $t("selectfields.selectall") }}</sl-button>
+      <sl-button @click="unselectall">{{ $t("selectfields.unselectall") }}</sl-button>
+      <sl-button @click="invertselect">{{ $t("selectfields.invertselect") }}</sl-button>
+    </sl-button-group>
   </sl-dialog>
 
 
@@ -67,7 +67,38 @@ export default defineComponent({
 
 <style scoped lang="less">
 .selectfieldswitch {
-  display: block;
+  display: flex;
+  margin-bottom: 5px;
+
+  &::part(base){
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  &::part(control){
+    width: 1em;
+    height: 1em;
+  }
 
 }
+
+sl-dialog{
+  &::part(body){
+    padding-top: 0;
+  }
+}
+
+sl-button-group{
+  width: 100%;
+
+  &::part(base){
+    width: 100%;
+  }
+
+  sl-button{
+    flex: 1;
+  }
+}
+
 </style>
