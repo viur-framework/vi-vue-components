@@ -2,11 +2,13 @@
 
   <div class="topbar">
     <div class="top-headline">
-      {{ module }}
+      Neuer {{state.conf['name']}} Eintrag
+      <span v-if="state.skel['name']">: {{state.skel['name']}}</span>
+      <!---{{ module }}
       {{ action }}
       {{ group }}
       {{ skelkey }}
-      {{ skeltype }}
+      {{ skeltype }}--->
     </div>
 
     <entry-bar :module="module" :action="action" :skelkey="skelkey" skeltype="skeltype"

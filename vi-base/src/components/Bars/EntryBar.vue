@@ -1,5 +1,6 @@
 <template>
   <div class="bar" style="z-index: 50">
+    <debugentry></debugentry>
     <save :module="module" :action="action"></save>
     <save
       name="action.save_close"
@@ -14,10 +15,12 @@
 //@ts-nocheck
 import {reactive, defineComponent} from 'vue'
 import Save from "../Actions/save.vue";
+import Debugentry from "../Actions/debugentry.vue";
+
 
 export default defineComponent({
   props: {},
-  components: {Save},
+  components: {Debugentry, Save},
   setup(props, context) {
     const state = reactive({})
     return {state}
