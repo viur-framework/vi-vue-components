@@ -1,6 +1,6 @@
 <template>
   <sl-select @sl-change="rootNodeChange" :value="state.initValue">
-  <sl-menu-item v-for="node in handlerState['currentRootNodes']" :value="node['key']">{{node["name"]}}</sl-menu-item>
+    <sl-option v-for="node in handlerState['currentRootNodes']" :value="node['key']">{{ node["name"] }}</sl-option>
   </sl-select>
 
 </template>
@@ -14,35 +14,40 @@ export default defineComponent({
   components: {},
   setup(props, context) {
     const state = reactive({
-      initValue:computed(()=>{
-        if(handlerState['currentRootNodes'].length>0)
-        {
-          return handlerState['currentRootNodes'][0]['key']
+      initValue: computed(() => {
+        console.log("crn",handlerState['currentRootNodes'])
+        if (handlerState['currentRootNodes']) {
+          console.log("crn2",handlerState['currentRootNodes'],handlerState['currentRootNodes'])
+          if (handlerState['currentRootNodes'].length > 0) {
+            return handlerState['currentRootNodes'][0]['key']
+          }
         }
+
         return ""
       })
     });
     const handlerState: any = inject("state");
     const changerootNode: any = inject("changerootNode")
+
     function rootNodeChange(e: Event) {
-     changerootNode(e.target.value);
+      changerootNode(e.target.value);
     }
 
-    return {state, rootNodeChange,handlerState}
+    return {state, rootNodeChange, handlerState}
   }
 })
 </script>
 
 <style scoped lang="less">
 
-sl-select{
-  &::part(form-control){
+sl-select {
+  &::part(form-control) {
     display: flex;
     flex-direction: row;
     align-items: center;
   }
 
-  &::part(form-control-label){
+  &::part(form-control-label) {
     margin-right: 7px;
     margin-bottom: 0;
   }

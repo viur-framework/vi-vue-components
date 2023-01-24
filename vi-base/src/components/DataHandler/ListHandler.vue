@@ -1,15 +1,10 @@
 <template>
   <handler-bar :module="module"></handler-bar>
-  <!--<sl-table rowselect moveablecolumns height="800px"
-            :structure.prop="currentlist.structure"
-            :skellist.prop="currentlist.state.skellist"
-            @sl-selectionChanged="entrySelected"
-  >
 
-  </sl-table>-->
   <sl-details open summary="Info" v-if="modulesStore.state.loaded && modulesStore.state.modules[module]['help_text']">
     {{modulesStore.state.modules[module]["help_text"]}}
   </sl-details>
+
   <sl-table moveablecolumns
             :rowselect="true"
             :structure="currentlist.structure"

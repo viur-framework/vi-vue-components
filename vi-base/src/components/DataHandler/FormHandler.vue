@@ -18,7 +18,7 @@
   </sl-details>
   <div class="scroll-content">
     <template v-for="(group,key) in state.formGroups">
-      <sl-details :summary="group['name']" v-show="group['groupVisible']">
+      <sl-details :summary="group['name']" v-show="group['groupVisible']" open>
         <template v-for="bone in group['bones']">
           <sl-bone
             :boneName="bone['boneName']"
