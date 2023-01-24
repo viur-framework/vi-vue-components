@@ -17,20 +17,37 @@
                class="icon-end"
                @click.stop="removeItem">
       </sl-icon>
-      <sl-icon v-if="userStore.favoriteModules_keys.indexOf(moduleInfo['module'])>-1" name="star-fill" @click="toogleFavItem()"></sl-icon>
-      <sl-icon v-else name="star" @click="toogleFavItem()"></sl-icon>
-      <sl-icon v-if="state.slotitems"
-               sprite
-               name="chevron-left"
-               class="arrow"
-               @click.stop="openGroup"
-               :class="{'is-open':state.open}">
-      </sl-icon>
 
+
+      <div v-if="state.slotitems"
+           class="arrow"
+           @click.stop="openGroup"
+            :class="{'is-open':state.open}">
+          <sl-icon name="chevron-right" sprite>
+          </sl-icon>
+      </div>
+
+      <div class="space" v-else></div>
+
+      <sl-dropdown class="dropdown">
+        <sl-button slot="trigger">
+          <sl-icon slot="prefix" name="three-dots" sprite></sl-icon>
+        </sl-button>
+        <sl-menu>
+          <sl-menu-item>
+            <sl-icon slot="prefix" name="heart" sprite></sl-icon>
+            Favorisieren
+          </sl-menu-item>
+          <sl-menu-item>
+            <sl-icon slot="prefix" name="pencil" sprite></sl-icon>
+            Berarbeiten
+          </sl-menu-item>
+        </sl-menu>
+      </sl-dropdown>
 
     </div>
 
-    <div v-show="state.open" class="list">
+    <div v-show="state.open" class="sublist">
       <slot>
       </slot>
     </div>
@@ -55,16 +72,17 @@
         {{ name }}
       </div>
 
-      <sl-icon v-if="state.slotitems"
-               name="chevron-left"
-               class="arrow"
-               @click.stop="openGroup"
-               :class="{'is-open':state.open}" sprite>
-      </sl-icon>
+      <div v-if="state.slotitems"
+           class="arrow"
+           @click.stop="openGroup"
+            :class="{'is-open':state.open}">
+          <sl-icon name="chevron-right" sprite>
+          </sl-icon>
+      </div>
 
     </div>
 
-    <div v-show="state.open" class="list">
+    <div v-show="state.open" class="sublist">
       <slot>
       </slot>
     </div>
@@ -81,17 +99,18 @@
         {{ name }}
       </div>
 
-      <sl-icon v-if="state.slotitems"
-               name="chevron-left"
-               class="arrow"
-               @click.stop="openGroup"
-               :class="{'is-open':state.open}" sprite>
-      </sl-icon>
+      <div v-if="state.slotitems"
+           class="arrow"
+           @click.stop="openGroup"
+            :class="{'is-open':state.open}">
+          <sl-icon name="chevron-right" sprite>
+          </sl-icon>
+      </div>
 
 
     </div>
 
-    <div v-show="state.open" class="list">
+    <div v-show="state.open" class="sublist">
       <slot>
       </slot>
     </div>
@@ -259,26 +278,37 @@ export default defineComponent({
   user-select: none;
   border: 0;
   text-align: left;
-  padding: 3px 3.75px;
+  padding: 3px 4px;
   align-items: center;
   align-self: stretch;
   min-height: 35px;
   min-width: 41px;
   justify-content: space-between;
-  gap: 10px;
   border-top: 1px solid var(--sl-color-neutral-300);
   display: grid;
-  grid-template-columns: 41px 1fr auto;
+  grid-template-columns: 51px minmax(0, 1fr) auto auto;
   grid-template-rows: 1fr;
-  grid-column-gap: 10px 0;
   justify-items: center;
   transition: all ease .3s;
+
+  sl-avatar {
+    --size: 2.1em;
+    padding-right: var(--sl-spacing-small);
+  }
 
   &:hover {
     background-color: #fff;
 
     .name {
       color: var(--sl-color-primary-500);
+    }
+
+    .dropdown sl-button{
+      opacity: 1;
+    }
+
+    .arrow{
+      opacity: 1;
     }
   }
 
@@ -303,16 +333,21 @@ export default defineComponent({
 
 sl-icon {
   font-size: 1.5em;
-
-  &.arrow {
-    &.is-open {
-      transform: rotate(-90deg);
-    }
-  }
+  transition: all ease .3s;
 }
 
-sl-avatar {
-  --size: 2.2em;
+.arrow {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 var(--sl-spacing-small) ;
+  font-size: .5em;
+  opacity: .3;
+
+  &.is-open sl-icon{
+    transform: rotate(90deg);
+  }
 }
 
 .icon-wrapper {
@@ -321,6 +356,58 @@ sl-avatar {
 
 sl-avatar::part(base) {
   background-color: var(--sl-color-primary-500)
+}
+
+.dropdown{
+  sl-button{
+    transition: all ease .3s;
+    opacity: .3;
+
+    &::part(base){
+      border: none;
+      background-color: transparent;
+      font-size: .7em;
+    }
+  }
+
+  sl-menu{
+    padding: 0;
+  }
+
+  sl-menu-item{
+    sl-icon{
+      font-size: .9em;
+      margin-right: var(--sl-spacing-small);
+    }
+
+    &::part(base){
+      padding: var(--sl-spacing-x-small) var(--sl-spacing-medium);
+      font-size: .9em;
+    }
+
+    &::part(checked-icon){
+      display: none;
+    }
+
+    :deep(.menu-item__chevron){
+      display: none;
+    }
+  }
+}
+
+.sublist{
+  .item {
+    background-color: #fff;
+    padding-left: var(--sl-spacing-medium);
+
+    sl-avatar {
+      &::part(base) {
+        background-color: transparent;
+        color: var(--sl-color-primary-500);
+        border: 1px solid var(--sl-color-primary-500);
+      }
+    }
+  }
 }
 
 </style>

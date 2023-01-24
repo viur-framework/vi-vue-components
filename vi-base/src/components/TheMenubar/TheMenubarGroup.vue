@@ -70,18 +70,19 @@ export default defineComponent({
 }
 
 .seperator {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    flex: 0 0 auto;
-    padding: 5px 7px;
-    color: #51514e;
-    font-size: .8em;
-    font-weight: 600;
-    background-color: var(--sl-color-neutral-200);
-    border-top: 1px solid var(--sl-color-neutral-300);
-    width: 100%;
-    gap: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex: 0 0 auto;
+  padding: 5px 7px;
+  color: #51514e;
+  font-size: .8em;
+  font-weight: 600;
+  background-color: var(--sl-color-neutral-200);
+  border-top: 1px solid var(--sl-color-neutral-300);
+  width: 100%;
+  gap: 10px;
+  cursor: pointer;
 }
 
 span {

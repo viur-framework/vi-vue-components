@@ -25,3 +25,13 @@ sl-select{
     box-shadow: none;
   }
 }
+
+sl-dialog{
+  &::part(overlay){
+    background-color: rgba(0, 0, 0, .5);
+  }
+
+  &::part(panel){
+    box-shadow: 0 0 10px rgba(0, 0, 0, .4);
+  }
+}
