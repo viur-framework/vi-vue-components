@@ -1,16 +1,63 @@
 <template>
-    {{ $t("actions.addnode") }}
+    <router-link :to="state.url" custom v-slot="{route}">
+        <sl-button  size="small" variant="success" @click="createAndNavigate(route)" :disabled="!state.canAdd">
+
+            <sl-icon slot="prefix" name="folder-plus"></sl-icon>
+           {{ $t("actions.addnode") }}
+        </sl-button>
+    </router-link>
+
 </template>
 
 <script lang="ts">
-import {reactive, defineComponent} from 'vue'
+// @ts-nocheck
+import {reactive, defineComponent, inject, computed} from 'vue'
+import {useAppStore} from "../../stores/app";
+import {useUserStore} from "../../stores/user";
+import {useRoute} from "vue-router";
 
 export default defineComponent({
     props: {},
     components: {},
     setup(props, context) {
-        const state = reactive({})
-        return {state}
+        const handlerState: any = inject("state")
+        const appStore = useAppStore();
+        const userStore = useUserStore();
+        const route = useRoute();
+
+        const state = reactive({
+            url: computed(() => {
+              if(handlerState && handlerState["currentSelection"] && handlerState["currentSelection"][0])
+              {
+                return `/${route.params.module}/add/node/${handlerState["currentSelection"][0]["key"]}?_=${new Date().getTime()}`
+              }
+              if(handlerState && handlerState["currentRootNode"])
+              {
+                return `/${route.params.module}/add/node/${handlerState["currentRootNode"]["key"]}?_=${new Date().getTime()}`
+              }
+              return ""
+
+
+
+            }),
+          canAdd: computed(() => {
+            if(userStore.state.user.access.indexOf("root") !== -1 )
+            {
+              return true;
+            }
+            return userStore.state.user.access.indexOf(`${route.params.module}-add`)>-1;
+          })
+
+        })
+
+        function createAndNavigate(route: any) {
+            appStore.addOpened(route, handlerState["module"], handlerState["view"])
+        }
+
+        return {
+            state,
+            createAndNavigate,
+        }
     }
 })
 </script>

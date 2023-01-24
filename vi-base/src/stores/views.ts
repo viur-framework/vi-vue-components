@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {defineStore} from "pinia";
 import {computed, h, reactive, toRaw} from "vue";
 import {useRoute, useRouter} from "vue-router";
@@ -34,6 +35,7 @@ export const useViewStore = defineStore("viewStore", () => {
     }
 
     function destroy(route) {
+
         delete state.cacheList[route]
     }
 

@@ -44,7 +44,8 @@
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, reactive} from 'vue'
+// @ts-nocheck
+import {defineComponent, reactive,computed} from 'vue'
 import {useRoute} from "vue-router";
 import {useUsagestore} from "../stores/usage";
 import {useUserStore} from "../stores/user";

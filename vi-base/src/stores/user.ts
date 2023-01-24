@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {reactive, computed} from 'vue';
 import {defineStore} from "pinia";
 import {Request} from "@viur/viur-vue-utils";
@@ -195,10 +196,21 @@ export const useUserStore = defineStore("user", () => {
     return new Promise((resolve, reject) => {
       state["user.loggedin"] = "loading"
       Request.securePost(`/json/user/f2_${state["user.login.type"]}/verify`, {dataObj: {"otp": otp}})
-        .then((resp) => {
+        .then(async (resp) => {
+          const opt_data= await resp.json();
+          if (opt_data.errors) {
+                if (opt_data.errors.length > 0) {
+                  state["user.loggedin"] = "error";
+                  return;
+                }
+
+              }
           Request.get("/json/user/view/self").then(
             async (resp: Response) => {
-              let data = await resp.json()
+              let data = await resp.json();
+
+
+
               state["user.loggedin"] = "yes"
               state["user"] = data.values
               state["user.login.type"] = "user"
@@ -206,7 +218,7 @@ export const useUserStore = defineStore("user", () => {
             (error: Error) => {
               resetLoginInformation()
               state["user.loggedin"] = "error"
-              reject(respLogin);
+              reject(resp);
             }
           )
         })

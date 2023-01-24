@@ -1,16 +1,10 @@
 <template>
   <handler-bar :module="module"></handler-bar>
-  <!--<sl-table rowselect moveablecolumns height="800px"
-            :structure.prop="currentlist.structure"
-            :skellist.prop="currentlist.state.skellist"
-            @sl-selectionChanged="entrySelected"
-  >
-
-  </sl-table>-->
 
   <sl-details open summary="Info" v-if="modulesStore.state.loaded && modulesStore.state.modules[module]['help_text']">
     {{modulesStore.state.modules[module]["help_text"]}}
   </sl-details>
+
   <sl-table moveablecolumns
             :rowselect="true"
             :structure="currentlist.structure"
@@ -19,7 +13,7 @@
             :editabletable="state.editableTable"
             @sl-selectionChanged="entrySelected"
             @sl-dblclick="openEditor"
-            height="500px"
+            height="100%"
 
   >
 
@@ -131,8 +125,12 @@ export default defineComponent({
 </script>
 
 <style scoped lang="less">
-sl-table{
-  &::part(base){
+sl-table {
+  flex: 1;
+  display: flex;
+  height: 0;
+
+  &::part(base) {
     margin-top: 0;
     border: none;
     border-radius: 0;

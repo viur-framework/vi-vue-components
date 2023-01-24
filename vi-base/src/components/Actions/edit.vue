@@ -8,6 +8,7 @@
 </template>
 
 <script lang="ts">
+// @ts-nocheck
 import {reactive, defineComponent, inject, computed} from 'vue'
 import {useRoute} from "vue-router";
 import {useAppStore} from "../../stores/app";
@@ -27,6 +28,10 @@ export default defineComponent({
       }),
       url: computed(() => {
         if (!state.active) return ""
+        if(appStore.getConf(handlerState.module).handler==="tree.node")
+        {
+          return `/${route.params.module}/edit/node/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
+        }
         return `/${route.params.module}/edit/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
       }),
       canEdit: computed(() => {

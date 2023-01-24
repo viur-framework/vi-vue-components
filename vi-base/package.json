@@ -4,7 +4,7 @@
   "version": "0.5.0",
   "scripts": {
     "dev": "vite --port=8082",
-    "build": "vue-tsc --noEmit && vite build",
+    "build": "vue-tsc --noEmit &&  vite build --sourcemap",
     "build-watch": "vue-tsc --noEmit && vite build --watch",
     "check": "vue-tsc --noEmit",
     "preview": "vite preview",

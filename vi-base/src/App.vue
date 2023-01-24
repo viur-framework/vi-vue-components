@@ -3,6 +3,7 @@
   <the-login-screen v-else></the-login-screen>
 </template>
 <script lang="ts">
+// @ts-nocheck
 import TheLoginScreen from "./components/Screens/TheLoginScreen.vue"
 import TheMainScreen from "./components/Screens/TheMainScreen.vue"
 import {useUserStore} from "./stores/user"

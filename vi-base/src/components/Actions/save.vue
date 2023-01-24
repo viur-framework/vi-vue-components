@@ -56,8 +56,14 @@ export default defineComponent({
         obj[[key]] = formData.getAll(key);
 
       }
-      let url = `/vi/${handlerState.module}/${handlerState.action==="clone"?"add": handlerState.action}`;
+      let url = `/vi/${handlerState.module}/${handlerState.action==="clone"?"edit":handlerState.action}`;
 
+      if(handlerState.skeltype==="node" && handlerState.action=="add")
+      {
+        obj["skelType"]="node";
+        obj["node"]=handlerState.skelkey;
+
+      }
       if (handlerState.action === "edit") {
         url += `/${handlerState.skelkey}`
       }
@@ -73,7 +79,14 @@ export default defineComponent({
             messageStore.addMessage("success", `Edit`, "Entry edited successfully");
             if (props.close) {
               appStore.removeOpened(route.fullPath);
-              router.push({name: "list"}); //fixme reload List
+              if(handlerState.skeltype==="node")
+              {
+                 router.push({name: "hierarchy"});//fixme reload hierarchy
+              }
+              else
+              {
+                 router.push({name: "list"});//fixme reload List
+              }
             }
           }
         }
@@ -84,7 +97,15 @@ export default defineComponent({
             messageStore.addMessage("success", `Add`, "Added edited successfully");
             if (props.close) {
               appStore.removeOpened(route.fullPath);
-              router.push({name: "list"});//fixme reload List
+              if(handlerState.skeltype==="node")
+              {
+                 router.push({name: "hierarchy"});//fixme reload hierarchy
+              }
+              else
+              {
+                 router.push({name: "list"});//fixme reload List
+              }
+
             }
           }
         }

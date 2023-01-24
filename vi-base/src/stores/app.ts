@@ -61,8 +61,10 @@ function adminTreeLayer(itemList: Array<ModuleInfo>, parent: ModuleInfo): Array<
             conf["url"] = {"path": `/${conf["module"]}/list/${group}`}
         } else if (conf["handler"] === "list" || conf["handler"].startsWith("list.")) {
             conf["url"] = {"path": `/${conf["module"]}/list`}
-        } else if (conf["handler"] === "tree" || conf["handler"].startsWith("tree.")) {
+        } else if (conf["handler"] === "tree" ) {
             conf["url"] = {"path": `/${conf["module"]}/tree`}
+        } else if (conf["handler"] === "tree.node" ) {
+            conf["url"] = {"path": `/${conf["module"]}/tree.node`}
         } else if (conf["handler"] === "singleton" || conf["handler"].startsWith("singleton.")) {
             conf["url"] = {"path": `/${conf["module"]}`}
         }
