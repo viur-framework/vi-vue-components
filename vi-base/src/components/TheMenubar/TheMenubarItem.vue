@@ -30,9 +30,9 @@
       <div class="space" v-else></div>
 
       <sl-dropdown class="dropdown">
-        <sl-button slot="trigger">
-          <sl-icon slot="prefix" name="three-dots" sprite></sl-icon>
-        </sl-button>
+        <sl-icon-button slot="trigger" name="three-dots">
+
+        </sl-icon-button>
         <sl-menu>
           <sl-menu-item>
             <sl-icon slot="prefix" name="heart" sprite></sl-icon>
@@ -359,15 +359,11 @@ sl-avatar::part(base) {
 }
 
 .dropdown{
-  sl-button{
+  sl-icon-button{
     transition: all ease .3s;
     opacity: .3;
+    rotate:90deg;
 
-    &::part(base){
-      border: none;
-      background-color: transparent;
-      font-size: .7em;
-    }
   }
 
   sl-menu{

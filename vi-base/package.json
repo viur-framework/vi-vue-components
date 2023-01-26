@@ -15,7 +15,7 @@
     "src/*"
   ],
   "dependencies": {
-    "@viur/viur-shoelace": "^2.0.0-beta.88-viur-21",
+    "@viur/viur-shoelace": "^2.0.0-viur-0.5.0",
     "@viur/viur-vue-utils": "^0.5.15",
     "logics-js": "^0.3.4",
     "pinia": "^2.0.29",
@@ -26,6 +26,7 @@
     "vue-router": "^4.1.6"
   },
   "devDependencies": {
+    "@esbuild/linux-x64": "^0.17.4",
     "@vitejs/plugin-vue": "^4.0.0",
     "@vitest/ui": "^0.27.2",
     "@vue/test-utils": "^2.2.7",
