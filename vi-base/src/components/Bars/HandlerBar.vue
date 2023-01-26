@@ -5,7 +5,7 @@
                  :is="`${action}_action`"
                  size="small"
       >
-        <custom_action></custom_action>
+        <custom_action :name="action"></custom_action>
       </component>
       <space_action v-if="index<(state.actions['default'].length-1)"></space_action>
     </template>
@@ -90,7 +90,6 @@ export default defineComponent({
               }
             }
           }
-
 
           confActions = confActions.split("\n")
 

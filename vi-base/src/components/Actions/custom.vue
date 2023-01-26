@@ -1,5 +1,5 @@
 <template>
-  <template v-if="state.access">
+  <template v-if="state.access && state.info">
     <sl-button :disabled="state.disabled" size="small" @click="buttonClicked">
       <sl-icon slot="prefix" :name="state.info['icon'].replace('icon-','')" :library="state.info['library']" sprite
                v-once></sl-icon>
@@ -32,12 +32,10 @@ export default defineComponent({
     const state = reactive({
       info: computed(() => {
         let conf = appStore.state["vi.modules"][handlerState["module"]]
-        if(!conf["customActions"]) return null
-
         if (handlerState["view"]) {
           conf = conf["children"][handlerState["view"]]
         }
-        return conf["customActions"][props.name]
+        return conf["customActions"]?.[props.name]
       }),
       access: computed(() => {
         let access = false
