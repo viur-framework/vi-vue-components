@@ -12,6 +12,7 @@
 <script lang="ts">
 import {reactive, defineComponent} from 'vue'
 import {useAppStore} from "../../stores/app";
+import {useRoute} from "vue-router";
 export default defineComponent({
   props: {
     icon:String,
@@ -26,6 +27,7 @@ export default defineComponent({
   setup(props, context) {
     const state = reactive({})
     const appStore = useAppStore()
+    const route = useRoute()
 
     function openTab(){
       appStore.addOpened(props.to, props.to.params["module"], props.to.query["view"])

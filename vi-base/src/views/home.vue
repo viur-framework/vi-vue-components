@@ -2,11 +2,11 @@
   <div class="home">
     <h1 class="main-headline">Hallo {{ state.name }}</h1>
 
-    <template v-if="useageStore.state.favorites.length>0">
+    <template v-if="userStore.state.favoriteModules.length>0">
 
       <h2 class="headline">Deine Favoriten</h2>
       <div class="home-grid">
-        <widget-small v-for="i in useageStore.state.favorites"
+        <widget-small v-for="i in userStore.state.favoriteModules"
                       :icon="i['icon']"
                       :library="i['library']"
                       :to="i['to']"
@@ -17,37 +17,26 @@
     </template>
     <br>
     <br>
-    <template v-if="useageStore.state.last.length>0">
+    <template v-if="userStore.state.lastActions.length>0">
       <h2 class="headline">Zuletzt geöffnet</h2>
 
       <div class="home-grid">
-        <widget-small v-for="i in useageStore.state.last"
-                      :icon="i['icon']"
-                      :library="i['library']"
-                      :to="i['to']"
+        <widget-small v-for="i in userStore.state.lastActions"
+                      :icon="i['icon']?.split('___')[1]"
+                      :library="i['library']?.split('___')[0]"
+                      :to="i['url']"
         >
           {{ i['name'] }}
         </widget-small>
       </div>
     </template>
   </div>
-<router-link :to="action.url" v-for="action in userStore.state.lastActions">
-<sl-avatar :initials="action.icon!==''?'':createInitials(action.name)">
-  <sl-icon slot="icon"
-           :name="action.icon.split('___')[1]"
-           :library="action.icon.split('___')[0]"
-           v-if="action.icon.length>0"></sl-icon>
-</sl-avatar>
-
-{{ `(${new Date(action.time).toLocaleString()}) ${action.name}` }}
-</router-link>
 </template>
 
 <script lang="ts">
 // @ts-nocheck
 import {defineComponent, reactive,computed} from 'vue'
 import {useRoute} from "vue-router";
-import {useUsagestore} from "../stores/usage";
 import {useUserStore} from "../stores/user";
 import TheMenubarItem from "../components/TheMenubar/TheMenubarItem.vue";
 import Utils from "../utils";
@@ -57,7 +46,6 @@ export default defineComponent({
   props: {},
   components: {WidgetSmall, TheMenubarItem},
   setup(props, context) {
-    const useageStore = useUsagestore()
     const route = useRoute();
     const userStore = useUserStore();
     const state = reactive({
@@ -83,7 +71,6 @@ export default defineComponent({
       state,
       route,
       userStore,
-      useageStore,
       createInitials
     }
   }

@@ -5,7 +5,7 @@ import {defineStore, StoreDefinition} from "pinia";
 import {useRouter} from "vue-router";
 import {useViewStore} from "./views";
 import {useUserStore} from "./user";
-import {useUsagestore} from "./usage";
+
 
 export interface ModuleInfo {
     name: string,
@@ -114,7 +114,6 @@ function flattenTree(tree) {
 
 export const useAppStore = defineStore("app", () => {
     const viewStore = useViewStore()
-    const useageStore = useUsagestore()
     const router = useRouter()
     const state = reactive({
         //vi section
@@ -265,9 +264,6 @@ export const useAppStore = defineStore("app", () => {
             "closeable":true
         }
 
-
-        useageStore.addToLast(entry)
-
         let tabNames = state["handlers.opened"].map(e=>e["url"]).filter(name => name.startsWith(route.path+"?_="))
 
         if(state["handlers.opened.max"]>tabNames.length){
@@ -287,6 +283,7 @@ export const useAppStore = defineStore("app", () => {
         let idx = state["handlers.opened"].findIndex(e=>e["url"]===url)
         if(idx===state["handlers.active"]){
              router.push(state["handlers.opened"][idx-1]["to"]).then(() => {
+                 console.log(state["handlers.opened"])
                 state["handlers.opened"].splice(idx, 1)
                 viewStore.destroy(url)
                 state["handlers.active"] = idx-1

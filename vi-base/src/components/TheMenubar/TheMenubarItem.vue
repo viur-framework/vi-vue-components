@@ -34,7 +34,7 @@
 
         </sl-icon-button>
         <sl-menu>
-          <sl-menu-item>
+          <sl-menu-item @click="toogleFavItem()">
             <sl-icon slot="prefix" name="heart" sprite></sl-icon>
             Favorisieren
           </sl-menu-item>
@@ -209,9 +209,10 @@ export default defineComponent({
     }
 
     function toogleFavItem() {
-
-
-      let configObj = JSON.parse(userStore.state.user["adminconfig"]);
+      let configObj = null
+      if (userStore.state.user["adminconfig"]){
+        configObj = JSON.parse(userStore.state.user["adminconfig"]);
+      }
       if (configObj === null) {
         configObj = {"favoriteModules": []};
       }

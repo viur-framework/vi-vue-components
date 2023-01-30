@@ -285,7 +285,7 @@ export const useUserStore = defineStore("user", () => {
       const conf = appStore.getConfByRoute(route);
       if (!conf) return;
       const action = {
-        "url": route.fullPath,
+        "url": route,
         "module": conf["module"],
         "time": new Date().getTime(),
         "icon": conf["icon"],
