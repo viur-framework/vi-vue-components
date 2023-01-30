@@ -1,6 +1,6 @@
 <template>
-
-  <div class="topbar">
+  <sl-split-panel class="split" primary="end">
+  <div class="topbar" slot="start" >
     <div class="top-headline">
       Neuer {{state.conf['name']}} Eintrag
       <span v-if="state.skel['name']">: {{state.skel['name']}}</span>
@@ -45,6 +45,12 @@
     </sl-details>
 
   </div>
+
+    <div slot="end">
+      END PANEL
+    </div>
+
+    </sl-split-panel>
 
 </template>
 
@@ -213,6 +219,15 @@ export default defineComponent({
 </script>
 
 <style scoped lang="less">
+
+.split{
+  flex: 1;
+  height: 0;
+      &::part(panel){
+      display: flex;
+      flex-direction: column;
+    }
+}
 
 .topbar {
   display: flex;

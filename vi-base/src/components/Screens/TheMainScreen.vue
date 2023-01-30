@@ -82,7 +82,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="less">
-sl-split-panel {
+.split-panel {
     --min: 300px;
     --max: 40%;
     flex: 1;
