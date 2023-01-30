@@ -5,6 +5,7 @@ import {defineStore, StoreDefinition} from "pinia";
 import {useRouter} from "vue-router";
 import {useViewStore} from "./views";
 import {useUserStore} from "./user";
+import {destroyStore} from "@viur/viur-vue-utils/utils/handlers";
 
 
 export interface ModuleInfo {
@@ -219,6 +220,7 @@ export const useAppStore = defineStore("app", () => {
     //ts-ignore
 
     const conf = getConfByRoute(route)
+    if (!conf) return null
 
     let name: string = `module___${conf.module}`
     if (conf.view) {
@@ -295,6 +297,18 @@ export const useAppStore = defineStore("app", () => {
         }else if (idx>state["handlers.active"]){
             state["handlers.opened"].splice(idx, 1)
             viewStore.destroy(url)
+        }
+
+        const conf = getConfByRoute(route)
+
+        let findStorename = `module___${route.params.module}`
+        if (Object.keys(conf).includes("view_number")){
+            findStorename +=`___${conf['view_number']}`
+        }
+        findStorename+= `___${route.query["_"]}`
+        console.log(findStorename)
+        if (Object.keys(state["stores.map"]).includes(findStorename)){
+            destroyStore(state["stores.map"][findStorename])
         }
 
     }

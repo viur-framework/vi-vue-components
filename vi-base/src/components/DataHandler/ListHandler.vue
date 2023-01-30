@@ -29,6 +29,7 @@ import {useAppStore} from '../../stores/app'
 import {useMessageStore} from "../../stores/message";
 import router from "../../routes";
 import {useModulesStore} from "../../stores/modules";
+import {useRoute} from "vue-router";
 
 export default defineComponent({
   props: {
@@ -42,6 +43,7 @@ export default defineComponent({
   components: {HandlerBar},
   setup(props, context) {
     const appStore = useAppStore();
+    const route = useRoute()
     const messageStore = useMessageStore();
     const modulesStore = useModulesStore();
 
@@ -51,6 +53,8 @@ export default defineComponent({
         if (props.view) {
           name += `___${props.view}`
         }
+        name+= `___${route.query["_"]}`
+
         return name
       }),
       currentSelection: null,
