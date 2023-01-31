@@ -2,7 +2,7 @@
   <sl-split-panel class="split" primary="end">
   <div class="topbar" slot="start" >
     <div class="top-headline">
-      Neuer {{state.conf['name']}} Eintrag
+       {{state.conf?`Neuer ${state.conf['name']} Eintrag`:""}}
       <span v-if="state.skel['name']">: {{state.skel['name']}}</span>
       <!---{{ module }}
       {{ action }}
