@@ -1,57 +1,77 @@
 <template>
-  <sl-split-panel class="split" primary="end">
-  <div class="topbar" slot="start" >
-    <div class="top-headline">
-      Neuer {{state.conf['name']}} Eintrag
-      <span v-if="state.skel['name']">: {{state.skel['name']}}</span>
-      <!---{{ module }}
-      {{ action }}
-      {{ group }}
-      {{ skelkey }}
-      {{ skeltype }}--->
-    </div>
-
-    <entry-bar :module="module" :action="action" :skelkey="skelkey" skeltype="skeltype"
-    ></entry-bar>
-  </div>
-  <sl-details open summary="Info"
-              v-if="modulesStore.state.loaded && modulesStore.state.modules[module][`help_text_${action}`]">
-    {{ modulesStore.state.modules[module][`help_text_${action}`] }}
-  </sl-details>
-  <div class="scroll-content">
-    <template v-for="(group,key) in state.formGroups">
-      <sl-details :summary="group['name']" v-show="group['groupVisible']" open>
-        <template v-for="bone in group['bones']">
-          <sl-bone
-            :boneName="bone['boneName']"
-            :boneStructure="state.structure[bone['boneName']]"
-            :boneValue="toRaw(state.skel[bone['boneName']])"
-            renderType="edit"
-            :renderLabel="true"
-            @sl-boneChange="updateValue"
-            :errors="state.errors"
-            v-if="state.structure[bone['boneName']]['visible']"
-          >
-          </sl-bone>
-        </template>
+  <sl-split-panel class="split" primary="start" position="100">
+    <div slot="start"  class="scroll-content">
+      <div class="topbar">
+        <div class="top-headline">
+          <span v-if="['clone', 'add'].includes(action)">Neuer</span>
+          <span v-else-if="['edit'].includes(action)">Bearbeite</span>
+          {{ state.conf?.['name'] }} Eintrag
+          <span v-if="state.skel['name']">: {{ state.skel['name'] }}</span>
+          <!---{{ module }}
+          {{ action }}
+          {{ group }}
+          {{ skelkey }}
+          {{ skeltype }}--->
+        </div>
+        <entry-bar :module="module" :action="action" :skelkey="skelkey" skeltype="skeltype"
+        ></entry-bar>
+      </div>
+      <sl-details open summary="Info"
+                  v-if="modulesStore.state.loaded && modulesStore.state.modules[module][`help_text_${action}`]">
+        {{ modulesStore.state.modules[module][`help_text_${action}`] }}
       </sl-details>
-    </template>
+      <div class="scroll-content">
+        <template v-for="(group,key) in state.formGroups">
+          <sl-details :summary="group['name']" v-show="group['groupVisible']" open>
+            <template v-for="bone in group['bones']">
+              <sl-bone
+                :boneName="bone['boneName']"
+                :boneStructure="state.structure[bone['boneName']]"
+                :boneValue="toRaw(state.skel[bone['boneName']])"
+                renderType="edit"
+                :renderLabel="true"
+                @sl-bone-change="updateValue"
+                @sl-bone-init="updateValue"
+                @sl-bone-relational-select="relationSelection(bone)"
+                :errors="state.errors"
+                :in-vi="true"
+                v-if="state.structure[bone['boneName']]['visible']"
+              >
+              </sl-bone>
+            </template>
+          </sl-details>
+        </template>
 
-    <sl-details summary="DEBUG: Formdata">
-      {{ state.formValues }}
-    </sl-details>
-    <sl-details summary="DEBUG: Errors">
-      {{ state.errors }}
-    </sl-details>
+        <sl-details summary="DEBUG: Formdata">
+          {{ state.formValues }}
+        </sl-details>
+        <sl-details summary="DEBUG: Errors">
+          {{ state.errors }}
+        </sl-details>
 
-  </div>
-
+      </div>
+    </div>
     <div slot="end">
-      END PANEL
+      <div class="topbar">
+        <div class="top-headline">
+          Relationsauswahl:
+        </div>
+      </div>
+
+
+      <list-handler
+        :module="module"
+        :group="group"
+    >
+
+    </list-handler>
+
+
+      <sl-button @click="" variant="success">{{ $t("relation.select") }}</sl-button>
+      <sl-button @click="" variant="danger" outline>{{ $t("relation.abort") }}</sl-button>
     </div>
 
-    </sl-split-panel>
-
+  </sl-split-panel>
 </template>
 
 <script lang="ts">
@@ -63,6 +83,7 @@ import {useRoute} from "vue-router";
 import bone from "../../components/Bones/edit/bone.vue";
 import EntryBar from "../Bars/EntryBar.vue";
 import {useModulesStore} from "../../stores/modules";
+import ListHandler from '../../components/DataHandler/ListHandler.vue'
 import app from "../../App.vue";
 
 export default defineComponent({
@@ -78,7 +99,7 @@ export default defineComponent({
 
 
   },
-  components: {EntryBar, bone},
+  components: {EntryBar, bone, ListHandler},
   setup(props, context) {
     const appStore = useAppStore();
     const route = useRoute();
@@ -131,8 +152,7 @@ export default defineComponent({
       group: props.group,
       skelkey: props.skelkey,
       skeltype: props.skeltype,
-
-
+      relation_opened:true
     })
     provide("state", state)
 
@@ -147,20 +167,19 @@ export default defineComponent({
     }
 
     function fetchData() {
-      let url = `/vi/${props.module}/${props.action==="clone"?"edit":props.action}`;
+      let url = `/vi/${props.module}/${props.action === "clone" ? "edit" : props.action}`;
 
       if (props.group) url + `/${props.group}`
 
       if (props.action === "edit" || props.action === "clone") {
-        if(state.skeltype==="node")
-        {
-            url += `/node`
+        if (state.skeltype === "node") {
+          url += `/node`
         }
         url += `/${props.skelkey}`
       }
 
       const dataObj = {}
-      if (state.skeltype==="node" && props.action === "add") {
+      if (state.skeltype === "node" && props.action === "add") {
         dataObj["skelType"] = "node"
         dataObj["node"] = props.skelkey
 
@@ -189,30 +208,35 @@ export default defineComponent({
       return widget
     }
 
-    /*
-        function updateValue(name: string, value: any) {
-          state.formValues[name] = value
-        }
-       */
-
     function updateValue(event: Object) {
-
+      console.log(event)
       state.formValues[event.detail.boneName] = event.detail.formValue;
+    }
 
+    function relationSelection(bone){
+      console.log("XXXX")
+      state.relation_opened=true
+    }
+
+    function relation_preventClosing(event){
+      if(event.detail.source==='overlay'){
+        event.preventDefault()
+      }
     }
 
 
     onBeforeMount(() => {
       fetchData()
     })
-
     return {
       state,
       values,
       getWidget,
       updateValue,
       modulesStore,
-      toRaw
+      relationSelection,
+      toRaw,
+      relation_preventClosing
     }
   }
 })
@@ -220,13 +244,15 @@ export default defineComponent({
 
 <style scoped lang="less">
 
-.split{
+.split {
+
   flex: 1;
   height: 0;
-      &::part(panel){
-      display: flex;
-      flex-direction: column;
-    }
+
+  &::part(panel) {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 .topbar {

@@ -32,7 +32,13 @@ export default defineComponent({
         {
           return `/${route.params.module}/edit/node/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
         }
-        return `/${route.params.module}/edit/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
+        if(handlerState.group){
+          return `/${route.params.module}/edit/${handlerState.group}/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
+        }else{
+          return `/${route.params.module}/edit/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
+        }
+
+
       }),
       canEdit: computed(() => {
        if(userStore.state.user.access.indexOf("root") !== -1 )

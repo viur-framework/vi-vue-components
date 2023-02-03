@@ -66,6 +66,8 @@ function adminTreeLayer(itemList: Array<ModuleInfo>, parent: ModuleInfo): Array<
             conf["url"] = {"path": `/${conf["module"]}/tree`}
         } else if (conf["handler"] === "tree.node" ) {
             conf["url"] = {"path": `/${conf["module"]}/tree.node`}
+        } else if (conf["handler"] === "tree.simple.file" ) {
+            conf["url"] = {"path": `/${conf["module"]}/tree`}
         } else if (conf["handler"] === "singleton" || conf["handler"].startsWith("singleton.")) {
             conf["url"] = {"path": `/${conf["module"]}`}
         }
@@ -226,6 +228,7 @@ export const useAppStore = defineStore("app", () => {
     if (conf.view) {
       name += `___${conf.view}`
     }
+    name+= `___${route.query["_"]}`
     return state["stores.map"][name];
 
   }

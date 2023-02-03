@@ -4,7 +4,6 @@
   <sl-details open summary="Info" v-if="modulesStore.state.loaded && modulesStore.state.modules[module]['help_text']">
     {{modulesStore.state.modules[module]["help_text"]}}
   </sl-details>
-
   <sl-table moveablecolumns
             :rowselect="true"
             :structure="currentlist.structure"
@@ -14,6 +13,7 @@
             @sl-selectionChanged="entrySelected"
             @sl-dblclick="openEditor"
             height="100%"
+            ref="tableInst"
 
   >
 
@@ -22,7 +22,7 @@
 
 <script lang="ts">
 //@ts-nocheck
-import {reactive, defineComponent, computed, provide, onBeforeMount, onUpdated, onMounted} from 'vue'
+import {reactive, defineComponent, computed, provide, onBeforeMount, onUpdated, onMounted,ref} from 'vue'
 import HandlerBar from "../../components/Bars/HandlerBar.vue";
 import {ListRequest} from '@viur/viur-vue-utils'
 import {useAppStore} from '../../stores/app'
@@ -47,6 +47,8 @@ export default defineComponent({
     const messageStore = useMessageStore();
     const modulesStore = useModulesStore();
 
+    const tableInst = ref(null)
+
     const state = reactive({
       storeName: computed(() => {
         let name: string = `module___${props.module}`
@@ -62,7 +64,7 @@ export default defineComponent({
       group: computed(() => props.group),
       view: computed(() => props.view),
       editableTable: false,
-
+      tableInst:computed(()=>tableInst)
     })
     provide("state", state)
     const currentlist = ListRequest(state.storeName, {
@@ -121,7 +123,8 @@ export default defineComponent({
       currentlist,
       entrySelected,
       openEditor,
-      modulesStore
+      modulesStore,
+      tableInst
 
     }
   }
@@ -132,7 +135,7 @@ export default defineComponent({
 sl-table {
   flex: 1;
   display: flex;
-  height: 0;
+  //height: 0;
 
   &::part(base) {
     margin-top: 0;

@@ -24,11 +24,14 @@ export default defineComponent({
         const appStore = useAppStore();
         const userStore = useUserStore();
 
-        console.log(userStore.state.user)
         const route = useRoute()
         const state = reactive({
             url: computed(() => {
-                return `/${route.params.module}/add?_=${new Date().getTime()}`
+                if(handlerState.group){
+                  return `/${route.params.module}/add/${handlerState.group}?_=${new Date().getTime()}`
+                }else{
+                  return `/${route.params.module}/add?_=${new Date().getTime()}`
+                }
             }),
           canAdd: computed(() => {
             if(userStore.state.user.access.indexOf("root") !== -1 )

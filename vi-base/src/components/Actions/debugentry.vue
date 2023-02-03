@@ -6,7 +6,7 @@
 
   <teleport v-if="state.opened" to="#dialogs" :disabled="!state.opened">
     <sl-drawer open @sl-after-hide="crossClicked">
-
+      <vue-json-pretty :data="handlerState.skel"></vue-json-pretty>
     </sl-drawer>
   </teleport>
 </template>
@@ -17,10 +17,12 @@ import {reactive, defineComponent, inject, computed} from 'vue'
 import {useRoute} from "vue-router";
 import {useAppStore} from "../../stores/app";
 import {useUserStore} from "../../stores/user";
+import VueJsonPretty from 'vue-json-pretty';
+import 'vue-json-pretty/lib/styles.css';
 
 export default defineComponent({
   props: {},
-  components: {},
+  components: {VueJsonPretty},
   setup(props, context) {
     const handlerState: any = inject("state")
     const appStore = useAppStore();

@@ -2,11 +2,11 @@
   <div class="home">
     <h1 class="main-headline">Hallo {{ state.name }}</h1>
 
-    <template v-if="userStore.state.favoriteModules.length>0">
+    <template v-if="userStore.favoriteModules?.length>0">
 
       <h2 class="headline">Deine Favoriten</h2>
       <div class="home-grid">
-        <widget-small v-for="i in userStore.state.favoriteModules"
+        <widget-small v-for="i in userStore.favoriteModules"
                       :icon="i['icon']"
                       :library="i['library']"
                       :to="i['to']"

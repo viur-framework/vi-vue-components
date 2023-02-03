@@ -22,7 +22,7 @@
 
 <script lang="ts">
 //@ts-nocheck
-import {reactive, defineComponent} from 'vue'
+import {reactive, defineComponent, inject} from 'vue'
 import {useAppStore} from "../../stores/app";
 import {useRoute} from "vue-router";
 
@@ -31,6 +31,7 @@ export default defineComponent({
   props: {},
   components: {},
   setup(props, context) {
+    const handlerState: any = inject("state")
     const state = reactive({structure: {}});
     const appStore = useAppStore()
     const route = useRoute();
@@ -39,13 +40,17 @@ export default defineComponent({
     function openSelectDialog() {
       let store = appStore.getListStoreByRoute(route);
       const dialog = document.getElementById("dialog-selectfields");
+      console.log(store)
       state.structure = store.structure;
       dialog.show();
     }
 
     function visibleChange(boneName) {
-
-      //state.structure[[boneName]]["visible"] = !state.structure[[boneName]]["visible"];//TODO Comunicate with the list
+      let tbl = handlerState.tableInst
+      let column = tbl._value.tableInstance.getColumns().filter(i=>i["_column"]["field"]===boneName)
+      if (column.length >0 ){
+        column[0].toggle();
+      }
     }
 
     function selectall() {

@@ -54,6 +54,12 @@ export default defineComponent({
           "default": [["add", "selectfields"], ["setamount", "reload"], ["overlay", "filter", "edittable"]],
           "entry": [["edit", "clone", "delete"], ["preview"]]
         }
+
+        const hierarchyActions = {
+          "default": [["addnode","selectfields","rootnodelist"], ["reload", "setamount", "overlay"]],
+          "entry": [["edit", "clone", "delete"], ["preview"]]
+        }
+
         const treeActions = {
           "default": [["addnode", "add", "selectfields","rootnodelist"], ["reload", "setamount", "overlay"]],
           "entry": [["edit", "clone", "delete"], ["preview"]]
@@ -68,7 +74,9 @@ export default defineComponent({
 
         if (!conf) return actions;
 
-        if (conf["handler"].startsWith("tree")) {
+        if (conf["handler"].startsWith("tree.node")) {
+          actions = {...hierarchyActions}
+        }else if (conf["handler"].startsWith("tree")) {
           actions = {...treeActions}
         }
 

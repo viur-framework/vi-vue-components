@@ -1,22 +1,6 @@
 <template>
     <handler-bar :module="module"></handler-bar>
-    <sl-split-panel position-in-pixels="300" snap="300px">
-        <sl-tree slot="start"
-                 v-if="state.currentRootNode"
-                 @sl-selection-change="changeParentEntry">
-
-            <tree-layer :module="module" :nodes="[state.currentRootNode]"></tree-layer>
-        </sl-tree>
-
-        <sl-table slot="end"
-                  rowselect moveablecolumns moveablerows height="100%"
-                  :structure.prop="currentlistleafs.structure"
-                  :skellist.prop="currentlistleafs.state.skellist"
-                  @sl-selectionChanged="entrySelected"
-        >
-
-        </sl-table>
-    </sl-split-panel>
+    <file-browser :rootnode="state.currentRootNode" module="module"></file-browser>
 </template>
 
 <script lang="ts">
@@ -26,7 +10,7 @@ import HandlerBar from "../../components/Bars/HandlerBar.vue";
 import {ListRequest} from '@viur/viur-vue-utils'
 import {useAppStore} from '../../stores/app'
 import {Request} from "@viur/viur-vue-utils";
-import TreeLayer from "../../components/Tree/TreeLayer.vue";
+import FileBrowser from '../../components/Tree/FileBrowser.vue';
 
 export default defineComponent({
     props: {
@@ -36,7 +20,7 @@ export default defineComponent({
         },
         view: null
     },
-    components: {TreeLayer, HandlerBar},
+    components: {FileBrowser, HandlerBar},
     setup(props, context) {
         const appStore = useAppStore()
 

@@ -1,0 +1,136 @@
+<template>
+  <tr class="noderow"
+      @click="changeParentEntry(idx)"
+      :draggable="treeState.dragging"
+      @dragstart="tree.onDragStart($event, idx)"
+      @dragenter.prevent="tree.onDragEnter($event, idx)"
+      @dragover.prevent="tree.onDragOver($event, idx)"
+      @dragleave="tree.onDragLeave($event, idx)"
+      @drop.stop="tree.onDrop($event, idx)"
+      :class="{'dropin':state.currentEntry['_isover'] && state.currentEntry['_drop']==='in',
+             'dropafter':state.currentEntry['_isover'] && state.currentEntry['_drop']==='after',
+             'dropbefore':state.currentEntry['_isover'] && state.currentEntry['_drop']==='before'
+      }"
+  >
+    <td>
+      <div class="folder">
+        <sl-icon name="folder" sprite></sl-icon>
+        <span class="filename" v-html="skel['name']"></span>
+      </div>
+    </td>
+    <td @click="changeParentEntry(idx)">
+      <sl-format-date year="numeric" month="numeric" day="2-digit" :date="skel['creationdat']"></sl-format-date>
+    </td>
+    <td @click="changeParentEntry(idx)">
+      <sl-format-date year="numeric" month="numeric" day="2-digit" :date="skel['changedate']"></sl-format-date>
+    </td>
+  </tr>
+</template>
+
+<script>
+import {reactive, defineComponent, onMounted, inject, computed} from 'vue'
+import useTree from "./tree";
+import {Request} from "@viur/viur-vue-utils";
+
+export default defineComponent({
+  props: {
+    module: {
+      type: String,
+      required: true
+    },
+    skel: {
+      type: Object
+    },
+    idx:{
+      type:Number
+    },
+    path:{
+      type:Array
+    }
+  },
+  components: {},
+  setup(props, context) {
+    const treeState = inject("state")
+    const state = reactive({
+      currentEntry: computed(()=>{
+        return tree.EntryFromPath(props.path)
+      }),
+    })
+
+    //folder navigation
+    function changeParentEntry(idx) {
+      treeState.selectedPath.push(idx)
+      treeState.selected_leaf = null
+    }
+
+    const tree = useTree(props.module,treeState,state)
+    return {
+      state,
+      treeState,
+      tree,
+      changeParentEntry
+    }
+  }
+})
+</script>
+
+<style scoped lang="less">
+.folder, .file {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+
+  span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+  }
+
+  sl-icon {
+    margin-right: 10px;
+  }
+}
+
+tr {
+  position: relative;
+  transition: all ease .3s;
+  cursor: pointer;
+
+  &:nth-child(odd) {
+    background-color: var(--sl-color-neutral-100)
+  }
+
+  &:hover {
+    background-color: rgba(22, 159, 172, .25);
+  }
+
+  &.isSelected {
+    color: var(--sl-color-primary-500);
+
+    * {
+      font-weight: 600;
+    }
+  }
+}
+
+td {
+  max-width: 5px;
+  overflow: hidden;
+  word-wrap: break-word;
+  padding: 6px 8px;
+}
+
+.dropin {
+  background-color: red;
+}
+
+.dropafter {
+  background-color: blue;
+}
+
+.dropbefore {
+  background-color: green;
+}
+
+</style>

@@ -23,7 +23,6 @@ import {reactive, defineComponent, computed, provide, onBeforeMount, watch, toRa
 import HandlerBar from "../../components/Bars/HandlerBar.vue";
 import {Request} from '@viur/viur-vue-utils'
 import {useAppStore} from '../../stores/app'
-import TreeLayer from "../../components/Tree/TreeLayer.vue";
 import {useRoute} from "vue-router";
 
 
@@ -35,7 +34,7 @@ export default defineComponent({
     },
     view: null
   },
-  components: {TreeLayer, HandlerBar},
+  components: {HandlerBar},
   setup(props, context) {
     const appStore = useAppStore();
     const route = useRoute();

@@ -44,14 +44,14 @@ const routes = [
     component: singletonview
   },
   {
-    path: '/:module/edit/:skelkey',
+    path: '/:module/edit/:group?/:skelkey',
     name: 'edit',
     meta: {"action": "edit"},
     props: true,
     component: editview
   },
   {
-    path: '/:module/add',
+    path: '/:module/add/:group?',
     name: 'add',
     meta: {"action": "add"},
     props: true,
@@ -72,7 +72,7 @@ const routes = [
     component: editview
   },
   {
-    path: '/:module/clone/:skelkey',
+    path: '/:module/clone/:group?/:skelkey',
     name: 'clone',
     meta: {"action": "clone"},
     props: true,
