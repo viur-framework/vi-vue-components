@@ -1,15 +1,6 @@
 <template>
   <nav>
-    <!--<the-menubar-group :name="$t('sidebar.workspace')">
-        <the-menubar-item v-for="entry in appStore.state['handlers.opened']" closeable
-                          :to="entry['to']"
-                          :name="entry['name']"
-                          :icon="entry['icon']"
-                          :library="entry['library']"
-        >
-        </the-menubar-item>
-    </the-menubar-group>-->
-    <the-menubar-group :name="$t('sidebar.favorites')">
+    <the-menubar-group :name="$t('sidebar.favorites')" v-if="userStore.favoriteModules?.length>0">
       <menu-tree :tree="userStore.favoriteModules"></menu-tree>
     </the-menubar-group>
     <the-menubar-group :name="$t('sidebar.administration')">

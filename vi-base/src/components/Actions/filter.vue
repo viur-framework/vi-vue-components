@@ -8,11 +8,11 @@
       <label>{{ boneName }}</label>
       <sl-select v-if="hasSelector(boneStructure)" :id="boneName+'-selector'"
                  @sl-change="selectorChange" :disabled="state.disabledSelectorCache[boneName]" defaultValue="eq">
-        <sl-menu-item value="eq" selected>==</sl-menu-item> <!--TODO select not work-->
-        <sl-menu-item value="gt">&gt;</sl-menu-item>
-        <sl-menu-item value="ge">&gt;=</sl-menu-item>
-        <sl-menu-item value="lt">&lt;</sl-menu-item>
-        <sl-menu-item value="le">&lt;=</sl-menu-item>
+        <sl-option value="eq">==</sl-option> <!--TODO select not work-->
+        <sl-option value="gt">&gt;</sl-option >
+        <sl-option value="ge">&gt;=</sl-option >
+        <sl-option value="lt">&lt;</sl-option>
+        <sl-option value="le">&lt;=</sl-option >
       </sl-select>
       <sl-bone
         :boneName="boneName"
