@@ -72,6 +72,7 @@ export default defineComponent({
         state.currentNode = data[0];
         const conf = appStore.getConfByRoute(route);
         conf["rootNode"] = data[0];
+        fetchNodes(state.currentRootNode["key"]);
 
       })
     }

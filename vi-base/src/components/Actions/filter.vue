@@ -4,15 +4,18 @@
     {{ $t("actions.filter.text") }}
   </sl-button>
   <sl-drawer :label="$t('actions.filter.text')" id="filter-drawer" style="--size: 30%;">
-    <div v-for="(boneStructure,boneName) in state.structure" >
+    <div v-for="(boneStructure,boneName) in state.structure">
       <label>{{ boneName }}</label>
       <sl-select v-if="hasSelector(boneStructure)" :id="boneName+'-selector'"
                  @sl-change="selectorChange" :disabled="state.disabledSelectorCache[boneName]" defaultValue="eq">
         <sl-option value="eq">==</sl-option> <!--TODO select not work-->
-        <sl-option value="gt">&gt;</sl-option >
-        <sl-option value="ge">&gt;=</sl-option >
+        <sl-option value="gt">&gt;</sl-option>
+        <sl-option value="ge">&gt;=</sl-option>
         <sl-option value="lt">&lt;</sl-option>
-        <sl-option value="le">&lt;=</sl-option >
+        <sl-option value="le">&lt;=</sl-option>
+        <sl-option value="between" v-if="boneStructure['type']==='date'||boneStructure['type']==='numeric'">between
+        </sl-option>
+        <sl-option value="startwith" v-if="boneStructure['type']==='str'">startwith</sl-option>
       </sl-select>
       <sl-bone
         :boneName="boneName"
@@ -20,10 +23,21 @@
         renderType="edit"
         :id="boneName"
         :disabled="state.disabledCache[boneName]"
+        @sl-bone-change="bone_change"
+      ></sl-bone>
+      <sl-bone
+        :boneName="boneName"
+        :boneStructure="boneStructure"
+        renderType="edit"
+        :id="boneName+'-between'"
+        :disabled="state.disabledCache[boneName]"
+        v-if="boneStructure['type']==='date'"
+        v-show="state.between_show[boneName]"
+        @sl-bone-change="bone_change"
       ></sl-bone>
     </div>
     <div v-show="Object.keys(state.structure).length===0">{{ $t('actions.filter.nofilter') }}</div>
-
+    <sl-switch slot="footer"  @sl-change="live_change">Live preview</sl-switch>
     <sl-button slot="footer" variant="success" @click="filter">{{ $t("actions.filter.text") }}</sl-button>
     <sl-button slot="footer" variant="danger" @click="reset">{{ $t("actions.reset") }}</sl-button>
   </sl-drawer>
@@ -42,7 +56,14 @@ export default defineComponent({
   props: {},
   components: {},
   setup(props, context) {
-    const state = reactive({structure: {}, openBefore: false, disabledCache: {}, disabledSelectorCache: {}});
+    const state = reactive({
+      structure: {},
+      openBefore: false,
+      disabledCache: {},
+      disabledSelectorCache: {},
+      between_show: {},
+      live_preview:false
+    });
     const appStore = useAppStore();
     const route = useRoute();
     const conf = appStore.getConfByRoute(route);
@@ -61,11 +82,14 @@ export default defineComponent({
             orderfields = listStore.state.orders.map((order) => order[0]); //returns the names
           }
 
-          if (boneStructure["indexed"] && boneStructure["visible"]) {
-            if (["bool", "numeric", "select", "date"].indexOf(boneStructure["type"]) != -1 || boneStructure["type"].startsWith("str")|| boneStructure["type"].startsWith("relational")) {
+          if (boneStructure["indexed"]) { // todo && boneStructure["visible"] only filter if visible
+            if (["bool", "numeric", "select", "date"].indexOf(boneStructure["type"]) != -1 || boneStructure["type"].startsWith("str") || boneStructure["type"].startsWith("relational")) {
               let canFilter = true;
               for (const name of orderfields) {
                 let inIndexes = false;
+                if (conf["indexes"] === undefined) {
+                  conf["indexes"] = []
+                }
                 for (const index of conf["indexes"]) {
                   if (index["properties"].indexOf(name) !== -1 && index["properties"].indexOf(key) !== -1) {
                     inIndexes = true;
@@ -77,9 +101,12 @@ export default defineComponent({
 
               if (canFilter) {
                 state.disabledCache[key] = false;
+                state.between_show[key] = false;
                 state.disabledSelectorCache[key] = false;
-                //enforce readonly === false so we can edit the filter
+                //enforce readonly = false so we can edit the filter
                 boneStructure["readonly"] = false;
+                //enforce visible = true so we can edit the filter
+                boneStructure["visible"] = true;
                 state.structure[key] = boneStructure;
               }
 
@@ -93,7 +120,7 @@ export default defineComponent({
       drawer.show();
     }
 
-    function filter() {
+    function filter(close=true) {
       const listStore = appStore.getListStoreByRoute(route);
       const filterObj = {};
       let notequalFilter = false;
@@ -114,6 +141,15 @@ export default defineComponent({
               const selector = document.querySelector(`#${key}-selector`);
               if (selector.value === "eq" || notequalFilter) {
                 filterObj[key] = bone.getBoneValue;
+              } else if (selector.value === "between") {
+                const bone2 = document.querySelector(`#${key}-between`);
+                filterObj[`${key}$gt`] = bone.getBoneValue;
+                filterObj[`${key}$lt`] = bone2.getBoneValue;
+              } else if (selector.value === "startwith") {
+
+                filterObj[`${key}$gt`] = bone.getBoneValue;
+                //makes  last char +1 like test to  tesu
+                filterObj[`${key}$lt`] = bone.getBoneValue.substring(0, bone.getBoneValue.length - 1) + String.fromCharCode(bone.getBoneValue.charCodeAt(bone.getBoneValue.length - 1) + 1);
               } else {
                 filterObj[`${key}$${selector.value}`] = bone.getBoneValue;
                 notequalFilter = true;
@@ -121,12 +157,9 @@ export default defineComponent({
 
 
             } else {
-              if(boneStructure["type"].startsWith("relational"))
-              {
-                  filterObj[`${key}.dest.key`] = bone.getBoneValue;
-              }
-              else
-              {
+              if (boneStructure["type"].startsWith("relational")) {
+                filterObj[`${key}.dest.key`] = bone.getBoneValue;
+              } else {
                 filterObj[key] = bone.getBoneValue;
               }
 
@@ -139,8 +172,12 @@ export default defineComponent({
       }
       listStore.reset();
       listStore.filter(filterObj);
-      const drawer = document.querySelector("#filter-drawer");
+      if(close)
+      {
+           const drawer = document.querySelector("#filter-drawer");
       drawer.hide();
+      }
+
     }
 
     function reset() {
@@ -157,7 +194,10 @@ export default defineComponent({
       if (state.disabledCache[targetName] || state.disabledSelectorCache[targetName]) {
         return//is disabled
       }
+      state.between_show[targetName] = e.target.value === "between";
+
       if (e.target.value !== "eq") {
+
         for (const key of Object.keys(state.disabledCache)) {
           if (key !== targetName) {
             state.disabledSelectorCache[key] = true;
@@ -166,6 +206,9 @@ export default defineComponent({
               selector.value = "eq";
             }
             let allinIndex = false;
+            if (conf["indexes"] === undefined) {
+              conf["indexes"] = []
+            }
             for (const index of conf["indexes"]) {
               if (index["properties"].indexOf(targetName) !== -1) {
                 if (index["properties"].indexOf(key) !== -1) {
@@ -203,8 +246,20 @@ export default defineComponent({
 
 
     }
+    function live_change(e)
+    {
+      state.live_preview=e.target.checked;
+    }
+    function bone_change()
+    {
+      console.log("bone change")
+      if(state.live_preview)
+      {
+        filter(false)
+      }
+    }
 
-    return {state, openFilterDrawer, filter, reset, selectorChange, hasSelector}
+    return {state, openFilterDrawer, filter, reset, selectorChange, hasSelector,live_change,bone_change}
   }
 })
 </script>
