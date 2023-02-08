@@ -2,19 +2,16 @@
   <sl-split-panel class="split" primary="start" position="100">
     <div slot="start"  class="scroll-content">
       <div class="topbar">
+
         <div class="top-headline">
           <span v-if="['clone', 'add'].includes(action)">Neuer</span>
           <span v-else-if="['edit'].includes(action)">Bearbeite</span>
           {{ state.conf?.['name'] }} Eintrag
-          <span v-if="state.skel['name']">: {{ state.skel['name'] }}</span>
-          <!---{{ module }}
-          {{ action }}
-          {{ group }}
-          {{ skelkey }}
-          {{ skeltype }}--->
+          <span v-if="state.formValues?.['name']?.[0]['name']">: {{ state.formValues['name'][0]['name'] }}</span>
         </div>
         <entry-bar :module="module" :action="action" :skelkey="skelkey" skeltype="skeltype"
         ></entry-bar>
+
       </div>
       <sl-details open summary="Info"
                   v-if="modulesStore.state.loaded && modulesStore.state.modules[module][`help_text_${action}`]">
@@ -211,6 +208,9 @@ export default defineComponent({
     function updateValue(event: Object) {
       console.log(event)
       state.formValues[event.detail.boneName] = event.detail.formValue;
+      if (event.detail.boneName === "name"){
+        appStore.updateActiveTabName(event.detail.formValue[0]["name"])
+      }
     }
 
     function relationSelection(bone){

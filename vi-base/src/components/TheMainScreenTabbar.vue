@@ -11,6 +11,7 @@
             :closeable="entry['closeable']"
             :position="idx"
             :mode="entry['mode']"
+            :name="entry['name']"
         >
             {{ entry['name'] }}
         </the-main-screen-tabbar-item>

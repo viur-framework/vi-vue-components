@@ -1,6 +1,6 @@
 //@ts-nocheck
 
-import {reactive, computed, Component} from 'vue';
+import {reactive, computed, Component, getCurrentInstance} from 'vue';
 import {defineStore, StoreDefinition} from "pinia";
 import {useRouter} from "vue-router";
 import {useViewStore} from "./views";
@@ -52,7 +52,11 @@ function adminTreeLayer(itemList: Array<ModuleInfo>, parent: ModuleInfo): Array<
         if (!Object.keys(conf).includes("icon")) {
             conf["icon"] = ""
         } else if (!conf["icon"].includes("___") && conf["icon"] !== "") {
-            conf["icon"] = "default___" + conf["icon"].replace("icon-", "").replace("icons-", "")
+            let icon = conf["icon"].replace("icon-", "").replace("icons-", "")
+            if (icon === "list"){
+                icon = "list-ul"
+            }
+            conf["icon"] = "default___" + icon
         }
         // build url by handler
         if (!Object.keys(conf).includes("handler")) {
@@ -242,11 +246,12 @@ export const useAppStore = defineStore("app", () => {
 
     function addOpened(route, module: string, view = null, name = "", icon = "", library = "") {
         let currentConf = getConf(module, view)
+        let currentModuleConf = getConf(module)
         let moduleIconData = currentConf["icon"].split("___")
         let url = route.fullPath
 
         let mode = "view"
-        console.log(url)
+
         if (url){
           if (url.includes("/add")){
             mode = "add"
@@ -257,16 +262,26 @@ export const useAppStore = defineStore("app", () => {
           }
         }
 
+        if (!name){
+            name = currentConf["name"]
+            if (currentConf["name"]!==currentModuleConf["name"]){
+                name = `${currentModuleConf["name"]} / ${currentConf["name"]}`
+            }
+        }
+
         let entry = {
             "to": route,
             "url": url,
             "icon": icon ? icon : moduleIconData[1],
             "library": library ? library : moduleIconData[2],
-            "name": name ? name : currentConf["name"],
+            "name": name,
+            "_name": name,
             "module":module,
+            "group":currentConf["group"],
             "mode":mode,
             "moduleDescr":currentConf["name"],
-            "closeable":true
+            "closeable":true,
+            "update":false
         }
 
         let tabNames = state["handlers.opened"].map(e=>e["url"]).filter(name => name.startsWith(route.path+"?_="))
@@ -303,24 +318,42 @@ export const useAppStore = defineStore("app", () => {
         }
 
         const conf = getConfByRoute(route)
-
-        let findStorename = `module___${route.params.module}`
-        if (Object.keys(conf).includes("view_number")){
-            findStorename +=`___${conf['view_number']}`
+        if (conf){
+            let findStorename = `module___${route.params.module}`
+            if (Object.keys(conf).includes("view_number")){
+                findStorename +=`___${conf['view_number']}`
+            }
+            findStorename+= `___${route.query["_"]}`
+            console.log(findStorename)
+            if (Object.keys(state["stores.map"]).includes(findStorename)){
+                destroyStore(state["stores.map"][findStorename])
+            }
         }
-        findStorename+= `___${route.query["_"]}`
-        console.log(findStorename)
-        if (Object.keys(state["stores.map"]).includes(findStorename)){
-            destroyStore(state["stores.map"][findStorename])
-        }
-
     }
 
     function getActiveTab(){
       return state["handlers.opened"][state["handlers.active"]]
     }
 
+    function updateActiveTabName(detail){
+        let tabinfo = getActiveTab()
+        tabinfo["name"] = `${tabinfo["_name"]} : ${detail}`
+    }
 
+    function markHandlersToUpdate(module, group=null){
+        let handlers = state["handlers.opened"].filter((e)=>{
+            if (e["mode"]==="view" && e["module"]===module && !group){
+                return true
+            }else if(e["mode"]==="view" && e["module"]===module && e["group"]===group){
+                return true
+            }
+
+            return false
+        })
+        for(let e of handlers){
+            e["update"]=true
+        }
+    }
 
     return {
         state,
@@ -333,6 +366,8 @@ export const useAppStore = defineStore("app", () => {
         addTopBarAction,
         addOpened,
         removeOpened,
-        getActiveTab
+        getActiveTab,
+        updateActiveTabName,
+        markHandlersToUpdate
     }
 })

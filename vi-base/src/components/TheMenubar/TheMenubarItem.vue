@@ -38,7 +38,7 @@
             <sl-icon slot="prefix" name="heart" sprite></sl-icon>
             Favorisieren
           </sl-menu-item>
-          <sl-menu-item>
+          <sl-menu-item @click="openConfig()">
             <sl-icon slot="prefix" name="pencil" sprite></sl-icon>
             Berarbeiten
           </sl-menu-item>
@@ -208,6 +208,11 @@ export default defineComponent({
       state.maxtabsReached = !appStore.addOpened(new_route, route.params["module"], route.query["view"])
     }
 
+    function openConfig(){
+      let new_route = router.resolve(unref(`/_moduleconf/edit/${props.moduleInfo["module"]}`))
+      appStore.addOpened(new_route, props.moduleInfo["module"])
+    }
+
     function toogleFavItem() {
       let configObj = null
       if (userStore.state.user["adminconfig"]){
@@ -247,6 +252,9 @@ export default defineComponent({
       state.slotitems = Utils.getSlotLength(context.slots.default)
     })
 
+
+
+
     return {
       state,
       openGroup,
@@ -255,7 +263,8 @@ export default defineComponent({
       openItem,
       getRoute,
       toogleFavItem,
-      userStore
+      userStore,
+      openConfig
     }
   }
 })

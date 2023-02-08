@@ -19,7 +19,17 @@
 
 <script lang="ts">
 //@ts-nocheck
-import {reactive, defineComponent, computed, provide, onBeforeMount, watch, toRaw} from 'vue'
+import {
+  reactive,
+  defineComponent,
+  computed,
+  provide,
+  onBeforeMount,
+  watch,
+  toRaw,
+  onActivated,
+  onDeactivated
+} from 'vue'
 import HandlerBar from "../../components/Bars/HandlerBar.vue";
 import {Request} from '@viur/viur-vue-utils'
 import {useAppStore} from '../../stores/app'
@@ -55,7 +65,8 @@ export default defineComponent({
       module: props.module,
       group: null,
       view: computed(() => props.view),
-      structure: {}
+      structure: {},
+      active:false
     })
     provide("state", state) // expose to components
 
@@ -224,6 +235,20 @@ export default defineComponent({
 
 
     }
+
+    onActivated(()=>{
+      state.active = true
+
+      if (appStore.getActiveTab()["update"]){
+        reloadAction()
+         appStore.getActiveTab()["update"]=false
+      }
+
+    })
+
+    onDeactivated(()=>{
+      state.active = false
+    })
 
     provide("changerootNode", changerootNode)
 

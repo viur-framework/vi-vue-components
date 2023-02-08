@@ -1,28 +1,47 @@
 <template>
+
+
+
+
   <handler-bar :module="module"></handler-bar>
 
   <sl-details open summary="Info" v-if="modulesStore.state.loaded && modulesStore.state.modules[module]['help_text']">
     {{modulesStore.state.modules[module]["help_text"]}}
   </sl-details>
-  <sl-table moveablecolumns
-            :rowselect="true"
-            :structure="currentlist.structure"
-            :skellist="currentlist.state.skellist"
-            :module="module"
-            :editabletable="state.editableTable"
-            @sl-selectionChanged="entrySelected"
-            @sl-dblclick="openEditor"
-            height="100%"
-            ref="tableInst"
 
-  >
 
-  </sl-table>
+    <sl-table moveablecolumns
+              :rowselect="true"
+              :structure="currentlist.structure"
+              :skellist="currentlist.state.skellist"
+              :module="module"
+              :editabletable="state.editableTable"
+              @sl-selectionChanged="entrySelected"
+              @sl-dblclick="openEditor"
+              height="100%"
+              ref="tableInst"
+
+    >
+
+    </sl-table>
 </template>
 
 <script lang="ts">
 //@ts-nocheck
-import {reactive, defineComponent, computed, provide, onBeforeMount, onUpdated, onMounted,ref} from 'vue'
+import {
+  reactive,
+  defineComponent,
+  computed,
+  provide,
+  onBeforeMount,
+  onUpdated,
+  onMounted,
+  ref,
+  watch,
+  onActivated,
+  onDeactivated,
+  unref
+} from 'vue'
 import HandlerBar from "../../components/Bars/HandlerBar.vue";
 import {ListRequest} from '@viur/viur-vue-utils'
 import {useAppStore} from '../../stores/app'
@@ -30,6 +49,7 @@ import {useMessageStore} from "../../stores/message";
 import router from "../../routes";
 import {useModulesStore} from "../../stores/modules";
 import {useRoute} from "vue-router";
+import Loader from "../Generic/Loader.vue";
 
 export default defineComponent({
   props: {
@@ -40,7 +60,7 @@ export default defineComponent({
     group: String,
     view: null
   },
-  components: {HandlerBar},
+  components: {Loader, HandlerBar},
   setup(props, context) {
     const appStore = useAppStore();
     const route = useRoute()
@@ -64,7 +84,8 @@ export default defineComponent({
       group: computed(() => props.group),
       view: computed(() => props.view),
       editableTable: false,
-      tableInst:computed(()=>tableInst)
+      tableInst:computed(()=>tableInst),
+      active:false
     })
     provide("state", state)
     const currentlist = ListRequest(state.storeName, {
@@ -79,7 +100,7 @@ export default defineComponent({
       return currentlist.fetch().catch((error) => {
         messageStore.addMessage("error", `${error.message}`, error.response.url)
       }).then((resp) => {
-        messageStore.addMessage("success", `Reload`, "Message Test")
+        messageStore.addMessage("success", `Reload`, "Liste neu geladen")
       })
     }
 
@@ -93,12 +114,25 @@ export default defineComponent({
 
     provide("setLimit", setLimit)
 
-    onBeforeMount(() => {
+    onMounted(() => {
       currentlist.fetch().catch((error) => {
         messageStore.addMessage("error", `${error.message}`, error.response.url)
       })
     })
 
+    onActivated(()=>{
+      state.active = true
+
+      if (appStore.getActiveTab()["update"]){
+        reloadAction()
+        appStore.getActiveTab()["update"]=false
+      }
+
+    })
+
+    onDeactivated(()=>{
+      state.active = false
+    })
 
     function entrySelected(e: Event) {
       state.currentSelection = e.detail.data
@@ -114,9 +148,12 @@ export default defineComponent({
 
     function openEditor(e: Event) {
       const url = `/${state.module}/edit/${e.detail.cell.getRow().getData().key}?_=${new Date().getTime()}`;
-      appStore.addOpened(url, state.module, state.view);
+      let route = router.resolve(unref(url))
+
+      appStore.addOpened(route, state.module, state.view);
       router.push(url);
     }
+
 
     return {
       state,
@@ -124,7 +161,8 @@ export default defineComponent({
       entrySelected,
       openEditor,
       modulesStore,
-      tableInst
+      tableInst,
+      appStore
 
     }
   }
@@ -143,4 +181,10 @@ sl-table {
     border-radius: 0;
   }
 }
+
+.loader{
+    position:absolute;
+    width: 100%;
+    height:50%
+  }
 </style>

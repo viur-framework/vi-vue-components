@@ -1,11 +1,13 @@
 <template>
     <handler-bar :module="module"></handler-bar>
-    <file-browser :rootnode="state.currentRootNode" module="module"></file-browser>
+  <template v-if="state.currentRootNode">
+    <file-browser :rootnode="state.currentRootNode" :module="module"></file-browser>
+  </template>
 </template>
 
 <script lang="ts">
 //@ts-nocheck
-import {reactive, defineComponent, computed, provide, onBeforeMount, watch} from 'vue'
+import {reactive, defineComponent, computed, provide, onBeforeMount, watch, onActivated, onDeactivated} from 'vue'
 import HandlerBar from "../../components/Bars/HandlerBar.vue";
 import {ListRequest} from '@viur/viur-vue-utils'
 import {useAppStore} from '../../stores/app'
@@ -25,55 +27,31 @@ export default defineComponent({
         const appStore = useAppStore()
 
         const state = reactive({
-            storeName: computed(() => {
-                let name: string = `module___${props.module}`
-                if (props.view) {
-                    name += `___${props.view}`
-                }
-                return name
-            }),
-            currentSelection: null,
             currentRootNodes: [],
             currentRootNode: null,
-            currentNode: null,
-            nodes: [],
             module: computed(() => props.module),
             group: null,
             view: computed(() => props.view),
+            active:false
         })
         provide("state", state) // expose to components
-
-        const currentlistleafs = ListRequest(state.storeName + "_leaf", {
-            module: props.module,
-            params: {
-                "skelType": "leaf",
-            }
-        })
-        appStore.setListStore(currentlistleafs)
 
         function fetchRoots() {
             return Request.get(`/vi/${props.module}/listRootNodes`).then(async (resp) => {
                 let data = await resp.json()
                 state.currentRootNodes = data
                 state.currentRootNode = data[0]
-                state.currentNode = data[0]
             })
         }
 
         function fetchInitData() {
             return fetchRoots().then(() => {
-                currentlistleafs.filter({...currentlistleafs.state.params, ...{"parententry": state.currentNode["key"]}})
             })
         }
 
         function reloadAction() {
-            return new Promise((resolve, reject) => {
-                currentlistleafs.fetch().then(() => {
-                    resolve()
-                }).catch(() => {
-                    reject()
-                })
-            })
+            state.currentRootNode = null
+            return fetchRoots()
         }
 
         provide("reloadAction", reloadAction)
@@ -83,24 +61,23 @@ export default defineComponent({
             fetchInitData()
         })
 
-        function entrySelected(e) {
-            state.currentSelection = e.detail.data
-        }
+        onActivated(()=>{
+          state.active = true
 
-        function changeParentEntry(event) {
-            console.log(event)
-            state.currentNode = {
-                "name": event.detail.selection[0]["dataset"]["name"],
-                "key": event.detail.selection[0]["dataset"]["key"]
-            }
-            currentlistleafs.filter({...currentlistleafs.state.params, ...{"parententry": state.currentNode["key"]}})
-        }
+          if (appStore.getActiveTab()["update"]){
+            reloadAction()
+            appStore.getActiveTab()["update"]=false
+          }
+
+        })
+
+        onDeactivated(()=>{
+          state.active = false
+        })
+
 
         return {
             state,
-            currentlistleafs,
-            entrySelected,
-            changeParentEntry
         }
     }
 })

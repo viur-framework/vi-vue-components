@@ -6,7 +6,7 @@
   <sl-drawer :label="$t('actions.filter.text')" id="filter-drawer" style="--size: 30%;">
     <div v-for="(boneStructure,boneName) in state.structure">
       <label>{{ boneName }}</label>
-      <sl-select v-if="hasSelector(boneStructure)" :id="boneName+'-selector'"
+      <sl-select hoist v-if="hasSelector(boneStructure)" :id="boneName+'-selector'"
                  @sl-change="selectorChange" :disabled="state.disabledSelectorCache[boneName]" defaultValue="eq">
         <sl-option value="eq">==</sl-option> <!--TODO select not work-->
         <sl-option value="gt">&gt;</sl-option>

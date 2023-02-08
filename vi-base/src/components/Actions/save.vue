@@ -1,5 +1,5 @@
 <template>
-  <sl-button variant="success" size="small" @click="save" >
+  <sl-button variant="success" size="small" @click="save" :loading="state.loading" >
     <sl-icon slot="prefix" :name="icon"></sl-icon>
     {{ $t(name) }}
   </sl-button>
@@ -34,12 +34,14 @@ export default defineComponent({
     const router = useRouter();
     const route = useRoute();
     const appStore = useAppStore();
-    const state = reactive({});
+    const state = reactive({
+      loading:false
+    });
     const messageStore = useMessageStore();
 
     function save() {
+      state.loading=true
       //Send request
-
       const formData: FormData = new FormData();
       for (const [boneName, boneValue] of Object.entries(handlerState.formValues)) {
         for (const value of boneValue) {
@@ -77,16 +79,10 @@ export default defineComponent({
             handlerState.errors = responsedata["errors"];
           } else {
             messageStore.addMessage("success", `Edit`, "Entry edited successfully");
+            state.loading=false
+            appStore.markHandlersToUpdate(handlerState.module,handlerState.group)
             if (props.close) {
-              appStore.removeOpened(route.fullPath);
-              if(handlerState.skeltype==="node")
-              {
-                 router.push({name: "hierarchy"});//fixme reload hierarchy
-              }
-              else
-              {
-                 router.push({name: "list"});//fixme reload List
-              }
+              appStore.removeOpened(route);
             }
           }
         }
@@ -95,30 +91,24 @@ export default defineComponent({
             handlerState.errors = responsedata["errors"];
           } else {
             messageStore.addMessage("success", `Add`, "Added edited successfully");
+            state.loading=false
+            appStore.markHandlersToUpdate(handlerState.module,handlerState.group)
             if (props.close) {
-              appStore.removeOpened(route.fullPath);
-              if(handlerState.skeltype==="node")
-              {
-                 router.push({name: "hierarchy"});//fixme reload hierarchy
-              }
-              else
-              {
-                 router.push({name: "list"});//fixme reload List
-              }
-
+              appStore.removeOpened(route);
             }
           }
         }
-
+      }).catch((error)=>{
+        console.log(error)
+        messageStore.addMessage("error", `Error on Save`, "Error on Save");
       })
-
-
     }
 
     return {
       state,
       save,
-      handlerState
+      handlerState,
+      route
     }
   }
 })

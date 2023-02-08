@@ -5,7 +5,7 @@
             @sl-close="onTabClose"
             :data-id="position"
     >
-        <router-link class="link-wrap" :to="to">
+        <router-link class="link-wrap" :to="to" :title="name">
           <sl-avatar label="Rounded avatar">
             <sl-icon class="mode-icon" v-if="mode!=='view'"
                      :name="state.modeIcon"
@@ -147,6 +147,9 @@ sl-tab{
   align-items: center;
   color: @textColor;
   opacity: .6;
+  overflow:hidden;
+  max-width: 200px;
+
 }
 
 sl-avatar{
