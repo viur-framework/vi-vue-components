@@ -42,7 +42,7 @@ export default defineComponent({
        {
          return true;
        }
-       return userStore.state.user.access.indexOf(`${route.params.module}-delete`)>-1;
+       return userStore.state.user.access.indexOf(`${handlerState.module}-delete`)>-1;
       })
     })
 

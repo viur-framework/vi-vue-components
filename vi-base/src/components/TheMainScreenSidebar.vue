@@ -7,7 +7,7 @@
     <the-menubar-group :name="$t('sidebar.administration')">
       <menu-tree :tree="appStore.modulesTree"></menu-tree>
     </the-menubar-group>
-    <div class="loader">
+    <div class="loader" v-if="appStore.modulesTree.length===0">
       <loader></loader>
     </div>
   </nav>

@@ -24,13 +24,12 @@ export default defineComponent({
         const appStore = useAppStore();
         const userStore = useUserStore();
 
-        const route = useRoute()
         const state = reactive({
             url: computed(() => {
                 if(handlerState.group){
-                  return `/${route.params.module}/add/${handlerState.group}?_=${new Date().getTime()}`
+                  return `/${handlerState.module}/add/${handlerState.group}?_=${new Date().getTime()}`
                 }else{
-                  return `/${route.params.module}/add?_=${new Date().getTime()}`
+                  return `/${handlerState.module}/add?_=${new Date().getTime()}`
                 }
             }),
           canAdd: computed(() => {
@@ -38,7 +37,7 @@ export default defineComponent({
             {
               return true;
             }
-            return userStore.state.user.access.indexOf(`${route.params.module}-add`)>-1;
+            return userStore.state.user.access.indexOf(`${handlerState.module}-add`)>-1;
           })
 
         })

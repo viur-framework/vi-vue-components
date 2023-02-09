@@ -1,8 +1,7 @@
 <template>
     <handler-bar :module="module"></handler-bar>
   <template v-if="state.currentRootNode">
-    <file-browser :rootnode="state.currentRootNode" :module="module"
-        :dragging="true"></file-browser>
+    <file-browser :rootnode="state.currentRootNode" :module="module" :dragging="true"></file-browser>
   </template>
 </template>
 

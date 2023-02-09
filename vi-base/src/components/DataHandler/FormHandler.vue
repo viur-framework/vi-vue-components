@@ -1,74 +1,75 @@
 <template>
-  <sl-split-panel class="split" primary="start" position="100">
-    <div slot="start"  class="scroll-content">
-      <div class="topbar">
 
-        <div class="top-headline">
-          <span v-if="['clone', 'add'].includes(action)">Neuer</span>
-          <span v-else-if="['edit'].includes(action)">Bearbeite</span>
-          {{ state.conf?.['name'] }} Eintrag
-          <span v-if="state.formValues?.['name']?.[0]['name']">: {{ state.formValues['name'][0]['name'] }}</span>
-        </div>
-        <entry-bar :module="module" :action="action" :skelkey="skelkey" skeltype="skeltype"
-        ></entry-bar>
 
-      </div>
-      <sl-details open summary="Info"
-                  v-if="modulesStore.state.loaded && modulesStore.state.modules[module][`help_text_${action}`]">
-        {{ modulesStore.state.modules[module][`help_text_${action}`] }}
-      </sl-details>
-      <div class="scroll-content">
-        <template v-for="(group,key) in state.formGroups">
-          <sl-details :summary="group['name']" v-show="group['groupVisible']" open>
-            <template v-for="bone in group['bones']">
-              <sl-bone
-                :boneName="bone['boneName']"
-                :boneStructure="state.structure[bone['boneName']]"
-                :boneValue="toRaw(state.skel[bone['boneName']])"
-                renderType="edit"
-                :renderLabel="true"
-                @sl-bone-change="updateValue"
-                @sl-bone-init="updateValue"
-                @sl-bone-relational-select="relationSelection(bone)"
-                :errors="state.errors"
-                :in-vi="true"
-                v-if="state.structure[bone['boneName']]['visible']"
-              >
-              </sl-bone>
-            </template>
-          </sl-details>
+  <div class="topbar">
+
+    <div class="top-headline">
+      <span v-if="['clone', 'add'].includes(action)">Neuer</span>
+      <span v-else-if="['edit'].includes(action)">Bearbeite</span>
+      {{ state.conf?.['name'] }} Eintrag
+      <span v-if="state.formValues?.['name']?.[0]['name']">: {{ state.formValues['name'][0]['name'] }}</span>
+    </div>
+    <entry-bar :module="module" :action="action" :skelkey="skelkey" skeltype="skeltype"
+    ></entry-bar>
+
+  </div>
+  <sl-details open summary="Info"
+              v-if="modulesStore.state.loaded && modulesStore.state.modules[module][`help_text_${action}`]">
+    {{ modulesStore.state.modules[module][`help_text_${action}`] }}
+  </sl-details>
+  <div class="scroll-content">
+    <template v-for="(group,key) in state.formGroups">
+      <sl-details :summary="group['name']" v-show="group['groupVisible']" open>
+        <template v-for="bone in group['bones']">
+          <sl-bone
+            :boneName="bone['boneName']"
+            :boneStructure="state.structure[bone['boneName']]"
+            :boneValue="toRaw(state.skel[bone['boneName']])"
+            renderType="edit"
+            :renderLabel="true"
+            @sl-bone-change="updateValue"
+            @sl-bone-init="updateValue"
+            @sl-bone-relational-select="relationSelection($event,bone)"
+            :errors="state.errors"
+            :inVi="true"
+            v-if="state.structure[bone['boneName']]['visible']"
+          >
+          </sl-bone>
         </template>
+      </sl-details>
+    </template>
 
-        <sl-details summary="DEBUG: Formdata">
-          {{ state.formValues }}
-        </sl-details>
-        <sl-details summary="DEBUG: Errors">
-          {{ state.errors }}
-        </sl-details>
+    <sl-details summary="DEBUG: Formdata">
+      {{ state.formValues }}
+    </sl-details>
+    <sl-details summary="DEBUG: Errors">
+      {{ state.errors }}
+    </sl-details>
 
-      </div>
-    </div>
-    <div slot="end">
-      <div class="topbar">
-        <div class="top-headline">
-          Relationsauswahl:
+    <template v-for="bone in state.relation_opened">
+      <sl-dialog open style="--width:75%"
+                 :label="'Auswahl: '+bone['boneStructure']['descr']"
+                 @sl-request-close="relationCloseAction($event)"
+      >
+        <list-handler
+          :rowselect="1"
+          :module="bone['boneStructure']['module']"
+          @currentSelection="relationUpdateSelection($event,bone)"
+        >
+        </list-handler>
+        <div slot="footer">
+            <sl-button :disabled="!bone['currentSelection'] || bone['currentSelection']?.length===0"
+                       @click="relationApplySelection(bone)"
+                       variant="success">
+              {{ $t("relation.select") }}
+            </sl-button>
+            <sl-button @click="relationRemoveHandler(bone)" variant="danger" outline>{{ $t("relation.abort") }}</sl-button>
         </div>
-      </div>
+      </sl-dialog>
+    </template>
+  </div>
 
 
-      <list-handler
-        :module="module"
-        :group="group"
-    >
-
-    </list-handler>
-
-
-      <sl-button @click="" variant="success">{{ $t("relation.select") }}</sl-button>
-      <sl-button @click="" variant="danger" outline>{{ $t("relation.abort") }}</sl-button>
-    </div>
-
-  </sl-split-panel>
 </template>
 
 <script lang="ts">
@@ -149,7 +150,7 @@ export default defineComponent({
       group: props.group,
       skelkey: props.skelkey,
       skeltype: props.skeltype,
-      relation_opened:true
+      relation_opened: []
     })
     provide("state", state)
 
@@ -208,21 +209,40 @@ export default defineComponent({
     function updateValue(event: Object) {
       console.log(event)
       state.formValues[event.detail.boneName] = event.detail.formValue;
-      if (event.detail.boneName === "name"){
+      if (event.detail.boneName === "name") {
         appStore.updateActiveTabName(event.detail.formValue[0]["name"])
       }
     }
 
-    function relationSelection(bone){
-      console.log("XXXX")
-      state.relation_opened=true
+    function relationSelection(event,bone) {
+      bone["bone_instance"] = event.target
+      bone["bone_instance_boneName"] = event["detail"]["boneName"]
+      state.relation_opened.push(bone)
     }
 
-    function relation_preventClosing(event){
-      if(event.detail.source==='overlay'){
-        event.preventDefault()
-      }
+    function relationUpdateSelection(event,bone){
+      bone["currentSelection"] = event
     }
+
+    function relationApplySelection(bone){
+      for(let skel of bone["currentSelection"]){
+        bone["bone_instance"].addRelation(toRaw(skel),bone["bone_instance_boneName"] )
+      }
+      relationRemoveHandler(bone)
+    }
+
+    function relationCloseAction(event,bone) {
+      if (event.detail.source === 'overlay') {
+        event.preventDefault()
+        return 0
+      }
+      relationRemoveHandler(bone)
+    }
+
+    function relationRemoveHandler(bone){
+      state.relation_opened = state.relation_opened.filter(i=>i!==bone)
+    }
+
 
 
     onBeforeMount(() => {
@@ -236,7 +256,10 @@ export default defineComponent({
       modulesStore,
       relationSelection,
       toRaw,
-      relation_preventClosing
+      relationCloseAction,
+      relationUpdateSelection,
+      relationApplySelection,
+      relationRemoveHandler
     }
   }
 })
@@ -276,6 +299,7 @@ export default defineComponent({
 .scroll-content {
   flex: 1;
   overflow-y: auto;
+  position: relative;
 
   &::-webkit-scrollbar-track {
     background-color: transparent;
@@ -303,6 +327,14 @@ sl-details {
   &::part(base) {
     border-radius: 0;
   }
+}
+
+sl-dialog::part(base) {
+  position: absolute;
+}
+
+sl-dialog::part(overlay) {
+  position: absolute;
 }
 
 </style>

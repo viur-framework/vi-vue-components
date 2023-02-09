@@ -74,7 +74,6 @@ export default defineComponent({
 
       if (!state.openBefore) {
         const listStore = appStore.getListStoreByRoute(route);
-        console.log(listStore.structure)
         for (const key in listStore.structure) {
           const boneStructure = listStore.structure[key];
           let orderfields = []

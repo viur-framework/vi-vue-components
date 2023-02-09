@@ -29,11 +29,11 @@ export default defineComponent({
             url: computed(() => {
               if(handlerState && handlerState["currentSelection"] && handlerState["currentSelection"][0])
               {
-                return `/${route.params.module}/add/node/${handlerState["currentSelection"][0]["key"]}?_=${new Date().getTime()}`
+                return `/${handlerState.module}/add/node/${handlerState["currentSelection"][0]["key"]}?_=${new Date().getTime()}`
               }
               if(handlerState && handlerState["currentRootNode"])
               {
-                return `/${route.params.module}/add/node/${handlerState["currentRootNode"]["key"]}?_=${new Date().getTime()}`
+                return `/${handlerState.module}/add/node/${handlerState["currentRootNode"]["key"]}?_=${new Date().getTime()}`
               }
               return ""
 
@@ -45,7 +45,7 @@ export default defineComponent({
             {
               return true;
             }
-            return userStore.state.user.access.indexOf(`${route.params.module}-add`)>-1;
+            return userStore.state.user.access.indexOf(`${handlerState.module}-add`)>-1;
           })
 
         })

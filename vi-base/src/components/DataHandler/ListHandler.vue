@@ -11,7 +11,7 @@
 
 
     <sl-table moveablecolumns
-              :rowselect="true"
+              :rowselect="rowselect"
               :structure="currentlist.structure"
               :skellist="currentlist.state.skellist"
               :module="module"
@@ -58,8 +58,12 @@ export default defineComponent({
       required: true
     },
     group: String,
-    view: null
+    view: null,
+    rowselect:{
+      default:true
+    }
   },
+  emits:['currentSelection'],
   components: {Loader, HandlerBar},
   setup(props, context) {
     const appStore = useAppStore();
@@ -136,6 +140,7 @@ export default defineComponent({
 
     function entrySelected(e: Event) {
       state.currentSelection = e.detail.data
+      context.emit("currentSelection", state.currentSelection)
       if (e.detail.data.length > 0) {
         appStore.state['skeldrawer.entry'] = e.detail.data[e.detail.data.length - 1]
         appStore.state['skeldrawer.structure'] = currentlist.structure
