@@ -1,8 +1,9 @@
 import view_missing from "../views/view_missing.vue";
 import {createRouter, createWebHashHistory} from "vue-router";
 import listview from '../views/list.vue'
+import fluidpageview from '../views/fluidpage.vue'
 import treeview from '../views/tree.vue'
-import hierarchy from '../views/hierarchy.vue'
+import hierarchyview from '../views/hierarchy.vue'
 import singletonview from '../views/singleton.vue'
 import editview from '../views/edit.vue'
 import homeview from '../views/home.vue'
@@ -35,7 +36,7 @@ const routes = [
     path: '/:module/tree.node',
     name: 'hierarchy',
     props: true,
-    component: hierarchy
+    component: hierarchyview
   },
   {
     path: '/:module',
@@ -78,6 +79,13 @@ const routes = [
     props: true,
     component: editview
   },
+    {
+    path: '/:module/fluidpage/:key?',
+    name: 'fluidpage',
+    props: true,
+    component: fluidpageview
+  }
+
 
 ]
 

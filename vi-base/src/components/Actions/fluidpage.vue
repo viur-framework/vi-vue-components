@@ -2,7 +2,7 @@
   <router-link :to="state.url" custom v-slot="{route}">
     <sl-button size="small" variant="info" :disabled="!state.active || !state.canEdit" @click="createAndNavigate(route)">
       <sl-icon slot="prefix" name="pencil"></sl-icon>
-      {{ $t("actions.edit") }}
+      {{ $t("actions.fluidpage.edit") }}
     </sl-button>
   </router-link>
 </template>
@@ -28,18 +28,10 @@ export default defineComponent({
       }),
       url: computed(() => {
         if (!state.active) return ""
-        console.log(handlerState.module)
-        if(appStore.getConf(handlerState.module).handler==="tree.node")
-        {
-          return `/${handlerState.module}/edit/node/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
-        }
-        if(handlerState.group){
-          return `/${handlerState.module}/edit/${handlerState.group}/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
-        }else{
-          return `/${handlerState.module}/edit/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
-        }
 
-
+        let conf = appStore.getConfByRoute(route);
+        let module = conf["handler"].split(".").at(-1)
+        return `/${module}/fluidpage/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
       }),
       canEdit: computed(() => {
        if(userStore.state.user.access.indexOf("root") !== -1 )

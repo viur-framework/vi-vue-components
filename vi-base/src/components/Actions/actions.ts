@@ -13,6 +13,7 @@ import custom_action from './custom.vue'
 import edittable_action from './edittable.vue'
 import filter_action from './filter.vue'
 import rootnodelist_action from './rootnodelist.vue'
+import fluidpage_action from './fluidpage.vue'
 
 
 export default {
@@ -30,5 +31,6 @@ export default {
   custom_action,
   edittable_action,
   filter_action,
-  rootnodelist_action
+  rootnodelist_action,
+  fluidpage_action
 }

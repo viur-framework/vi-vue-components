@@ -29,10 +29,11 @@ function adminTreeLayer(itemList: Array<ModuleInfo>, parent: ModuleInfo): Array<
     let i = 0
 
     for (let conf of itemList) {
-        // hide hidden
-        if (Object.keys(conf).includes("display") && conf["display"] === "hidden") {
-            continue
+
+        if (!Object.keys(conf).includes("display")){
+            conf["display"] = "visible"
         }
+
         // set index as sortindex if missing
         if (!Object.keys(conf).includes("sortIndex")) {
             conf["sortIndex"] = i
@@ -61,6 +62,8 @@ function adminTreeLayer(itemList: Array<ModuleInfo>, parent: ModuleInfo): Array<
         // build url by handler
         if (!Object.keys(conf).includes("handler")) {
             conf["url"] = null // if handler is missing, this is a moduleGroup
+        } else if (conf["handler"] == "list.fluidpage.content") {
+            conf["url"] = {"path": `/${conf["module"]}/fluidpage`}
         } else if (conf["handler"] === "list.grouped") {
             let group = Object.keys(conf).includes("group") ? conf["group"] : "all"
             conf["url"] = {"path": `/${conf["module"]}/list/${group}`}
@@ -197,6 +200,7 @@ export const useAppStore = defineStore("app", () => {
         }
         //@ts-ignore
         let adminInfoTree: Array<ModuleInfo> = adminTreeLayer(itemList, {"module": "start"})
+        console.log(adminInfoTree)
         return adminInfoTree
     })
 
@@ -215,6 +219,8 @@ export const useAppStore = defineStore("app", () => {
         if (view)
             name += "_" + view
         conf = modulesList.value?.[name]
+        console.log(modulesTree)
+        console.log(modulesList.value)
         return conf
     }
 

@@ -26,9 +26,9 @@ export default defineComponent({
       url: computed(() => {
         if (!state.active) return ""
         if(handlerState.group){
-          return `/${route.params.module}/clone/${handlerState.group}/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
+          return `/${handlerState.module}/clone/${handlerState.group}/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
         }else{
-          return `/${route.params.module}/clone/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
+          return `/${handlerState.module}/clone/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
         }
       })
     })

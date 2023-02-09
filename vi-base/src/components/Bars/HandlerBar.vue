@@ -65,6 +65,18 @@ export default defineComponent({
           "entry": [["edit", "clone", "delete"], ["preview"]]
         }
 
+        let fluidpageActions = {
+          "default": [["add", "selectfields"], ["setamount", "reload"], ["overlay", "filter", "edittable"]],
+          "entry": [["edit", "clone", "delete", "fluidpage"], ["preview"]]
+        }
+
+        let fluidpagecontentActions = {
+          "default": [["add"], ["reload"]],
+          "entry": [["edit", "clone", "delete"], ["preview"]]
+        }
+
+
+
         //given props overrides calculation
         if (props.actions?.length > 0) return props.actions
 
@@ -73,13 +85,18 @@ export default defineComponent({
         let actions = {...listActions}
 
         if (!conf) return actions;
-
+        console.log(conf["handler"])
         if (conf["handler"].startsWith("tree.node")) {
           actions = {...hierarchyActions}
         }else if (conf["handler"].startsWith("tree")) {
           actions = {...treeActions}
+        }else if (conf["handler"].startsWith("list.fluidpage") && conf["handler"]!=="list.fluidpage.content") {
+          actions = {...fluidpageActions}
+        }else if (conf["handler"].startsWith("list.fluidpage.content")) {
+          actions = {...fluidpagecontentActions}
         }
 
+        console.log(actions)
         let confActions = conf["actions"]
         if (confActions) {
           confActions = confActions.join(" ").replace(/\|\s/g, "space") // replace pipes with "space"
