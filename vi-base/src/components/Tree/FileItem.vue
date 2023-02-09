@@ -77,9 +77,10 @@ export default defineComponent({
 </script>
 
 <style scoped lang="less">
-.folder, .file {
+.file {
   display: flex;
   flex-direction: row;
+  align-items: center;
   flex-wrap: nowrap;
 
   span {
@@ -104,7 +105,7 @@ tr {
   }
 
   &:hover {
-    background-color: rgba(22, 159, 172, .25);
+    background-color: var(--sl-color-primary-50)
   }
 
   &.isSelected {

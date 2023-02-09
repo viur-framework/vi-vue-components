@@ -1,7 +1,7 @@
 <template>
     <transition>
         <div class="loading" v-if="active">
-            <sl-spinner></sl-spinner>
+            <img src="/vi/loading.svg" class="loader">
         </div>
     </transition>
 </template>
@@ -13,8 +13,8 @@ import {reactive, computed} from 'vue'
 export default {
     props: {
         size: {
-            type: Number,
-            default: 1
+            type: String,
+            default: "1em"
         },
         active: {
             type: Boolean,
@@ -38,6 +38,12 @@ export default {
 
 <style scoped lang="less">
 
+
+.loader{
+  height: 2.5em;
+  width: 2.5em;
+}
+
 .loading {
     position: absolute;
     width: 100%;
@@ -45,12 +51,6 @@ export default {
     display: inline-grid;
     justify-items: center;
     align-items: center;
-
-    sl-spinner {
-        font-size: v-bind("state.spinnerSize");
-        box-shadow: v-bind("state.shadowSize");
-        background-color: var(--sl-color-neutral-200);
-    }
 }
 // transition styles see: https://vuejs.org/guide/built-ins/transition.html#the-transition-component
 .v-enter-active,

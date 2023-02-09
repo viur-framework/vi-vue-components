@@ -18,7 +18,7 @@
                      slot="icon"
                      sprite></sl-icon>
           </sl-avatar>
-            <slot></slot>
+            <span class="name"><slot></slot></span>
         </router-link>
     </sl-tab>
 </template>
@@ -147,9 +147,13 @@ sl-tab{
   align-items: center;
   color: @textColor;
   opacity: .6;
-  overflow:hidden;
   max-width: 200px;
+}
 
+.name{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 sl-avatar{

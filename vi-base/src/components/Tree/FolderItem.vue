@@ -79,6 +79,7 @@ export default defineComponent({
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
+  align-items: center;
 
   span {
     white-space: nowrap;
@@ -102,7 +103,7 @@ tr {
   }
 
   &:hover {
-    background-color: rgba(22, 159, 172, .25);
+    background-color: var(--sl-color-primary-50)
   }
 
   &.isSelected {

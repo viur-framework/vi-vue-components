@@ -88,10 +88,14 @@ export default defineComponent({
     flex: 1;
   height: 0;
 
-    &::part(panel){
-      display: flex;
-      flex-direction: column;
-    }
+  &::part(panel){
+    display: flex;
+    flex-direction: column;
+  }
+
+  &::part(divider){
+    width: 2px;
+  }
 }
 
 .content {

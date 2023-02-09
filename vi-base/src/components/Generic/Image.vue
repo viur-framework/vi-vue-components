@@ -98,7 +98,7 @@ img {
     aspect-ratio: 1 / 1;
     object-fit: contain;
     object-position: center;
-    background-color: #fff;
+    background-color: var(--sl-color-neutral-200);
     transition: opacity 2s ease-in-out;
 
 }

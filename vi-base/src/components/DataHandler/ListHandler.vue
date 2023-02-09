@@ -173,7 +173,7 @@ export default defineComponent({
 sl-table {
   flex: 1;
   display: flex;
-  //height: 0;
+  height: 0;
 
   &::part(base) {
     margin-top: 0;

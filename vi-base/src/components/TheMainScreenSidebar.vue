@@ -39,13 +39,17 @@ export default defineComponent({
 <style scoped>
   .loader{
     position:absolute;
-    width: 100%;
-    height:50%
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(255, 255, 255, 0.8);
   }
 
   .nav{
     height:100%;
-    position:relative
+    position:relative;
+    background-color: #fff;
   }
 
 </style>

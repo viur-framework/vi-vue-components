@@ -15,7 +15,7 @@
     </div>
 
     <sl-split-panel style="--max: 70%" slot="end">
-      <div slot="start">
+      <div slot="start" class="start-slot">
         <slot :nodes="state.currentEntry?.['_nodes']" :leafs="state.currentEntry?.['_leafs']">
           <sl-table-wrapper  :search="filter" sortable class="scroller">
             <table ref="currentTable" class="table">
@@ -46,7 +46,12 @@
                 </tr>
 
                 <tr v-if="(!state.currentEntry?.['_nodes'] || state.currentEntry?.['_nodes'].length===0) &&  (!state.currentEntry?.['_leafs'] ||state.currentEntry?.['_leafs'].length===0 )">
-                  <td colspan="3">Keine Einträge</td>
+                  <td colspan="3">
+                    <sl-alert variant="info" open class="alert">
+                      <sl-icon slot="icon" name="exclamation-triangle"></sl-icon>
+                      <strong>Keine Einträge</strong>
+                    </sl-alert>
+                   </td>
                 </tr>
 
               </tbody>
@@ -234,6 +239,27 @@ export default defineComponent({
 
 <style lang="less" scoped>
 
+sl-breadcrumb{
+  padding: 7px 10px;
+  border-bottom: 2px solid var(--sl-color-neutral-200);
+
+  .mq-max(@breakSmall,{
+	margin-bottom: 10px;
+  });
+}
+
+sl-breadcrumb-item{
+
+  &::part(base){
+  	font-weight: 400;
+	color: var(--sl-color-primary-500)
+  }
+
+  &::part(separator){
+	font-size: .5em;
+  }
+}
+
 sl-split-panel {
   --min: 250px;
   --divider-width: 1px;
@@ -244,10 +270,35 @@ sl-split-panel {
     display: flex;
     flex-direction: column;
   }
+
+  .mq-max(@breakSmall,{
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+
+	&::part(start){
+	  display: none;
+	}
+  });
 }
 
 .tree-wrapper {
   overflow-y: auto;
+
+  &::-webkit-scrollbar-track {
+	  background-color: transparent;
+  }
+
+  &::-webkit-scrollbar {
+	  width: 4px;
+	  height: 4px;
+	  background-color: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+	  background-color: #afafaf;
+	  border-radius: 3px;
+  }
 }
 
 .table {
@@ -316,12 +367,27 @@ sl-format-date {
 .file-info {
   display: flex;
   flex-direction: column;
-  padding: 6px 0 6px 15px;
+  padding: 7px 15px;
   overflow-y: auto;
 
   .headline {
     word-break: break-word;
     margin-bottom: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  &::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+    background-color: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #afafaf;
+    border-radius: 3px;
   }
 }
 
@@ -336,13 +402,6 @@ sl-format-date {
 .file-preview {
   cursor: pointer;
   margin-bottom: 10px;
-}
-
-
-.image {
-  &:hover {
-    object-fit: contain !important;
-  }
 }
 
 .details {
@@ -417,9 +476,41 @@ sl-format-date {
   }
 }
 
-.scroller {
-  overflow-y: auto;
+.start-slot{
+  display: contents;
 }
 
+.scroller {
+  height: 1px;
+  flex: 1;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  &::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+    background-color: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #afafaf;
+    border-radius: 3px;
+  }
+}
+
+.alert{
+  margin: 10px 5px;
+
+  &::part(icon){
+    padding: 15px 0px 15px 15px;
+  }
+
+  &::part(message){
+    padding: 15px;
+  }
+}
 
 </style>

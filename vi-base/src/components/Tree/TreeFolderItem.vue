@@ -1,7 +1,7 @@
 <template>
   <li v-for="(child,idx) in state.currentEntry['_nodes']"
       :key="child['key']"
-      :style="{marginLeft:((path.concat([idx]).length-1)*10)+'px'}"
+      :style="{marginLeft:((path.concat([idx]).length-2)*10)+'px'}"
   >
     <div class="entry"
          :draggable="child['_dragging'] && treeState.dragging"
@@ -16,26 +16,30 @@
       }"
 
     >
-      <sl-icon name="menu" v-if="treeState.dragging"
+      <div class="dragger" v-if="treeState.dragging"
                @mouseup="tree.mouseUpHandle($event, idx)"
                @mousedown="tree.mouseDownHandle($event, idx)">
+      <sl-icon name="menu"></sl-icon>
+      </div>
 
-      </sl-icon>
-      <sl-icon :name="child['_expanded']?'chevron-down':'chevron-right'"
-               @click="clickToExpand(idx)"
-               :class="{disabled:child['_disabled']}"
-      >
+      <div class="chevron"
+           @click="clickToExpand(idx)">
+        <sl-icon name="play"
+             :class="{disabled:child['_disabled'], expanded:child['_expanded']}"
+        ></sl-icon>
+      </div>
 
-      </sl-icon>
-      <sl-spinner v-if="child['_status']==='loading'"></sl-spinner>
+      <div class="loading" v-if="child['_status']==='loading'">
+        <sl-spinner></sl-spinner>
+      </div>
 
       <div class="item"
            @click="selectChild(idx)"
            :class="{active:isactive(idx)}"
       >
-        <sl-icon name="folder"></sl-icon>
+        <sl-icon name="folder"  class="item-icon"></sl-icon>
 
-        <div>
+        <div class="title">
           {{ child['name'] }}
         </div>
       </div>
@@ -130,35 +134,109 @@ export default defineComponent({
 
 <style scoped lang="less">
 .dropin {
-  background-color: red;
+  background-color: var(--sl-color-primary-50);
 }
 
 .dropafter {
-  background-color: blue;
+  border-bottom: 4px solid var(--sl-color-primary-50) !important;
 }
 
 .dropbefore {
-  background-color: green;
+  border-top: 4px solid var(--sl-color-primary-50) !important;
 }
 
+.dragger{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-right: var(--sl-spacing-x-small);
+  height: 100%;
+  cursor: move;
+  opacity: .2;
+  transition: opacity ease .3s;
+
+  sl-icon{
+    font-size: .7em;
+  }
+}
 
 .active {
   color: var(--sl-color-primary-500);
+  font-weight: 600;
 }
+
 
 .entry {
   display: flex;
+  flex-direction: row;
   align-items: center;
+  padding: 0 10px;
+  cursor: pointer;
+  position: relative;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+
+  &:hover{
+    .dragger{
+      opacity: 1;
+    }
+  }
+}
+
+.loading{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.6);
 }
 
 .item {
   display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.item-icon {
+  width: 1em;
+  height: 1em;
+  margin-right: var(--sl-spacing-small);
+}
+
+.chevron{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 1em;
+  height: 1em;
+  margin-right: var(--sl-spacing-x-small);
+
+  sl-icon{
+	font-size: .4em;
+  	color: var(--sl-color-primary-500);
+
+	&.expanded{
+	  transform: rotate(90deg);
+	}
+
+	&.disabled{
+	  color: var(--sl-color-neutral-300)
+	}
+  }
+}
+
+.title{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .disabled {
   color: var(--sl-color-neutral-200);
-  //pointer-events: none;
-  //cursor: not-allowed;
 }
 
 </style>
