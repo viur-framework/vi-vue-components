@@ -35,7 +35,6 @@ export default defineComponent({
 
     function createAndNavigate(route: any) {
       appStore.addOpened(route, handlerState["module"], handlerState["view"])
-      navigate()
     }
 
     return {state, createAndNavigate}

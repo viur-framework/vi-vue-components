@@ -11,7 +11,7 @@ export default defineConfig({
       targets: [
         {
           src: path.join(__dirname, "node_modules", "@viur", "viur-shoelace", "dist", "assets"),
-          dest: path.join(__dirname, 'public', 'vi', "viur-shoelace")
+          dest: path.join(__dirname, 'public', "viur-shoelace")
         }
       ]
     }),
@@ -35,11 +35,35 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src")
     }
   },
-  //base: "/vi_vue/",
+
+  base:"/vvi",
   build: {
-    emptyOutDir:true,
-    outDir: path.resolve(__dirname, '../../deploy/vi-vue-wip-build'),
+    //emptyOutDir:true,
+    outDir: path.resolve(__dirname, '../../../deploy/vvi'),
+    assetsInlineLimit: 0,
     chunkSizeWarningLimit: 700,
+    rollupOptions: {
+      //input: {
+      //    index: path.resolve(__dirname, 'html/index.html'),
+      //},
+      output: {
+        chunkFileNames: (chunkinfo) => {
+          if (chunkinfo['moduleIds'].filter(x => x.includes('node_modules/@viur/viur-shoelace/dist/components')).length > 0) {
+            return `[name].js`
+          } else {
+            return `[name]-[hash].js`
+          }
+
+        },
+        manualChunks(id) {
+          if (id.includes('node_modules/@viur/viur-shoelace/dist/components')) {
+            return "viur-shoelace/component_" + id.split("/").slice(-2)[0];
+          }
+        }
+      }
+  }
+
+
   }
 
 

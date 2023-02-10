@@ -2,7 +2,7 @@
     <header>
         <router-link to="/" class="head">
             <div class="logo">
-                <sl-icon src="/vi/logo-cube.svg"></sl-icon>
+                <sl-icon src="logo-cube.svg"></sl-icon>
             </div>
             <h1 class="main-headline">
                 {{ appStore.state["vi.name"] }}

@@ -1,7 +1,7 @@
 <template>
     <transition>
         <div class="loading" v-if="active">
-            <img src="/vi/loading.svg" class="loader">
+            <img src="/loading.svg" class="loader">
         </div>
     </transition>
 </template>

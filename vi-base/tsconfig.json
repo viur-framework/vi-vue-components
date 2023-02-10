@@ -4,9 +4,11 @@
     "useDefineForClassFields": true,
     "module": "ESNext",
     "moduleResolution": "Node",
-    "strict": true,
+    "strict": false, // TRUE
     "jsx": "preserve",
     "sourceMap": true,
+    "allowJs": true, // REMOVE
+    "noImplicitAny": false, //REMOVE
     "resolveJsonModule": true,
     "isolatedModules": true,
     "esModuleInterop": true,

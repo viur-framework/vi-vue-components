@@ -1,12 +1,5 @@
 import view_missing from "../views/view_missing.vue";
 import {createRouter, createWebHashHistory} from "vue-router";
-import listview from '../views/list.vue'
-import fluidpageview from '../views/fluidpage.vue'
-import treeview from '../views/tree.vue'
-import hierarchyview from '../views/hierarchy.vue'
-import singletonview from '../views/singleton.vue'
-import editview from '../views/edit.vue'
-import homeview from '../views/home.vue'
 import {useUserStore} from "../stores/user";
 
 const routes = [
@@ -18,72 +11,72 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    component: homeview
+    component: () => import("../views/home.vue")
   },
   {
     path: '/:module/list/:group?',
     name: 'list',
     props: true,
-    component: listview
+    component: () => import("../views/list.vue")
   },
   {
     path: '/:module/tree',
     name: 'tree',
     props: true,
-    component: treeview
+    component: () => import("../views/tree.vue")
   },
   {
     path: '/:module/tree.node',
     name: 'hierarchy',
     props: true,
-    component: hierarchyview
+    component: () => import("../views/hierarchy.vue")
   },
   {
     path: '/:module',
     name: 'singleton',
     props: true,
-    component: singletonview
+    component: () => import("../views/singleton.vue")
   },
   {
     path: '/:module/edit/:group?/:skelkey',
     name: 'edit',
     meta: {"action": "edit"},
     props: true,
-    component: editview
+    component: () => import("../views/edit.vue")
   },
   {
     path: '/:module/add/:group?',
     name: 'add',
     meta: {"action": "add"},
     props: true,
-    component: editview
+    component: () => import("../views/edit.vue")
   },
   {
     path: '/:module/add/:skeltype/:skelkey',
     name: 'addnode',
     meta: {"action": "add"},
     props: true,
-    component: editview
+    component: () => import("../views/edit.vue")
   },
   {
     path: '/:module/edit/:skeltype/:skelkey',
     name: 'editnode',
     meta: {"action": "edit"},
     props: true,
-    component: editview
+    component: () => import("../views/edit.vue")
   },
   {
     path: '/:module/clone/:group?/:skelkey',
     name: 'clone',
     meta: {"action": "clone"},
     props: true,
-    component: editview
+    component: () => import("../views/edit.vue")
   },
     {
     path: '/:module/fluidpage/:key?',
     name: 'fluidpage',
     props: true,
-    component: fluidpageview
+    component: () => import("../views/fluidpage.vue")
   }
 
 

@@ -43,7 +43,7 @@ import '@viur/viur-shoelace/dist/components/bone/bone';
 
 import {setBasePath} from '@viur/viur-shoelace/dist/utilities/base-path';
 
-setBasePath(`vi/viur-shoelace`)
+setBasePath(`viur-shoelace`)
 
 /*
 import {registerIconLibrary} from '@viviur/viur-shoelace/dist/utilities/icon-library';
