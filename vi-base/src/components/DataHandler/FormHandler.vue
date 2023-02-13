@@ -186,6 +186,8 @@ export default defineComponent({
       console.log("new url ", url)
       console.log(dataObj)
 
+
+
       Request.get(url, {"dataObj": dataObj}).then(async (resp) => {
         let data = await resp.json()
         state.skel = data["values"]

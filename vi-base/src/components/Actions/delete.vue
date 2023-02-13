@@ -24,6 +24,7 @@ export default defineComponent({
   components: {},
   setup(props, context) {
     const handlerState: any = inject("state");
+    const tableReload: any = inject("reloadAction")
     const messageStore = useMessageStore();
     const userStore = useUserStore();
     const route = useRoute();
@@ -52,14 +53,17 @@ export default defineComponent({
         dialog.hide();
       }
 
+      let allPromises = []
       for (const entry of handlerState.currentSelection) {
         let url = `/vi/${handlerState.module}/delete`
-        await Request.securePost(url, {dataObj: {key: entry.key}}).then(async (resp: object) => {
-          //TODO Error handling
-          messageStore.addMessage("success", `Delete`, "Entry deleted successfully");
-        })
-
+        allPromises.push(Request.securePost(url, {dataObj: {key: entry.key}}))
       }
+
+      let deletedSuccess = Promise.all(allPromises)
+      await deletedSuccess.then((resp)=>{
+        messageStore.addMessage("success", `Delete`, "Entry deleted successfully");
+        tableReload()
+      })
     }
 
     function openDeletePopup() {

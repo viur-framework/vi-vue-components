@@ -58,7 +58,7 @@ export default defineComponent({
         obj[[key]] = formData.getAll(key);
 
       }
-      let url = `/vi/${handlerState.module}/${handlerState.action==="clone"?"edit":handlerState.action}`;
+      let url = `/vi/${handlerState.module}/${handlerState.action==="clone"?"add":handlerState.action}`;
 
       if(handlerState.skeltype==="node" && handlerState.action=="add")
       {
