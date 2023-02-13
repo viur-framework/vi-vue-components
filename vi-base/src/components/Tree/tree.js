@@ -2,7 +2,6 @@ import {Request} from "@viur/viur-vue-utils";
 
 export default function useTree(module, treeState, state){
     function mouseDownHandle(e, idx) {
-        console.log(state.currentEntry)
       state.currentEntry['_nodes'][idx]["_dragging"] = true
     }
 

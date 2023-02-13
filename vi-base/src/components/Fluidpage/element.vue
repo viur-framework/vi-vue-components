@@ -1,12 +1,22 @@
 <template>
 
   <div class="fluid-element element"
-       :class="state.width, state.height"
-       draggable="true"
+       :class="{
+              [state.width]:true,
+              [state.height]:true,
+              'ghost':state.isGhost
+       }"
+       :draggable="state.draggable"
        @dragstart="startDragging"
        @dragover.prevent="dragOver"
        @dragend.prevent="dragEnd"
   >
+    <sl-icon name="menu"
+             @mousedown="onMouseDownDragger"
+             @mouseup="onMouseUpDragger"
+    >
+
+    </sl-icon>
     {{skel["sortindex"]}}
     <h1 v-if="skel['headline'] || skel['subline']">{{ skel["headline"] }}, {{ skel["subline"] }}</h1>
     <h2>{{ skel["kind"] }}, {{ skel["active"] }},
@@ -48,6 +58,8 @@ export default {
     const state = reactive({
       width:computed(()=>'fluid-width-' + props.skel["width"]),
       height:computed(()=>'fluid-height-' + props.skel["height"]),
+      isGhost:false,
+      draggable:false
     })
     const changeOrder = inject('changeOrder')
     const updateDragged = inject('updateDragged')
@@ -60,10 +72,12 @@ export default {
       if (!target.classList.contains('fluid-element')){
         target = target.closest('.fluidpage-element')
       }
-      handlerState.dragCurrentElement = target;
+      handlerState.dragCurrentElement = {
+        "element":target,
+        "key":props.skel["key"]
+      };
       e.dataTransfer.effectAllowed = 'move';
-
-      target.classList.add('ghost');
+      state.isGhost = true
     }
 
     function dragOver(e){
@@ -73,14 +87,24 @@ export default {
         target = target.closest('.fluidpage-element')
       }
 
-      if (target && target !== handlerState.dragCurrentElement) {
-          changeOrder(handlerState.dragCurrentElement.__vnode.ctx.props["skel"]["key"], props.skel["key"])
+      if (target && target !== handlerState.dragCurrentElement['element']) {
+          changeOrder(handlerState.dragCurrentElement['key'], props.skel["key"])
       }
     }
     function dragEnd(e){
-      handlerState.dragCurrentElement.classList.remove('ghost');
+      state.isGhost = false
+      state.draggable=false
       updateDragged()
     }
+
+    function onMouseDownDragger(e){
+      state.draggable = true
+    }
+
+    function onMouseUpDragger(e){
+      state.draggable = false
+    }
+
 
     function expandContent(){
       updateWidth(props.skel["key"], parseInt(props.skel["width"])+1+"")
@@ -103,7 +127,9 @@ export default {
       dragEnd,
       expandContent,
       shrinkContent,
-      entrySelected
+      entrySelected,
+      onMouseDownDragger,
+      onMouseUpDragger
     };
   }
 }
@@ -112,7 +138,6 @@ export default {
 <style lang="less" scoped>
 .element {
   border: 1px solid var(--sl-color-primary-500);
-  cursor: move;
 }
 
 h1 {
