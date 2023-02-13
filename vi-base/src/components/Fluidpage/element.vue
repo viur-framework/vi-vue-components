@@ -4,42 +4,68 @@
        :class="{
               [state.width]:true,
               [state.height]:true,
-              'ghost':state.isGhost
+              'ghost':state.isGhost,
+              'is-selected':handlerState.currentSelection?.[0]['key'] === skel['key']
        }"
        :draggable="state.draggable"
        @dragstart="startDragging"
        @dragover.prevent="dragOver"
        @dragend.prevent="dragEnd"
   >
-    <sl-icon name="menu"
-             @mousedown="onMouseDownDragger"
-             @mouseup="onMouseUpDragger"
-    >
+    <div class="header">
+      <div class="dragger"
+           @mousedown="onMouseDownDragger"
+           @mouseup="onMouseUpDragger">
+          <sl-icon name="draggable"></sl-icon>
+      </div>
 
-    </sl-icon>
-    {{skel["sortindex"]}}
-    <h1 v-if="skel['headline'] || skel['subline']">{{ skel["headline"] }}, {{ skel["subline"] }}</h1>
-    <h2>{{ skel["kind"] }}, {{ skel["active"] }},
-      <span v-if="skel['downloaditems']">Dateien {{ skel['downloaditems'].length }}</span>
-      <span v-if="skel['url']">Navigation: {{ skel['url'] }}</span>
-    </h2>
+      <sl-button-group :class="{'is-selected':handlerState.currentSelection?.[0]['key'] === skel['key']}">
+        <sl-button class="size-btn expand"
+               title="Expand"
+               size="small"
+               v-if="skel['width']!=='fullwidth' && skel['width']!=='12'"
+               @click="expandContent">
+            <sl-icon name="plus"></sl-icon>
+        </sl-button>
+        <sl-button class="size-btn shrink"
+                   title="Shrink"
+                   size="small"
+                   v-if="skel['width']!=='1'"
+                   @click="shrinkContent">
+            <sl-icon name="minus"></sl-icon>
+        </sl-button>
+        <edit></edit>
+        <delete></delete>
+    </sl-button-group>
 
-    <sl-avatar v-if="skel['image']"
+
+
+    </div>
+
+    <div class="content">
+      <sl-avatar v-if="skel['image']"
                shape="square"
+               class="image"
                style="--size: 3em"
                :image="Request.downloadUrlFor(skel['image'],false)"
                :label="skel['image']['dest']['name']"
-    >
+      >
+      </sl-avatar>
 
-    </sl-avatar>
-    <sl-button-group v-if="handlerState.currentSelection?.[0]['key'] === skel['key']">
-      <edit></edit>
-      <delete></delete>
-    </sl-button-group>
+      <div class="column">
+        <h2 class="element-headline">
+          {{ skel["kind"] }}
+          <component v-if='skel["headline"]'>: {{ skel["headline"] }}</component>
+          <component v-else-if='skel["subline"]'>: {{ skel["subline"] }}</component>
+        </h2>
 
-    {{skel["width"]}}
-    <sl-button v-if="skel['width']!=='fullwidth' && skel['width']!=='12'" @click="expandContent">expand</sl-button>
-    <sl-button  v-if="skel['width']!=='1'" @click="shrinkContent">shrink</sl-button>
+
+        <span v-if="skel['downloaditems']">Dateien: {{ skel['downloaditems'].length }}</span>
+        <span v-if="skel['url']">Navigation: {{ skel['url'] }}</span>
+      </div>
+
+    </div>
+
   </div>
 </template>
 
@@ -137,14 +163,94 @@ export default {
 
 <style lang="less" scoped>
 .element {
-  border: 1px solid var(--sl-color-primary-500);
+  border: 1px solid var(--sl-color-neutral-200);
+  box-shadow: 0 0 5px rgba(0, 0, 0, .2);
+  padding: var(--sl-spacing-small);
+  position: relative;
+  cursor: pointer;
+  background-color: #fff;
+  z-index: 1;
+
+  &.is-selected{
+    cursor: initial;
+    border: 1px solid var(--sl-color-primary-200);
+    box-shadow: 0 0 5px rgba(0, 0, 0, .2);
+
+    .element-headline{
+      color: var(--sl-color-primary-500)
+    }
+  }
 }
 
-h1 {
+sl-button{
+  &::part(base){
+    aspect-ratio: 1;
+  }
+}
+
+:deep(.sl-button-group__button):not(.size-btn){
+  &::part(base){
+    aspect-ratio: 1;
+    padding-left: 0;
+  }
+
+  &::part(label){
+    display: none;
+  }
+}
+
+.header{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  padding-bottom: var(--sl-spacing-small);
+  margin-bottom: var(--sl-spacing-small);
+  border-bottom: 1px solid var(--sl-color-neutral-300);
+}
+
+.dragger{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  aspect-ratio: 1;
+  cursor: move;
+  width: 1.9em;
+  margin-right: auto;
+}
+
+.element-headline{
   font-weight: bold;
 }
 
+.content{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
+.column{
+  display: flex;
+  flex-direction: column;
+}
+
+.image{
+  margin-right: var(--sl-spacing-medium);
+  border: 1px solid var(--sl-color-neutral-300);
+}
+
+sl-button-group{
+  opacity: .3;
+  mix-blend-mode: luminosity;
+  transition: all ease .3s;
+
+  &.is-selected, &:hover{
+    opacity: 1;
+    mix-blend-mode: normal;
+  }
+}
+
 .ghost {
-  border: 1px dashed #000;
+  background-color: var(--sl-color-primary-100);
+  opacity: .7;
 }
 </style>

@@ -17,6 +17,9 @@
           </component>
 
           <div v-else class="fluid-grid">
+              <div class="shadow-grid">
+                  <div v-for="i in 12"></div>
+              </div>
               <component v-for="contentSkel in grid"
                          :is="'element'"
                          :skel="contentSkel"
@@ -256,12 +259,14 @@ export default defineComponent({
     height:50%
   }
 
-
 .fluid-wrap {
   display: grid;
   grid-template-columns: [full-start] minmax(20px, 1fr) [main-start] minmax(0, 1200px) [main-end] minmax(20px, 1fr) [full-end];
   grid-gap: 20px 0;
-  //margin: 0 -20px;
+  padding: 20px 0;
+  overflow-x: auto;
+  height: 0;
+  flex: 1;
 }
 
 .fluid-grid {
@@ -269,6 +274,8 @@ export default defineComponent({
   grid-column: main;
   grid-template-columns: repeat(12, minmax(0, 100px) );
   grid-gap: 20px;
+  position: relative;
+
 
   .mq-print({
     padding: 0;
@@ -279,64 +286,66 @@ export default defineComponent({
   });
 }
 
-@fluidHeightSmall: 100px;
-@fluidHeightMedium: 125px;
-@fluidHeightLarge: 150px;
+.shadow-grid{
+  position: absolute;
+  top: -20px;
+  left: 0;
+  right: 0;
+  bottom: -20px;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 100px) );
+  grid-gap: 20px;
+  z-index: 0;
+
+  & > div {
+    background-color: var(--sl-color-neutral-50);
+  }
+}
 
 
 @iterations: 12;
-  .width-loop (@i) when (@i > 0) {
-      &.fluid-width-@{i}{
-        grid-column: ~"span @{i}";
+.width-loop (@i) when (@i > 0) {
+    &.fluid-width-@{i}{
+      grid-column: ~"span @{i}";
 
-        .mq-max(@breakMedium,{
-            grid-column: span 6;
-        });
+      .mq-max(@breakMedium,{
+          grid-column: span 6;
+      });
 
-        .mq-max(@breakSmall,{
-            grid-column: span 12;
-        });
-      }
-      .width-loop(@i - 1);
-  }
-  .width-loop (@iterations);
+      .mq-max(@breakSmall,{
+          grid-column: span 12;
+      });
+    }
+    .width-loop(@i - 1);
+}
+.width-loop (@iterations);
 
-  &.fluid-width-fullwidth {
-    grid-column: full;
-  }
+&.fluid-width-fullwidth {
+  grid-column: full;
+}
 
-  &.fluid-height-small {
-    height: @fluidHeightSmall;
-    overflow-y: hidden;
-  }
-  &.fluid-height-medium {
-    height: @fluidHeightMedium;
-    overflow-y: hidden;
-  }
-  &.fluid-height-large {
-    height: @fluidHeightLarge;
-    overflow-y: hidden;
-  }
-  &.fluid-height-100 {
-    height: 100vh;
-    overflow-y: hidden;
-  }
+&.fluid-height-100 {
+  height: 100vh;
+  overflow-y: hidden;
+}
 
-  &.fluid-height-1-1 {
-    aspect-ratio: 1;
-  }
+&.fluid-height-1-1 {
+  aspect-ratio: 1;
+}
 
-  &.fluid-height-16-9 {
-    aspect-ratio: 1.7777;
-  }
+&.fluid-height-16-9 {
+  aspect-ratio: 1.7777;
+}
 
-  &.fluid-height-16-10 {
-    aspect-ratio: 1.6;
-  }
+&.fluid-height-16-10 {
+  aspect-ratio: 1.6;
+}
 
-  &.fluid-height-4-3 {
-    aspect-ratio: 1.3333;
-  }
+&.fluid-height-4-3 {
+  aspect-ratio: 1.3333;
+}
+
+
 
 
 </style>
