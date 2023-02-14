@@ -14,7 +14,7 @@
         </message>
     </sl-drawer>
 
-    <div class="messsges_target" style="position: absolute;width: 500px;right: 10px;z-index: 99;bottom: 70px">
+    <div class="messages_target">
         <message v-for="message in messageStore.state.messages.slice(0,3)"
                  :key="message['time']"
                  :variant="message['variant']"
@@ -53,5 +53,14 @@ export default defineComponent({
 </script>
 
 <style scoped lang="less">
+
+.messages_target{
+  position: absolute;
+  width: 500px;
+  right: 25px;
+  bottom: 25px;
+  z-index: 99;
+}
+
 
 </style>

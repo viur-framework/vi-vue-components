@@ -1,13 +1,15 @@
 <template>
+  <sl-dialog :label='$t("actions.delete")' id="dialog-delete">
+    {{ `Do you want to delete these ${state.count} entries` }}<!--TODO Translate-->
+    <sl-button slot="footer" variant="primary" @click="deleteEntries">{{ $t("actions.delete") }}</sl-button>
+  </sl-dialog>
+
   <sl-button variant="danger" size="small" :disabled="!state.active || !state.canDelete" @click="openDeletePopup">
     <sl-icon slot="prefix" name="trash"></sl-icon>
     {{ $t("actions.delete") }}
   </sl-button>
 
-  <sl-dialog :label='$t("actions.delete")' id="dialog-delete">
-    {{ `Do you want to delete these ${state.count} entries` }}<!--TODO Translate-->
-    <sl-button slot="footer" variant="primary" @click="deleteEntries">{{ $t("actions.delete") }}</sl-button>
-  </sl-dialog>
+
 </template>
 
 <script lang="ts">

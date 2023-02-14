@@ -72,6 +72,7 @@
 <script>
 import {Request} from '@viur/viur-vue-utils'
 import {computed, reactive, inject, provide} from "vue";
+import Utils from "../../utils"
 import Edit from "../Actions/edit.vue";
 import Delete from "../Actions/delete.vue";
 
@@ -155,7 +156,8 @@ export default {
       shrinkContent,
       entrySelected,
       onMouseDownDragger,
-      onMouseUpDragger
+      onMouseUpDragger,
+      Utils
     };
   }
 }
