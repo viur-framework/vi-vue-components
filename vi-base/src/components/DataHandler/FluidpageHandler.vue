@@ -12,6 +12,7 @@
                      :skel="contentSkel"
                      :key="contentSkel['key']"
                      @click="entrySelected(contentSkel)"
+                     @mouseenter="entrySelected(contentSkel)"
           >
 
           </component>
@@ -25,6 +26,7 @@
                          :skel="contentSkel"
                          :key="contentSkel['key']"
                          @click="entrySelected(contentSkel)"
+                         @mouseenter="entrySelected(contentSkel)"
               >
 
               </component>
