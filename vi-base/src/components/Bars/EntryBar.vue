@@ -30,6 +30,13 @@ export default defineComponent({
 
 <style scoped lang="less">
 
+.bar{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  margin-left: 10px;
+}
+
 sl-button{
   margin-left: 5px;
 }
