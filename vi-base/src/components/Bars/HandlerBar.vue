@@ -61,8 +61,8 @@ export default defineComponent({
         }
 
         const treeActions = {
-          "default": [["addnode", "add", "selectfields","rootnodelist"], ["reload", "setamount", "overlay"]],
-          "entry": [["edit", "clone", "delete"], ["preview"]]
+          "default": [["addfolder", "addfile", "selectfields","rootnodelist"], ["reload"]],
+          "entry": [["edit", "clone", "delete"]]
         }
 
         let fluidpageActions = {

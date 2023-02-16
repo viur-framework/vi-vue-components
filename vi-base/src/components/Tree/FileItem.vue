@@ -1,10 +1,7 @@
 <template>
   <tr
     :draggable="treeState.dragging"
-    @dragstart="tree.onDragStart($event, idx)"
-    @dragenter.prevent="tree.onDragEnter($event, idx)"
-    @dragover.prevent="tree.onDragOver($event, idx)"
-    @dragleave="tree.onDragLeave($event, idx)"
+    @dragstart="tree.onDragStart($event, idx, 'leaf')"
     @drop.stop="tree.onDrop($event, idx)"
     :class="{
             isSelected: treeState.selected_leaf?.key === skel.key,
@@ -12,12 +9,17 @@
            'dropafter':state.currentEntry['_isover'] && state.currentEntry['_drop']==='after',
            'dropbefore':state.currentEntry['_isover'] && state.currentEntry['_drop']==='before'
     }"
-    :key="skel['key']" @click="entrySelected(skel)"
+    :key="skel['key']"
   >
     <td>
       <div class="file">
-        <sl-icon name="download-file" sprite></sl-icon>
-        <span class="filename" v-html="skel.name"></span>
+        <div class="dragger" v-if="treeState.dragging"
+               @mouseup="tree.mouseUpHandle($event, idx, 'leaf')"
+               @mousedown="tree.mouseDownHandle($event, idx, 'leaf')">
+        <sl-icon name="menu"></sl-icon>
+        </div>
+        <sl-icon name="download-file" sprite @click="entrySelected(skel)"></sl-icon>
+        <span class="filename" v-html="skel.name"  @click="entrySelected(skel)"></span>
       </div>
     </td>
     <td>
@@ -56,10 +58,19 @@ export default defineComponent({
   setup(props, context) {
     const treeState = inject("state")
     const state = reactive({
-      currentEntry: computed(()=>{
-        return tree.EntryFromPath(props.path)
-      }),
+       currentEntry:{},
+      child:computed(()=>{
+        if (!state.currentEntry['_leafs']){
+          return null
+        }
+        return state.currentEntry['_leafs'][props.idx]
+      })
     })
+
+    onMounted(() => {
+      state.currentEntry = tree.EntryFromPath(props.path)
+    })
+
 
     //activate File
     function entrySelected(skel) {
@@ -124,16 +135,19 @@ td {
   padding: 6px 8px;
 }
 
-.dropin {
-  background-color: red;
-}
+.dragger{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-right: var(--sl-spacing-x-small);
+  height: 100%;
+  cursor: move;
+  opacity: .2;
+  transition: opacity ease .3s;
 
-.dropafter {
-  background-color: blue;
-}
-
-.dropbefore {
-  background-color: green;
+  sl-icon{
+    font-size: .7em;
+  }
 }
 
 </style>

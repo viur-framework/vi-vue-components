@@ -14,6 +14,8 @@ import edittable_action from './edittable.vue'
 import filter_action from './filter.vue'
 import rootnodelist_action from './rootnodelist.vue'
 import fluidpage_action from './fluidpage.vue'
+import addfolder_action from './addfolder.vue'
+import addfile_action from './addfile.vue'
 
 
 export default {
@@ -32,5 +34,7 @@ export default {
   edittable_action,
   filter_action,
   rootnodelist_action,
-  fluidpage_action
+  fluidpage_action,
+  addfolder_action,
+  addfile_action
 }

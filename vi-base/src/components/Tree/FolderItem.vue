@@ -1,21 +1,29 @@
 <template>
-  <tr class="noderow"
-      @click="changeParentEntry(idx)"
-      :draggable="treeState.dragging"
+  <tr class="noderow entry"
+      :draggable="state.child?.['_dragging'] && treeState.dragging"
       @dragstart="tree.onDragStart($event, idx)"
       @dragenter.prevent="tree.onDragEnter($event, idx)"
       @dragover.prevent="tree.onDragOver($event, idx)"
       @dragleave="tree.onDragLeave($event, idx)"
       @drop.stop="tree.onDrop($event, idx)"
-      :class="{'dropin':state.currentEntry['_isover'] && state.currentEntry['_drop']==='in',
-             'dropafter':state.currentEntry['_isover'] && state.currentEntry['_drop']==='after',
-             'dropbefore':state.currentEntry['_isover'] && state.currentEntry['_drop']==='before'
+      :class="{'dropin':state.child?.['_isover'] && state.child?.['_drop']==='in',
+             'dropafter':state.child?.['_isover'] && state.child?.['_drop']==='after',
+             'dropbefore':state.child?.['_isover'] && state.child?.['_drop']==='before'
       }"
   >
     <td>
-      <div class="folder">
-        <sl-icon name="folder" sprite></sl-icon>
-        <span class="filename" v-html="skel['name']"></span>
+      <div v-if="up" class="folder" >
+        <sl-icon name="folder" sprite @click="changeParentEntryUp"></sl-icon>
+        <span class="filename" @click="changeParentEntryUp">..</span>
+      </div>
+      <div v-else class="folder" >
+        <div class="dragger" v-if="treeState.dragging"
+               @mouseup="tree.mouseUpHandle($event, idx)"
+               @mousedown="tree.mouseDownHandle($event, idx)">
+        <sl-icon name="menu"></sl-icon>
+        </div>
+        <sl-icon name="folder" sprite @click="changeParentEntry(idx)"></sl-icon>
+        <span class="filename" v-html="skel['name']" @click="changeParentEntry(idx)"></span>
       </div>
     </td>
     <td @click="changeParentEntry(idx)">
@@ -28,7 +36,7 @@
 </template>
 
 <script>
-import {reactive, defineComponent, onMounted, inject, computed} from 'vue'
+import {reactive, defineComponent, onMounted, inject, computed, watch} from 'vue'
 import useTree from "./tree";
 import {Request} from "@viur/viur-vue-utils";
 
@@ -46,15 +54,44 @@ export default defineComponent({
     },
     path:{
       type:Array
-    }
+    },
+    up:Boolean
   },
   components: {},
   setup(props, context) {
     const treeState = inject("state")
     const state = reactive({
-      currentEntry: computed(()=>{
-        return tree.EntryFromPath(props.path)
-      }),
+      currentEntry:{},
+      child:computed(()=>{
+        if (!state.currentEntry['_nodes']){
+          return null
+        }
+        return state.currentEntry['_nodes'][props.idx]
+      })
+    })
+    const tree = useTree(props.module,treeState,state)
+
+    onMounted(() => {
+      state.currentEntry = tree.EntryFromPath(props.path)
+      if (props.path && props.path.length === 1 && props.path[0] === 0) { // prefetch rootnode childs
+        state.currentEntry['_status'] = 'loading'
+        Request.get(`/vi/${props.module}/list`, {
+          dataObj: {
+            "skelType": "node",
+            "orderby": "sortindex",
+            "parententry": state.currentEntry["key"]
+          }
+        }).then(async (resp) => {
+          let data = await resp.json()
+          state.currentEntry['_nodes'] = data["skellist"]
+          state.currentEntry['_disabled'] = false
+          state.currentEntry['_status'] = 'loaded' //loading, loaded
+          state.currentEntry['_dragging'] = false
+          state.currentEntry['_isover'] = false
+          state.currentEntry['_overElement'] = null
+          state.currentEntry['_drop'] = null
+        })
+      }
     })
 
     //folder navigation
@@ -63,12 +100,17 @@ export default defineComponent({
       treeState.selected_leaf = null
     }
 
-    const tree = useTree(props.module,treeState,state)
+    function changeParentEntryUp() {
+      treeState.selectedPath = treeState.selectedPath.splice(0,-1)
+      treeState.selected_leaf = null
+    }
+
     return {
       state,
       treeState,
       tree,
-      changeParentEntry
+      changeParentEntry,
+      changeParentEntryUp
     }
   }
 })
@@ -95,7 +137,6 @@ export default defineComponent({
 
 tr {
   position: relative;
-  transition: all ease .3s;
   cursor: pointer;
 
   &:nth-child(odd) {
@@ -123,15 +164,31 @@ td {
 }
 
 .dropin {
-  background-color: red;
+  background-color: var(--sl-color-primary-50);
 }
 
 .dropafter {
-  background-color: blue;
+  border-bottom: 4px solid var(--sl-color-primary-50) !important;
 }
 
 .dropbefore {
-  background-color: green;
+  border-top: 4px solid var(--sl-color-primary-50) !important;
 }
+
+.dragger{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-right: var(--sl-spacing-x-small);
+  height: 100%;
+  cursor: move;
+  opacity: .2;
+  transition: opacity ease .3s;
+
+  sl-icon{
+    font-size: .7em;
+  }
+}
+
 
 </style>

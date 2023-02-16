@@ -46,17 +46,19 @@
       {{ state.errors }}
     </sl-details>
 
+    <template v-if="state.relation_opened">
     <template v-for="bone in state.relation_opened">
       <sl-dialog open style="--width:75%"
                  :label="'Auswahl: '+bone['boneStructure']['descr']"
                  @sl-request-close="relationCloseAction($event)"
       >
-        <list-handler
+        <component
+          :is="bone['bone_conf']['handlerComponent']"
           :rowselect="1"
           :module="bone['boneStructure']['module']"
           @currentSelection="relationUpdateSelection($event,bone)"
         >
-        </list-handler>
+        </component>
         <div slot="footer">
             <sl-button :disabled="!bone['currentSelection'] || bone['currentSelection']?.length===0"
                        @click="relationApplySelection(bone)"
@@ -67,6 +69,7 @@
         </div>
       </sl-dialog>
     </template>
+      </template>
   </div>
 
 
@@ -81,8 +84,7 @@ import {useRoute} from "vue-router";
 import bone from "../../components/Bones/edit/bone.vue";
 import EntryBar from "../Bars/EntryBar.vue";
 import {useModulesStore} from "../../stores/modules";
-import ListHandler from '../../components/DataHandler/ListHandler.vue'
-import app from "../../App.vue";
+import handlers from "../DataHandler/handlers";
 
 export default defineComponent({
   props: {
@@ -97,18 +99,19 @@ export default defineComponent({
 
 
   },
-  components: {EntryBar, bone, ListHandler},
+  components: {EntryBar, bone, ...handlers},
   setup(props, context) {
     const appStore = useAppStore();
     const route = useRoute();
     const modulesStore = useModulesStore();
     const values = reactive({})
     const state = reactive({
+      type:"formhandler",
       skel: {},
       structure: {},
       errors: [],
       conf: computed(() => {
-        return appStore.getConfByRoute(route)
+        return appStore.getConf(props.module)
       }),
       formGroups: computed(() => {
         let groups = {"default": {"name": "Allgemein", "bones": [], "groupVisible": false}}
@@ -172,6 +175,8 @@ export default defineComponent({
       if (props.action === "edit" || props.action === "clone") {
         if (state.skeltype === "node") {
           url += `/node`
+        }else if (state.skeltype === "leaf"){
+          url += `/leaf`
         }
         url += `/${props.skelkey}`
       }
@@ -180,15 +185,19 @@ export default defineComponent({
       if (state.skeltype === "node" && props.action === "add") {
         dataObj["skelType"] = "node"
         dataObj["node"] = props.skelkey
-
-
       }
+
+      if (state.skeltype === "leaf" && props.action === "add") {
+        dataObj["skelType"] = "leaf"
+        dataObj["node"] = props.skelkey
+      }
+
       console.log("new url ", url)
       console.log(dataObj)
 
 
 
-      Request.get(url, {"dataObj": dataObj}).then(async (resp) => {
+      Request.securePost(url, {"dataObj": dataObj}).then(async (resp) => {
         let data = await resp.json()
         state.skel = data["values"]
         state.structure = structureToDict(data["structure"])
@@ -219,6 +228,8 @@ export default defineComponent({
     function relationSelection(event,bone) {
       bone["bone_instance"] = event.target
       bone["bone_instance_boneName"] = event["detail"]["boneName"]
+      bone["bone_conf"] = appStore.getConf(bone['boneStructure']['module'])
+
       state.relation_opened.push(bone)
     }
 

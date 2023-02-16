@@ -1,7 +1,13 @@
 <template>
     <handler-bar :module="module"></handler-bar>
   <template v-if="state.currentRootNode">
-    <file-browser :rootnode="state.currentRootNode" :module="module" :dragging="true"></file-browser>
+    <file-browser :rootnode="state.currentRootNode"
+                  :module="module"
+                  :dragging="true"
+                  @changed="onSelectionChanged"
+    >
+      </file-browser>
+
   </template>
 </template>
 
@@ -13,6 +19,8 @@ import {ListRequest} from '@viur/viur-vue-utils'
 import {useAppStore} from '../../stores/app'
 import {Request} from "@viur/viur-vue-utils";
 import FileBrowser from '../../components/Tree/FileBrowser.vue';
+import {useMessageStore} from "../../stores/message";
+import {useUserStore} from "../../stores/user";
 
 export default defineComponent({
     props: {
@@ -22,17 +30,23 @@ export default defineComponent({
         },
         view: null
     },
+    emits:["currentSelection"],
     components: {FileBrowser, HandlerBar},
     setup(props, context) {
         const appStore = useAppStore()
+        const userStore = useUserStore()
+
 
         const state = reactive({
+            type:"treehandler",
             currentRootNodes: [],
             currentRootNode: null,
             module: computed(() => props.module),
             group: null,
             view: computed(() => props.view),
-            active:false
+            active:false,
+            currentSelection:null,
+            currentSelectionType:null
         })
         provide("state", state) // expose to components
 
@@ -41,6 +55,8 @@ export default defineComponent({
                 let data = await resp.json()
                 state.currentRootNodes = data
                 state.currentRootNode = data[0]
+            }).catch((error)=>{
+              if(error.statusCode === 401) userStore.updateUser()
             })
         }
 
@@ -75,9 +91,22 @@ export default defineComponent({
           state.active = false
         })
 
+        function onSelectionChanged(selection, type){
+          if (selection){
+            state.currentSelection = [selection]
+            state.currentSelectionType = type
+          }else{
+            state.currentSelection = null
+            state.currentSelectionType = null
+          }
+
+          context.emit("currentSelection", state.currentSelection)
+        }
+
 
         return {
             state,
+            onSelectionChanged
         }
     }
 })

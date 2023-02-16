@@ -10,8 +10,9 @@
 
 <script lang="ts">
 import {reactive, defineComponent, computed} from 'vue'
-import {useRoute} from "vue-router";
+import {useRoute, onBeforeRouteUpdate} from "vue-router";
 import ListHandler from "../components/DataHandler/ListHandler.vue";
+import {useUserStore} from "../stores/user";
 
 export default defineComponent({
     props: {
@@ -24,6 +25,7 @@ export default defineComponent({
     components: {ListHandler},
     setup(props, context) {
         const route = useRoute()
+        const userstore = useUserStore()
 
         const state = reactive({
             view: computed(() => {
@@ -32,6 +34,10 @@ export default defineComponent({
                 }
                 return null
             })
+        })
+
+        onBeforeRouteUpdate(async (to,from)=>{
+          userstore.updateUser()
         })
 
         return {

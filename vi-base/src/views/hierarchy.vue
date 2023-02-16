@@ -11,7 +11,8 @@
 //@ts-nocheck
 import {reactive, defineComponent, computed} from 'vue'
 import HierarchyHandler from "../components/DataHandler/HierarchyHandler.vue";
-import {useRoute} from "vue-router";
+import {onBeforeRouteUpdate, useRoute} from "vue-router";
+import {useUserStore} from "../stores/user";
 
 export default defineComponent({
     props: {
@@ -23,6 +24,7 @@ export default defineComponent({
     components: {HierarchyHandler},
     setup(props, context) {
         const route = useRoute()
+        const userStore = useUserStore()
 
         const state = reactive({
             view: computed(() => {
@@ -32,6 +34,11 @@ export default defineComponent({
                 return null
             })
         })
+
+      onBeforeRouteUpdate(async (to,from)=>{
+          userstore.updateUser()
+        })
+
         return {state}
     }
 })

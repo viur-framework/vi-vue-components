@@ -74,6 +74,7 @@ export default defineComponent({
     const tableInst = ref(null)
 
     const state = reactive({
+      type:"listhandler",
       storeName: computed(() => {
         let name: string = `module___${props.module}`
         if (props.view) {

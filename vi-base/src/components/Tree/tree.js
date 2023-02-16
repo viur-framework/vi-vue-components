@@ -1,20 +1,39 @@
 import {Request} from "@viur/viur-vue-utils";
 
 export default function useTree(module, treeState, state){
-    function mouseDownHandle(e, idx) {
-      state.currentEntry['_nodes'][idx]["_dragging"] = true
+    function mouseDownHandle(e, idx, type="node") {
+        if(type==="node") {
+            state.currentEntry['_nodes'][idx]["_dragging"] = true
+        }else{
+            state.currentEntry['_leafs'][idx]["_dragging"] = true
+        }
     }
 
-    function mouseUpHandle(e, idx) {
-      state.currentEntry['_nodes'][idx]["_dragging"] = false
+    function mouseUpHandle(e, idx, type="node") {
+        if(type==="node") {
+            state.currentEntry['_nodes'][idx]["_dragging"] = false
+        }else{
+            state.currentEntry['_leafs'][idx]["_dragging"] = false
+        }
     }
 
-    function onDragStart(e, idx) {
-      treeState.draggedEntry = {
-        "entry": state.currentEntry['_nodes'][idx],
-        "idx": idx,
-        "parent": state.currentEntry
+    function onDragStart(e, idx, type="node") {
+      if(type==="node"){
+          treeState.draggedEntry = {
+            "entry": state.currentEntry['_nodes'][idx],
+            "idx": idx,
+            "parent": state.currentEntry,
+            "type":"node"
+          }
+      }else{
+          treeState.draggedEntry = {
+            "entry": state.currentEntry['_leafs'][idx],
+            "idx": idx,
+            "parent": state.currentEntry,
+            "type":"leaf"
+          }
       }
+
     }
 
     function onDragEnter(e, idx) {
@@ -28,13 +47,17 @@ export default function useTree(module, treeState, state){
 
       let elem = e.target.closest(".entry")
 
-      if (parseInt(e.offsetY) < 5) {
-        state.currentEntry['_nodes'][idx]["_drop"] = 'before'
-      } else if (parseInt(elem.clientHeight) / 2 > parseInt(e.offsetY)) {
-        state.currentEntry['_nodes'][idx]["_drop"] = 'in'
-      } else {
-        state.currentEntry['_nodes'][idx]["_drop"] = 'after'
-      }
+      if(treeState.draggedEntry['type']!=="node"){
+          state.currentEntry['_nodes'][idx]["_drop"] = 'in'
+      }else{
+          if (parseInt(e.offsetY) < 5) {
+            state.currentEntry['_nodes'][idx]["_drop"] = 'before'
+          } else if (parseInt(elem.clientHeight) / 2 > parseInt(e.offsetY)) {
+            state.currentEntry['_nodes'][idx]["_drop"] = 'in'
+          } else {
+            state.currentEntry['_nodes'][idx]["_drop"] = 'after'
+          }
+        }
     }
 
     function onDragLeave(e, idx) {
@@ -43,46 +66,57 @@ export default function useTree(module, treeState, state){
     }
 
     function onDrop(e, idx) {
-      //move element
-      if (state.currentEntry['_nodes'][idx]["_drop"] === 'after') {
-        treeState.draggedEntry["parent"]['_nodes'].splice(treeState.draggedEntry["idx"], 1) // remove old one
-        state.currentEntry['_nodes'].splice(idx + 1, 0, treeState.draggedEntry["entry"]) //add a copy
-
-        let sortidx = state.currentEntry['_nodes'][idx]['sortindex'] + 1
-        if (state.currentEntry['_nodes'].length-1 !== idx){
-           sortidx = (state.currentEntry['_nodes'][idx]['sortindex'] + state.currentEntry['_nodes'][idx+1]['sortindex']) /2
-        }
-
-
-        EntryMoved(treeState.draggedEntry["entry"], sortidx, state.currentEntry["key"])
-
-      } else if (state.currentEntry['_nodes'][idx]["_drop"] === 'before') {
-        treeState.draggedEntry["parent"]['_nodes'].splice(treeState.draggedEntry["idx"], 1) // remove old one
-
-        state.currentEntry['_nodes'].splice(idx, 0, treeState.draggedEntry["entry"]) //add a copy
-
-
-        let sortidx = state.currentEntry['_nodes'][idx]['sortindex'] - 1
-
-        if (idx !== 0){
-           sortidx = (state.currentEntry['_nodes'][idx]['sortindex'] + state.currentEntry['_nodes'][idx-1]['sortindex']) /2
-        }
-
-        EntryMoved(treeState.draggedEntry["entry"], sortidx, state.currentEntry["key"])
-
-      } else if (state.currentEntry['_nodes'][idx]["_drop"] === 'in') {
-
-        treeState.draggedEntry["parent"]['_nodes'].splice(treeState.draggedEntry["idx"], 1) // remove old one
-        if (state.currentEntry['_nodes'][idx]['_status'] === 'loaded') {
-          state.currentEntry['_nodes'][idx]['_nodes'].push(treeState.draggedEntry["entry"]) //add a copy
+        if (treeState.draggedEntry['type']!=="node"){
+            treeState.draggedEntry["parent"]['_leafs'].splice(treeState.draggedEntry["idx"], 1) // remove old one
+            if (state.currentEntry['_nodes'][idx]['_status'] === 'loaded') {
+              state.currentEntry['_nodes'][idx]['_leafs'].push(treeState.draggedEntry["entry"]) //add a copy
+            }else{
+              requestChildren(idx).then(() =>
+                state.currentEntry['_nodes'][idx]['_leafs'].push(treeState.draggedEntry["entry"]) //add a copy
+              )
+            }
+            EntryMoved(treeState.draggedEntry["entry"], new Date().getTime(), state.currentEntry['_nodes'][idx]["key"],'leaf')
         }else{
-          requestChildren(idx).then(() =>
-            state.currentEntry['_nodes'][idx]['_nodes'].push(treeState.draggedEntry["entry"]) //add a copy
-          )
-        }
-        EntryMoved(treeState.draggedEntry["entry"], new Date().getTime(), state.currentEntry['_nodes'][idx]["key"])
-      }
+            //move element
+              if (state.currentEntry['_nodes'][idx]["_drop"] === 'after') {
+                treeState.draggedEntry["parent"]['_nodes'].splice(treeState.draggedEntry["idx"], 1) // remove old one
+                state.currentEntry['_nodes'].splice(idx + 1, 0, treeState.draggedEntry["entry"]) //add a copy
 
+                let sortidx = state.currentEntry['_nodes'][idx]['sortindex'] + 1
+                if (state.currentEntry['_nodes'].length-1 !== idx){
+                   sortidx = (state.currentEntry['_nodes'][idx]['sortindex'] + state.currentEntry['_nodes'][idx+1]['sortindex']) /2
+                }
+
+
+                EntryMoved(treeState.draggedEntry["entry"], sortidx, state.currentEntry["key"])
+
+              } else if (state.currentEntry['_nodes'][idx]["_drop"] === 'before') {
+                treeState.draggedEntry["parent"]['_nodes'].splice(treeState.draggedEntry["idx"], 1) // remove old one
+
+                state.currentEntry['_nodes'].splice(idx, 0, treeState.draggedEntry["entry"]) //add a copy
+
+
+                let sortidx = state.currentEntry['_nodes'][idx]['sortindex'] - 1
+
+                if (idx !== 0){
+                   sortidx = (state.currentEntry['_nodes'][idx]['sortindex'] + state.currentEntry['_nodes'][idx-1]['sortindex']) /2
+                }
+
+                EntryMoved(treeState.draggedEntry["entry"], sortidx, state.currentEntry["key"])
+
+              } else if (state.currentEntry['_nodes'][idx]["_drop"] === 'in') {
+
+                treeState.draggedEntry["parent"]['_nodes'].splice(treeState.draggedEntry["idx"], 1) // remove old one
+                if (state.currentEntry['_nodes'][idx]['_status'] === 'loaded') {
+                  state.currentEntry['_nodes'][idx]['_nodes'].push(treeState.draggedEntry["entry"]) //add a copy
+                }else{
+                  requestChildren(idx).then(() =>
+                    state.currentEntry['_nodes'][idx]['_nodes'].push(treeState.draggedEntry["entry"]) //add a copy
+                  )
+                }
+                EntryMoved(treeState.draggedEntry["entry"], new Date().getTime(), state.currentEntry['_nodes'][idx]["key"])
+              }
+        }
       //cleaning
       state.currentEntry['_nodes'][idx]["_isover"] = false
       state.currentEntry['_nodes'][idx]["_drop"] = null

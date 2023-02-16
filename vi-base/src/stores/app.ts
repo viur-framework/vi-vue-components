@@ -6,6 +6,7 @@ import {useRouter} from "vue-router";
 import {useViewStore} from "./views";
 import {useUserStore} from "./user";
 import {destroyStore} from "@viur/viur-vue-utils/utils/handlers";
+import hierarchyhandler from "../components/DataHandler/HierarchyHandler.vue";
 
 
 export interface ModuleInfo {
@@ -62,21 +63,29 @@ function adminTreeLayer(itemList: Array<ModuleInfo>, parent: ModuleInfo): Array<
         // build url by handler
         if (!Object.keys(conf).includes("handler")) {
             conf["url"] = null // if handler is missing, this is a moduleGroup
+            conf["handlerComponent"] = null
         } else if (conf["handler"] == "list.fluidpage.content") {
             conf["url"] = {"path": `/${conf["module"]}/fluidpage`}
+            conf["handlerComponent"] = "fluidpagehandler"
         } else if (conf["handler"] === "list.grouped") {
             let group = Object.keys(conf).includes("group") ? conf["group"] : "all"
             conf["url"] = {"path": `/${conf["module"]}/list/${group}`}
+            conf["handlerComponent"] = "listhandler"
         } else if (conf["handler"] === "list" || conf["handler"].startsWith("list.")) {
             conf["url"] = {"path": `/${conf["module"]}/list`}
+            conf["handlerComponent"] = "listhandler"
         } else if (conf["handler"] === "tree" ) {
             conf["url"] = {"path": `/${conf["module"]}/tree`}
+            conf["handlerComponent"] = "treehandler"
         } else if (conf["handler"] === "tree.node" ) {
             conf["url"] = {"path": `/${conf["module"]}/tree.node`}
+            conf["handlerComponent"] = "hierarchyhandler"
         } else if (conf["handler"] === "tree.simple.file" ) {
             conf["url"] = {"path": `/${conf["module"]}/tree`}
+            conf["handlerComponent"] = "treehandler"
         } else if (conf["handler"] === "singleton" || conf["handler"].startsWith("singleton.")) {
             conf["url"] = {"path": `/${conf["module"]}`}
+            conf["handlerComponent"] = "formhandler"
         }
 
         if (Object.keys(conf).includes("view_number") && Object.keys(conf).includes("handler") && conf["handler"]) {

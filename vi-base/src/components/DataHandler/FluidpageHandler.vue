@@ -84,6 +84,7 @@ export default defineComponent({
     const tableInst = ref(null)
 
     const state = reactive({
+      type:"fluidpagehandler",
       storeName: computed(() => {
         let name: string = `module___${props.module}`
         if (props.view) {

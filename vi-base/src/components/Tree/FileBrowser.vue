@@ -5,7 +5,7 @@
     </sl-breadcrumb-item>
   </sl-breadcrumb>
 
-  <sl-split-panel position-in-pixels="250" snap="250px">
+  <sl-split-panel class="main" position-in-pixels="250" snap="250px">
     <div class="tree-wrapper"
          slot="start"
     >
@@ -14,7 +14,7 @@
       </ul>
     </div>
 
-    <sl-split-panel style="--max: 70%" slot="end">
+    <sl-split-panel slot="end" :position="state.leafView">
       <div slot="start" class="start-slot">
         <slot :nodes="state.currentEntry?.['_nodes']" :leafs="state.currentEntry?.['_leafs']">
           <sl-table-wrapper  :search="filter" sortable class="scroller">
@@ -117,10 +117,12 @@ export default defineComponent({
     view: null,
     dragging:false
   },
+  emits:['changed'],
   components: {FileItem, FolderItem, ViImage, TreeFolderItem},
   setup(props, context) {
     const state = reactive({
       tree: [],
+      leafView:100,
       selected_leaf: null,
       selectedPath: [],
       selectedEntries: computed(() => {
@@ -149,18 +151,25 @@ export default defineComponent({
       current_leaves: [], // holds our entries
       refreshList: false,
       dragging:computed(()=>props.dragging),
-      loading:false
+      loading:false,
+      selectedNode:null,
+      selectedType:null
     })
     provide("state", state) // expose to components
 
     const tree = useTree(props.module,state,state)
 
     //update if path changes
-    watch(() => state.selectedPath, (newVal, oldVal) => {
-      if (newVal.toString() !== oldVal.toString()) {
-        fetchAll();
-      }
+    watch(() => state.selectedEntries, (newVal, oldVal) => {
+      fetchAll();
     })
+
+    watch(() => state.selected_leaf, (newVal, oldVal) => {
+        state.selectedNode = state.selected_leaf
+        context.emit("changed",state.selectedNode, "leaf")
+        state.leafView=50
+    })
+
 
     //update if marked as needs update
     watch(() => state.refreshList, (newVal, oldVal) => {
@@ -178,14 +187,19 @@ export default defineComponent({
 
     //breadcrumb navigation
     function changePath(idx) {
-      state.selected_leaf = null
       state.selectedPath.splice(idx + 1, state.selectedPath.length - (idx + 1))
       fetchAll();
     }
 
     function fetchAll() {
+      state.selected_leaf = null
       state.loading=true
-      fetch("node");
+      context.emit("changed",null, null)
+      fetch("node").then((resp)=>{
+        state.selectedNode = state.selectedEntries.at(-1)
+        context.emit("changed",state.selectedNode, "node")
+        state.leafView=100
+      });
       fetch("leaf");
       state.loading=false;
     }
@@ -260,8 +274,10 @@ sl-breadcrumb-item{
   }
 }
 
-sl-split-panel {
+sl-split-panel.main{
   --min: 250px;
+}
+sl-split-panel {
   --divider-width: 1px;
   height: 0;
   flex: 1;

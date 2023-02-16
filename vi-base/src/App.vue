@@ -1,5 +1,7 @@
 <template>
-  <the-main-screen v-if="userStore.state['user.loggedin']==='yes'"></the-main-screen>
+  <the-main-screen v-if="userStore.state['user.loggedin']==='yes'">
+
+  </the-main-screen>
   <the-login-screen v-else></the-login-screen>
 </template>
 <script lang="ts">
@@ -52,7 +54,16 @@ export default defineComponent({
       ).catch(()=>{
         console.log("Viur settings not Found")
       })
+
+      //check access on reactivation
+      document.addEventListener("visibilitychange",()=>{
+        userStore.updateUser()
+      })
+
     })
+
+
+
 
     function getPrimaryColor(lightness) {
       return colorStore.getPrimaryColor(lightness);

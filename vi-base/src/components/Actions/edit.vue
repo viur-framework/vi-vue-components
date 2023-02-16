@@ -28,11 +28,16 @@ export default defineComponent({
       }),
       url: computed(() => {
         if (!state.active) return ""
-        console.log(handlerState.module)
-        if(appStore.getConf(handlerState.module).handler==="tree.node")
+        if(handlerState.type=="hierarchyhandler")
         {
           return `/${handlerState.module}/edit/node/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
         }
+
+        if(handlerState.type=="treehandler")
+        {
+          return `/${handlerState.module}/edit/${handlerState?.currentSelectionType}/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
+        }
+
         if(handlerState.group){
           return `/${handlerState.module}/edit/${handlerState.group}/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
         }else{

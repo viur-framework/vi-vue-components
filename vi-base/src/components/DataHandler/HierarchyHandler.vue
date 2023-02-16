@@ -7,11 +7,11 @@
             :module="state.module"
             height="100%"
             mode="hierarchy"
-            v-on:table-fetchNodes="fetchNodesEvent"
-            v-on:table-rowMovedDataTree="rowMovedDataTree"
-            v-on:table-newSortIndex="newSortIndex"
-            v-on:table-move_and_SortIndex="move_and_SortIndex"
-            v-on:sl-selectionChanged="entrySelected"
+            @table-fetchNodes="fetchNodesEvent"
+            @table-rowMovedDataTree="rowMovedDataTree"
+            @table-newSortIndex="newSortIndex"
+            @table-move_and_SortIndex="move_and_SortIndex"
+            @sl-selectionChanged="entrySelected"
 
 
   ></sl-table>
@@ -34,6 +34,7 @@ import HandlerBar from "../../components/Bars/HandlerBar.vue";
 import {Request} from '@viur/viur-vue-utils'
 import {useAppStore} from '../../stores/app'
 import {useRoute} from "vue-router";
+import {useUserStore} from "../../stores/user";
 
 
 export default defineComponent({
@@ -44,12 +45,15 @@ export default defineComponent({
     },
     view: null
   },
+  emits:['currentSelection'],
   components: {HandlerBar},
   setup(props, context) {
     const appStore = useAppStore();
+    const userStore = useUserStore();
     const route = useRoute();
 
     const state = reactive({
+      type:"hierarchyhandler",
       storeName: computed(() => {
         let name: string = `module___${props.module}`
         if (props.view) {
@@ -85,7 +89,9 @@ export default defineComponent({
         conf["rootNode"] = data[0];
         fetchNodes(state.currentRootNode["key"]);
 
-      })
+      }).catch((error)=>{
+              if(error.statusCode === 401) userStore.updateUser()
+            })
     }
 
     function fetchStructure() {
@@ -98,7 +104,9 @@ export default defineComponent({
           struct[data[idx][0]] = data[idx][1];
         }
         state.structure = struct;
-      })
+      }).catch((error)=>{
+              if(error.statusCode === 401) userStore.updateUser()
+            })
     }
 
 
@@ -123,6 +131,8 @@ export default defineComponent({
       } else {
         state.currentSelection = [];
       }
+
+      context.emit("currentSelection", state.currentSelection)
 
     }
 
@@ -157,7 +167,9 @@ export default defineComponent({
         state.nodes = data["skellist"];
 
 
-      })
+      }).catch((error)=>{
+              if(error.statusCode === 401) userStore.updateUser()
+            })
     }
 
     function fetchNodesEvent(event: CustomEvent) {
@@ -191,6 +203,8 @@ export default defineComponent({
         }
 
 
+      }).catch((error)=>{
+        if(error.statusCode === 401) userStore.updateUser()
       })
     }
 

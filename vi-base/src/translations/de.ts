@@ -1,7 +1,9 @@
 export default {
     actions: {
         add: "Hinzufügen",
-        addnode: "Ordner hinzufügen",
+        addnode: "Eintrag hinzufügen",
+        addfolder: "Ordner hinzufügen",
+        addfile: "Datei hinzufügen",
         clone: "Klonen",
         delete: "Löschen",
         edit: "Bearbeiten",
@@ -36,7 +38,10 @@ export default {
     },
     tab:{
         amount_warning: "Du hast bereits x Einträge geöffnet. Möchtest du trotzdem einen weiteren öffnen?"
-    }
+    },
+    abort:"Abbrechen",
+    create:"Erstellen",
+    select:"Auswählen"
 
 }
 
