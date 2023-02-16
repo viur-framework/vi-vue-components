@@ -48,7 +48,7 @@
 
     <template v-if="state.relation_opened">
     <template v-for="bone in state.relation_opened">
-      <sl-dialog open style="--width:75%"
+      <sl-dialog open style="--width:85%" class="relation-popup"
                  :label="'Auswahl: '+bone['boneStructure']['descr']"
                  @sl-request-close="relationCloseAction($event)"
       >
@@ -58,14 +58,16 @@
           :module="bone['boneStructure']['module']"
           @currentSelection="relationUpdateSelection($event,bone)"
         >
+
         </component>
-        <div slot="footer">
+        <div class="footer" slot="footer">
             <sl-button :disabled="!bone['currentSelection'] || bone['currentSelection']?.length===0"
                        @click="relationApplySelection(bone)"
-                       variant="success">
+                       variant="success"
+                        size="small">
               {{ $t("relation.select") }}
             </sl-button>
-            <sl-button @click="relationRemoveHandler(bone)" variant="danger" outline>{{ $t("relation.abort") }}</sl-button>
+            <sl-button @click="relationRemoveHandler(bone)" variant="danger" size="small" outline>{{ $t("relation.abort") }}</sl-button>
         </div>
       </sl-dialog>
     </template>
@@ -342,12 +344,33 @@ sl-details {
   }
 }
 
-sl-dialog::part(base) {
-  position: absolute;
+.relation-popup{
+  &::part(base) {
+    position: absolute;
+    height: 100%;
+  }
+
+  &::part(panel) {
+    height: 100%;
+  }
+
+  &::part(body){
+    display: contents;
+  }
+
+  &::part(footer){
+    padding: var(--sl-spacing-small);
+  }
+
+  &::part(overlay) {
+    position: absolute;
+  }
 }
 
-sl-dialog::part(overlay) {
-  position: absolute;
+.footer{
+  sl-button{
+    margin-left: var(--sl-spacing-x-small);
+  }
 }
 
 </style>
