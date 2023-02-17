@@ -36,16 +36,16 @@ export default defineConfig({
     }
   },
 
-  base:"/vi",
+  base:"/vi/s",
   build: {
     //emptyOutDir:true,
     outDir: path.resolve(__dirname, '../../../deploy/vi'),
     assetsInlineLimit: 0,
     chunkSizeWarningLimit: 700,
     rollupOptions: {
-      //input: {
-      //    index: path.resolve(__dirname, 'html/index.html'),
-      //},
+      input: {
+          index: path.resolve(__dirname, 'main.html'),
+      },
       output: {
         chunkFileNames: (chunkinfo) => {
           if (chunkinfo['moduleIds'].filter(x => x.includes('node_modules/@viur/viur-shoelace/dist/components')).length > 0) {

@@ -7,7 +7,9 @@
         Fehler beim Anmelden
       </sl-alert>
 
-      <sl-spinner class="init-spinner" v-if="state.waitForInit"></sl-spinner>
+      <div class="init-spinner"  style="position: relative;height:40px"  v-if="state.waitForInit">
+        <loader></loader>
+      </div>
 
       <sl-tab-group v-else>
         <sl-tab slot="nav" panel="userpassword"
@@ -75,8 +77,10 @@ import {useUserStore} from "../../stores/user"
 import {reactive, computed, onBeforeMount, defineComponent, ref} from 'vue'
 import {Request} from "@viur/viur-vue-utils";
 import {useAppStore} from "../../stores/app";
+import Loader from "../Generic/Loader.vue";
 
 export default defineComponent({
+  components: {Loader},
   setup() {
 
     //We must load the Vi settings

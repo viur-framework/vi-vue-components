@@ -37,7 +37,7 @@ export default defineComponent({
         })
 
         onBeforeRouteUpdate(async (to,from)=>{
-          userstore.updateUser()
+          userStore.updateUser()
         })
 
         return {

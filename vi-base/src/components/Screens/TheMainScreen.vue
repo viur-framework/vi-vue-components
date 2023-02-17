@@ -41,6 +41,7 @@ import MessageDrawer from "../Messaging/MessageDrawer.vue";
 import TheMainScreenSkelDrawer from "../TheMainScreenSkelDrawer.vue";
 import ViewWrapper from "../ViewWrapper.vue";
 import TheMainScreenTabbar from "../TheMainScreenTabbar.vue";
+import {useUserStore} from "../../stores/user";
 
 export default defineComponent({
     components: {TheMainScreenTabbar, ViewWrapper, TheMainScreenSkelDrawer, MessageDrawer, TheTopbar, TheSidebar},
