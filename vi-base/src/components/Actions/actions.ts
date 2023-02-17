@@ -16,6 +16,7 @@ import rootnodelist_action from './rootnodelist.vue'
 import fluidpage_action from './fluidpage.vue'
 import addfolder_action from './addfolder.vue'
 import addfile_action from './addfile.vue'
+import nextpage_action from './nextpage.vue'
 
 
 export default {
@@ -36,5 +37,6 @@ export default {
   rootnodelist_action,
   fluidpage_action,
   addfolder_action,
-  addfile_action
+  addfile_action,
+  nextpage_action
 }

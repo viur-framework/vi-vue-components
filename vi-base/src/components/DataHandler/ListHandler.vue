@@ -160,6 +160,11 @@ export default defineComponent({
       router.push(url);
     }
 
+    function nextpage(){
+      return currentlist.next()
+    }
+    provide("nextpage", nextpage)
+    provide("currentlist", currentlist)
 
     return {
       state,
@@ -168,7 +173,8 @@ export default defineComponent({
       openEditor,
       modulesStore,
       tableInst,
-      appStore
+      appStore,
+      nextpage
 
     }
   }

@@ -16,7 +16,9 @@ export default {
           text: "Filter",
           nofilter: "Für dieses Modul sind keine Filter vorhanden"
         },
-        reset: "Zurücksetzen"
+        reset: "Zurücksetzen",
+        nextpage: "weitere Einträge",
+        nextpage_finish: "alle Einträge geladen"
 
     },
     bone: {
