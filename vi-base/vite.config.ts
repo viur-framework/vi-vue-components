@@ -36,10 +36,10 @@ export default defineConfig({
     }
   },
 
-  base:"/vvi",
+  base:"/vi",
   build: {
     //emptyOutDir:true,
-    outDir: path.resolve(__dirname, '../../../deploy/vvi'),
+    outDir: path.resolve(__dirname, '../../../deploy/vi'),
     assetsInlineLimit: 0,
     chunkSizeWarningLimit: 700,
     rollupOptions: {

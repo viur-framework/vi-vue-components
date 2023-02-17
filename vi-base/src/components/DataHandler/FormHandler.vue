@@ -38,13 +38,13 @@
         </template>
       </sl-details>
     </template>
-
+    <!--
     <sl-details summary="DEBUG: Formdata">
       {{ state.formValues }}
     </sl-details>
     <sl-details summary="DEBUG: Errors">
       {{ state.errors }}
-    </sl-details>
+    </sl-details>-->
 
     <template v-if="state.relation_opened">
     <template v-for="bone in state.relation_opened">
