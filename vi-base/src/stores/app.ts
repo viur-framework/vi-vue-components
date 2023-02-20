@@ -209,7 +209,6 @@ export const useAppStore = defineStore("app", () => {
         }
         //@ts-ignore
         let adminInfoTree: Array<ModuleInfo> = adminTreeLayer(itemList, {"module": "start"})
-        console.log(adminInfoTree)
         return adminInfoTree
     })
 
@@ -228,8 +227,6 @@ export const useAppStore = defineStore("app", () => {
         if (view)
             name += "_" + view
         conf = modulesList.value?.[name]
-        console.log(modulesTree)
-        console.log(modulesList.value)
         return conf
     }
 

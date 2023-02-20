@@ -85,7 +85,6 @@ export default defineComponent({
         let actions = {...listActions}
 
         if (!conf) return actions;
-        console.log(conf["handler"])
         if (conf["handler"].startsWith("tree.node")) {
           actions = {...hierarchyActions}
         }else if (conf["handler"].startsWith("tree")) {
@@ -96,7 +95,6 @@ export default defineComponent({
           actions = {...fluidpagecontentActions}
         }
 
-        console.log(actions)
         let confActions = conf["actions"]
         if (confActions) {
           confActions = confActions.join(" ").replace(/\|\s/g, "space") // replace pipes with "space"

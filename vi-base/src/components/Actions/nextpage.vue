@@ -16,6 +16,7 @@ export default defineComponent({
   setup(props, context) {
     const state = reactive({
       disable:computed(()=>{
+        if (!currentlist) return true
         return currentlist.state.state === 2
       }),
       loading:false

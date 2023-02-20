@@ -43,7 +43,11 @@ import '@viur/viur-shoelace/dist/components/bone/bone';
 
 import {setBasePath} from '@viur/viur-shoelace/dist/utilities/base-path';
 
-setBasePath(`viur-shoelace`)
+if(import.meta.env.DEV){
+    setBasePath(`s/viur-shoelace`)
+}else{
+    setBasePath(`viur-shoelace`)
+}
 
 /*
 import {registerIconLibrary} from '@viviur/viur-shoelace/dist/utilities/icon-library';
