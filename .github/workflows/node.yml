@@ -27,13 +27,10 @@ jobs:
         cache-dependency-path: app/sources/vi-base/package-lock.json
     - run: npm install --prefix=app/sources/vi-base
     - run: npm run build --prefix=app/sources/vi-base
-    - run: ls app
-    - run: ls
-    - run: ls ..
     - uses: actions/upload-artifact@master
       with:
         name: buildfiles
-        path: app/deploy/vi
+        path: deploy/vi
 
 
   release:
