@@ -25,11 +25,8 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
         cache-dependency-path: app/sources/vi-base/package-lock.json
-    - run: cd "app/sources"
-    - run: pwd
-    - run: ls
-    - run: npm install --prefix=vi-base
-    - run: npm run build --prefix=vi-base
+    - run: npm install --prefix=app/sources/vi-base
+    - run: npm run build --prefix=app/sources/vi-base
     - uses: actions/upload-artifact@master
       with:
         name: buildfiles
