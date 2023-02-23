@@ -18,6 +18,7 @@
               :editabletable="state.editableTable"
               @sl-selectionChanged="entrySelected"
               @sl-dblclick="openEditor"
+              @table-fetchData="nextpage"
               height="100%"
               ref="tableInst"
 
@@ -174,7 +175,7 @@ export default defineComponent({
       modulesStore,
       tableInst,
       appStore,
-      nextpage
+      nextpage,
 
     }
   }
