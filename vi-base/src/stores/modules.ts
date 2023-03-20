@@ -13,7 +13,7 @@ export const useModulesStore = defineStore("modulesStore", () => {
 
   function setmodules() {
 
-    Request.get(`/json/_moduleconf?limit=99`).then(async (resp) => {
+    Request.get(`/vi/_moduleconf?limit=99`).then(async (resp) => {
       let data = await resp.json()
       for (const skel of data["skellist"]) {
         state.modules[skel['name']]=skel;

@@ -91,10 +91,10 @@ export const useUserStore = defineStore("user", () => {
             prompt_parent_id: "google_oauth",
             callback: (response: CredentialPopupResponse) => {
               if (response.credential) {
-                Request.securePost("/json/user/auth_googleaccount/login", {
+                Request.securePost("/vi/user/auth_googleaccount/login", {
                   dataObj: {"token": response.credential}
                 }).then((resp: Response) => {
-                  Request.get("/json/user/view/self").then(
+                  Request.get("/vi/user/view/self").then(
                     async (resp: Response) => {
                       let data = await resp.json()
                       state["user.loggedin"] = "yes"
@@ -151,7 +151,7 @@ export const useUserStore = defineStore("user", () => {
   function userLogin(name: string, password: string) {
     return new Promise((resolve, reject) => {
       state["user.loggedin"] = "loading"
-      Request.securePost("/json/user/auth_userpassword/login",
+      Request.securePost("/vi/user/auth_userpassword/login",
         {
           dataObj: {
             "name": name,
@@ -161,7 +161,7 @@ export const useUserStore = defineStore("user", () => {
       ).then(async (respLogin: Response) => {
         const logindata = await respLogin.json()
         if (logindata === "OKAY") {
-          Request.get("/json/user/view/self").then(
+          Request.get("/vi/user/view/self").then(
             async (resp: Response) => {
               let data = await resp.json()
               state["user.loggedin"] = "yes"
@@ -195,7 +195,7 @@ export const useUserStore = defineStore("user", () => {
   function userSecondFactor(otp: string) {
     return new Promise((resolve, reject) => {
       state["user.loggedin"] = "loading"
-      Request.securePost(`/json/user/f2_${state["user.login.type"]}/verify`, {dataObj: {"otp": otp}})
+      Request.securePost(`/vi/user/f2_${state["user.login.type"]}/verify`, {dataObj: {"otp": otp}})
         .then(async (resp) => {
           const opt_data= await resp.json();
           if (opt_data.errors) {
@@ -205,7 +205,7 @@ export const useUserStore = defineStore("user", () => {
                 }
 
               }
-          Request.get("/json/user/view/self").then(
+          Request.get("/vi/user/view/self").then(
             async (resp: Response) => {
               let data = await resp.json();
 
@@ -232,7 +232,7 @@ export const useUserStore = defineStore("user", () => {
       //window.google.accounts.id.disableAutoSelect();
       window.google.accounts.id.revoke();
     }
-    Request.securePost("/json/user/logout").then((resp: Response) => {
+    Request.securePost("/vi/user/logout").then((resp: Response) => {
         resetLoginInformation()
       }
     ).catch(
@@ -246,7 +246,7 @@ export const useUserStore = defineStore("user", () => {
   function updateUser() {
     return new Promise((resolve, reject) => {
 
-      Request.get("/json/user/view/self").then(
+      Request.get("/vi/user/view/self").then(
         async (resp: Response) => {
           let data = await resp.json()
           state["user.loggedin"] = "yes"
@@ -325,7 +325,7 @@ export const useUserStore = defineStore("user", () => {
     if (JSON.stringify(state.lastActions) !== JSON.stringify(state.syncedlastActions)) {
       state.syncedlastActions = JSON.parse(JSON.stringify(state.lastActions));// Delete referenc
       state.lastSynced = new Date().getTime();
-      Request.securePost("/json/user/edit", {
+      Request.securePost("/vi/user/edit", {
         dataObj: {
           "key": state.user.key,
           "adminconfig": state.user["adminconfig"]
