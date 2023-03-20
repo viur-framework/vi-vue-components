@@ -252,8 +252,8 @@ export const useUserStore = defineStore("user", () => {
           state["user.loggedin"] = "yes"
           state["user"] = data.values
           state["user.login.type"] = "user"
-          if (data.values["adminconfig"]) {
-            const obj = JSON.parse(data.values["adminconfig"]);
+          if (data.values["admin_config"]) {
+            const obj = data.values["admin_config"];
             if (obj !== null) {
               for (const key in obj["lastActions"])//back to array
               {
@@ -277,7 +277,11 @@ export const useUserStore = defineStore("user", () => {
   }
 
   function addAction() {
-    if (!state.user["adminconfig"]) {
+    if(state.user === null)
+    {
+      return
+    }
+    if (!state.user["admin_config"]) {
       return
     }
     if (route) {
@@ -303,13 +307,13 @@ export const useUserStore = defineStore("user", () => {
       }
 
       state.lastActions.unshift(action)
-      let configObj = JSON.parse(state.user["adminconfig"]);
+      let configObj = state.user["admin_config"];
       if (configObj === null) {
         configObj = {"lastActions": state.lastActions};
       } else {
         configObj["lastActions"] = state.lastActions
       }
-      state.user["adminconfig"] = JSON.stringify(configObj)
+      state.user["admin_config"] = configObj
       if (new Date().getTime() - state.lastSynced > 30 * 1000) { // trigger sync only when the last sync is older than 30 sec
         synclastActions();
       }
@@ -319,16 +323,16 @@ export const useUserStore = defineStore("user", () => {
   }
 
   function synclastActions() {
-    if (!state.user["adminconfig"]) {
+    if (!state.user["admin_config"]) {
       return
     }
     if (JSON.stringify(state.lastActions) !== JSON.stringify(state.syncedlastActions)) {
-      state.syncedlastActions = JSON.parse(JSON.stringify(state.lastActions));// Delete referenc
+      state.syncedlastActions = state.lastActions;// Delete referenc
       state.lastSynced = new Date().getTime();
       Request.securePost("/vi/user/edit", {
         dataObj: {
           "key": state.user.key,
-          "adminconfig": state.user["adminconfig"]
+          "admin_config": state.user["admin_config"]
         }
       }).then(() => {
         console.log("sync success")
@@ -370,8 +374,8 @@ export const useUserStore = defineStore("user", () => {
   const favoriteModules = computed(() => {
     //return the modules
     const appStore = useAppStore();
-    if (!state.user["adminconfig"]) return;
-    let configObj = JSON.parse(state.user["adminconfig"]); //maybe we can use the
+    if (!state.user["admin_config"]) return;
+    let configObj = state.user["admin_config"]; //maybe we can use the
     if (configObj === null) {
       configObj = {"favoriteModules": []};
     }

@@ -235,7 +235,7 @@ export default defineComponent({
       Request.securePost("/vi/user/edit", {
         dataObj: {
           "key": userStore.state.user.key,
-          "adminconfig": userStore.state.user["adminconfig"]
+          "admin_config": userStore.state.user["adminconfig"]
         }
       }).then((resp: object) => {
           console.log("Update Userconfig Succesfully")
