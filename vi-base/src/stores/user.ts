@@ -91,10 +91,10 @@ export const useUserStore = defineStore("user", () => {
             prompt_parent_id: "google_oauth",
             callback: (response: CredentialPopupResponse) => {
               if (response.credential) {
-                Request.securePost("/json/user/auth_googleaccount/login", {
+                Request.securePost("/vi/user/auth_googleaccount/login", {
                   dataObj: {"token": response.credential}
                 }).then((resp: Response) => {
-                  Request.get("/json/user/view/self").then(
+                  Request.get("/vi/user/view/self").then(
                     async (resp: Response) => {
                       let data = await resp.json()
                       state["user.loggedin"] = "yes"
@@ -151,7 +151,7 @@ export const useUserStore = defineStore("user", () => {
   function userLogin(name: string, password: string) {
     return new Promise((resolve, reject) => {
       state["user.loggedin"] = "loading"
-      Request.securePost("/json/user/auth_userpassword/login",
+      Request.securePost("/vi/user/auth_userpassword/login",
         {
           dataObj: {
             "name": name,
@@ -161,7 +161,7 @@ export const useUserStore = defineStore("user", () => {
       ).then(async (respLogin: Response) => {
         const logindata = await respLogin.json()
         if (logindata === "OKAY") {
-          Request.get("/json/user/view/self").then(
+          Request.get("/vi/user/view/self").then(
             async (resp: Response) => {
               let data = await resp.json()
               state["user.loggedin"] = "yes"
@@ -195,7 +195,7 @@ export const useUserStore = defineStore("user", () => {
   function userSecondFactor(otp: string) {
     return new Promise((resolve, reject) => {
       state["user.loggedin"] = "loading"
-      Request.securePost(`/json/user/f2_${state["user.login.type"]}/verify`, {dataObj: {"otp": otp}})
+      Request.securePost(`/vi/user/f2_${state["user.login.type"]}/verify`, {dataObj: {"otp": otp}})
         .then(async (resp) => {
           const opt_data= await resp.json();
           if (opt_data.errors) {
@@ -205,7 +205,7 @@ export const useUserStore = defineStore("user", () => {
                 }
 
               }
-          Request.get("/json/user/view/self").then(
+          Request.get("/vi/user/view/self").then(
             async (resp: Response) => {
               let data = await resp.json();
 
@@ -232,7 +232,7 @@ export const useUserStore = defineStore("user", () => {
       //window.google.accounts.id.disableAutoSelect();
       window.google.accounts.id.revoke();
     }
-    Request.securePost("/json/user/logout").then((resp: Response) => {
+    Request.securePost("/vi/user/logout").then((resp: Response) => {
         resetLoginInformation()
       }
     ).catch(
@@ -246,14 +246,14 @@ export const useUserStore = defineStore("user", () => {
   function updateUser() {
     return new Promise((resolve, reject) => {
 
-      Request.get("/json/user/view/self").then(
+      Request.get("/vi/user/view/self").then(
         async (resp: Response) => {
           let data = await resp.json()
           state["user.loggedin"] = "yes"
           state["user"] = data.values
           state["user.login.type"] = "user"
-          if (data.values["adminconfig"]) {
-            const obj = JSON.parse(data.values["adminconfig"]);
+          if (data.values["admin_config"]) {
+            const obj = data.values["admin_config"];
             if (obj !== null) {
               for (const key in obj["lastActions"])//back to array
               {
@@ -277,7 +277,11 @@ export const useUserStore = defineStore("user", () => {
   }
 
   function addAction() {
-    if (!state.user["adminconfig"]) {
+    if(state.user === null)
+    {
+      return
+    }
+    if (!state.user["admin_config"]) {
       return
     }
     if (route) {
@@ -303,13 +307,13 @@ export const useUserStore = defineStore("user", () => {
       }
 
       state.lastActions.unshift(action)
-      let configObj = JSON.parse(state.user["adminconfig"]);
+      let configObj = state.user["admin_config"];
       if (configObj === null) {
         configObj = {"lastActions": state.lastActions};
       } else {
         configObj["lastActions"] = state.lastActions
       }
-      state.user["adminconfig"] = JSON.stringify(configObj)
+      state.user["admin_config"] = configObj
       if (new Date().getTime() - state.lastSynced > 30 * 1000) { // trigger sync only when the last sync is older than 30 sec
         synclastActions();
       }
@@ -319,16 +323,16 @@ export const useUserStore = defineStore("user", () => {
   }
 
   function synclastActions() {
-    if (!state.user["adminconfig"]) {
+    if (!state.user["admin_config"]) {
       return
     }
     if (JSON.stringify(state.lastActions) !== JSON.stringify(state.syncedlastActions)) {
-      state.syncedlastActions = JSON.parse(JSON.stringify(state.lastActions));// Delete referenc
+      state.syncedlastActions = state.lastActions;// Delete referenc
       state.lastSynced = new Date().getTime();
-      Request.securePost("/json/user/edit", {
+      Request.securePost("/vi/user/edit", {
         dataObj: {
           "key": state.user.key,
-          "adminconfig": state.user["adminconfig"]
+          "admin_config": state.user["admin_config"]
         }
       }).then(() => {
         console.log("sync success")
@@ -370,8 +374,8 @@ export const useUserStore = defineStore("user", () => {
   const favoriteModules = computed(() => {
     //return the modules
     const appStore = useAppStore();
-    if (!state.user["adminconfig"]) return;
-    let configObj = JSON.parse(state.user["adminconfig"]); //maybe we can use the
+    if (!state.user["admin_config"]) return;
+    let configObj = state.user["admin_config"]; //maybe we can use the
     if (configObj === null) {
       configObj = {"favoriteModules": []};
     }
