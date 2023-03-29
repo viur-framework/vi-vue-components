@@ -1,30 +1,41 @@
 <template>
 
+  <div class="main-wrapper">
+      <handler-bar :module="module"></handler-bar>
+
+      <sl-details open summary="Info" v-if="modulesStore.state.loaded && modulesStore.state.modules[module]['help_text']">
+        {{modulesStore.state.modules[module]["help_text"]}}
+      </sl-details>
 
 
+        <sl-table moveablecolumns
+                  :rowselect="rowselect"
+                  :structure="currentlist.structure"
+                  :skellist="currentlist.state.skellist"
+                  :module="module"
+                  :editabletable="state.editableTable"
+                  @sl-selectionChanged="entrySelected"
+                  @sl-dblclick="openEditor"
+                  @table-fetchData="nextpage"
+                  height="100%"
+                  ref="tableInst"
 
-  <handler-bar :module="module"></handler-bar>
+        >
 
-  <sl-details open summary="Info" v-if="modulesStore.state.loaded && modulesStore.state.modules[module]['help_text']">
-    {{modulesStore.state.modules[module]["help_text"]}}
-  </sl-details>
+        </sl-table>
 
-
-    <sl-table moveablecolumns
-              :rowselect="rowselect"
-              :structure="currentlist.structure"
-              :skellist="currentlist.state.skellist"
-              :module="module"
-              :editabletable="state.editableTable"
-              @sl-selectionChanged="entrySelected"
-              @sl-dblclick="openEditor"
-              @table-fetchData="nextpage"
-              height="100%"
-              ref="tableInst"
-
-    >
-
-    </sl-table>
+        <div class="more-entries">
+          <sl-button size="small">
+              <sl-icon slot="prefix" aria-hidden="true" library="default" v-once="" name="arrow-repeat"></sl-icon>
+              Weitere Einträge
+          </sl-button>
+          <sl-select size="small" label="Anzahl">
+            <sl-option value="1">30</sl-option>
+            <sl-option value="2">60</sl-option>
+            <sl-option value="3">90</sl-option>
+          </sl-select>
+        </div>
+    </div>
 </template>
 
 <script lang="ts">
@@ -183,6 +194,46 @@ export default defineComponent({
 </script>
 
 <style scoped lang="less">
+.main-wrapper{
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 0;
+  position: relative;
+}
+
+.more-entries{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 15px;
+  padding: 10px;
+  background-color: var(--sl-label-background-color);
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, .2);
+  border-radius: var(--sl-border-radius-medium);
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+sl-select{
+  &::part(form-control){
+    flex-direction: row;
+    align-items: center;
+  }
+
+  &::part(form-control-label){
+    margin-right: 10px;
+    font-size: .8em;
+  }
+
+  &::part(form-control-input){
+    width: 80px;
+  }
+
+}
+
 sl-table {
   flex: 1;
   display: flex;

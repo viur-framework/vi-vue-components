@@ -7,7 +7,7 @@
             <span v-else> &nbsp;</span>
 
             <sl-icon v-if="state.slotitems"
-                     name="chevron-right"
+                     name="play"
                      class="arrow"
                      :class="{'is-open':state.open}">
             </sl-icon>
@@ -74,15 +74,21 @@ export default defineComponent({
   flex-direction: row;
   align-items: center;
   flex: 0 0 auto;
-  padding: 5px 7px;
-  color: #51514e;
+  padding: 5px 7px 6px 7px;
   font-size: .8em;
   font-weight: 600;
-  background-color: var(--sl-color-neutral-200);
-  border-top: 1px solid var(--sl-color-neutral-300);
+  border-bottom: 1px solid var(--sl-foreground-color);
   width: 100%;
   gap: 10px;
   cursor: pointer;
+  color: var(--sl-foreground-color);
+
+  &:hover{
+    .arrow{
+      opacity: 1;
+    }
+  }
+
 }
 
 span {
@@ -90,8 +96,10 @@ span {
     text-align: left;
 }
 
-sl-icon.arrow {
+.arrow {
     transition: all ease .3s;
+    font-size: .6em;
+    opacity: 0;
 
     &.is-open {
         transform: rotate(90deg);

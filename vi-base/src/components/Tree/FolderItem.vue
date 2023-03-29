@@ -122,6 +122,7 @@ export default defineComponent({
   flex-direction: row;
   flex-wrap: nowrap;
   align-items: center;
+  color: var(--sl-foreground-color);
 
   span {
     white-space: nowrap;
@@ -133,18 +134,25 @@ export default defineComponent({
   sl-icon {
     margin-right: 10px;
   }
+
+  &:hover{
+    .dragger{
+      opacity: 1;
+    }
+  }
 }
 
 tr {
   position: relative;
   cursor: pointer;
+  transition: background-color ease .3s;
 
   &:nth-child(odd) {
-    background-color: var(--sl-color-neutral-100)
+    background-color: rgba(0, 0, 0, .1)
   }
 
   &:hover {
-    background-color: var(--sl-color-primary-50)
+    background-color: rgba(0, 0, 0, .15)
   }
 
   &.isSelected {
@@ -164,15 +172,15 @@ td {
 }
 
 .dropin {
-  background-color: var(--sl-color-primary-50);
+  background-color: var(--sl-color-neutral-400);
 }
 
 .dropafter {
-  border-bottom: 4px solid var(--sl-color-primary-50) !important;
+  border-bottom: 4px solid var(--sl-color-neutral-400) !important;
 }
 
 .dropbefore {
-  border-top: 4px solid var(--sl-color-primary-50) !important;
+  border-top: 4px solid var(--sl-color-neutral-400) !important;
 }
 
 .dragger{
@@ -184,6 +192,7 @@ td {
   cursor: move;
   opacity: .2;
   transition: opacity ease .3s;
+  color: var(--sl-foreground-color);
 
   sl-icon{
     font-size: .7em;

@@ -134,15 +134,15 @@ export default defineComponent({
 
 <style scoped lang="less">
 .dropin {
-  background-color: var(--sl-color-primary-50);
+  background-color: var(--sl-color-neutral-400);
 }
 
 .dropafter {
-  border-bottom: 4px solid var(--sl-color-primary-50) !important;
+  border-bottom: 4px solid var(--sl-color-neutral-400) !important;
 }
 
 .dropbefore {
-  border-top: 4px solid var(--sl-color-primary-50) !important;
+  border-top: 4px solid var(--sl-color-neutral-400) !important;
 }
 
 .dragger{
@@ -154,6 +154,7 @@ export default defineComponent({
   cursor: move;
   opacity: .2;
   transition: opacity ease .3s;
+  color: var(--sl-foreground-color);
 
   sl-icon{
     font-size: .7em;
@@ -205,6 +206,7 @@ export default defineComponent({
   width: 1em;
   height: 1em;
   margin-right: var(--sl-spacing-small);
+  color: var(--sl-foreground-color);
 }
 
 .chevron{
@@ -217,14 +219,14 @@ export default defineComponent({
 
   sl-icon{
 	font-size: .4em;
-  	color: var(--sl-color-primary-500);
+  color: var(--sl-foreground-color);
 
 	&.expanded{
 	  transform: rotate(90deg);
 	}
 
 	&.disabled{
-	  color: var(--sl-color-neutral-300)
+	  opacity: .4;
 	}
   }
 }
@@ -233,10 +235,11 @@ export default defineComponent({
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color: var(--sl-foreground-color);
 }
 
 .disabled {
-  color: var(--sl-color-neutral-200);
+  opacity: .4;
 }
 
 </style>

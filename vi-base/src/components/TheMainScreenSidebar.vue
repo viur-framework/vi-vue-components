@@ -49,7 +49,6 @@ export default defineComponent({
   .nav{
     height:100%;
     position:relative;
-    background-color: #fff;
   }
 
 </style>

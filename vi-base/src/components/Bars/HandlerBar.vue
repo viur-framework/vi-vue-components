@@ -1,5 +1,65 @@
 <template>
   <div class="bar">
+
+    <sl-dropdown distance="10">
+      <sl-button size="small"
+                 slot="trigger"
+                 title="Optionen"
+                 variant="default">
+        <sl-icon slot="prefix" aria-hidden="true" library="default" v-once="" name="plus"></sl-icon>
+      </sl-button>
+
+      <sl-menu>
+
+        <sl-menu-item>
+          <sl-icon slot="prefix" name="heart"></sl-icon>
+          Felder anzeigen
+        </sl-menu-item>
+        <sl-menu-item>
+          <sl-icon slot="prefix" name="heart"></sl-icon>
+          Neuladen
+        </sl-menu-item>
+        <sl-menu-item>
+          <sl-icon slot="prefix" name="heart"></sl-icon>
+          Filter
+        </sl-menu-item>
+        <sl-menu-item>
+          <sl-icon slot="prefix" name="heart"></sl-icon>
+          Bearbeitungsmodus
+        </sl-menu-item>
+      </sl-menu>
+    </sl-dropdown>
+
+    <div class="spacer"></div>
+
+    <sl-button size="small"
+               variant="danger"
+               title="Löschen">
+        <sl-icon slot="prefix" aria-hidden="true" library="default" v-once="" name="plus"></sl-icon>
+    </sl-button>
+    <sl-button size="small"
+               variant="default"
+               title="Klonen">
+        <sl-icon slot="prefix" aria-hidden="true" library="default" v-once="" name="plus"></sl-icon>
+    </sl-button>
+    <sl-button size="small"
+               variant="default"
+               title="Ansehen">
+        <sl-icon slot="prefix" aria-hidden="true" library="default" v-once="" name="plus"></sl-icon>
+    </sl-button>
+    <sl-button size="small"
+               variant="default"
+               title="Bearbeiten">
+        <sl-icon slot="prefix" aria-hidden="true" library="default" v-once="" name="plus"></sl-icon>
+    </sl-button>
+    <sl-button size="small"
+               variant="success">
+        <sl-icon slot="prefix" aria-hidden="true" library="default" v-once="" name="plus"></sl-icon>
+        Hinzufügen
+    </sl-button>
+  </div>
+
+  <!--<div class="bar">
     <template v-for="(actionlist,index) in state.actions['default']">
       <component v-for="action in actionlist"
                  :is="`${action}_action`"
@@ -16,11 +76,12 @@
       <component v-for="action in actionlist"
                  :is="`${action}_action`"
                  size="small"
+                 outline
       >
       </component>
       <space_action v-if="index<(state.actions['entry'].length-1)"></space_action>
     </template>
-  </div>
+  </div>-->
 </template>
 
 <script lang="ts">
@@ -137,16 +198,15 @@ export default defineComponent({
   padding: var(--sl-spacing-small);
   gap: var(--sl-spacing-small);
   width: 100%;
-  background-color: #fff;
-  //z-index: 1; //todo
-}
-
-.bottombar {
-  padding-top: 0;
-  border-bottom: 2px solid var(--sl-color-neutral-200)
+  color: var(--sl-foreground-color);
+  border-bottom: 1px solid var(--sl-border-color);
 }
 
 .spacer {
   margin: auto
+}
+
+sl-button{
+
 }
 </style>

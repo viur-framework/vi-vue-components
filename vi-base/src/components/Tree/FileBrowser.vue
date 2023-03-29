@@ -255,7 +255,7 @@ export default defineComponent({
 
 sl-breadcrumb{
   padding: 7px 10px;
-  border-bottom: 2px solid var(--sl-color-neutral-200);
+  border-bottom: 2px solid rgba(0, 0, 0, .4);
 
   .mq-max(@breakSmall,{
 	margin-bottom: 10px;
@@ -266,7 +266,7 @@ sl-breadcrumb-item{
 
   &::part(base){
   	font-weight: 400;
-	color: var(--sl-color-primary-500)
+    color: var(--sl-foreground-color)
   }
 
   &::part(separator){
@@ -277,6 +277,7 @@ sl-breadcrumb-item{
 sl-split-panel.main{
   --min: 250px;
 }
+
 sl-split-panel {
   --divider-width: 1px;
   height: 0;
@@ -285,6 +286,11 @@ sl-split-panel {
   &::part(panel) {
     display: flex;
     flex-direction: column;
+  }
+
+  &::part(divider){
+    width: 2px;
+    background-color: rgba(0, 0, 0, .4);
   }
 
   .mq-max(@breakSmall,{
@@ -332,7 +338,7 @@ th {
   :deep(sl-icon) {
     height: .4em;
     padding-top: .5em;
-    color: @textColor;
+    color: var(--sl-foreground-color)
   }
 
   &.thimg {
@@ -350,6 +356,7 @@ th {
     overflow: hidden;
     text-overflow: ellipsis;
     width: 100%;
+    color: var(--sl-foreground-color)
   }
 }
 
@@ -385,6 +392,7 @@ sl-format-date {
   flex-direction: column;
   padding: 7px 15px;
   overflow-y: auto;
+  color: var(--sl-foreground-color);
 
   .headline {
     word-break: break-word;

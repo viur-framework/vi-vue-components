@@ -187,6 +187,10 @@ sl-card {
   max-width: 500px;
   width: 30vw;
 
+  &::part(base) {
+    background-color: var(--sl-background-color);
+    border: none;
+  }
 
   &::part(body) {
     display: flex;
@@ -202,10 +206,20 @@ sl-card {
   justify-content: center;
 }
 
+sl-tab-group {
+  --indicator-color: var(--sl-foreground-color);
+  --track-color: transparent;
+}
 
 sl-tab {
   &::part(base) {
     padding: 10px 20px;
+  }
+
+  &[aria-selected="true"]{
+    &::part(base) {
+      color: var(--sl-foreground-color);
+    }
   }
 }
 

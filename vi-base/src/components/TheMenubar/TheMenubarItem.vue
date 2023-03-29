@@ -288,37 +288,49 @@ export default defineComponent({
   user-select: none;
   border: 0;
   text-align: left;
-  padding: 3px 4px;
+  padding: 5px 0;
   align-items: center;
   align-self: stretch;
   min-height: 35px;
   min-width: 41px;
   justify-content: space-between;
-  border-top: 1px solid var(--sl-color-neutral-300);
   display: grid;
-  grid-template-columns: 51px minmax(0, 1fr) auto auto;
+  grid-template-columns: 37px minmax(0, 1fr) auto auto;
   grid-template-rows: 1fr;
   justify-items: center;
   transition: all ease .3s;
 
   sl-avatar {
-    --size: 2.1em;
-    padding-right: var(--sl-spacing-small);
+    --size: 1.85em;
+
+    &::part(icon){
+      padding: 25%;
+    }
+
+    &::part(base){
+      border: 1px solid var(--sl-border-color);
+      background-color: transparent;
+      color: var(--sl-border-color);
+    }
   }
 
   &:hover {
-    background-color: #fff;
+    background-color: var(--sl-hover-color);
 
-    .name {
-      color: var(--sl-color-primary-500);
-    }
-
-    .dropdown sl-button{
+    .dropdown sl-icon-button{
       opacity: 1;
     }
 
     .arrow{
       opacity: 1;
+    }
+
+    sl-avatar {
+      &::part(base){
+        border: 1px solid var(--sl-foreground-color);
+        background-color: transparent;
+        color: var(--sl-foreground-color);
+      }
     }
   }
 
@@ -334,10 +346,11 @@ export default defineComponent({
   -webkit-box-orient: vertical;
   overflow: hidden;
   display: -webkit-box;
-  color: @textColor;
+  color: var(--sl-foreground-color);
+  margin-left: 13px;
 
   a {
-    color: @textColor;
+    color: var(--sl-foreground-color);
   }
 }
 
@@ -354,6 +367,7 @@ sl-icon {
   padding: 0 var(--sl-spacing-small) ;
   font-size: .5em;
   opacity: .3;
+  color: var(--sl-foreground-color);
 
   &.is-open sl-icon{
     transform: rotate(90deg);
@@ -364,16 +378,21 @@ sl-icon {
   width: 41px;
 }
 
-sl-avatar::part(base) {
-  background-color: var(--sl-color-primary-500)
-}
 
 .dropdown{
   sl-icon-button{
     transition: all ease .3s;
     opacity: .3;
     rotate:90deg;
+    color: var(--sl-foreground-color);
 
+    &:hover{
+
+      &::part(base){
+        color: var(--sl-foreground-color) !important;
+      }
+
+    }
   }
 
   sl-menu{
@@ -384,10 +403,12 @@ sl-avatar::part(base) {
     sl-icon{
       font-size: .9em;
       margin-right: var(--sl-spacing-small);
+      color: var(--sl-foreground-color);
     }
 
     &::part(base){
       padding: var(--sl-spacing-x-small) var(--sl-spacing-medium);
+      color: var(--sl-foreground-color);
       font-size: .9em;
     }
 
@@ -403,16 +424,7 @@ sl-avatar::part(base) {
 
 .sublist{
   .item {
-    background-color: #fff;
     padding-left: var(--sl-spacing-medium);
-
-    sl-avatar {
-      &::part(base) {
-        background-color: transparent;
-        color: var(--sl-color-primary-500);
-        border: 1px solid var(--sl-color-primary-500);
-      }
-    }
   }
 }
 

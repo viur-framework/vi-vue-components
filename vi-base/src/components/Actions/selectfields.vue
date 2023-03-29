@@ -11,9 +11,9 @@
     </sl-checkbox>
 
     <sl-button-group slot="footer">
-      <sl-button @click="selectall">{{ $t("selectfields.selectall") }}</sl-button>
-      <sl-button @click="unselectall">{{ $t("selectfields.unselectall") }}</sl-button>
-      <sl-button @click="invertselect">{{ $t("selectfields.invertselect") }}</sl-button>
+      <sl-button size="small" @click="selectall">{{ $t("selectfields.selectall") }}</sl-button>
+      <sl-button size="small" @click="unselectall">{{ $t("selectfields.unselectall") }}</sl-button>
+      <sl-button size="small" @click="invertselect">{{ $t("selectfields.invertselect") }}</sl-button>
     </sl-button-group>
   </sl-dialog>
 

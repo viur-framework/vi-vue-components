@@ -96,6 +96,7 @@ export default defineComponent({
 
   &::part(divider){
     width: 2px;
+    background-color: rgba(0, 0, 0, .4);
   }
 }
 
@@ -104,7 +105,6 @@ export default defineComponent({
     flex-direction: column;
     flex: 1;
     height: 100%;
-    background-color: #fff;
 
     &::-webkit-scrollbar-track {
         background-color: transparent;
@@ -132,31 +132,6 @@ export default defineComponent({
     overflow-y: auto;
     max-height: 100%;
     height: 100%;
-
-    &::-webkit-scrollbar-track {
-        background-color: transparent;
-    }
-
-    &::-webkit-scrollbar {
-        width: 6px;
-        height: 6px;
-        background-color: transparent;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background-color: transparent;
-        border-radius: 3px;
-    }
-
-    &::-webkit-scrollbar-button {
-        height: 6px;
-    }
-
-    &:hover {
-        &::-webkit-scrollbar-thumb {
-            background-color: #afafaf;
-        }
-    }
 }
 
 </style>

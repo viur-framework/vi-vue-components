@@ -93,6 +93,7 @@ export default defineComponent({
   flex-direction: row;
   align-items: center;
   flex-wrap: nowrap;
+  color: var(--sl-foreground-color);
 
   span {
     white-space: nowrap;
@@ -104,6 +105,12 @@ export default defineComponent({
   sl-icon {
     margin-right: 10px;
   }
+
+  &:hover{
+    .dragger{
+      opacity: 1;
+    }
+  }
 }
 
 tr {
@@ -112,15 +119,14 @@ tr {
   cursor: pointer;
 
   &:nth-child(odd) {
-    background-color: var(--sl-color-neutral-100)
+    background-color: rgba(0, 0, 0, .1)
   }
 
   &:hover {
-    background-color: var(--sl-color-primary-50)
+    background-color: rgba(0, 0, 0, .15)
   }
 
   &.isSelected {
-    color: var(--sl-color-primary-500);
 
     * {
       font-weight: 600;
@@ -144,6 +150,7 @@ td {
   cursor: move;
   opacity: .2;
   transition: opacity ease .3s;
+  color: var(--sl-foreground-color);
 
   sl-icon{
     font-size: .7em;

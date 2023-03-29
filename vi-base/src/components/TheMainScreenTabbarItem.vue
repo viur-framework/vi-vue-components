@@ -104,6 +104,18 @@ sl-tab{
     font-size: .9em;
     margin: 0 -6px 0 5px;
     transition: all ease .3s;
+    color: var(--sl-foreground-color);
+  }
+
+  .link-wrap{
+      color: var(--sl-foreground-color);
+      opacity: .5;
+    }
+
+  sl-avatar {
+    &::part(base) {
+      background-color: var(--sl-foreground-color);
+    }
   }
 
   &:hover{
@@ -112,29 +124,29 @@ sl-tab{
     }
 
     .link-wrap{
-      color: var(--sl-color-primary-500);
-      opacity: .8;
+      color: var(--sl-foreground-color);;
+      opacity: .9;
     }
 
     sl-avatar {
       &::part(base) {
-        background-color: var(--sl-color-primary-500);
+        background-color: var(--sl-foreground-color);;
       }
 
     }
   }
 
   &[aria-selected="true"]{
-    background-color: #fff;
+    background-color: var(--sl-background-color);
 
     .link-wrap{
-      color: var(--sl-color-primary-500);
+      color: var(--sl-foreground-color);
       opacity: 1;
     }
 
     sl-avatar{
       &::part(base){
-        background-color: var(--sl-color-primary-500);
+        background-color: var(--sl-foreground-color);
       }
     }
   }
@@ -146,7 +158,6 @@ sl-tab{
   flex-direction: row;
   align-items: center;
   color: @textColor;
-  opacity: .6;
   max-width: 200px;
 }
 
@@ -166,8 +177,12 @@ sl-avatar{
     font-size: .8em;
   }
 
+  &::part(icon){
+    color: var(--sl-background-color);
+  }
+
   &::part(base){
-  transition: all ease .3s;
+    transition: all ease .3s;
     margin-top: -2px;
     border-radius: 3px;
     background-color: var(--sl-color-neutral-900);

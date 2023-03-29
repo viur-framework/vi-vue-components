@@ -86,11 +86,11 @@ export default defineComponent({
   max-width: 1280px;
   flex: 1;
   overflow-y: auto;
+  color: var(--sl-foreground-color)
 }
 
 .main-headline {
   font-size: 2em;
-  color: var(--sl-color-primary-500);
   margin-bottom: 15px;
   font-weight: 600;
 }

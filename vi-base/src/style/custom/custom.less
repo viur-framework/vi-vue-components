@@ -2,6 +2,25 @@
 
 *{
   hyphens:auto;
+
+  &::-webkit-scrollbar-track {
+      background-color: transparent;
+  }
+
+  &::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+      background-color: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+      background-color: var(--sl-scrollbar-color);
+      border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-button {
+      height: 6px;
+  }
 }
 
 .no-scroll{
@@ -16,7 +35,9 @@ html{
 body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: var(--sl-background-color);
 }
+
 #app {
   display: flex;
   flex-direction: column;
@@ -25,10 +46,101 @@ body {
 
 sl-input,
 sl-select{
+  --sl-panel-background-color: var(--sl-background-color);
+
   &::part(base){
     box-shadow: none;
+    color: var(--sl-foreground-color);
+    background-color: var(--sl-background-color);
+    border-color: var(--sl-border-color) !important;
+  }
+
+  &::part(input){
+    color: var(--sl-foreground-color);
+  }
+
+  &::part(combobox){
+    box-shadow: none;
+    color: var(--sl-foreground-color);
+    background-color: var(--sl-background-color);
+    border-color: var(--sl-border-color) !important
+  }
+
+  &::part(display-input){
+    color: var(--sl-foreground-color);
+    background-color: var(--sl-background-color);
+    border-color: var(--sl-border-color) !important
+  }
+
+  &::part(form-control-label){
+    color: var(--sl-foreground-color);
+  }
+
+  sl-option{
+    &::part(base){
+      color: var(--sl-foreground-color);
+      background-color: var(--sl-background-color);
+    }
+
   }
 }
+
+sl-checkbox{
+  &::part(label){
+    color: var(--sl-foreground-color);
+  }
+
+  &::part(control){
+    background-color: var(--sl-background-color);
+    border: 1px solid var(--sl-border-color);
+  }
+
+  &::part(control--checked){
+    background-color: var(--sl-active-color);
+    border: 1px solid var(--sl-active-color);
+  }
+
+  &::part(control--indeterminate){
+    background-color: var(--sl-active-color);
+    border: 1px solid var(--sl-active-color);
+  }
+
+  &::part(checked-icon){
+    width: 0px;
+    position: relative;
+  }
+
+  &::part(checked-icon)::after{
+    content: '';
+    position: absolute;
+    display: inline-block;
+    transform: rotate(45deg);
+    height: calc((var(--toggle-size) / 6) * 3);
+    width: calc((var(--toggle-size) / 12) * 3);
+    margin-left: calc(-0.19 * var(--toggle-size));
+    margin-top: calc(0.08 * var(--toggle-size));
+    border-bottom: 2px solid var(--sl-foreground-color);
+    border-right: 2px solid var(--sl-foreground-color);
+  }
+}
+
+sl-button{
+  &[variant="default"]{
+    &::part(base){
+      border: 1px solid var(--sl-foreground-color);
+      color: var(--sl-foreground-color);
+      background-color: var(--sl-background-color);
+      border-color: var(--sl-border-color) !important
+    }
+
+    &:hover{
+      &::part(base){
+        border-color: var(--sl-foreground-color) !important
+      }
+    }
+  }
+}
+
 
 sl-dialog{
   &::part(overlay){
@@ -37,5 +149,67 @@ sl-dialog{
 
   &::part(panel){
     box-shadow: 0 0 10px rgba(0, 0, 0, .4);
+    color: var(--sl-foreground-color);
+    background-color: var(--sl-background-color);
   }
+
+}
+
+.headline{
+  color: var(--sl-foreground-color);
+}
+
+sl-table{
+  --table-head-background: transparent;
+
+  --table-row-color-selected: var(--sl-table-row-color-selected);
+  --table-head-color-hover: var(--sl-table-head-color-hover);
+  --table-head-color: var(--sl-table-head-color);
+  --table-head-background-hover: var(--sl-table-head-background-hover);
+  --table-row-color-hover: var(--sl-table-row-color-hover);
+  --table-border-color: var(--sl-table-border-color);
+  --table-checkbox-color: var(--sl-active-color);
+}
+
+sl-details{
+  &::part(base){
+      color: var(--sl-foreground-color);
+      background-color: var(--sl-background-color);
+    }
+}
+
+sl-menu{
+  background-color: transparent;
+  color: inherit;
+}
+
+sl-menu-item{
+  color: inherit;
+
+  &:hover{
+    &::part(base){
+      background-color: var(--sl-hover-color);
+    }
+  }
+
+  &::part(base){
+    color: inherit;
+  }
+}
+
+sl-dropdown{
+  &::part(panel){
+    color: var(--sl-foreground-color);
+    background-color: var(--sl-background-color);
+  }
+
+  sl-menu-item::part(base){
+    font-size: .9em;
+  }
+}
+
+sl-bone{
+  --input-border-color: var(--sl-color-neutral-400);
+  --label-background-color: var(--sl-color-neutral-100);
+  --hover-color: rgba(0, 0, 0, .2);
 }

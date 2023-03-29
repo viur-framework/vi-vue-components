@@ -304,7 +304,7 @@ export default defineComponent({
 
 .top-headline {
   margin-right: auto;
-  color: var(--sl-color-primary-500);
+  color: var(--sl-foreground-color);
   font-weight: bold;
   white-space: nowrap;
   overflow: hidden;
@@ -339,8 +339,14 @@ export default defineComponent({
 }
 
 sl-details {
+  &::part(prefix) {
+    display: none;
+  }
   &::part(base) {
     border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-top: none;
   }
 }
 
@@ -350,7 +356,7 @@ sl-details {
     height: 100%;
   }
 
-  &::part(panel) {
+  &::part(panel) {+
     height: 100%;
   }
 

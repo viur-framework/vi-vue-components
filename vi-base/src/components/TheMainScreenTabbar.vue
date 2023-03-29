@@ -45,5 +45,8 @@ export default defineComponent({
 </script>
 
 <style scoped lang="less">
+sl-tab-group {
+  --tab-flap-background-color: var(--sl-tab-background-color);
+}
 
 </style>
