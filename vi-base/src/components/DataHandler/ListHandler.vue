@@ -3,7 +3,8 @@
   <div class="main-wrapper">
       <handler-bar :module="module"></handler-bar>
 
-      <sl-details open summary="Info" v-if="modulesStore.state.loaded && modulesStore.state.modules[module]['help_text']">
+      <sl-details open summary="Modul Info"
+                  v-if="modulesStore.state.loaded && modulesStore.state.modules[module]['help_text']">
         {{modulesStore.state.modules[module]["help_text"]}}
       </sl-details>
 
@@ -208,7 +209,7 @@ export default defineComponent({
   flex-wrap: nowrap;
   gap: 15px;
   padding: 10px;
-  background-color: var(--sl-label-background-color);
+  background-color: var(--vi-label-background-color);
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, .2);
   border-radius: var(--sl-border-radius-medium);
   position: absolute;
@@ -251,4 +252,26 @@ sl-table {
     width: 100%;
     height:50%
   }
+
+sl-details{
+  &::part(prefix){
+    display: none;
+  }
+
+  &::part(header){
+    font-weight: bold;
+    padding: var(--sl-spacing-small) var(--sl-spacing-medium);
+  }
+
+  &::part(content){
+    padding: 0 var(--sl-spacing-medium) var(--sl-spacing-small) var(--sl-spacing-medium);
+  }
+
+  &::part(base){
+    font-size: .95em;
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid var(--vi-border-color);
+  }
+}
 </style>

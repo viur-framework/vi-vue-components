@@ -308,9 +308,9 @@ export default defineComponent({
     }
 
     &::part(base){
-      border: 1px solid var(--sl-border-color);
+      border: 1px solid var(--vi-border-color);
       background-color: transparent;
-      color: var(--sl-border-color);
+      color: var(--vi-border-color);
     }
   }
 

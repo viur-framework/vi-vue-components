@@ -52,7 +52,7 @@ sl-select{
     box-shadow: none;
     color: var(--sl-foreground-color);
     background-color: var(--sl-background-color);
-    border-color: var(--sl-border-color) !important;
+    border-color: var(--vi-border-color) !important;
   }
 
   &::part(input){
@@ -63,13 +63,13 @@ sl-select{
     box-shadow: none;
     color: var(--sl-foreground-color);
     background-color: var(--sl-background-color);
-    border-color: var(--sl-border-color) !important
+    border-color: var(--vi-border-color) !important
   }
 
   &::part(display-input){
     color: var(--sl-foreground-color);
     background-color: var(--sl-background-color);
-    border-color: var(--sl-border-color) !important
+    border-color: var(--vi-border-color) !important
   }
 
   &::part(form-control-label){
@@ -92,17 +92,17 @@ sl-checkbox{
 
   &::part(control){
     background-color: var(--sl-background-color);
-    border: 1px solid var(--sl-border-color);
+    border: 1px solid var(--vi-border-color);
   }
 
   &::part(control--checked){
-    background-color: var(--sl-active-color);
-    border: 1px solid var(--sl-active-color);
+    background-color: var(--vi-active-color);
+    border: 1px solid var(--vi-active-color);
   }
 
   &::part(control--indeterminate){
-    background-color: var(--sl-active-color);
-    border: 1px solid var(--sl-active-color);
+    background-color: var(--vi-active-color);
+    border: 1px solid var(--vi-active-color);
   }
 
   &::part(checked-icon){
@@ -130,7 +130,7 @@ sl-button{
       border: 1px solid var(--sl-foreground-color);
       color: var(--sl-foreground-color);
       background-color: var(--sl-background-color);
-      border-color: var(--sl-border-color) !important
+      border-color: var(--vi-border-color) !important
     }
 
     &:hover{
@@ -162,13 +162,13 @@ sl-dialog{
 sl-table{
   --table-head-background: transparent;
 
-  --table-row-color-selected: var(--sl-table-row-color-selected);
-  --table-head-color-hover: var(--sl-table-head-color-hover);
-  --table-head-color: var(--sl-table-head-color);
-  --table-head-background-hover: var(--sl-table-head-background-hover);
-  --table-row-color-hover: var(--sl-table-row-color-hover);
-  --table-border-color: var(--sl-table-border-color);
-  --table-checkbox-color: var(--sl-active-color);
+  --table-row-color-selected: var(--vi-table-row-color-selected);
+  --table-head-color-hover: var(--vi-table-head-color-hover);
+  --table-head-color: var(--vi-table-head-color);
+  --table-head-background-hover: var(--vi-table-head-background-hover);
+  --table-row-color-hover: var(--vi-table-row-color-hover);
+  --table-border-color: var(--vi-table-border-color);
+  --table-checkbox-color: var(--vi-active-color);
 }
 
 sl-details{

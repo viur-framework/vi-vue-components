@@ -199,7 +199,7 @@ export default defineComponent({
   gap: var(--sl-spacing-small);
   width: 100%;
   color: var(--sl-foreground-color);
-  border-bottom: 1px solid var(--sl-border-color);
+  border-bottom: 1px solid var(--vi-border-color);
 }
 
 .spacer {

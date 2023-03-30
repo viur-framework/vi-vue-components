@@ -290,7 +290,7 @@ sl-split-panel {
 
   &::part(divider){
     width: 2px;
-    background-color: rgba(0, 0, 0, .4);
+    background-color: var(--vi-divider-color);
   }
 
   .mq-max(@breakSmall,{

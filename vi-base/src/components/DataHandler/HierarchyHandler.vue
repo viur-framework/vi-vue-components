@@ -308,7 +308,7 @@ export default defineComponent({
   flex-wrap: nowrap;
   gap: 15px;
   padding: 10px;
-  background-color: var(--sl-label-background-color);
+  background-color: var(--vi-label-background-color);
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, .2);
   border-radius: var(--sl-border-radius-medium);
   position: absolute;

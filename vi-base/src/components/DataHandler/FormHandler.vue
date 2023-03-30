@@ -1,6 +1,5 @@
 <template>
 
-
   <div class="topbar">
 
     <div class="top-headline">
@@ -283,7 +282,6 @@ export default defineComponent({
 <style scoped lang="less">
 
 .split {
-
   flex: 1;
   height: 0;
 
