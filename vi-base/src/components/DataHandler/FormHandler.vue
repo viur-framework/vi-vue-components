@@ -354,7 +354,7 @@ sl-details {
     height: 100%;
   }
 
-  &::part(panel) {+
+  &::part(panel) {
     height: 100%;
   }
 
