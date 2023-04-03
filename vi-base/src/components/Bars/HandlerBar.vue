@@ -17,14 +17,6 @@
         </sl-menu-item>
         <sl-menu-item>
           <sl-icon slot="prefix" name="heart"></sl-icon>
-          Neuladen
-        </sl-menu-item>
-        <sl-menu-item>
-          <sl-icon slot="prefix" name="heart"></sl-icon>
-          Filter
-        </sl-menu-item>
-        <sl-menu-item>
-          <sl-icon slot="prefix" name="heart"></sl-icon>
           Bearbeitungsmodus
         </sl-menu-item>
       </sl-menu>
