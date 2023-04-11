@@ -53,19 +53,20 @@ export default defineComponent({
           return false
         }
 
-        if (state.info["enabled"] && handlerState.currentSelection.length > 0) {
+        if (state.info["enabled"] && handlerState.currentSelection?.length > 0) {
           let ex = new Logics(state.info["enabled"])
-          let valid = true
-          for (let i of handlerState.currentSelection) {
-            if (!ex.run({
-              "skel": handlerState.currentSelection[i],
+          let disabled = true
+
+          for (let selection of handlerState.currentSelection) {
+            if (ex.run({
+              "skel": selection,
               "additionalEvalData": state.info?.["additionalEvalData"]
             }).toBool()) {
-              valid = false
+              disabled = false
               break
             }
           }
-          return valid
+          return disabled
         }
 
         return true

@@ -1,8 +1,11 @@
 <template>
   <router-link :to="state.url" custom v-slot="{route}">
-    <sl-button :disabled="!state.active" @click="createAndNavigate(route)" size="small">
+    <sl-button :disabled="!state.active"
+               @click="createAndNavigate(route)"
+               size="small"
+               :title="$t('actions.clone')"
+    >
       <sl-icon slot="prefix" name="clone"></sl-icon>
-      {{ $t("actions.clone") }}
     </sl-button>
   </router-link>
 </template>

@@ -18,7 +18,10 @@ export default {
         },
         reset: "Zurücksetzen",
         nextpage: "weitere Einträge",
-        nextpage_finish: "alle Einträge geladen"
+        nextpage_finish: "alle Einträge geladen",
+        fluidpage:{
+            edit:"Inhalt bearbeiten"
+        }
 
     },
     bone: {

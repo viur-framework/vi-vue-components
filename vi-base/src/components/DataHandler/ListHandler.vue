@@ -25,25 +25,7 @@
 
         </sl-table>
 
-        <div class="more-entries">
-          <sl-button size="small">
-              <sl-icon slot="prefix" aria-hidden="true" library="default" v-once="" name="arrow-repeat"></sl-icon>
-              Filtern
-          </sl-button>
-          <sl-button size="small">
-              <sl-icon slot="prefix" aria-hidden="true" library="default" v-once="" name="arrow-repeat"></sl-icon>
-              Weitere Einträge
-          </sl-button>
-          <sl-select size="small" label="Anzahl">
-            <sl-option value="1">30</sl-option>
-            <sl-option value="2">60</sl-option>
-            <sl-option value="3">90</sl-option>
-          </sl-select>
-          <sl-button size="small">
-              <sl-icon slot="prefix" aria-hidden="true" library="default" v-once="" name="arrow-repeat"></sl-icon>
-              Neuladen
-          </sl-button>
-        </div>
+        <floating-bar></floating-bar>
     </div>
 </template>
 
@@ -71,6 +53,7 @@ import router from "../../routes";
 import {useModulesStore} from "../../stores/modules";
 import {useRoute} from "vue-router";
 import Loader from "../Generic/Loader.vue";
+import FloatingBar from "../Bars/FloatingBar.vue";
 
 export default defineComponent({
   props: {
@@ -85,7 +68,7 @@ export default defineComponent({
     }
   },
   emits:['currentSelection'],
-  components: {Loader, HandlerBar},
+  components: {FloatingBar, Loader, HandlerBar},
   setup(props, context) {
     const appStore = useAppStore();
     const route = useRoute()
@@ -209,38 +192,6 @@ export default defineComponent({
   flex-direction: column;
   height: 0;
   position: relative;
-}
-
-.more-entries{
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  gap: 15px;
-  padding: 10px;
-  background-color: var(--vi-label-background-color);
-  box-shadow: 0 0 10px 0 rgba(0, 0, 0, .2);
-  border-radius: var(--sl-border-radius-medium);
-  position: absolute;
-  bottom: 6px;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-sl-select{
-  &::part(form-control){
-    flex-direction: row;
-    align-items: center;
-  }
-
-  &::part(form-control-label){
-    margin-right: 10px;
-    font-size: .8em;
-  }
-
-  &::part(form-control-input){
-    width: 80px;
-  }
-
 }
 
 sl-table {

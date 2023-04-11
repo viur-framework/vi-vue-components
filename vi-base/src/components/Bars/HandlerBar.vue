@@ -1,81 +1,33 @@
 <template>
   <div class="bar">
-
-    <sl-dropdown distance="10">
-      <sl-button size="small"
-                 slot="trigger"
-                 title="Optionen"
-                 variant="default">
-        <sl-icon slot="prefix" aria-hidden="true" library="default" v-once="" name="plus"></sl-icon>
-      </sl-button>
-
-      <sl-menu>
-
-        <sl-menu-item>
-          <sl-icon slot="prefix" name="heart"></sl-icon>
-          Felder anzeigen
-        </sl-menu-item>
-        <sl-menu-item>
-          <sl-icon slot="prefix" name="heart"></sl-icon>
-          Bearbeitungsmodus
-        </sl-menu-item>
-      </sl-menu>
-    </sl-dropdown>
-
-    <div class="spacer"></div>
-
-    <sl-button size="small"
-               variant="danger"
-               title="Löschen">
-        <sl-icon slot="prefix" aria-hidden="true" library="default" v-once="" name="plus"></sl-icon>
-    </sl-button>
-    <sl-button size="small"
-               variant="default"
-               title="Klonen">
-        <sl-icon slot="prefix" aria-hidden="true" library="default" v-once="" name="plus"></sl-icon>
-    </sl-button>
-    <sl-button size="small"
-               variant="default"
-               title="Ansehen">
-        <sl-icon slot="prefix" aria-hidden="true" library="default" v-once="" name="plus"></sl-icon>
-    </sl-button>
-    <sl-button size="small"
-               variant="default"
-               title="Bearbeiten">
-        <sl-icon slot="prefix" aria-hidden="true" library="default" v-once="" name="plus"></sl-icon>
-    </sl-button>
-    <sl-button size="small"
-               variant="success">
-        <sl-icon slot="prefix" aria-hidden="true" library="default" v-once="" name="plus"></sl-icon>
-        Hinzufügen
-    </sl-button>
-  </div>
-
-  <!--<div class="bar">
     <template v-for="(actionlist,index) in state.actions['default']">
-      <component v-for="action in actionlist"
-                 :is="`${action}_action`"
-                 size="small"
-      >
-        <custom_action :name="action"></custom_action>
-      </component>
+      <template v-for="action in actionlist">
+        <group_action v-if="action.startsWith(':')" :group="state.actionGroups[action.substring(1)]">
+          <template v-for="(actiongrouplist,groupindex) in state.actions[action]">
+            <template v-for="groupaction in actiongrouplist">
+              <sl-menu-item>
+                <component :is="`${groupaction}_action`"
+                           size="small"
+                >
+                  <custom_action :name="groupaction"></custom_action>
+                </component>
+              </sl-menu-item>
+            </template>
+            <groupdivider_action v-if="groupindex<(actiongrouplist.length-1)"></groupdivider_action>
+          </template>
+        </group_action>
+
+        <component v-else :is="`${action}_action`"
+                   size="small"
+        >
+          <custom_action :name="action"></custom_action>
+        </component>
+      </template>
+
       <space_action v-if="index<(state.actions['default'].length-1)"></space_action>
     </template>
   </div>
-
-  <div class="bar bottombar">
-    <template v-for="(actionlist,index) in state.actions['entry']">
-      <component v-for="action in actionlist"
-                 :is="`${action}_action`"
-                 size="small"
-                 outline
-      >
-      </component>
-      <space_action v-if="index<(state.actions['entry'].length-1)"></space_action>
-    </template>
-  </div>-->
 </template>
-
 <script lang="ts">
 //@ts-nocheck
 import {reactive, defineComponent, computed} from 'vue'
@@ -102,30 +54,34 @@ export default defineComponent({
 
 
     const state = reactive({
+      actionGroups: {
+          "options":{
+            "name":"Optionen"}
+        },
       actions: computed(() => {
         let listActions = {
-          "default": [["add", "selectfields"], ["nextpage", "setamount", "reload"], ["overlay", "filter", "edittable"]],
-          "entry": [["edit", "clone", "delete"], ["preview"]]
+          ":options": [["selectfields","edittable","overlay"]],
+          "default": [[":options"],["delete", "clone","preview", "edit", "add"]],
         }
 
         const hierarchyActions = {
-          "default": [["addnode","selectfields","rootnodelist"], ["reload", "setamount", "overlay"]],
-          "entry": [["edit", "clone", "delete"], ["preview"]]
+          ":options": [["selectfields","edittable","overlay"]],
+          "default": [[":options","rootnodelist"],["delete", "clone","preview", "edit", "addnode"]],
         }
 
         const treeActions = {
-          "default": [["addfolder", "addfile", "selectfields","rootnodelist"], ["reload"]],
-          "entry": [["edit", "clone", "delete"]]
+          ":options": [["selectfields","edittable","overlay"]],
+          "default": [[":options", "rootnodelist"],["delete", "clone","preview", "edit", "addfolder","addfile"]],
         }
 
         let fluidpageActions = {
-          "default": [["add", "selectfields"], ["setamount", "reload"], ["overlay", "filter", "edittable"]],
-          "entry": [["edit", "clone", "delete", "fluidpage"], ["preview"]]
+          ":options": [["selectfields","edittable","overlay"]],
+          "default": [[":options"],["fluidpage","delete", "clone","preview", "edit", "add"]],
         }
 
         let fluidpagecontentActions = {
-          "default": [["add"], ["reload"]],
-          "entry": [["edit", "clone", "delete"], ["preview"]]
+          ":options": [],
+          "default": [["delete", "clone","preview", "edit", "add"]],
         }
 
 
@@ -136,7 +92,6 @@ export default defineComponent({
         // find matching conf
         let conf = appStore.getConfByRoute(route);
         let actions = {...listActions}
-
         if (!conf) return actions;
         if (conf["handler"].startsWith("tree.node")) {
           actions = {...hierarchyActions}
@@ -148,33 +103,40 @@ export default defineComponent({
           actions = {...fluidpagecontentActions}
         }
 
-        let confActions = conf["actions"]
-        if (confActions) {
-          confActions = confActions.join(" ").replace(/\|\s/g, "space") // replace pipes with "space"
-          if (Object.keys(conf).includes("disabledActions") && conf["disabledActions"].length > 0) {
-            for (let rmAction of conf["disabledActions"]) {
-              for (let actiongroup in actions) {
-                let actionlists = actions[actiongroup]
-                for (let actionlist of actionlists) {
-                  for (let action of actionlist) {
-                    if (rmAction === action) {
-                      delete actionlist[action]
-                      actionlist.splice(actionlist.indexOf(action), 1)
-                    }
+        //remove disabledActions from all objects
+        if (Object.keys(conf).includes("disabledActions") && conf["disabledActions"].length > 0) { // remove actions
+          for (let rmAction of conf["disabledActions"]) {
+            for (let actiongroup in actions) {
+              let actionlists = actions[actiongroup]
+              for (let actionlist of actionlists) {
+                for (let action of actionlist) {
+                  if (rmAction === action) {
+                    delete actionlist[action]
+                    actionlist.splice(actionlist.indexOf(action), 1)
                   }
                 }
               }
             }
           }
-
-          confActions = confActions.split("\n")
-
-          actions["default"].splice(1, 0, confActions[0].split(" "))
-          if (confActions.length > 1) {
-            actions["entry"].splice(1, 0, confActions[1].split(" "))
-          }
-
         }
+
+        if (conf["actions"]) {
+          //build listed structure
+          let actiongroups = conf["actions"].join(" ").replace(/\n\s/g, "").replace(/\n/g, "").replace(/\|\s/g, "space")
+          //add after the first group
+          //actions["default"].splice(1, 0, actiongroups.split(" "))
+          //add to the first group
+          actions["default"][0]= actions["default"][0].concat(actiongroups.split(" "))
+        }
+
+        if (Object.keys(conf).includes("actionGroups")){
+          for (const [groupName, config] of Object.entries(conf["actionGroups"])) {
+            state.actionGroups[groupName] = config
+            actions[":"+groupName] = [config["actions"].join(" ").replace(/\n\s/g, "").replace(/\n/g, "").replace(/\|\s/g, "space").split(" ")]
+          }
+        }
+
+        console.log(actions)
         return actions
       })
     })

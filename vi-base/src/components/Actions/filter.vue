@@ -1,53 +1,55 @@
 <template>
   <sl-button @click="openFilterDrawer" size="small">
     <sl-icon slot="prefix" name="search"></sl-icon>
-    {{ $t("actions.filter.text") }}
+    {{ $t("actions.filter.text") }} {{state.opened}}
   </sl-button>
-  <sl-drawer :label="$t('actions.filter.text')" id="filter-drawer" style="--size: 30%;">
-    <div v-for="(boneStructure,boneName) in state.structure">
-      <label>{{ boneName }}</label>
-      <sl-select hoist v-if="hasSelector(boneStructure)" :id="boneName+'-selector'"
-                 @sl-change="selectorChange" :disabled="state.disabledSelectorCache[boneName]" defaultValue="eq">
-        <sl-option value="eq">==</sl-option> <!--TODO select not work-->
-        <sl-option value="gt">&gt;</sl-option>
-        <sl-option value="ge">&gt;=</sl-option>
-        <sl-option value="lt">&lt;</sl-option>
-        <sl-option value="le">&lt;=</sl-option>
-        <sl-option value="between" v-if="boneStructure['type']==='date'||boneStructure['type']==='numeric'">between
-        </sl-option>
-        <sl-option value="startwith" v-if="boneStructure['type']==='str'">startwith</sl-option>
-      </sl-select>
-      <sl-bone
-        :boneName="boneName"
-        :boneStructure="boneStructure"
-        renderType="edit"
-        :id="boneName"
-        :disabled="state.disabledCache[boneName]"
-        @sl-bone-change="bone_change"
-      ></sl-bone>
-      <sl-bone
-        :boneName="boneName"
-        :boneStructure="boneStructure"
-        renderType="edit"
-        :id="boneName+'-between'"
-        :disabled="state.disabledCache[boneName]"
-        v-if="boneStructure['type']==='date'"
-        v-show="state.between_show[boneName]"
-        @sl-bone-change="bone_change"
-      ></sl-bone>
-    </div>
-    <div v-show="Object.keys(state.structure).length===0">{{ $t('actions.filter.nofilter') }}</div>
-    <sl-switch slot="footer"  @sl-change="live_change">Live preview</sl-switch>
-    <sl-button slot="footer" variant="success" @click="filter">{{ $t("actions.filter.text") }}</sl-button>
-    <sl-button slot="footer" variant="danger" @click="reset">{{ $t("actions.reset") }}</sl-button>
-  </sl-drawer>
 
+  <teleport v-if="state.opened" to="#dialogs" :disabled="!state.opened">
+    <sl-drawer :open="state.opened" @sl-after-hide="closed" :label="$t('actions.filter.text')" style="--size: 30%;" >
+      <div v-for="(boneStructure,boneName) in state.structure">
+        <label>{{ boneName }}</label>
+        <sl-select hoist v-if="hasSelector(boneStructure)" :id="boneName+'-selector'"
+                   @sl-change="selectorChange" :disabled="state.disabledSelectorCache[boneName]" defaultValue="eq">
+          <sl-option value="eq">==</sl-option> <!--TODO select not work-->
+          <sl-option value="gt">&gt;</sl-option>
+          <sl-option value="ge">&gt;=</sl-option>
+          <sl-option value="lt">&lt;</sl-option>
+          <sl-option value="le">&lt;=</sl-option>
+          <sl-option value="between" v-if="boneStructure['type']==='date'||boneStructure['type']==='numeric'">between
+          </sl-option>
+          <sl-option value="startwith" v-if="boneStructure['type']==='str'">startwith</sl-option>
+        </sl-select>
+        <sl-bone
+          :boneName="boneName"
+          :boneStructure="boneStructure"
+          renderType="edit"
+          :id="boneName"
+          :disabled="state.disabledCache[boneName]"
+          @sl-bone-change="bone_change"
+        ></sl-bone>
+        <sl-bone
+          :boneName="boneName"
+          :boneStructure="boneStructure"
+          renderType="edit"
+          :id="boneName+'-between'"
+          :disabled="state.disabledCache[boneName]"
+          v-if="boneStructure['type']==='date'"
+          v-show="state.between_show[boneName]"
+          @sl-bone-change="bone_change"
+        ></sl-bone>
+      </div>
+      <div v-show="Object.keys(state.structure).length===0">{{ $t('actions.filter.nofilter') }}</div>
+      <sl-switch slot="footer"  @sl-change="live_change">Live preview</sl-switch>
+      <sl-button slot="footer" variant="success" @click="filter">{{ $t("actions.filter.text") }}</sl-button>
+      <sl-button slot="footer" variant="danger" @click="reset">{{ $t("actions.reset") }}</sl-button>
+    </sl-drawer>
+  </teleport>
 
 </template>
 
 <script lang="ts">
 //@ts-nocheck
-import {reactive, defineComponent, computed} from 'vue'
+import {reactive, defineComponent, computed, inject} from 'vue'
 import {useAppStore} from "../../stores/app";
 import {useRoute} from "vue-router";
 
@@ -58,69 +60,61 @@ export default defineComponent({
   setup(props, context) {
     const state = reactive({
       structure: {},
-      openBefore: false,
       disabledCache: {},
       disabledSelectorCache: {},
       between_show: {},
-      live_preview:false
+      live_preview:false,
+      opened:false
     });
     const appStore = useAppStore();
     const route = useRoute();
     const conf = appStore.getConfByRoute(route);
+    const currentlist: any = inject("currentlist")
 
     function openFilterDrawer() {
+      state.opened = true
+      for (const key in currentlist.structure) {
+        const boneStructure = currentlist.structure[key];
+        let orderfields = []
+        if (currentlist.state.orders !== null) {
+          orderfields = currentlist.state.orders.map((order) => order[0]); //returns the names
+        }
 
-      const drawer = document.querySelector("#filter-drawer");
-
-      if (!state.openBefore) {
-        const listStore = appStore.getListStoreByRoute(route);
-        for (const key in listStore.structure) {
-          const boneStructure = listStore.structure[key];
-          let orderfields = []
-          if (listStore.state.orders !== null) {
-            orderfields = listStore.state.orders.map((order) => order[0]); //returns the names
-          }
-
-          if (boneStructure["indexed"]) { // todo && boneStructure["visible"] only filter if visible
-            if (["bool", "numeric", "select", "date"].indexOf(boneStructure["type"]) != -1 || boneStructure["type"].startsWith("str") || boneStructure["type"].startsWith("relational")) {
-              let canFilter = true;
-              for (const name of orderfields) {
-                let inIndexes = false;
-                if (conf["indexes"] === undefined) {
-                  conf["indexes"] = []
-                }
-                for (const index of conf["indexes"]) {
-                  if (index["properties"].indexOf(name) !== -1 && index["properties"].indexOf(key) !== -1) {
-                    inIndexes = true;
-                  }
-                }
-                canFilter = inIndexes;
-
+        if (boneStructure["indexed"]) { // todo && boneStructure["visible"] only filter if visible
+          if (["bool", "numeric", "select", "date"].indexOf(boneStructure["type"]) != -1 || boneStructure["type"].startsWith("str") || boneStructure["type"].startsWith("relational")) {
+            let canFilter = true;
+            for (const name of orderfields) {
+              let inIndexes = false;
+              if (conf["indexes"] === undefined) {
+                conf["indexes"] = []
               }
-
-              if (canFilter) {
-                state.disabledCache[key] = false;
-                state.between_show[key] = false;
-                state.disabledSelectorCache[key] = false;
-                //enforce readonly = false so we can edit the filter
-                boneStructure["readonly"] = false;
-                //enforce visible = true so we can edit the filter
-                boneStructure["visible"] = true;
-                state.structure[key] = boneStructure;
+              for (const index of conf["indexes"]) {
+                if (index["properties"].indexOf(name) !== -1 && index["properties"].indexOf(key) !== -1) {
+                  inIndexes = true;
+                }
               }
+              canFilter = inIndexes;
 
             }
 
+            if (canFilter) {
+              state.disabledCache[key] = false;
+              state.between_show[key] = false;
+              state.disabledSelectorCache[key] = false;
+              //enforce readonly = false so we can edit the filter
+              boneStructure["readonly"] = false;
+              //enforce visible = true so we can edit the filter
+              boneStructure["visible"] = true;
+              state.structure[key] = boneStructure;
+            }
+
           }
+
         }
       }
-
-      state.openBefore = true;
-      drawer.show();
     }
 
     function filter(close=true) {
-      const listStore = appStore.getListStoreByRoute(route);
       const filterObj = {};
       let notequalFilter = false;
       for (const key in state.structure) {
@@ -169,23 +163,19 @@ export default defineComponent({
 
 
       }
-      listStore.reset();
-      listStore.filter(filterObj);
+      currentlist.reset();
+      currentlist.filter(filterObj);
       if(close)
       {
-           const drawer = document.querySelector("#filter-drawer");
-      drawer.hide();
+         state.opened = false
       }
 
     }
 
     function reset() {
-      const drawer = document.querySelector("#filter-drawer");
-      state.openBefore = false;
-      const listStore = appStore.getListStoreByRoute(route);
-      listStore.reset();
-      listStore.filter({}); //reset filter
-      drawer.hide();
+      currentlist.reset();
+      currentlist.filter({}); //reset filter
+      state.opened = false
     }
 
     function selectorChange(e: Event) {
@@ -257,8 +247,11 @@ export default defineComponent({
         filter(false)
       }
     }
+    function closed(){
+      state.opened = !state.opened
+    }
 
-    return {state, openFilterDrawer, filter, reset, selectorChange, hasSelector,live_change,bone_change}
+    return {state, openFilterDrawer, filter, reset, selectorChange, hasSelector,live_change,bone_change, closed}
   }
 })
 </script>
