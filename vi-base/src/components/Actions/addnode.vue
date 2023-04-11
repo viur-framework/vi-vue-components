@@ -1,6 +1,7 @@
 <template>
     <router-link :to="state.url" custom v-slot="{route}">
-        <sl-button  size="small" variant="success" @click="createAndNavigate(route)" :disabled="!state.canAdd">
+        <sl-button  size="small" variant="success" @click="createAndNavigate(route)" :disabled="!state.canAdd"
+        :title="$t('actions.addnode')">
 
             <sl-icon slot="prefix" name="folder-plus"></sl-icon>
            {{ $t("actions.addnode") }}

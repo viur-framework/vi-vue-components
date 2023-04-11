@@ -1,5 +1,6 @@
 <template>
-    <sl-button @click="openDrawer" :disabled="!state.active" size="small">
+    <sl-button @click="openDrawer" :disabled="!state.active" size="small"
+               :title="$t('actions.overlay')">
         <sl-icon slot="prefix" name="file-earmark-pdf"></sl-icon>
         {{ $t("actions.overlay") }}
     </sl-button>

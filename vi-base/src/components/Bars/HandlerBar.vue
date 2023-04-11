@@ -3,7 +3,7 @@
     <template v-for="(actionlist,index) in state.actions['default']">
       <template v-for="action in actionlist">
         <group_action v-if="action.startsWith(':')" :group="state.actionGroups[action.substring(1)]">
-          <template v-for="(actiongrouplist,groupindex) in state.actions[action]">
+          <div v-for="(actiongrouplist,groupindex) in state.actions[action]" class="action-group">
             <template v-for="groupaction in actiongrouplist">
               <sl-menu-item>
                 <component :is="`${groupaction}_action`"
@@ -13,8 +13,7 @@
                 </component>
               </sl-menu-item>
             </template>
-            <groupdivider_action v-if="groupindex<(actiongrouplist.length-1)"></groupdivider_action>
-          </template>
+          </div>
         </group_action>
 
         <component v-else :is="`${action}_action`"
@@ -60,22 +59,22 @@ export default defineComponent({
         },
       actions: computed(() => {
         let listActions = {
-          ":options": [["selectfields","edittable","overlay"]],
+          ":options": [["edittable","selectfields","overlay"]],
           "default": [[":options"],["delete", "clone","preview", "edit", "add"]],
         }
 
         const hierarchyActions = {
-          ":options": [["selectfields","edittable","overlay"]],
+          ":options": [["edittable","selectfields","overlay"]],
           "default": [[":options","rootnodelist"],["delete", "clone","preview", "edit", "addnode"]],
         }
 
         const treeActions = {
-          ":options": [["selectfields","edittable","overlay"]],
+          ":options": [["edittable","selectfields","overlay"]],
           "default": [[":options", "rootnodelist"],["delete", "clone","preview", "edit", "addfolder","addfile"]],
         }
 
         let fluidpageActions = {
-          ":options": [["selectfields","edittable","overlay"]],
+          ":options": [["edittable","selectfields","overlay"]],
           "default": [[":options"],["fluidpage","delete", "clone","preview", "edit", "add"]],
         }
 
@@ -160,7 +159,50 @@ export default defineComponent({
   margin: auto
 }
 
-sl-button{
-
+.action-group:not(:last-child){
+ border-bottom: 1px solid var(--vi-border-color);
+  margin-bottom: var(--sl-spacing-x-small);
 }
+
+sl-menu-item{
+  overflow: hidden;
+
+  &::part(base){
+    padding: 0;
+    margin: 0 var(--sl-spacing-x-small);
+    background-color: transparent !important;
+  }
+  &::part(checked-icon){
+    display: none;
+  }
+  &::part(prefix){
+    display: none;
+  }
+  &::part(suffix){
+    display: none;
+  }
+
+  &::part(label){
+    flex: 1 0 100%;
+  }
+
+  &:not(:last-child){
+    margin-bottom: var(--sl-spacing-x-small);
+  }
+
+  :deep(sl-button){
+    width: 100%;
+
+    &::part(base){
+      justify-content: flex-start;
+    }
+  }
+
+  sl-switch{
+    &::part(base){
+      margin: 5px 0 8px 0;
+    }
+  }
+}
+
 </style>

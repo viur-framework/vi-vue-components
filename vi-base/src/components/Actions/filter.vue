@@ -1,5 +1,5 @@
 <template>
-  <sl-button @click="openFilterDrawer" size="small">
+  <sl-button @click="openFilterDrawer" size="small" :title="$t('actions.filter.text')">
     <sl-icon slot="prefix" name="search"></sl-icon>
     {{ $t("actions.filter.text") }} {{state.opened}}
   </sl-button>
@@ -39,9 +39,13 @@
         ></sl-bone>
       </div>
       <div v-show="Object.keys(state.structure).length===0">{{ $t('actions.filter.nofilter') }}</div>
-      <sl-switch slot="footer"  @sl-change="live_change">Live preview</sl-switch>
-      <sl-button slot="footer" variant="success" @click="filter">{{ $t("actions.filter.text") }}</sl-button>
-      <sl-button slot="footer" variant="danger" @click="reset">{{ $t("actions.reset") }}</sl-button>
+      <div class="footer" slot="footer">
+        <sl-switch size="small" @sl-change="live_change">Live preview</sl-switch>
+        <div class="footer-btns">
+          <sl-button size="small" outline variant="danger" @click="reset">{{ $t("actions.reset") }}</sl-button>
+          <sl-button size="small" variant="success" @click="filter">{{ $t("actions.filter.text") }}</sl-button>
+        </div>
+      </div>
     </sl-drawer>
   </teleport>
 
@@ -259,6 +263,31 @@ export default defineComponent({
 <style scoped lang="less">
 .selectfieldswitch {
   display: block;
-
 }
+
+.footer{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.footer-btns{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  margin-top: var(--sl-spacing-medium);
+}
+
+sl-drawer {
+  &::part(header) {
+    height: 60px;
+    align-items: center;
+  }
+
+  &::part(header-actions){
+    height: 100%;
+  }
+}
+
 </style>

@@ -1,6 +1,6 @@
 <template>
   <template v-if="state.access && state.info">
-    <sl-button :disabled="state.disabled" size="small" @click="buttonClicked">
+    <sl-button :disabled="state.disabled" size="small" @click="buttonClicked" :title="state.info['name']">
       <sl-icon slot="prefix" :name="state.info['icon'].replace('icon-','')" :library="state.info['library']" sprite
                v-once></sl-icon>
       {{ state.info["name"] }}

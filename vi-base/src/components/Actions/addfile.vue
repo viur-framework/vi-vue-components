@@ -1,5 +1,6 @@
 <template>
-    <sl-button  size="small" variant="success" @click="fileUpload" :disabled="!state.canAdd">
+    <sl-button  size="small" variant="success" @click="fileUpload" :disabled="!state.canAdd"
+    :title="$t('actions.addfile')">
 
         <sl-icon slot="prefix" name="plus"></sl-icon>
        {{ $t("actions.addfile") }}

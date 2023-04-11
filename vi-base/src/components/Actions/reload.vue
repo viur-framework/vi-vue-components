@@ -1,7 +1,7 @@
 <template>
-    <sl-button @click="reload" :loading="state.loading" size="small">
+    <sl-button @click="reload" :loading="state.loading" size="small" :title="$t('actions.reload')">
         <sl-icon slot="prefix" name="arrow-repeat"></sl-icon>
-        {{ $t("actions.reload") }}
+        <!--{{ $t("actions.reload") }}-->
     </sl-button>
 </template>
 

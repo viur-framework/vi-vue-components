@@ -213,3 +213,34 @@ sl-bone{
   --label-background-color: var(--vi-label-background-color);
   --hover-color: rgba(0, 0, 0, .2);
 }
+
+sl-drawer{
+
+  &::part(header){
+    border-bottom: 1px solid var(--vi-border-color);
+  }
+
+  &::part(footer){
+    border-top: 1px solid var(--vi-border-color);
+    padding-top: var(--sl-spacing-medium);
+    padding-bottom: var(--sl-spacing-medium);
+  }
+
+  &::part(title){
+    font-size: 1.2em;
+    padding-top: var(--sl-spacing-medium);
+    padding-bottom: var(--sl-spacing-medium);
+  }
+
+  &::part(header-actions){
+    padding: 0;
+    aspect-ratio: 1;
+    justify-content: center;
+  }
+
+  &::part(panel){
+    color: var(--sl-foreground-color);
+    background-color: var(--sl-background-color);
+    font-size: .9em;
+  }
+}

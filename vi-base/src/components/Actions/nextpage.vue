@@ -1,5 +1,6 @@
 <template>
-  <sl-button @click="loadnextpage" :loading="state.loading" :disabled="state.disable" size="small">
+  <sl-button @click="loadnextpage" :loading="state.loading" :disabled="state.disable" size="small"
+             :title="$t('actions.nextpage')">
     <sl-icon slot="prefix" name="menu"></sl-icon>
        {{ $t("actions.nextpage") }}
   </sl-button>

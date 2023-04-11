@@ -1,5 +1,6 @@
 <template>
-    <sl-button  size="small" variant="success" @click="openAction($event)" :disabled="!state.canAdd">
+    <sl-button  size="small" variant="success" @click="openAction($event)" :disabled="!state.canAdd"
+                :title="$t('actions.addfolder')">
         <sl-icon slot="prefix" name="folder-plus"></sl-icon>
        {{ $t("actions.addfolder") }}
     </sl-button>

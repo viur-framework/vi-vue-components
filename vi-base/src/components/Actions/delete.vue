@@ -3,7 +3,8 @@
     {{ `Do you want to delete these ${state.count} entries` }}<!--TODO Translate-->
     <sl-button slot="footer"
                variant="primary"
-               @click="deleteEntries">
+               @click="deleteEntries"
+               :title="$t('actions.delete')">
       {{ $t("actions.delete") }}
     </sl-button>
   </sl-dialog>

@@ -38,7 +38,7 @@ export default defineComponent({
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, .2);
   border-radius: var(--sl-border-radius-medium);
   position: absolute;
-  bottom: 6px;
+  bottom: 15px;
   left: 50%;
   transform: translateX(-50%);
 }

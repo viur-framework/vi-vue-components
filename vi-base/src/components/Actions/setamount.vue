@@ -1,5 +1,6 @@
 <template>
-  <sl-select value="30" :label='$t("actions.setamount") + ":" ' @sl-change="amoutChange" size="small">
+  <sl-select value="30" :label='$t("actions.setamount") + ":" ' @sl-change="amoutChange" size="small"
+             :title="$t('actions.setamount')">
     <sl-option value="30">30</sl-option>
     <sl-option value="60">60</sl-option>
     <sl-option value="99">99</sl-option>

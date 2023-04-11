@@ -1,5 +1,6 @@
 <template>
-    <sl-button size="small" variant="danger" outline @click="debugClicked">
+    <sl-button size="small" variant="danger" outline @click="debugClicked"
+               :title="$t('actions.debug')">
       <sl-icon slot="prefix" name="bug"></sl-icon>
       {{ $t("actions.debug") }}
     </sl-button>
