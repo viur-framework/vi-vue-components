@@ -1,13 +1,15 @@
 <template>
   <header>
-    <router-link to="/" class="head">
+    <!-- <router-link to="/" class="head"> -->
+    <div class="head" @click="homebutton()">
       <div class="logo">
         <sl-icon src="logo-cube.svg"></sl-icon>
       </div>
       <h1 class="main-headline">
         {{ appStore.state["vi.name"] }}
       </h1>
-    </router-link>
+    </div>
+    <!-- </router-link> -->
 
     <div class="main-group">
       <!--<component v-for="action in appStore.state['topbar.actions']" :is="action">
@@ -86,6 +88,7 @@
 import { useUserStore } from "../stores/user";
 import { useAppStore } from "../stores/app";
 import { defineComponent, reactive, computed } from "vue";
+import router from "../routes";
 
 export default defineComponent({
   setup(props, context) {
@@ -159,10 +162,16 @@ export default defineComponent({
       }),
     });
 
+    function homebutton() {
+      appStore.state["handlers.active"] = 0;
+      router.push("/");
+    }
+
     return {
       userStore,
       appStore,
       state,
+      homebutton,
     };
   },
 });
