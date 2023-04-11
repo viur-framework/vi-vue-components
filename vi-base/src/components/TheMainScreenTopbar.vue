@@ -16,56 +16,66 @@
       <sl-avatar
         :image="state.avatarUser"
         @click="state.sidebarOpen = !state.sidebarOpen"
-        :label="`Avatar of ${state.name}`"
+        :label="state.name"
         :initials="state.nameInitials"
       ></sl-avatar>
 
       <sl-drawer
-        label="Drawer"
+        :label="$t('sidebar.name')"
         class="drawer-overview"
         :open="state.sidebarOpen"
       >
         <div class="drawer-header">
           <sl-avatar
             :image="state.avatarUser"
-            :label="`Avatar of ${state.name}`"
+            :label="state.name"
             :initials="state.nameInitials"
             @click="state.sidebarOpen = !state.sidebarOpen"
           ></sl-avatar>
 
           <div class="name">{{ state.name }}</div>
 
-          <sl-button variant="primary" size="small"> Ausloggen </sl-button>
+          <sl-button variant="primary" size="small" @click="userStore.logout">{{
+            $t("sidebar.logout")
+          }}</sl-button>
         </div>
 
         <div class="drawer-scroller">
           <div class="group">
-            <div class="group-headline">Allgemein</div>
+            <div class="group-headline">
+              {{ $t("sidebar.section_general_name") }}
+            </div>
             <sl-button size="medium">
               <sl-icon name="gear"></sl-icon>
-              Einstellungen
+              {{ $t("sidebar.section_general_configuration") }}
             </sl-button>
             <sl-button size="medium">
               <sl-icon name="gear"></sl-icon>
-              Cache leeren
+              {{ $t("sidebar.section_general_cache") }}
             </sl-button>
           </div>
           <div class="group">
-            <div class="group-headline">System Jobs</div>
+            <div class="group-headline">
+              {{ $t("sidebar.section_system_name") }}
+            </div>
             <sl-button size="medium">
               <sl-icon name="gear"></sl-icon>
-              Rebuild Search Index
+              {{ $t("sidebar.section_system_searchindex") }}
             </sl-button>
             <sl-button size="medium">
               <sl-icon name="gear"></sl-icon>
-              Vacuum Viur Relations
+              {{ $t("sidebar.section_system_vacuum") }}
+            </sl-button>
+            <sl-button size="medium">
+              <sl-icon name="gear"></sl-icon>
+              {{ $t("sidebar.section_system_entities") }}
             </sl-button>
           </div>
         </div>
 
         <div slot="footer" class="drawer-footer">
-          <div class="footer-item">Vi: 3.3</div>
-          <div class="footer-item">Core: 3.3</div>
+          <div class="footer-item">Vi: {{ state.viVersion }}</div>
+          <div class="footer-item">Core: {{ state.coreVersion }}</div>
         </div>
       </sl-drawer>
     </div>
@@ -124,6 +134,28 @@ export default defineComponent({
         if (!userStore.state.user) return avatar;
 
         return userStore.state.user["image"];
+      }),
+      viVersion: computed(() => {
+        let vi = "";
+        if (!appStore.state["vi.version"]) return vi;
+        for (let i = 0; i < appStore.state["vi.version"].length; i++) {
+          vi += appStore.state["vi.version"][i];
+          if (i < appStore.state["vi.version"].length - 1) {
+            vi += ".";
+          }
+        }
+        return vi;
+      }),
+      coreVersion: computed(() => {
+        let core = "";
+        if (!appStore.state["core.version"]) return core;
+        for (let i = 0; i < appStore.state["core.version"].length; i++) {
+          core += appStore.state["core.version"][i];
+          if (i < appStore.state["core.version"].length - 1) {
+            core += ".";
+          }
+        }
+        return core;
       }),
     });
 
