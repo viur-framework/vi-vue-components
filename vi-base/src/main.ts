@@ -7,10 +7,6 @@ import App from './App.vue'
 
 const app = createApp(App)
 
-//element plus
-//import ElementPlus from 'element-plus'
-//app.use(ElementPlus)
-
 import router from './routes'
 import {createPinia} from 'pinia'
 import {createI18n} from "vue-i18n";

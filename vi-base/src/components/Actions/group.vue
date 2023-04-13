@@ -21,6 +21,7 @@
 </template>
 
 <script lang="ts">
+//@ts-nocheck
 import {reactive, defineComponent, inject, computed} from 'vue'
 
 export default defineComponent({

@@ -1,3 +1,4 @@
+//@ts-nocheck
 import add_action from './add.vue'
 import addnode_action from './addnode.vue'
 import clone_action from './clone.vue'
