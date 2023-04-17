@@ -188,7 +188,7 @@ sl-card {
   width: 30vw;
 
   &::part(base) {
-    background-color: var(--sl-background-color);
+    background-color: var(--vi-background-color);
     border: none;
   }
 
@@ -207,7 +207,7 @@ sl-card {
 }
 
 sl-tab-group {
-  --indicator-color: var(--sl-foreground-color);
+  --indicator-color: var(--vi-foreground-color);
   --track-color: transparent;
 }
 
@@ -218,7 +218,7 @@ sl-tab {
 
   &[aria-selected="true"]{
     &::part(base) {
-      color: var(--sl-foreground-color);
+      color: var(--vi-foreground-color);
     }
   }
 }

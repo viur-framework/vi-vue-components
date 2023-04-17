@@ -47,6 +47,7 @@ export default defineComponent({
 <style scoped lang="less">
 sl-tab-group {
   --tab-flap-background-color: var(--vi-tab-background-color);
+  z-index: 2;
 }
 
 </style>

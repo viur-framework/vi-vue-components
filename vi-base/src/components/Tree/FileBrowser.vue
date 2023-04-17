@@ -266,7 +266,7 @@ sl-breadcrumb-item{
 
   &::part(base){
   	font-weight: 400;
-    color: var(--sl-foreground-color)
+    color: var(--vi-foreground-color)
   }
 
   &::part(separator){
@@ -338,7 +338,7 @@ th {
   :deep(sl-icon) {
     height: .4em;
     padding-top: .5em;
-    color: var(--sl-foreground-color)
+    color: var(--vi-foreground-color)
   }
 
   &.thimg {
@@ -356,7 +356,7 @@ th {
     overflow: hidden;
     text-overflow: ellipsis;
     width: 100%;
-    color: var(--sl-foreground-color)
+    color: var(--vi-foreground-color)
   }
 }
 
@@ -392,7 +392,7 @@ sl-format-date {
   flex-direction: column;
   padding: 7px 15px;
   overflow-y: auto;
-  color: var(--sl-foreground-color);
+  color: var(--vi-foreground-color);
 
   .headline {
     word-break: break-word;

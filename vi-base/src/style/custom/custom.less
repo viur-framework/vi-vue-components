@@ -14,7 +14,7 @@
   }
 
   &::-webkit-scrollbar-thumb {
-      background-color: var(--sl-scrollbar-color);
+      background-color: var(--vi-scrollbar-color);
       border-radius: 3px;
   }
 
@@ -35,7 +35,7 @@ html{
 body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--sl-background-color);
+  background-color: var(--vi-background-color);
 }
 
 #app {
@@ -46,40 +46,40 @@ body {
 
 sl-input,
 sl-select{
-  --sl-panel-background-color: var(--sl-background-color);
+  --sl-panel-background-color: var(--vi-background-color);
 
   &::part(base){
     box-shadow: none;
-    color: var(--sl-foreground-color);
-    background-color: var(--sl-background-color);
+    color: var(--vi-foreground-color);
+    background-color: var(--vi-background-color);
     border-color: var(--vi-border-color) !important;
   }
 
   &::part(input){
-    color: var(--sl-foreground-color);
+    color: var(--vi-foreground-color);
   }
 
   &::part(combobox){
     box-shadow: none;
-    color: var(--sl-foreground-color);
-    background-color: var(--sl-background-color);
+    color: var(--vi-foreground-color);
+    background-color: var(--vi-background-color);
     border-color: var(--vi-border-color) !important
   }
 
   &::part(display-input){
-    color: var(--sl-foreground-color);
-    background-color: var(--sl-background-color);
+    color: var(--vi-foreground-color);
+    background-color: var(--vi-background-color);
     border-color: var(--vi-border-color) !important
   }
 
   &::part(form-control-label){
-    color: var(--sl-foreground-color);
+    color: var(--vi-foreground-color);
   }
 
   sl-option{
     &::part(base){
-      color: var(--sl-foreground-color);
-      background-color: var(--sl-background-color);
+      color: var(--vi-foreground-color);
+      background-color: var(--vi-background-color);
     }
 
   }
@@ -87,11 +87,11 @@ sl-select{
 
 sl-checkbox{
   &::part(label){
-    color: var(--sl-foreground-color);
+    color: var(--vi-foreground-color);
   }
 
   &::part(control){
-    background-color: var(--sl-background-color);
+    background-color: var(--vi-background-color);
     border: 1px solid var(--vi-border-color);
   }
 
@@ -119,23 +119,23 @@ sl-checkbox{
     width: calc((var(--toggle-size) / 12) * 3);
     margin-left: calc(-0.19 * var(--toggle-size));
     margin-top: calc(0.08 * var(--toggle-size));
-    border-bottom: 2px solid var(--sl-foreground-color);
-    border-right: 2px solid var(--sl-foreground-color);
+    border-bottom: 2px solid var(--vi-foreground-color);
+    border-right: 2px solid var(--vi-foreground-color);
   }
 }
 
 sl-button{
   &[variant="default"]{
     &::part(base){
-      border: 1px solid var(--sl-foreground-color);
-      color: var(--sl-foreground-color);
-      background-color: var(--sl-background-color);
+      border: 1px solid var(--vi-foreground-color);
+      color: var(--vi-foreground-color);
+      background-color: var(--vi-background-color);
       border-color: var(--vi-border-color) !important
     }
 
     &:hover{
       &::part(base){
-        border-color: var(--sl-foreground-color) !important
+        border-color: var(--vi-foreground-color) !important
       }
     }
   }
@@ -149,14 +149,14 @@ sl-dialog{
 
   &::part(panel){
     box-shadow: 0 0 10px rgba(0, 0, 0, .4);
-    color: var(--sl-foreground-color);
-    background-color: var(--sl-background-color);
+    color: var(--vi-foreground-color);
+    background-color: var(--vi-background-color);
   }
 
 }
 
 .headline{
-  color: var(--sl-foreground-color);
+  color: var(--vi-foreground-color);
 }
 
 sl-table{
@@ -173,8 +173,8 @@ sl-table{
 
 sl-details{
   &::part(base){
-      color: var(--sl-foreground-color);
-      background-color: var(--sl-background-color);
+      color: var(--vi-foreground-color);
+      background-color: var(--vi-background-color);
     }
 }
 
@@ -199,8 +199,8 @@ sl-menu-item{
 
 sl-dropdown{
   &::part(panel){
-    color: var(--sl-foreground-color);
-    background-color: var(--sl-background-color);
+    color: var(--vi-foreground-color);
+    background-color: var(--vi-background-color);
   }
 
   sl-menu-item::part(base){
@@ -239,8 +239,8 @@ sl-drawer{
   }
 
   &::part(panel){
-    color: var(--sl-foreground-color);
-    background-color: var(--sl-background-color);
+    color: var(--vi-foreground-color);
+    background-color: var(--vi-background-color);
     font-size: .9em;
   }
 }

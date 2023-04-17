@@ -104,17 +104,17 @@ sl-tab{
     font-size: .9em;
     margin: 0 -6px 0 5px;
     transition: all ease .3s;
-    color: var(--sl-foreground-color);
+    color: var(--vi-foreground-color);
   }
 
   .link-wrap{
-      color: var(--sl-foreground-color);
+      color: var(--vi-foreground-color);
       opacity: .5;
     }
 
   sl-avatar {
     &::part(base) {
-      background-color: var(--sl-foreground-color);
+      background-color: var(--vi-foreground-color);
     }
   }
 
@@ -124,29 +124,29 @@ sl-tab{
     }
 
     .link-wrap{
-      color: var(--sl-foreground-color);;
+      color: var(--vi-foreground-color);;
       opacity: .9;
     }
 
     sl-avatar {
       &::part(base) {
-        background-color: var(--sl-foreground-color);;
+        background-color: var(--vi-foreground-color);;
       }
 
     }
   }
 
   &[aria-selected="true"]{
-    background-color: var(--sl-background-color);
+    background-color: var(--vi-background-color);
 
     .link-wrap{
-      color: var(--sl-foreground-color);
+      color: var(--vi-foreground-color);
       opacity: 1;
     }
 
     sl-avatar{
       &::part(base){
-        background-color: var(--sl-foreground-color);
+        background-color: var(--vi-foreground-color);
       }
     }
   }
@@ -178,7 +178,7 @@ sl-avatar{
   }
 
   &::part(icon){
-    color: var(--sl-background-color);
+    color: var(--vi-background-color);
   }
 
   &::part(base){

@@ -86,7 +86,7 @@ export default defineComponent({
   max-width: 1280px;
   flex: 1;
   overflow-y: auto;
-  color: var(--sl-foreground-color)
+  color: var(--vi-foreground-color)
 }
 
 .main-headline {

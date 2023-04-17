@@ -151,7 +151,7 @@ export default defineComponent({
   padding: var(--sl-spacing-small);
   gap: var(--sl-spacing-small);
   width: 100%;
-  color: var(--sl-foreground-color);
+  color: var(--vi-foreground-color);
   border-bottom: 1px solid var(--vi-border-color);
 }
 

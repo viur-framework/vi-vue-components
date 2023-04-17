@@ -202,7 +202,7 @@ header {
     margin-left: 15px;
     font-size: 1.2em;
     font-weight: 700;
-    color: var(--sl-foreground-color);
+    color: var(--vi-foreground-color);
   }
 
   .logo {
@@ -236,7 +236,7 @@ sl-drawer {
   }
 
   &::part(overlay) {
-    background-color: var(--sl-background-color);
+    background-color: var(--vi-background-color);
     opacity: 0.8;
   }
 
@@ -249,7 +249,7 @@ sl-drawer {
     flex-direction: column;
     overflow-y: hidden;
     padding: 0;
-    background-color: var(--sl-background-color);
+    background-color: var(--vi-background-color);
   }
 
   &::part(footer) {
@@ -289,14 +289,14 @@ sl-drawer {
   display: flex;
   flex-direction: column;
   margin-bottom: 10px;
-  color: var(--sl-foreground-color);
+  color: var(--vi-foreground-color);
 
   sl-button {
     &::part(base) {
       justify-content: flex-start;
       background-color: transparent;
       border: none;
-      color: var(--sl-foreground-color);
+      color: var(--vi-foreground-color);
       transition: all ease 0.3s;
     }
 
@@ -323,7 +323,7 @@ sl-drawer {
 }
 
 .name {
-  color: var(--sl-foreground-color);
+  color: var(--vi-foreground-color);
   font-weight: bold;
   margin-left: 15px;
   font-size: 1.1em;

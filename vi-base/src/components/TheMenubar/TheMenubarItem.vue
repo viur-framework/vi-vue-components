@@ -327,9 +327,9 @@ export default defineComponent({
 
     sl-avatar {
       &::part(base){
-        border: 1px solid var(--sl-foreground-color);
+        border: 1px solid var(--vi-foreground-color);
         background-color: transparent;
-        color: var(--sl-foreground-color);
+        color: var(--vi-foreground-color);
       }
     }
   }
@@ -346,11 +346,11 @@ export default defineComponent({
   -webkit-box-orient: vertical;
   overflow: hidden;
   display: -webkit-box;
-  color: var(--sl-foreground-color);
+  color: var(--vi-foreground-color);
   margin-left: 13px;
 
   a {
-    color: var(--sl-foreground-color);
+    color: var(--vi-foreground-color);
   }
 }
 
@@ -367,7 +367,7 @@ sl-icon {
   padding: 0 var(--sl-spacing-small) ;
   font-size: .5em;
   opacity: .3;
-  color: var(--sl-foreground-color);
+  color: var(--vi-foreground-color);
 
   &.is-open sl-icon{
     transform: rotate(90deg);
@@ -384,12 +384,12 @@ sl-icon {
     transition: all ease .3s;
     opacity: .3;
     rotate:90deg;
-    color: var(--sl-foreground-color);
+    color: var(--vi-foreground-color);
 
     &:hover{
 
       &::part(base){
-        color: var(--sl-foreground-color) !important;
+        color: var(--vi-foreground-color) !important;
       }
 
     }
@@ -403,12 +403,12 @@ sl-icon {
     sl-icon{
       font-size: .9em;
       margin-right: var(--sl-spacing-small);
-      color: var(--sl-foreground-color);
+      color: var(--vi-foreground-color);
     }
 
     &::part(base){
       padding: var(--sl-spacing-x-small) var(--sl-spacing-medium);
-      color: var(--sl-foreground-color);
+      color: var(--vi-foreground-color);
       font-size: .9em;
     }
 
