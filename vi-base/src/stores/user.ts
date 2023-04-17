@@ -289,7 +289,7 @@ export const useUserStore = defineStore("user", () => {
       const conf = appStore.getConfByRoute(route);
       if (!conf) return;
       const action = {
-        "url": route,
+        "url": route.fullPath,
         "module": conf["module"],
         "time": new Date().getTime(),
         "icon": conf["icon"],
@@ -327,12 +327,13 @@ export const useUserStore = defineStore("user", () => {
       return
     }
     if (JSON.stringify(state.lastActions) !== JSON.stringify(state.syncedlastActions)) {
-      state.syncedlastActions = state.lastActions;// Delete referenc
+      state.syncedlastActions = JSON.parse(JSON.stringify(state.lastActions));// Delete reference
       state.lastSynced = new Date().getTime();
+      state.user["admin_config"]["lastActions"] = state.lastActions
       Request.securePost("/vi/user/edit", {
         dataObj: {
           "key": state.user.key,
-          "admin_config": state.user["admin_config"]
+          "admin_config": JSON.stringify(state.user["admin_config"])
         }
       }).then(() => {
         console.log("sync success")

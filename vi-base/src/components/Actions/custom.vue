@@ -39,7 +39,7 @@ export default defineComponent({
       }),
       access: computed(() => {
         let access = false
-        if (state.info) {
+        if (state.info && state.info["access"]) {
           for (let i of state.info["access"]) {
             if (userStore.state.user?.access.includes(i)) {
               access = true
