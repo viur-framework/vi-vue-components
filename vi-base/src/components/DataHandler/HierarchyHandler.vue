@@ -119,12 +119,17 @@ export default defineComponent({
       return Request.getStructure(props.module).then(async (resp) => {
         let data = await resp.json();
         data = data["viewNodeSkel"];
-        const struct = {};
-        for (const idx in data) {
 
-          struct[data[idx][0]] = data[idx][1];
+        if (Array.isArray(data)) {
+          let struct = {};
+          for (const idx in data) {
+            struct[data[idx][0]] = data[idx][1];
+          }
+          state.structure = struct;
+        }else{
+          state.structure = data;
         }
-        state.structure = struct;
+
       }).catch((error)=>{
               if(error.statusCode === 401) userStore.updateUser()
             })
