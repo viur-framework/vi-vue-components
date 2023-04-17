@@ -159,13 +159,15 @@ export default defineComponent({
     provide("state", state)
 
     function structureToDict(structure: object) {
-      let struct = {}
-      if (structure) {
-        for (let idx in structure) {
-          struct[structure[idx][0]] = structure[idx][1]
+      if (Array.isArray(structure)) {
+          let struct = {};
+          for (const idx in structure) {
+            struct[structure[idx][0]] = structure[idx][1];
+          }
+          return struct;
+        }else{
+          return structure;
         }
-      }
-      return struct
     }
 
     function fetchData() {
