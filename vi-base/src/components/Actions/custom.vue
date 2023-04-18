@@ -144,7 +144,7 @@ export default defineComponent({
       if (selection === null) {
         let urlparts = state.info?.['url'].split("/")
         let new_route = router.resolve("/"+state.info?.['url'])
-        new_route.query["_"] = new Date().getTime()
+        new_route.query["_"] = new Date().getTime().toString()
 
         console.log(new_route)
         console.log(urlparts)
