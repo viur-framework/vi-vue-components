@@ -6,10 +6,28 @@
       {{ state.info["name"] }}
     </sl-button>
   </template>
+  <teleport v-if="state.confirm" to="#dialogs" :disabled="!state.confirm">
+    <sl-dialog :label="state.info?.['name']" open @sl-after-hide="state.confirm=false">
+      {{ state.info?.["confirm"] }}
+
+      <sl-button slot="footer"
+                 @click="triggerAction"
+                 variant="success">
+        {{$t('confirm')}}
+      </sl-button>
+      <sl-button slot="footer" variant="danger"
+                 @click="state.confirm=false">
+        {{$t('abort')}}
+      </sl-button>
+    </sl-dialog>
+  </teleport>
+
+
+
 </template>
 
 <script lang="ts">
-import {reactive, defineComponent, computed, inject} from 'vue'
+import {reactive, defineComponent, computed, inject, unref} from 'vue'
 import {useAppStore} from "../../stores/app";
 import {useRouter} from "vue-router";
 import app from "../../App.vue";
@@ -24,12 +42,14 @@ export default defineComponent({
   components: {},
   setup(props, context) {
     const route = useRouter()
+    const router = useRouter()
     const handlerState: any = inject("state")
     const appStore = useAppStore();
     const userStore = useUserStore()
     const tableReload: any = inject("reloadAction")
 
     const state = reactive({
+      confirm:false,
       info: computed(() => {
         let conf = appStore.state["vi.modules"][handlerState["module"]]
         if (handlerState["view"]) {
@@ -74,6 +94,14 @@ export default defineComponent({
     })
 
     function buttonClicked() {
+      if (state.info?.["confirm"]){
+        state.confirm=true;
+      }else{
+        triggerAction()
+      }
+    }
+
+    function triggerAction() {
       let actions = handlerState.currentSelection
       if (!actions) {
         actions = [null]
@@ -98,6 +126,9 @@ export default defineComponent({
           } else if (state.info?.["then"] === "reload-vi") {
             window.location.reload()
           }
+          if (state.info?.["success"]){
+            //MESSAGE
+          }
         })
       }
 
@@ -108,8 +139,17 @@ export default defineComponent({
     }
 
     function handleView(selection) {
-      if (selection === null) {
+      if (!state.info?.['url']) return
 
+      if (selection === null) {
+        let urlparts = state.info?.['url'].split("/")
+        let new_route = router.resolve("/"+state.info?.['url'])
+        new_route.query["_"] = new Date().getTime()
+
+        console.log(new_route)
+        console.log(urlparts)
+
+        appStore.addOpened(new_route, urlparts[0])
         return
       }
     }
@@ -124,7 +164,8 @@ export default defineComponent({
 
     return {
       state,
-      buttonClicked
+      buttonClicked,
+      triggerAction
     }
   }
 })

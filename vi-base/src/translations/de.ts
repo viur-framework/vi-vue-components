@@ -54,6 +54,7 @@ export default {
       "Du hast bereits x Einträge geöffnet. Möchtest du trotzdem einen weiteren öffnen?",
   },
   abort: "Abbrechen",
+  confirm: "Bestätigen",
   create: "Erstellen",
   select: "Auswählen",
 };

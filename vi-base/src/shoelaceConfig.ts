@@ -36,6 +36,7 @@ import "@viur/viur-shoelace/dist/components/combobox/combobox"
 import "@viur/viur-shoelace/dist/components/icon-button/icon-button"
 import "@viur/viur-shoelace/dist/components/breadcrumb/breadcrumb"
 import "@viur/viur-shoelace/dist/components/breadcrumb-item/breadcrumb-item"
+import "@viur/viur-shoelace/dist/components/dialog/dialog"
 
 import '@viur/viur-shoelace/dist/components/bone/bone';
 
