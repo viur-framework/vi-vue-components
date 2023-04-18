@@ -241,8 +241,8 @@ export const useAppStore = defineStore("app", () => {
     if (!conf) return null
 
     let name: string = `module___${conf.module}`
-    if (conf.view) {
-      name += `___${conf.view}`
+    if (Object.keys(conf).includes("view_number") && conf.view_number!==null) {
+      name += `___${conf.view_number}`
     }
     name+= `___${route.query["_"]}`
     return state["stores.map"][name];
