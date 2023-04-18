@@ -122,7 +122,7 @@ export default defineComponent({
   flex-direction: row;
   flex-wrap: nowrap;
   align-items: center;
-  color: var(--sl-foreground-color);
+  color: var(--vi-foreground-color);
 
   span {
     white-space: nowrap;
@@ -192,7 +192,7 @@ td {
   cursor: move;
   opacity: .2;
   transition: opacity ease .3s;
-  color: var(--sl-foreground-color);
+  color: var(--vi-foreground-color);
 
   sl-icon{
     font-size: .7em;

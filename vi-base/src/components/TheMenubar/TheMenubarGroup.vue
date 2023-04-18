@@ -77,11 +77,11 @@ export default defineComponent({
   padding: 5px 7px 6px 7px;
   font-size: .8em;
   font-weight: 600;
-  border-bottom: 1px solid var(--sl-foreground-color);
+  border-bottom: 1px solid var(--vi-foreground-color);
   width: 100%;
   gap: 10px;
   cursor: pointer;
-  color: var(--sl-foreground-color);
+  color: var(--vi-foreground-color);
 
   &:hover{
     .arrow{

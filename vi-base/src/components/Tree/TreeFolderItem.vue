@@ -154,7 +154,7 @@ export default defineComponent({
   cursor: move;
   opacity: .2;
   transition: opacity ease .3s;
-  color: var(--sl-foreground-color);
+  color: var(--vi-foreground-color);
 
   sl-icon{
     font-size: .7em;
@@ -206,7 +206,7 @@ export default defineComponent({
   width: 1em;
   height: 1em;
   margin-right: var(--sl-spacing-small);
-  color: var(--sl-foreground-color);
+  color: var(--vi-foreground-color);
 }
 
 .chevron{
@@ -219,7 +219,7 @@ export default defineComponent({
 
   sl-icon{
 	font-size: .4em;
-  color: var(--sl-foreground-color);
+  color: var(--vi-foreground-color);
 
 	&.expanded{
 	  transform: rotate(90deg);
@@ -235,7 +235,7 @@ export default defineComponent({
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: var(--sl-foreground-color);
+  color: var(--vi-foreground-color);
 }
 
 .disabled {

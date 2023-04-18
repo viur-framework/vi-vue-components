@@ -1,44 +1,41 @@
 @charset "UTF-8";
 
 .sl-theme() {
+   /* Neutral */
+  --sl-color-neutral-50: var(--sl-color-gray-50) !important;
+  --sl-color-neutral-100: var(--sl-color-gray-100) !important;
+  --sl-color-neutral-200: var(--sl-color-gray-200) !important;
+  --sl-color-neutral-300: var(--sl-color-gray-300) !important;
+  --sl-color-neutral-400: var(--sl-color-gray-400) !important;
+  --sl-color-neutral-500: var(--sl-color-gray-500) !important;
+  --sl-color-neutral-600: var(--sl-color-gray-600) !important;
+  --sl-color-neutral-700: var(--sl-color-gray-700) !important;
+  --sl-color-neutral-800: var(--sl-color-gray-800) !important;
+  --sl-color-neutral-900: var(--sl-color-gray-900) !important;
+  --sl-color-neutral-950: var(--sl-color-gray-950) !important;
+  /* Neutral one-offs */
+  --sl-color-neutral-0: hsl(240, 5.9%, 11%);
+  --sl-color-neutral-1000: hsl(0, 0%, 100%);
 
-  --sl-foreground-color: #fff;
-  --sl-background-color: #262626;
+  --vi-foreground-color: var(--sl-color-neutral-900);
+  --vi-background-color: var(--sl-color-neutral-50);
 
-  --sl-hover-color: #3d3d3d;
-  --sl-scrollbar-color: #666;
+  --sl-hover-color: var(--sl-color-neutral-200);
+  --vi-scrollbar-color: var(--sl-color-neutral-500);
 
-  --vi-divider-color: #444;
-  --vi-border-color: #999;
-  --vi-tab-background-color: #3d3d3d;
-  --vi-label-background-color: #3a3a3a;
+  --vi-divider-color: var(--sl-color-neutral-500);
+  --vi-border-color: var(--sl-color-neutral-500);
+  --vi-tab-background-color: var(--sl-color-neutral-200);
+  --vi-label-background-color: var(--sl-color-neutral-200);
   --vi-active-color: var(--sl-color-primary-500);
 
-  --vi-table-row-color-selected: rgba(0, 0, 0, .2);
-  --vi-table-head-color: var(--sl-foreground-color);
-  --vi-table-head-color-hover:  var(--sl-foreground-color);
-  --vi-table-head-background-hover: rgba(0, 0, 0, .15);
-  --vi-table-row-color-hover: rgba(0, 0, 0, .15);
+  --vi-table-row-color-selected: var(--sl-color-neutral-200);
+  --vi-table-head-color: var(--vi-foreground-color);
+  --vi-table-head-color-hover:  var(--vi-foreground-color);
+  --vi-table-head-background-hover: var(--sl-color-neutral-200);
+  --vi-table-row-color-hover: var(--sl-color-neutral-200);
   --vi-table-border-color: var(--vi-border-color);
 
-  /*--sl-foreground-color: #222;
-  --sl-background-color: #fff;
 
-  --sl-hover-color: #e1e1e1;
-  --sl-scrollbar-color: #cecece;
-
-  --vi-divider-color: #c2c2c2;
-  --vi-border-color: #bbbbbb;
-  --vi-tab-background-color: #efefef;
-  --vi-label-background-color: #efefef;
-  --vi-active-color: var(--sl-color-primary-500);
-
-  --vi-table-row-color-selected: rgba(0, 0, 0, .15);
-  --vi-table-head-color: var(--sl-foreground-color);
-  --vi-table-head-color-hover:  var(--sl-foreground-color);
-  --vi-table-head-background-hover: #EAEAEAFF;
-  --vi-table-row-color-hover: #EAEAEAFF;
-  --vi-table-border-color: var(--vi-border-color);
-*/
 }
 

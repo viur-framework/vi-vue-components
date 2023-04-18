@@ -304,7 +304,7 @@ export default defineComponent({
 
 .top-headline {
   margin-right: auto;
-  color: var(--sl-foreground-color);
+  color: var(--vi-foreground-color);
   font-weight: bold;
   white-space: nowrap;
   overflow: hidden;

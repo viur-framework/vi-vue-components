@@ -126,7 +126,10 @@ export default defineComponent({
     provide("state", state)
     const currentlist = ListRequest(state.storeName, {
       module: props.module,
-      params: {"limit":99},
+      params: {
+        "limit":99,
+        "fluidpage.dest.key": route.params["key"]
+      },
       group: props.group
     })
     appStore.setListStore(currentlist) //backup access
