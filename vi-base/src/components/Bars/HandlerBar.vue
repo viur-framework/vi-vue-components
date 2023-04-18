@@ -80,7 +80,7 @@ export default defineComponent({
 
         let fluidpagecontentActions = {
           ":options": [],
-          "default": [["delete", "clone","preview", "edit", "add"]],
+          "default": [["reload"],["delete", "clone","preview", "edit", "add"]],
         }
 
 
