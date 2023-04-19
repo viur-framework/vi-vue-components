@@ -55,7 +55,7 @@ export default defineComponent({
         if (handlerState["view"]) {
           conf = conf["children"][handlerState["view"]]
         }
-        return conf["customActions"]?.[props.name]
+        return conf?.["customActions"]?.[props.name]
       }),
       access: computed(() => {
         let access = false

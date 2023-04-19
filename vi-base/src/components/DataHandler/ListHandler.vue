@@ -8,7 +8,6 @@
         {{modulesStore.state.modules[module]["help_text"]}}
       </sl-details>
 
-
         <sl-table moveablecolumns
                   :rowselect="rowselect"
                   :structure="currentlist.structure"
