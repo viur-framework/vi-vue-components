@@ -1,3 +1,3 @@
 [submodule "vi-base/src/style/ignite"]
 	path = vi-base/src/style/ignite
-	url = git@github.com:viur-framework/viur-ignite.git
+	url = https://github.com/viur-framework/ignite.git
