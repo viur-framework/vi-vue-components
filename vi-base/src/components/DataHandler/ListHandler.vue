@@ -73,7 +73,6 @@ export default defineComponent({
     const route = useRoute()
     const messageStore = useMessageStore();
     const modulesStore = useModulesStore();
-
     const tableInst = ref(null)
 
     const state = reactive({
@@ -93,7 +92,8 @@ export default defineComponent({
       view: computed(() => props.view),
       editableTable: false,
       tableInst:computed(()=>tableInst),
-      active:false
+      active:false,
+      conf:{},
     })
     provide("state", state)
     const currentlist = ListRequest(state.storeName, {
@@ -119,10 +119,17 @@ export default defineComponent({
       currentlist.reset();
       currentlist.fetch();
     }
-
     provide("setLimit", setLimit)
 
     onMounted(() => {
+      state.conf = appStore.getConfByRoute(route)
+      if(Object.keys(state.conf).indexOf("filter")>-1)
+      {
+        for (const key in state.conf["filter"])
+        {
+          currentlist.state.params[key]=state.conf["filter"][key]
+        }
+      }
       currentlist.fetch().catch((error) => {
         messageStore.addMessage("error", `${error.message}`, error.response.url)
       })

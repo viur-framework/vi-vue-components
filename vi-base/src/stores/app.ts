@@ -30,7 +30,6 @@ function adminTreeLayer(itemList: Array<ModuleInfo>, parent: ModuleInfo): Array<
     let i = 0
 
     for (let conf of itemList) {
-
         if (!Object.keys(conf).includes("display")){
             conf["display"] = "visible"
         }
@@ -106,7 +105,6 @@ function adminTreeLayer(itemList: Array<ModuleInfo>, parent: ModuleInfo): Array<
             //@ts-ignore
             conf["children"] = conf["children"].concat(adminTreeLayer(conf["views"], conf))
         }
-
         listOfNodes.push(conf)
         i += 1
     }
@@ -261,7 +259,6 @@ export const useAppStore = defineStore("app", () => {
         let currentModuleConf = getConf(module)
         let moduleIconData = currentConf["icon"].split("___")
         let url = route.fullPath
-
         let mode = "view"
 
         if (url){

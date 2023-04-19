@@ -204,7 +204,6 @@ export default defineComponent({
     function openItem(route) {
       route.query["_"] = new Date().getTime()
       let new_route = router.resolve(unref(route))
-
       state.maxtabsReached = !appStore.addOpened(new_route, route.params["module"], route.query["view"])
     }
 
