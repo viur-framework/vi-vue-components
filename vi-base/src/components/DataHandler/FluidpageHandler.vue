@@ -130,7 +130,8 @@ export default defineComponent({
         "limit":99,
         "fluidpage.dest.key": route.params["key"]
       },
-      group: props.group
+      group: props.group,
+      renderer:"vi"
     })
     appStore.setListStore(currentlist) //backup access
 

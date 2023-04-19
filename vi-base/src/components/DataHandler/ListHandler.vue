@@ -99,7 +99,8 @@ export default defineComponent({
     const currentlist = ListRequest(state.storeName, {
       module: props.module,
       params: {},
-      group: props.group
+      group: props.group,
+      renderer:"vi"
     })
     appStore.setListStore(currentlist) //backup access
 
