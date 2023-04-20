@@ -16,9 +16,10 @@
         <div class="dragger" v-if="treeState.dragging"
                @mouseup="tree.mouseUpHandle($event, idx, 'leaf')"
                @mousedown="tree.mouseDownHandle($event, idx, 'leaf')">
+
         <sl-icon name="menu"></sl-icon>
         </div>
-        <sl-icon name="download-file" sprite @click="entrySelected(skel)"></sl-icon>
+        <sl-icon name="download" sprite @click="downloadFile(skel)"></sl-icon>
         <span class="filename" v-html="skel.name"  @click="entrySelected(skel)"></span>
       </div>
     </td>
@@ -76,12 +77,17 @@ export default defineComponent({
     function entrySelected(skel) {
       treeState.selected_leaf = skel
     }
+    function downloadFile(skel)
+    {
+       window.open(import.meta.env.VITE_API_URL+skel["downloadUrl"]+"&download=1", '_blank');
+    }
     const tree = useTree(props.module,treeState,state)
     return {
       state,
       treeState,
       tree,
-      entrySelected
+      entrySelected,
+      downloadFile
     }
   }
 })
