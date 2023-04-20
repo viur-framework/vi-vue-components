@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts">
-//@ts-ignore
+//@ts-nocheck
 import {reactive, defineComponent, inject, computed} from 'vue'
 import {useAppStore} from "../../stores/app";
 
@@ -30,7 +30,6 @@ export default defineComponent({
           if (Object.keys(conf).includes("previewurls")){
             for (const [k, v] of Object.entries(conf['previewurls'])) {
               for(let selection of handlerState.currentSelection){
-                console.log("XXXX")
                 window.open(import.meta.env.VITE_API_URL+v.replace("{{key}}",selection["key"]), '_blank').focus();
               }
             }
