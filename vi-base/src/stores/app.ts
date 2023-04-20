@@ -162,6 +162,7 @@ export const useAppStore = defineStore("app", () => {
         //dynamic child buckets
         "handlers.opened": [{"to":{'name': 'home'},"url":"/","name":"Dashboard","icon":"dashboard","closeable":false}], // {'url','name','library'}
         "handlers.opened.max":5,
+        "handlers.opened.max.modules":{},
         "handlers.active":0, //current active index
 
         //drawer
@@ -295,7 +296,11 @@ export const useAppStore = defineStore("app", () => {
 
         let tabNames = state["handlers.opened"].map(e=>e["url"]).filter(name => name.startsWith(route.path+"?_="))
 
-        if(state["handlers.opened.max"]>tabNames.length){
+        if(!Object.keys(state["handlers.opened.max.modules"]).includes(module))
+        {
+          state["handlers.opened.max.modules"][module]=state["handlers.opened.max"]
+        }
+        if(state["handlers.opened.max.modules"][module]>tabNames.length){
             state["handlers.opened"].push(entry)
 
             state["handlers.active"] = state["handlers.opened"].indexOf(entry)

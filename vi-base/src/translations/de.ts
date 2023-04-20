@@ -21,7 +21,8 @@ export default {
     nextpage_finish: "alle Einträge geladen",
     fluidpage: {
       edit: "Inhalt bearbeiten"
-    }
+    },
+    open:"Öffnen",
   },
   bone: {
     add: "Hinzufügen",
@@ -51,7 +52,7 @@ export default {
   },
   tab: {
     amount_warning:
-      "Du hast bereits x Einträge geöffnet. Möchtest du trotzdem einen weiteren öffnen?",
+      "Du hast bereits {amount} Einträge von '{module}' geöffnet. Möchtest du trotzdem einen weiteren öffnen?",
   },
   abort: "Abbrechen",
   confirm: "Bestätigen",

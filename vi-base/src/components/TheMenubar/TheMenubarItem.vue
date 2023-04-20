@@ -54,8 +54,8 @@
 
     <teleport v-if="state.maxtabsReached" to="#dialogs" :disabled="!state.maxtabsReached">
       <sl-dialog open label="Max tabs">
-        {{ $t("tab.amount_warning") }}
-        <sl-button slot="footer" @click="openItem(route)">öffnen</sl-button>
+        {{ $t("tab.amount_warning", { amount: appStore.state["handlers.opened.max.modules"][moduleInfo["module"]] ,module:name}) }}
+        <sl-button slot="footer" @click="handleMaxTabOpen(route)">{{ $t("actions.open") }}</sl-button>
       </sl-dialog>
     </teleport>
 
@@ -242,7 +242,13 @@ export default defineComponent({
 
 
     }
+    function handleMaxTabOpen(route)
+    {
 
+      state.maxtabsReached = false;
+      appStore.state["handlers.opened.max.modules"][props.moduleInfo["module"]] += 1;
+      openItem(route);
+    }
     onMounted(() => {
       state.slotitems = Utils.getSlotLength(context.slots.default)
     })
@@ -263,7 +269,8 @@ export default defineComponent({
       getRoute,
       toogleFavItem,
       userStore,
-      openConfig
+      openConfig,
+      handleMaxTabOpen
     }
   }
 })
