@@ -4,6 +4,7 @@
             :key="to"
             @sl-close="onTabClose"
             :data-id="position"
+            @auxclick ="clickEvent"
     >
         <router-link class="link-wrap" :to="to" :title="name">
           <sl-avatar label="Rounded avatar">
@@ -81,11 +82,18 @@ export default defineComponent({
             // @ts-ignore
             appStore.removeOpened(props.to)
         }
-
+        //close tab with middel mouse click.
+        function clickEvent(e:Event)
+        {
+          e.preventDefault();
+          onTabClose();
+          return false;
+        }
         return {
             state,
             onIconError,
-            onTabClose
+            onTabClose,
+            clickEvent,
         }
     }
 })

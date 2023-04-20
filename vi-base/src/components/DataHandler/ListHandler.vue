@@ -124,13 +124,14 @@ export default defineComponent({
 
     onMounted(() => {
       state.conf = appStore.getConfByRoute(route)
-      if(Object.keys(state.conf).indexOf("filter")>-1)
-      {
-        for (const key in state.conf["filter"])
-        {
-          currentlist.state.params[key]=state.conf["filter"][key]
+      if (state.conf) {
+        if (Object.keys(state.conf).indexOf("filter") > -1) {
+          for (const key in state.conf["filter"]) {
+            currentlist.state.params[key] = state.conf["filter"][key]
+          }
         }
       }
+
       currentlist.fetch().catch((error) => {
         messageStore.addMessage("error", `${error.message}`, error.response.url)
       })
