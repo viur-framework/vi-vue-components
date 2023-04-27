@@ -1,25 +1,28 @@
 export default {
   actions: {
-    add: "add",
-    addnode: "add node",
-    clone: "clone",
-    delete: "delete",
-    edit: "edit",
-    overlay: "overlay",
-    preview: "preview",
-    reload: "reload",
-    selectfields: "fields",
-    setamount: "amount",
+    add: "Add",
+    addnode: "Add node",
+    clone: "Clone",
+    delete: "Delete",
+    debug: "Debug",
+    edit: "Edit",
+    overlay: "Overlay",
+    preview: "Preview",
+    reload: "Reload",
+    selectfields: "Fields",
+    setamount: "Amount",
+    save: "Save",
+    save_close: "Save and close",
     filter: {
-      text: "filter",
+      text: "Filter",
       nofilter: "There are no filter for this module",
     },
-    reset: "reset",
-    open:"open",
+    reset: "Reset",
+    open:"Open",
   },
   bone: {
-    add: "add",
-    del: "remove",
+    add: "Add",
+    del: "Remove",
   },
   sidebar: {
     workspace: "Workspace",
@@ -36,12 +39,16 @@ export default {
     section_system_entities: "Clear all entities of a kind",
   },
   skeldrawer: {
-    noentry: "no entry selected",
+    noentry: "No entry selected",
   },
   selectfields: {
     selectall: "Select all",
     unselectall: "Unselect all",
     invertselect: "Invert selection",
+  },
+  relation: {
+    select: "Select",
+    abort: "Cancel",
   },
   tab: {
     amount_warning:

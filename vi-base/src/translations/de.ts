@@ -6,12 +6,15 @@ export default {
     addfile: "Datei hinzufügen",
     clone: "Klonen",
     delete: "Löschen",
+    debug: "Debuggen",
     edit: "Bearbeiten",
     overlay: "Vorschau",
     preview: "Ansicht",
     reload: "Neuladen",
     selectfields: "Felder",
     setamount: "Anzahl",
+    save: "Speichern",
+    save_close: "Speichern und Schließen",
     filter: {
       text: "Filter",
       nofilter: "Für dieses Modul sind keine Filter vorhanden"
@@ -49,6 +52,10 @@ export default {
     selectall: "Alle auswählen",
     unselectall: "Alle abwählen",
     invertselect: "Auswahl umkehren",
+  },
+  relation: {
+    select: "Auswählen",
+    abort: "Abbrechen",
   },
   tab: {
     amount_warning:

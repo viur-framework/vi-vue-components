@@ -153,6 +153,22 @@ sl-dialog{
     background-color: var(--vi-background-color);
   }
 
+  &::part(title){
+    font-size: 1em;
+    padding: var(--sl-spacing-medium);
+  }
+
+  &::part(header){
+    border-bottom: 1px solid var(--sl-color-neutral-500);
+  }
+
+  &::part(header-actions){
+    padding: 0 var(--sl-spacing-small);
+  }
+
+  &::part(footer){
+    border-top: 1px solid var(--sl-color-neutral-500);
+  }
 }
 
 .headline{

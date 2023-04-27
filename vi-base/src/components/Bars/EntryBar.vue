@@ -3,7 +3,7 @@
     <debugentry></debugentry>
     <save :module="module" :action="action"></save>
     <save
-      name="action.save_close"
+      name="actions.save_close"
       icon="check-all"
       :close="true"
       :module="module" :action="action"

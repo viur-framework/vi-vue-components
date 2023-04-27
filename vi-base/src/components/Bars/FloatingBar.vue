@@ -35,7 +35,7 @@ export default defineComponent({
   gap: 15px;
   padding: 10px;
   background-color: var(--vi-label-background-color);
-  box-shadow: 0 0 10px 0 rgba(0, 0, 0, .2);
+  border: 1px solid var(--sl-color-neutral-300);
   border-radius: var(--sl-border-radius-medium);
   position: absolute;
   bottom: 15px;

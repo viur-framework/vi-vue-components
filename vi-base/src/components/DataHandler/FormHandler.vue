@@ -1,78 +1,80 @@
 <template>
+  <div class="wrap-for-popup">
+    <div class="topbar">
 
-  <div class="topbar">
+      <div class="top-headline">
+        <span v-if="['clone', 'add'].includes(action)">Neuer</span>
+        <span v-else-if="['edit'].includes(action)">Bearbeite</span>
+        {{ state.conf?.['name'] }} Eintrag
+        <span v-if="state.formValues?.['name']?.[0]['name']">: {{ state.formValues['name'][0]['name'] }}</span>
+      </div>
+      <entry-bar :module="module" :action="action" :skelkey="skelkey" skeltype="skeltype"
+      ></entry-bar>
 
-    <div class="top-headline">
-      <span v-if="['clone', 'add'].includes(action)">Neuer</span>
-      <span v-else-if="['edit'].includes(action)">Bearbeite</span>
-      {{ state.conf?.['name'] }} Eintrag
-      <span v-if="state.formValues?.['name']?.[0]['name']">: {{ state.formValues['name'][0]['name'] }}</span>
     </div>
-    <entry-bar :module="module" :action="action" :skelkey="skelkey" skeltype="skeltype"
-    ></entry-bar>
 
-  </div>
-  <sl-details open summary="Info"
-              v-if="modulesStore.state.loaded && modulesStore.state.modules[module][`help_text_${action}`]">
-    {{ modulesStore.state.modules[module][`help_text_${action}`] }}
-  </sl-details>
-  <div class="scroll-content">
-    <template v-for="(group,key) in state.formGroups">
-      <sl-details :summary="group['name']" v-show="group['groupVisible']" open>
-        <template v-for="bone in group['bones']">
-          <sl-bone
-            :boneName="bone['boneName']"
-            :boneStructure="state.structure[bone['boneName']]"
-            :boneValue="toRaw(state.skel[bone['boneName']])"
-            renderType="edit"
-            :renderLabel="true"
-            @sl-bone-change="updateValue"
-            @sl-bone-init="updateValue"
-            @sl-bone-relational-select="relationSelection($event,bone)"
-            :errors="state.errors"
-            :inVi="true"
-            v-if="state.structure[bone['boneName']]['visible']"
-          >
-          </sl-bone>
-        </template>
-      </sl-details>
-    </template>
-    <!--
-    <sl-details summary="DEBUG: Formdata">
-      {{ state.formValues }}
+    <sl-details open summary="Info"
+                v-if="modulesStore.state.loaded && modulesStore.state.modules[module][`help_text_${action}`]">
+      {{ modulesStore.state.modules[module][`help_text_${action}`] }}
     </sl-details>
-    <sl-details summary="DEBUG: Errors">
-      {{ state.errors }}
-    </sl-details>-->
 
-    <template v-if="state.relation_opened">
-    <template v-for="bone in state.relation_opened">
-      <sl-dialog open style="--width:85%" class="relation-popup"
-                 :label="'Auswahl: '+bone['boneStructure']['descr']"
-                 @sl-request-close="relationCloseAction($event)"
-      >
-        <component
-          :is="bone['bone_conf']['handlerComponent']"
-          :rowselect="1"
-          :module="bone['boneStructure']['module']"
-          @currentSelection="relationUpdateSelection($event,bone)"
-        >
-
-        </component>
-        <div class="footer" slot="footer">
-            <sl-button :disabled="!bone['currentSelection'] || bone['currentSelection']?.length===0"
-                       @click="relationApplySelection(bone)"
-                       variant="success"
-                        size="small">
-              {{ $t("relation.select") }}
-            </sl-button>
-            <sl-button @click="relationRemoveHandler(bone)" variant="danger" size="small" outline>{{ $t("relation.abort") }}</sl-button>
-        </div>
-      </sl-dialog>
-    </template>
+    <div class="scroll-content">
+      <template v-for="(group,key) in state.formGroups">
+        <sl-details :summary="group['name']" v-show="group['groupVisible']" open>
+          <template v-for="bone in group['bones']">
+            <sl-bone
+              :boneName="bone['boneName']"
+              :boneStructure="state.structure[bone['boneName']]"
+              :boneValue="toRaw(state.skel[bone['boneName']])"
+              renderType="edit"
+              :renderLabel="true"
+              @sl-bone-change="updateValue"
+              @sl-bone-init="updateValue"
+              @sl-bone-relational-select="relationSelection($event,bone)"
+              :errors="state.errors"
+              :inVi="true"
+              v-if="state.structure[bone['boneName']]['visible']"
+            >
+            </sl-bone>
+          </template>
+        </sl-details>
       </template>
-  </div>
+      <!--
+      <sl-details summary="DEBUG: Formdata">
+        {{ state.formValues }}
+      </sl-details>
+      <sl-details summary="DEBUG: Errors">
+        {{ state.errors }}
+      </sl-details>-->
+    </div>
+    <template v-if="state.relation_opened">
+      <template v-for="bone in state.relation_opened">
+        <sl-dialog open style="--width:85%" class="relation-popup"
+                   :label="'Auswahl: '+bone['boneStructure']['descr']"
+                   @sl-request-close="relationCloseAction($event)"
+        >
+          <component
+            :is="bone['bone_conf']['handlerComponent']"
+            :rowselect="1"
+            :module="bone['boneStructure']['module']"
+            @currentSelection="relationUpdateSelection($event,bone)"
+          >
 
+          </component>
+          <div class="footer" slot="footer">
+              <sl-button @click="relationRemoveHandler(bone)" variant="danger" size="small" outline>{{ $t("relation.abort") }}</sl-button>
+              <sl-button :disabled="!bone['currentSelection'] || bone['currentSelection']?.length===0"
+                         @click="relationApplySelection(bone)"
+                         variant="success"
+                          size="small">
+                {{ $t("relation.select") }}
+              </sl-button>
+          </div>
+        </sl-dialog>
+      </template>
+    </template>
+
+  </div>
 
 </template>
 
@@ -358,6 +360,8 @@ sl-details {
 
   &::part(panel) {
     height: 100%;
+    max-height: calc(100% - 100px);
+    margin-bottom: 40px;
   }
 
   &::part(body){
@@ -371,12 +375,39 @@ sl-details {
   &::part(overlay) {
     position: absolute;
   }
+
+
+  &:deep(.bar sl-button[variant="success"]){
+    &::part(base){
+      background-color: transparent;
+      border: 1px solid @successColor;
+      aspect-ratio: 1;
+      padding: 0;
+    }
+
+    &::part(label){
+      display: none;
+    }
+
+    &::part(prefix){
+      color: @successColor;
+    }
+  }
 }
 
 .footer{
-  sl-button{
-    margin-left: var(--sl-spacing-x-small);
-  }
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+
+.wrap-for-popup{
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 1px;
+  position: relative;
 }
 
 </style>

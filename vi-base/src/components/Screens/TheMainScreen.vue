@@ -97,6 +97,8 @@ export default defineComponent({
 .split-panel {
   --min: 300px;
   --max: 40%;
+  --divider-width: 1px;
+
   flex: 1;
   height: 0;
 
@@ -106,7 +108,6 @@ export default defineComponent({
   }
 
   &::part(divider) {
-    width: 2px;
     background-color: var(--vi-divider-color);
   }
 }
