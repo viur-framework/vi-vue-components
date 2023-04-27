@@ -5,7 +5,10 @@ export default {
     addfolder: "Ordner hinzufügen",
     addfile: "Datei hinzufügen",
     clone: "Klonen",
-    delete: "Löschen",
+    delete: {
+      text: "Löschen",
+      msg:"Wollen sie {amount} Einträge löschen"
+    },
     debug: "Debuggen",
     edit: "Bearbeiten",
     overlay: "Vorschau",

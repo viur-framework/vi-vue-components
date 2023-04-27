@@ -3,7 +3,10 @@ export default {
     add: "Add",
     addnode: "Add node",
     clone: "Clone",
-    delete: "Delete",
+    delete: {
+      text: "Delete",
+      msg:"`Do you want to delete these {count} entries`"
+    },
     debug: "Debug",
     edit: "Edit",
     overlay: "Overlay",

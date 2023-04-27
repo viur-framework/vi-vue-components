@@ -1,11 +1,11 @@
 <template>
-  <sl-dialog :label='$t("actions.delete")' id="dialog-delete">
-    {{ `Do you want to delete these ${state.count} entries` }}<!--TODO Translate-->
+  <sl-dialog :label='$t("actions.delete.text")' id="dialog-delete">
+    {{ $t("actions.delete.msg",{amount:state.count}) }}<!--TODO Translate-->
     <sl-button slot="footer"
                variant="primary"
                @click="deleteEntries"
                :title="$t('actions.delete')">
-      {{ $t("actions.delete") }}
+      {{ $t("actions.delete.text") }}
     </sl-button>
   </sl-dialog>
 
@@ -64,17 +64,12 @@ export default defineComponent({
         dialog.hide();
       }
 
-      let allPromises = []
       for (const entry of handlerState.currentSelection) {
         let url = `/vi/${handlerState.module}/delete`
-        allPromises.push(Request.securePost(url, {dataObj: {key: entry.key}}))
+        await Request.securePost(url, {dataObj: {key: entry.key}});
       }
-
-      let deletedSuccess = Promise.all(allPromises)
-      await deletedSuccess.then((resp)=>{
         messageStore.addMessage("success", `Delete`, "Entry deleted successfully");
         tableReload()
-      })
     }
 
     function openDeletePopup() {
