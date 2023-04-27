@@ -197,12 +197,9 @@ export default defineComponent({
         dataObj["node"] = props.skelkey
       }
 
-      console.log("new url ", url)
-      console.log(dataObj)
 
 
-
-      Request.securePost(url, {"dataObj": dataObj}).then(async (resp) => {
+      Request.post(url, {"dataObj": dataObj}).then(async (resp) => {
         let data = await resp.json()
         state.skel = data["values"]
         state.structure = structureToDict(data["structure"])
