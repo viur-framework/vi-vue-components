@@ -220,8 +220,12 @@ export default defineComponent({
     }
 
     function updateValue(event: Object) {
-      console.log(event)
-      state.formValues[event.detail.boneName] = event.detail.formValue;
+
+      if(event.type==="edit")
+      {
+        state.formValues[event.detail.boneName] = event.detail.formValue;
+      }
+
       if (event.detail.boneName === "name") {
         appStore.updateActiveTabName(event.detail.formValue[0]["name"])
       }
