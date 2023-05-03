@@ -201,6 +201,21 @@ export default defineComponent({
 
       Request.post(url, {"dataObj": dataObj}).then(async (resp) => {
         let data = await resp.json()
+
+        for (const [key, val] of Object.entries(route.query)) {
+          if (Object.keys(data["values"]).includes(key)){
+            data["values"][key] = val
+          }else if(key.includes(".")){
+            let  keyArr = key.split(".")
+            const bonename = keyArr[0]
+            const lastelement = keyArr.pop()
+            let newVal = {[lastelement]:val};
+            for (let element of keyArr.slice(1).reverse()) {
+              newVal = { [element]: newVal };
+            }
+            data["values"][bonename] = newVal
+          }
+        }
         state.skel = data["values"]
         state.structure = structureToDict(data["structure"])
         state.errors = data["errors"]
@@ -220,11 +235,12 @@ export default defineComponent({
     }
 
     function updateValue(event: Object) {
-
-      if(event.type==="edit")
+      if(event.detail.type==="edit")
       {
         state.formValues[event.detail.boneName] = event.detail.formValue;
       }
+
+      //state.formValues[event.detail.boneName] = event.detail.formValue;
 
       if (event.detail.boneName === "name") {
         appStore.updateActiveTabName(event.detail.formValue[0]["name"])

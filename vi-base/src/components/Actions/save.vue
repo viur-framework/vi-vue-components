@@ -49,9 +49,7 @@ export default defineComponent({
 
             formData.append(k, v)
           }
-
         }
-
       }
       const obj = {}
       for (const key: string of formData.keys()) {

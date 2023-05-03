@@ -134,6 +134,7 @@ export default defineComponent({
       renderer:"vi"
     })
     appStore.setListStore(currentlist) //backup access
+    provide("currentlist",currentlist)
 
     function changeOrder(oldkey, newkey){
       state.draggedKeys = [oldkey,newkey]
@@ -145,6 +146,26 @@ export default defineComponent({
       currentlist.state.skellist.splice(newidx,0, element)
     }
     provide("changeOrder",changeOrder)
+
+    function calculateIndex(new_position){
+      let sortIndex = 0.0001
+      if (currentlist.state.skellist.length===0) return sortIndex
+
+      if (new_position === 0){
+        let nextEntry = currentlist.state.skellist[new_position]
+        sortIndex = nextEntry["sortindex"]-1
+      }else if (new_position === currentlist.state.skellist.length){
+        let prevEntry = currentlist.state.skellist[new_position-1]
+        sortIndex = prevEntry["sortindex"]+1
+      }else{
+        let nextEntry = currentlist.state.skellist[new_position]
+        let prevEntry = currentlist.state.skellist[new_position-1]
+        sortIndex = prevEntry["sortindex"]+((nextEntry["sortindex"]-prevEntry["sortindex"])/2)
+      }
+      sortIndex += 0.0001
+      return sortIndex
+    }
+    provide("calculateIndex",calculateIndex)
 
     function updateDragged(){
       let idx = currentlist.state.skellist.findIndex(e=>e["key"]===state.draggedKeys[0])

@@ -33,7 +33,7 @@ export default defineComponent({
 
         let conf = appStore.getConfByRoute(route);
         let module = conf["handler"].split(".").at(-1)
-        return `/${module}/fluidpage/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
+        return `/${module}/fluidpage/${route.params['module']}/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
       }),
       canEdit: computed(() => {
        if(userStore.state.user.access.indexOf("root") !== -1 )

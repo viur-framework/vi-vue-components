@@ -73,7 +73,7 @@ const routes = [
     component: () => import("../views/edit.vue")
   },
     {
-    path: '/:module/fluidpage/:key?',
+    path: '/:module/fluidpage/:parentmodule/:key?',
     name: 'fluidpage',
     props: true,
     component: () => import("../views/fluidpage.vue")

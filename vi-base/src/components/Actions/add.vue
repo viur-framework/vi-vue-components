@@ -5,7 +5,9 @@
           :title="$t('actions.add')">
 
             <sl-icon slot="prefix" name="plus"></sl-icon>
-            {{ $t("actions.add") }}
+            <template v-if="label">
+              {{ $t("actions.add") }}
+            </template>
         </sl-button>
     </router-link>
 </template>
@@ -18,7 +20,14 @@ import {useAppStore} from "../../stores/app";
 import {useUserStore} from "../../stores/user";
 
 export default defineComponent({
-    props: {},
+    props: {
+      label:{
+        default:true
+      },
+      params:{
+        default:{}
+      }
+    },
     components: {},
     setup(props, context) {
         const handlerState: any = inject("state")
@@ -27,11 +36,16 @@ export default defineComponent({
 
         const state = reactive({
             url: computed(() => {
+                let url = `/${handlerState.module}/add`
+
                 if(handlerState.group){
-                  return `/${handlerState.module}/add/${handlerState.group}?_=${new Date().getTime()}`
-                }else{
-                  return `/${handlerState.module}/add?_=${new Date().getTime()}`
+                  url +=`/${handlerState.group}`
                 }
+
+                url +="?"+new URLSearchParams({...props.params, "_":new Date().getTime()}).toString()
+
+                return url
+
             }),
           canAdd: computed(() => {
             if(userStore.state.user.access.indexOf("root") !== -1 )

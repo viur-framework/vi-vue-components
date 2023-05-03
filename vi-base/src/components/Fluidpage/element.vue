@@ -1,6 +1,7 @@
 <template>
 
   <div class="fluid-element element"
+       style="position:relative"
        :class="{
               [state.width]:true,
               [state.height]:true,
@@ -12,6 +13,10 @@
        @dragover.prevent="dragOver"
        @dragend.prevent="dragEnd"
   >
+    <div class="actions_before">
+      <add :label="false" :params="{'sortindex':calculateIndex(state.prevIdx)}"></add>
+    </div>
+
     <div class="header">
       <div class="dragger"
            @mousedown="onMouseDownDragger"
@@ -59,13 +64,17 @@
           <component v-else-if='skel["subline"]'>: {{ skel["subline"] }}</component>
         </h2>
 
-
         <span v-if="skel['downloaditems']">Dateien: {{ skel['downloaditems'].length }}</span>
         <span v-if="skel['url']">Navigation: {{ skel['url'] }}</span>
+        <span class="sortindex">sortindex: {{skel["sortindex"]}}</span>
       </div>
-
     </div>
-
+    <div class="actions_after">
+      <add :label="false" :params="{
+        'sortindex':calculateIndex(state.nextIdx),
+        'fluidpage.dest.key':route.params['key']
+        }"></add>
+    </div>
   </div>
 </template>
 
@@ -75,24 +84,41 @@ import {computed, reactive, inject, provide} from "vue";
 import Utils from "../../utils"
 import Edit from "../Actions/edit.vue";
 import Delete from "../Actions/delete.vue";
+import Add from "../Actions/add.vue";
+import {useRoute} from "vue-router";
 
 export default {
-  components: {Delete, Edit},
+  components: {Delete, Edit, Add},
   props: {
-    skel: Object
+    skel: Object,
   },
   setup(props, context) {
+    const route = useRoute()
     const state = reactive({
       width:computed(()=>'fluid-width-' + props.skel["width"]),
       height:computed(()=>'fluid-height-' + props.skel["height"]),
       isGhost:false,
-      draggable:false
+      draggable:false,
+      nextIdx:computed(()=>{
+        let idx = currentlist.state.skellist.findIndex(e=>e["key"]===props.skel["key"])
+        return idx+1
+      }),
+      prevIdx:computed(()=>{
+        let idx = currentlist.state.skellist.findIndex(e=>e["key"]===props.skel["key"])
+        if (idx===0){
+          return idx
+        }else{
+          return idx
+        }
+      })
     })
     const changeOrder = inject('changeOrder')
     const updateDragged = inject('updateDragged')
     const updateWidth = inject('updateWidth')
     const entrySelected = inject('entrySelected')
     const handlerState = inject("state")
+    const calculateIndex = inject("calculateIndex")
+    const currentlist = inject("currentlist")
 
     function startDragging(e){
       let target = e.target;
@@ -157,7 +183,9 @@ export default {
       entrySelected,
       onMouseDownDragger,
       onMouseUpDragger,
-      Utils
+      calculateIndex,
+      Utils,
+      route
     };
   }
 }
@@ -254,5 +282,30 @@ sl-button-group{
 .ghost {
   background-color: var(--sl-color-primary-100);
   opacity: .7;
+}
+
+.actions_after{
+  position: absolute;
+  top:0;
+  bottom:0;
+  right:0;
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.actions_before{
+  position: absolute;
+  top:0;
+  bottom:0;
+  left:0;
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.sortindex{
+  color:var(--sl-color-neutral-500);
+  font-style: italic;
+  font-size: var(--sl-font-size-small);
 }
 </style>

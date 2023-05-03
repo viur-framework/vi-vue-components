@@ -12,6 +12,7 @@
 //@ts-nocheck
 import {reactive, defineComponent, inject, computed} from 'vue'
 import {useAppStore} from "../../stores/app";
+import {useRoute} from "vue-router";
 
 export default defineComponent({
     props: {},
@@ -19,6 +20,7 @@ export default defineComponent({
     setup(props, context) {
         const handlerState: any = inject("state")
         const appStore = useAppStore();
+        const route = useRoute();
         const state = reactive({
             active: computed(() => {
                 return handlerState.currentSelection && handlerState.currentSelection.length > 0
@@ -26,7 +28,12 @@ export default defineComponent({
         })
 
         function openPreview(){
-          let conf = appStore.state["vi.modules"][handlerState["module"]]
+          let module = handlerState["module"]
+          if(Object.keys(route.params).includes("parentmodule")){
+            module = route.params['parentmodule']
+          }
+
+          let conf = appStore.state["vi.modules"][module]
           if (Object.keys(conf).includes("previewurls")){
             for (const [k, v] of Object.entries(conf['previewurls'])) {
               for(let selection of handlerState.currentSelection){
