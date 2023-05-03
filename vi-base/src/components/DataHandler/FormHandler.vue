@@ -238,6 +238,9 @@ export default defineComponent({
       if(event.detail.type==="edit")
       {
         state.formValues[event.detail.boneName] = event.detail.formValue;
+      }else if(props.action === "add"){
+        //HOTFIX
+        state.formValues[event.detail.boneName] = event.detail.formValue;
       }
 
       //state.formValues[event.detail.boneName] = event.detail.formValue;

@@ -1,14 +1,4 @@
 <template>
-  <sl-dialog :label='$t("actions.delete.text")' id="dialog-delete">
-    {{ $t("actions.delete.msg",{amount:state.count}) }}<!--TODO Translate-->
-    <sl-button slot="footer"
-               variant="primary"
-               @click="deleteEntries"
-               :title="$t('actions.delete')">
-      {{ $t("actions.delete.text") }}
-    </sl-button>
-  </sl-dialog>
-
   <sl-button variant="danger"
              size="small"
              :disabled="!state.active || !state.canDelete"
@@ -18,6 +8,17 @@
     <sl-icon slot="prefix" name="trash"></sl-icon>
   </sl-button>
 
+  <teleport v-if="state.opened" to="#dialogs" :disabled="!state.opened">
+    <sl-dialog :open="state.opened" :label='$t("actions.delete.text")' id="dialog-delete">
+      {{ $t("actions.delete.msg",{amount:state.count}) }}<!--TODO Translate-->
+      <sl-button slot="footer"
+                 variant="primary"
+                 @click="deleteEntries"
+                 :title="$t('actions.delete')">
+        {{ $t("actions.delete.text") }}
+      </sl-button>
+    </sl-dialog>
+  </teleport>
 
 </template>
 
@@ -55,14 +56,12 @@ export default defineComponent({
          return true;
        }
        return userStore.state.user.access.indexOf(`${handlerState.module}-delete`)>-1;
-      })
+      }),
+      opened:false,
     })
 
     async function deleteEntries() {
-      const dialog = document.getElementById("dialog-delete");
-      if (dialog !== null) {
-        dialog.hide();
-      }
+      state.opened=false;
 
       for (const entry of handlerState.currentSelection) {
         let url = `/vi/${handlerState.module}/delete`
@@ -73,12 +72,7 @@ export default defineComponent({
     }
 
     function openDeletePopup() {
-      const dialog = document.getElementById("dialog-delete");
-      if (dialog !== null) {
-        dialog.show();
-      }
-
-
+      state.opened=true
     }
 
     return {state, deleteEntries, openDeletePopup}
