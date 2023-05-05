@@ -18,11 +18,11 @@
     ></sl-table>
     <div class="more-entries">
        <sl-button size="small">
-              <sl-icon slot="prefix" aria-hidden="true" library="default" v-once="" name="arrow-repeat"></sl-icon>
+              <sl-icon slot="prefix" aria-hidden="true" library="default" v-once name="arrow-repeat"></sl-icon>
               Filtern
           </sl-button>
           <sl-button size="small">
-              <sl-icon slot="prefix" aria-hidden="true" library="default" v-once="" name="arrow-repeat"></sl-icon>
+              <sl-icon slot="prefix" aria-hidden="true" library="default" v-once name="arrow-repeat"></sl-icon>
               Weitere Einträge
           </sl-button>
           <sl-select size="small" label="Anzahl">
@@ -31,7 +31,7 @@
             <sl-option value="3">90</sl-option>
           </sl-select>
           <sl-button size="small">
-              <sl-icon slot="prefix" aria-hidden="true" library="default" v-once="" name="arrow-repeat"></sl-icon>
+              <sl-icon slot="prefix" aria-hidden="true" library="default" v-once name="arrow-repeat"></sl-icon>
               Neuladen
           </sl-button>
     </div>
