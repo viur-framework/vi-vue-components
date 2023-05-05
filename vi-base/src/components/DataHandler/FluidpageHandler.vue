@@ -258,7 +258,7 @@ export default defineComponent({
      provide("entrySelected", entrySelected);
 
     function openEditor(e: Event) {
-      const url = `/${state.module}/edit/${e.detail.cell.getRow().getData().key}?_=${new Date().getTime()}`;
+      const url = `/db/${state.module}/edit/${e.detail.cell.getRow().getData().key}?_=${new Date().getTime()}`;
       let route = router.resolve(unref(url))
 
       appStore.addOpened(route, state.module, state.view);

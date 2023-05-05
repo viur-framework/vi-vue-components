@@ -14,66 +14,66 @@ const routes = [
     component: () => import("../views/home.vue")
   },
   {
-    path: '/:module/list/:group?',
+    path: '/db/:module/list/:group?',
     name: 'list',
     props: true,
     component: () => import("../views/list.vue")
   },
   {
-    path: '/:module/tree',
+    path: '/db/:module/tree',
     name: 'tree',
     props: true,
     component: () => import("../views/tree.vue")
   },
   {
-    path: '/:module/tree.node',
+    path: '/db/:module/tree.node',
     name: 'hierarchy',
     props: true,
     component: () => import("../views/hierarchy.vue")
   },
   {
-    path: '/:module',
+    path: '/db/:module',
     name: 'singleton',
     props: true,
     component: () => import("../views/singleton.vue")
   },
   {
-    path: '/:module/edit/:group?/:skelkey',
+    path: '/db/:module/edit/:group?/:skelkey',
     name: 'edit',
     meta: {"action": "edit"},
     props: true,
     component: () => import("../views/edit.vue")
   },
   {
-    path: '/:module/add/:group?',
+    path: '/db/:module/add/:group?',
     name: 'add',
     meta: {"action": "add"},
     props: true,
     component: () => import("../views/edit.vue")
   },
   {
-    path: '/:module/add/:skeltype/:skelkey',
+    path: '/db/:module/add/:skeltype/:skelkey',
     name: 'addnode',
     meta: {"action": "add"},
     props: true,
     component: () => import("../views/edit.vue")
   },
   {
-    path: '/:module/edit/:skeltype/:skelkey',
+    path: '/db/:module/edit/:skeltype/:skelkey',
     name: 'editnode',
     meta: {"action": "edit"},
     props: true,
     component: () => import("../views/edit.vue")
   },
   {
-    path: '/:module/clone/:group?/:skelkey',
+    path: '/db/:module/clone/:group?/:skelkey',
     name: 'clone',
     meta: {"action": "clone"},
     props: true,
     component: () => import("../views/edit.vue")
   },
     {
-    path: '/:module/fluidpage/:parentmodule/:key?',
+    path: '/db/:module/fluidpage/:parentmodule/:key?',
     name: 'fluidpage',
     props: true,
     component: () => import("../views/fluidpage.vue")

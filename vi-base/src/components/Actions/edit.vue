@@ -34,18 +34,18 @@ export default defineComponent({
         if (!state.active) return ""
         if(handlerState.type=="hierarchyhandler")
         {
-          return `/${handlerState.module}/edit/node/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
+          return `/db/${handlerState.module}/edit/node/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
         }
 
         if(handlerState.type=="treehandler")
         {
-          return `/${handlerState.module}/edit/${handlerState?.currentSelectionType}/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
+          return `/db/${handlerState.module}/edit/${handlerState?.currentSelectionType}/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
         }
 
         if(handlerState.group){
-          return `/${handlerState.module}/edit/${handlerState.group}/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
+          return `/db/${handlerState.module}/edit/${handlerState.group}/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
         }else{
-          return `/${handlerState.module}/edit/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
+          return `/db/${handlerState.module}/edit/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
         }
 
 

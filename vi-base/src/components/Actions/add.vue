@@ -36,10 +36,10 @@ export default defineComponent({
 
         const state = reactive({
             url: computed(() => {
-                let url = `/${handlerState.module}/add`
+                let url = `/db/${handlerState.module}/add`
 
                 if(handlerState.group){
-                  url +=`/${handlerState.group}`
+                  url +=`/db/${handlerState.group}`
                 }
 
                 url +="?"+new URLSearchParams({...props.params, "_":new Date().getTime()}).toString()

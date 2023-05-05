@@ -208,7 +208,7 @@ export default defineComponent({
     }
 
     function openConfig(){
-      let new_route = router.resolve(unref(`/_moduleconf/edit/${props.moduleInfo["module"]}`))
+      let new_route = router.resolve(unref(`/db/_moduleconf/edit/${props.moduleInfo["module"]}`))
       appStore.addOpened(new_route, props.moduleInfo["module"])
     }
 

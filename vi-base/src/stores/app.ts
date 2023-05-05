@@ -64,26 +64,26 @@ function adminTreeLayer(itemList: Array<ModuleInfo>, parent: ModuleInfo): Array<
             conf["url"] = null // if handler is missing, this is a moduleGroup
             conf["handlerComponent"] = null
         } else if (conf["handler"] == "list.fluidpage.content") {
-            conf["url"] = {"path": `/${conf["module"]}/fluidpage`}
+            conf["url"] = {"path": `/db/${conf["module"]}/fluidpage`}
             conf["handlerComponent"] = "fluidpagehandler"
         } else if (conf["handler"] === "list.grouped") {
             let group = Object.keys(conf).includes("group") ? conf["group"] : "all"
-            conf["url"] = {"path": `/${conf["module"]}/list/${group}`}
+            conf["url"] = {"path": `/db/${conf["module"]}/list/${group}`}
             conf["handlerComponent"] = "listhandler"
         } else if (conf["handler"] === "list" || conf["handler"].startsWith("list.")) {
-            conf["url"] = {"path": `/${conf["module"]}/list`}
+            conf["url"] = {"path": `/db/${conf["module"]}/list`}
             conf["handlerComponent"] = "listhandler"
         } else if (conf["handler"] === "tree" ) {
-            conf["url"] = {"path": `/${conf["module"]}/tree`}
+            conf["url"] = {"path": `/db/${conf["module"]}/tree`}
             conf["handlerComponent"] = "treehandler"
         } else if (conf["handler"] === "tree.node" ) {
-            conf["url"] = {"path": `/${conf["module"]}/tree.node`}
+            conf["url"] = {"path": `/db/${conf["module"]}/tree.node`}
             conf["handlerComponent"] = "hierarchyhandler"
         } else if (conf["handler"] === "tree.simple.file" ) {
-            conf["url"] = {"path": `/${conf["module"]}/tree`}
+            conf["url"] = {"path": `/db/${conf["module"]}/tree`}
             conf["handlerComponent"] = "treehandler"
         } else if (conf["handler"] === "singleton" || conf["handler"].startsWith("singleton.")) {
-            conf["url"] = {"path": `/${conf["module"]}`}
+            conf["url"] = {"path": `/db/${conf["module"]}`}
             conf["handlerComponent"] = "formhandler"
         }
 
