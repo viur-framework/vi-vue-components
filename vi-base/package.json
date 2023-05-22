@@ -15,7 +15,7 @@
     "src/*"
   ],
   "dependencies": {
-    "@viur/viur-shoelace": "^2.4.0-viur-0.5.16",
+    "@viur/viur-shoelace": "^2.4.0-viur-0.5.17",
     "@viur/viur-vue-utils": "^0.6.13",
     "logics-js": "^0.3.4",
     "pinia": "^2.0.35",
