@@ -1,72 +1,74 @@
 <template>
-    <!--Language chooser -->
-    <sl-tab-group v-if="state.multilanguage">
-        <template v-for="lang in state.languages" :key="lang+'_tab'">
-            <sl-tab slot="nav" :panel="'lang_'+lang">
-                {{ $t(lang) }}
-            </sl-tab>
 
-            <sl-tab-panel :name="'lang_'+lang">
-                <!--Bone rendering for multiple bones-->
-                <template v-if="state.multiple">
-                    <!--Bone Buttonbar -->
-                    <div class="actionbar">
-                        <sl-button v-if="state.multiple && !state.readonly" @click="addMultipleEntry(lang)">{{
-                                $t("bone.add")
-                            }}
-                        </sl-button>
-                    </div>
-                    <!--multilang and multiple-->
-                    <div v-if="state.bonevalue?.[lang]" v-for="(val, index) in state.bonevalue?.[lang]" :key="index">
-                        <wrapper-multiple :readonly="!state.readonly" @delete="removeMultipleEntry(index,lang)">
-                            <component :is="is" :value="val" :index="index" :lang="lang" :name="name"
-                                       @change="updateValue"></component>
-                        </wrapper-multiple>
-                    </div>
-                </template>
-                <!--Bone rendering for normal bones-->
-                <component v-else :is="is" :value="state.bonevalue?.[lang]" :index="null" :lang="lang" :name="name"
-                           @change="updateValue"></component>
-            </sl-tab-panel>
-        </template>
+  <div class="bone-wrapper">
+    <bone-label>
+      {{ state.bonestructure['descr'] }}
+    </bone-label>
+    <div class="bone-inner-wrap">
+      <!--Language chooser -->
+      <sl-tab-group v-if="state.multilanguage" placement="bottom">
+          <template v-for="lang in state.languages" :key="lang+'_tab'">
+              <sl-tab slot="nav" :panel="'lang_'+lang">
+                  {{ $t(lang) }}
+              </sl-tab>
 
-    </sl-tab-group>
+              <sl-tab-panel :name="'lang_'+lang">
+                  <!--Bone rendering for multiple bones-->
+                  <template v-if="state.multiple && !BoneHasMultipleHandling(state.bonestructure['type'])">
 
-    <template v-else>
+                      <!--multilang and multiple-->
+                      <div v-if="state.bonevalue?.[lang]" v-for="(val, index) in state.bonevalue?.[lang]" :key="index">
+                          <wrapper-multiple :readonly="!state.readonly" @delete="removeMultipleEntry(index,lang)">
+                              <component :is="is" :value="val" :index="index" :lang="lang" :name="name"
+                                        @change="updateValue"></component>
+                          </wrapper-multiple>
+                      </div>
+                      <!--Bone Buttonbar -->
+                      <component v-if="!state.readonly" :is="state.actionbar" :lang="lang"></component>
+                  </template>
+                  <!--Bone rendering for normal bones-->
+                  <component v-else :is="is" :value="state.bonevalue?.[lang]" :index="null" :lang="lang" :name="name"
+                            @change="updateValue"></component>
+              </sl-tab-panel>
+          </template>
 
-        <!--Bone rendering for multiple bones-->
-        <template v-if="state.multiple">
-            <!--Bone Buttonbar -->
-            <div class="actionbar">
-                <sl-button v-if="state.multiple && !state.readonly" @click="addMultipleEntry(null)">{{
-                        $t("bone.add")
-                    }}
-                </sl-button>
-            </div>
-            <div v-if="state.bonevalue" v-for="(val, index) in state.bonevalue" :key="index">
-                <wrapper-multiple :readonly="!state.readonly" @delete="removeMultipleEntry(index)">
-                    <component :is="is" :value="val" :index="index" :name="name" @change="updateValue"></component>
-                </wrapper-multiple>
-            </div>
-        </template>
-        <!--Bone rendering for normal bones-->
-        <component v-else :is="is" :value="state.bonevalue" :name="name" :index="null" @change="updateValue"></component>
-    </template>
+      </sl-tab-group>
 
+      <template v-else>
+          <!--Bone rendering for multiple bones-->
+          <template v-if="state.multiple && !BoneHasMultipleHandling(state.bonestructure['type'])">
+
+              <div v-if="state.bonevalue" v-for="(val, index) in state.bonevalue" :key="index">
+                  <wrapper-multiple :readonly="!state.readonly" @delete="removeMultipleEntry(index)">
+                      <component :is="is" :value="val" :index="index" :name="name" @change="updateValue"></component>
+                  </wrapper-multiple>
+              </div>
+              <!--Bone Buttonbar -->
+              <component v-if="!state.readonly" :is="state.actionbar"></component>
+          </template>
+          <!--Bone rendering for normal bones-->
+          <component v-else :is="is" :value="state.bonevalue" :name="name" :index="null" @change="updateValue"></component>
+      </template>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
 //@ts-nocheck
-import {reactive, defineComponent, computed, onBeforeMount} from 'vue'
+import {reactive, defineComponent, computed, onBeforeMount, provide, getCurrentInstance, onMounted} from 'vue'
 import wrapperMultiple from "../../../components/Bones/edit/wrapper_multiple.vue";
 import bones from '../../../components/Bones/edit/index';
+import BoneLabel from './boneLabel.vue';
+import defaultBar from './actionbar/defaultBar.vue';
+import relationalBar from './actionbar/relationalBar.vue';
+import {BoneHasMultipleHandling} from "../../../components/Bones/edit/index.ts"
 
 export default defineComponent({
-    components: {wrapperMultiple, ...bones},
+    components: { wrapperMultiple, ...bones, BoneLabel, defaultBar, relationalBar },
     props: {
         is: {
             type: Object,
-            default: bones.base_item
+            default: bones.raw
         },
         name: {
             type:String,
@@ -86,7 +88,7 @@ export default defineComponent({
             type:Object,
             required:true
         },
-        errors: Object
+        errors: Object,
     },
     emits: ['change'],
     setup(props, context) {
@@ -126,16 +128,22 @@ export default defineComponent({
                 }
                 return state.bonestructure && Object.keys(state.bonestructure).includes("params") ? state.bonestructure["params"] : {}
             }),
-
-
+            actionbar:computed(()=>{
+              if(state.bonestructure?.["type"].startsWith("relational.")){
+                return relationalBar
+              }
+              return defaultBar
+            })
         })
+        provide("boneState",state)
 
         function updateValue(name:string, val:any, lang:(string|null) = null, index:number = 0) {
             if (lang) {
+              console.log(index)
                 if (Object.keys(state.bonevalue).includes(lang) && index!==null) {
                     state.bonevalue[lang][index] = val
                 } else {
-                    state.bonevalue[lang] = [val]
+                    state.bonevalue[lang] = val
                 }
 
             } else if(index!==null){
@@ -143,6 +151,7 @@ export default defineComponent({
             }else{
                 state.bonevalue = val
             }
+            if (state.readonly) return false
 
             context.emit("change", name, toFormValue())
         }
@@ -151,7 +160,7 @@ export default defineComponent({
             function rewriteData(val:any, key:(string|null) = null):Array<Object> {
                 let ret = []
                 if (Array.isArray(val)) {
-                    if (Object.values(val).filter(c => c === Object(c)).length > 0) {
+                    if (Object.values(val).length > 0) {
                         for (const [i, v] of val.entries()) {
                             ret.push(rewriteData(v, key + "." + i))
                         }
@@ -187,24 +196,22 @@ export default defineComponent({
             return value
         }
 
-        function addMultipleEntry(lang = null) {
-
+        function addMultipleEntry(lang = null, data='') {
             if (lang) {
                 if (Object.keys(state.bonevalue).includes(lang)) {
-                    state.bonevalue[lang].push('')
+                    state.bonevalue[lang].push(data)
                 } else {
-                    state.bonevalue[lang] = ['']
+                    state.bonevalue[lang] = [data]
                 }
-
             } else {
                 if (state.bonevalue) {
-                    state.bonevalue.push('')
+                    state.bonevalue.push(data)
                 } else {
-                    state.bonevalue = ['']
+                    state.bonevalue = [data]
                 }
-
             }
         }
+        provide("addMultipleEntry",addMultipleEntry)
 
         function removeMultipleEntry(index:number, lang = null) {
             if (lang) {
@@ -213,6 +220,55 @@ export default defineComponent({
                 state.bonevalue.splice(index, 1)
             }
         }
+
+        function formatString(formatstr: string, boneValue: object | Array<object>) {
+          function getpathListFromFormatstring(formatstr) {
+            let output = [];
+            let formatList = [];
+            let regstr = /\$\((.*?)\)/g;
+
+            while (formatList) {
+                formatList = regstr.exec(formatstr);
+                if (!formatList) {
+                    formatList = false;
+                    continue
+                }
+
+                output.push(formatList[1]);
+            }
+
+            return output
+            }
+
+
+            let pathlist = getpathListFromFormatstring(formatstr);
+
+            let finalStrList = [];
+            if (!Array.isArray(boneValue)) {
+            boneValue = [boneValue]
+            }
+            for (let avalue of boneValue) {
+            let finalstr = formatstr;
+            for (let pathstr of pathlist) {
+                let path = pathstr.split(".");
+                let aval = avalue;
+                for (let entry of path) {
+                    if (aval && aval!=="-" && entry in aval && aval[entry]) {
+                        aval = aval[entry]
+                    } else {
+                        aval = "-"
+                    }
+                }
+                finalstr = finalstr.replace("$(" + pathstr + ")", aval)
+
+            }
+            finalStrList.push(finalstr)
+            }
+
+            return finalStrList.join(", ")
+        }
+        provide("formatString",formatString)
+
 
         onBeforeMount(() => {
             if (props.value) {
@@ -225,14 +281,23 @@ export default defineComponent({
 
         return {
             state,
+            defaultBar,
             updateValue,
             addMultipleEntry,
-            removeMultipleEntry
+            removeMultipleEntry,
+            BoneHasMultipleHandling
         }
     }
 })
 </script>
 
-<style scoped lang="less">
-
+<style scoped>
+  .bone-wrapper{
+    display: grid;
+    grid-template-columns: 230px 1fr;
+    margin-bottom: 20px;
+  }
+  sl-tab-panel::part(base){
+    padding: 0;
+  }
 </style>

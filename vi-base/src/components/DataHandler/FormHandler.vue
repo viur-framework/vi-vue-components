@@ -22,30 +22,26 @@
       <template v-for="(group,key) in state.formGroups">
         <sl-details :summary="group['name']" v-show="group['groupVisible']" open>
           <template v-for="bone in group['bones']">
-            <sl-bone
-              :boneName="bone['boneName']"
-              :boneStructure="state.structure[bone['boneName']]"
-              :boneValue="toRaw(state.skel[bone['boneName']])"
-              renderType="edit"
-              :renderLabel="true"
-              @sl-bone-change="updateValue"
-              @sl-bone-init="updateValue"
-              @sl-bone-relational-select="relationSelection($event,bone)"
+            <bone
+              :is="getBoneWidget(state.structure[bone['boneName']]['type'])"
+              :name="bone['boneName']"
+              :structure="state.structure"
+              :skel="state.skel"
               :errors="state.errors"
-              :inVi="true"
-              v-if="state.structure[bone['boneName']]['visible']"
-            >
-            </sl-bone>
+              @change="updateValue"
+              >
+
+              </bone>
           </template>
         </sl-details>
       </template>
-      <!--
+
       <sl-details summary="DEBUG: Formdata">
-        {{ state.formValues }}
+        <VueJsonPretty :deep="1" :data="state.formValues"></VueJsonPretty>
       </sl-details>
       <sl-details summary="DEBUG: Errors">
         {{ state.errors }}
-      </sl-details>-->
+      </sl-details>
     </div>
     <template v-if="state.relation_opened">
       <template v-for="bone in state.relation_opened">
@@ -88,6 +84,10 @@ import bone from "../../components/Bones/edit/bone.vue";
 import EntryBar from "../Bars/EntryBar.vue";
 import {useModulesStore} from "../../stores/modules";
 import handlers from "../DataHandler/handlers";
+import bone from '../Bones/edit/bone.vue';
+import {getBoneWidget} from "../Bones/edit/index.ts"
+import VueJsonPretty from 'vue-json-pretty';
+import 'vue-json-pretty/lib/styles.css';
 
 export default defineComponent({
   props: {
@@ -102,7 +102,7 @@ export default defineComponent({
 
 
   },
-  components: {EntryBar, bone, ...handlers},
+  components: {EntryBar, bone, ...handlers,VueJsonPretty},
   setup(props, context) {
     const appStore = useAppStore();
     const route = useRoute();
@@ -234,7 +234,9 @@ export default defineComponent({
       return widget
     }
 
-    function updateValue(event: Object) {
+    function updateValue(name: string, value: any) {
+      state.formValues[name] = value
+      return 0
       if(event.detail.type==="edit")
       {
         state.formValues[event.detail.boneName] = event.detail.formValue;
@@ -297,7 +299,8 @@ export default defineComponent({
       relationCloseAction,
       relationUpdateSelection,
       relationApplySelection,
-      relationRemoveHandler
+      relationRemoveHandler,
+      getBoneWidget
     }
   }
 })

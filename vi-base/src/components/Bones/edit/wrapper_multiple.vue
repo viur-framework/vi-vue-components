@@ -1,7 +1,7 @@
 <template>
     <div class="value-line">
-    <slot></slot>
-    <sl-button variant="danger" outline @click="$emit('delete')">{{ $t("bone.del") }}</sl-button>
+      <slot></slot>
+      <sl-button variant="danger" outline @click="$emit('delete')">{{ $t("bone.del") }}</sl-button>
     </div>
 </template>
 

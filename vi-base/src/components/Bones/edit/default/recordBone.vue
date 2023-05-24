@@ -1,10 +1,17 @@
 <template>
-    <sl-input :value="value" @sl-change="changeEvent"></sl-input>
+    <Wrapper_nested
+      :value="value"
+      :name="name"
+      :index="index"
+    >
+
+    </Wrapper_nested>
 </template>
 
 <script lang="ts">
 //@ts-nocheck
 import {reactive, defineComponent, onMounted} from 'vue'
+import Wrapper_nested from '../wrapper_nested.vue'
 
 export default defineComponent({
     props:{
@@ -15,7 +22,7 @@ export default defineComponent({
         readonly:Boolean,
         params:Object,
     },
-    components: {},
+    components: { Wrapper_nested },
     emits:["change"],
     setup(props, context) {
         const state = reactive({})

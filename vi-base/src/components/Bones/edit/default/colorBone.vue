@@ -1,0 +1,40 @@
+<template>
+    <sl-color-picker :value="value" @sl-change="changeEvent"></sl-color-picker>
+</template>
+
+<script lang="ts">
+//@ts-nocheck
+import {reactive, defineComponent, onMounted} from 'vue'
+
+export default defineComponent({
+    props:{
+        name:String,
+        value:Object,
+        index:Number,
+        lang:String,
+        readonly:Boolean,
+        params:Object,
+    },
+    components: {},
+    emits:["change"],
+    setup(props, context) {
+        const state = reactive({})
+
+        function changeEvent(event){
+            context.emit("change",props.name,event.target.value,props.lang,props.index)
+        }
+
+        onMounted(()=>{
+            context.emit("change",props.name,props.value,props.lang,props.index) //init
+        })
+
+        return {
+            state,
+            changeEvent
+        }
+    }
+})
+</script>
+
+<style scoped lang="less">
+</style>
