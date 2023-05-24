@@ -42,7 +42,7 @@ import {
   watch,
   onActivated,
   onDeactivated,
-  unref
+  unref, inject
 } from 'vue'
 import HandlerBar from "../../components/Bars/HandlerBar.vue";
 import {ListRequest} from '@viur/viur-vue-utils'
@@ -102,6 +102,7 @@ export default defineComponent({
       group: props.group,
       renderer:"vi"
     })
+
     appStore.setListStore(currentlist) //backup access
 
 
@@ -165,15 +166,14 @@ export default defineComponent({
     }
 
     function openEditor(e: Event) {
-      const url = `/${state.module}/edit/${e.detail.cell.getRow().getData().key}?_=${new Date().getTime()}`;
+      const url = `/db/${state.module}/edit/${e.detail.cell.getRow().getData().key}?_=${new Date().getTime()}`;
       let route = router.resolve(unref(url))
-
       appStore.addOpened(route, state.module, state.view);
       router.push(url);
     }
 
-    function nextpage(){
-      return currentlist.next()
+    function nextpage() {
+      return currentlist.next();
     }
     provide("nextpage", nextpage)
     provide("currentlist", currentlist)
