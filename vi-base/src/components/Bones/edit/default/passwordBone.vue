@@ -1,8 +1,8 @@
 <template>
-    <sl-input type="password" clearable password-toggle="true" v-model="state.value1" @sl-change="changeEvent" @sl-clear="state.value1=''"  @keyup="changeEvent">
+    <sl-input :disabled="boneState.readonly" type="password" clearable password-toggle="true" v-model="state.value1" @sl-change="changeEvent" @sl-clear="state.value1=''"  @keyup="changeEvent">
       <sl-icon :name="state.equal?'check':'x'" slot="suffix"></sl-icon>
     </sl-input>
-    <sl-input type="password" clearable password-toggle="true" v-model="state.value2" @sl-change="changeEvent" @sl-clear="state.value2=''"  @keyup="changeEvent">
+    <sl-input v-if="!boneState.readonly" type="password" clearable password-toggle="true" v-model="state.value2" @sl-change="changeEvent" @sl-clear="state.value2=''"  @keyup="changeEvent">
       <sl-icon :name="state.equal?'check':'x'" slot="suffix"></sl-icon>
     </sl-input>
     <ul>
@@ -19,9 +19,7 @@ export default defineComponent({
         name:String,
         value:Object,
         index:Number,
-        lang:String,
-        readonly:Boolean,
-        params:Object,
+        lang:String
     },
     components: {},
     emits:["change"],

@@ -20,7 +20,7 @@
                       <div v-if="state.bonevalue?.[lang]" v-for="(val, index) in state.bonevalue?.[lang]" :key="index">
                           <wrapper-multiple :readonly="!state.readonly" @delete="removeMultipleEntry(index,lang)">
                               <component :is="is" :value="val" :index="index" :lang="lang" :name="name"
-                                        @change="updateValue"></component>
+                                        @change="updateValue" @keydown.enter="multipleBonePressEnter(lang)"></component>
                           </wrapper-multiple>
                       </div>
                       <!--Bone Buttonbar -->
@@ -40,7 +40,7 @@
 
               <div v-if="state.bonevalue" v-for="(val, index) in state.bonevalue" :key="index">
                   <wrapper-multiple :readonly="!state.readonly" @delete="removeMultipleEntry(index)">
-                      <component :is="is" :value="val" :index="index" :name="name" @change="updateValue"></component>
+                      <component :is="is" :value="val" :index="index" :name="name" @change="updateValue" @keydown.enter="multipleBonePressEnter"></component>
                   </wrapper-multiple>
               </div>
               <!--Bone Buttonbar -->
@@ -49,8 +49,17 @@
           <!--Bone rendering for normal bones-->
           <component v-else :is="is" :value="state.bonevalue" :name="name" :index="null" @change="updateValue"></component>
       </template>
+
+      <sl-alert open summary="Errors" variant="info" v-for="message in state.errorMessages">
+        <sl-icon name="exclamation-triangle" slot="icon"> </sl-icon>
+        <div class="error-msg">
+          {{message}}
+        </div>
+      </sl-alert>
     </div>
+
   </div>
+
 </template>
 
 <script lang="ts">
@@ -133,13 +142,23 @@ export default defineComponent({
                 return relationalBar
               }
               return defaultBar
+            }),
+            errors:computed(()=>props.errors),
+            errorMessages:computed(()=>{
+              let errors = []
+              for (let error of props.errors){
+                if(error["fieldPath"][0] === props.name && error["severity"]>2){ //severity level???
+                  errors.push(error["errorMessage"])
+                }
+              }
+              return errors
             })
         })
         provide("boneState",state)
 
         function updateValue(name:string, val:any, lang:(string|null) = null, index:number = 0) {
+          if (val===undefined) return false
             if (lang) {
-              console.log(index)
                 if (Object.keys(state.bonevalue).includes(lang) && index!==null) {
                     state.bonevalue[lang][index] = val
                 } else {
@@ -153,31 +172,34 @@ export default defineComponent({
             }
             if (state.readonly) return false
 
-            context.emit("change", name, toFormValue())
+            context.emit("change", {name:name, value:toFormValue(),lang:lang,index:index})
+            context.emit("change-internal", {name:name, value:val,lang:lang,index:index})
         }
 
         function toFormValue() {
             function rewriteData(val:any, key:(string|null) = null):Array<Object> {
                 let ret = []
                 if (Array.isArray(val)) {
-                    if (Object.values(val).length > 0) {
+                    if (Object.values(val).filter(c => c === Object(c)).length > 0) { //only add i if relationaldata
                         for (const [i, v] of val.entries()) {
                             ret.push(rewriteData(v, key + "." + i))
                         }
                     } else {
                         for (const [i, v] of val.entries()) {
                             ret.push(rewriteData(v, key))
-
                         }
                     }
                 } else if (val === Object(val)) {
                     for (const [k, v] of Object.entries(val)) {
                         if (key) {
+                          if (key.endsWith("dest") && k === "key"){
                             ret.push(rewriteData(v, key + "." + k))
+                          }else if (!key.endsWith("dest")){
+                            ret.push(rewriteData(v, key + "." + k))
+                          }
                         }else{
                             ret.push(rewriteData(v, k))
                         }
-
                     }
                 }else{
                     if(val === null){
@@ -186,9 +208,7 @@ export default defineComponent({
                     if (key !== null){
                         ret.push({[key]:val})
                     }
-
                 }
-
                 return ret
             }
             let value = rewriteData(state.bonevalue, props.name)
@@ -220,6 +240,11 @@ export default defineComponent({
                 state.bonevalue.splice(index, 1)
             }
         }
+
+        function multipleBonePressEnter(lang=null, data=''){
+          addMultipleEntry(lang, data)
+        }
+
 
         function formatString(formatstr: string, boneValue: object | Array<object>) {
           function getpathListFromFormatstring(formatstr) {
@@ -274,7 +299,7 @@ export default defineComponent({
             if (props.value) {
                 state.bonevalue = props.value
             } else {
-                state.bonevalue = props.skel[props.name]
+                state.bonevalue = props.skel?.[props.name]
             }
         })
 
@@ -285,7 +310,8 @@ export default defineComponent({
             updateValue,
             addMultipleEntry,
             removeMultipleEntry,
-            BoneHasMultipleHandling
+            BoneHasMultipleHandling,
+            multipleBonePressEnter
         }
     }
 })

@@ -6,7 +6,7 @@
 
 <script lang="ts">
 //@ts-nocheck
-import {reactive, defineComponent, onMounted} from 'vue'
+import {reactive, defineComponent, onMounted, inject} from 'vue'
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
 
@@ -22,6 +22,7 @@ export default defineComponent({
     components: {VueJsonPretty},
     emits:["change"],
     setup(props, context) {
+        const boneState = inject("boneState")
         const state = reactive({})
 
         function changeEvent(newVal, oldVal){
@@ -34,6 +35,7 @@ export default defineComponent({
 
         return {
             state,
+            boneState,
             changeEvent
         }
     }

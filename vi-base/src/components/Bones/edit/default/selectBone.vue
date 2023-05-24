@@ -1,5 +1,5 @@
 <template>
-    <sl-select :value="value" @sl-change="changeEvent" :multiple="boneState['bonestructure']['multiple']">
+    <sl-select :disabled="boneState.readonly" :value="value" @sl-change="changeEvent" :multiple="boneState['bonestructure']['multiple']">
       <sl-option :value="value[0]" v-for="value in boneState['bonestructure']['values']">
           {{ value[1] }}
       </sl-option>
@@ -15,9 +15,7 @@ export default defineComponent({
         name:String,
         value:Object,
         index:Number,
-        lang:String,
-        readonly:Boolean,
-        params:Object,
+        lang:String
     },
     components: {},
     emits:["change"],

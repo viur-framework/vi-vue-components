@@ -35,6 +35,8 @@ export function getBoneWidget(boneType){
     return relationalBone
   }else if(boneType==="raw.json"){
     return jsonBone
+  }else if(boneType==="color"){
+    return colorBone
   }
 
   return rawBone

@@ -1,23 +1,22 @@
 <template>
-    <sl-input :value="value" @sl-change="changeEvent"></sl-input>
+    <sl-input :disabled="boneState.readonly" :value="value" @sl-change="changeEvent"></sl-input>
 </template>
 
 <script lang="ts">
 //@ts-nocheck
-import {reactive, defineComponent, onMounted} from 'vue'
+import {reactive, defineComponent, onMounted, inject} from 'vue'
 
 export default defineComponent({
     props:{
         name:String,
         value:Object,
         index:Number,
-        lang:String,
-        readonly:Boolean,
-        params:Object,
+        lang:String
     },
     components: {},
     emits:["change"],
     setup(props, context) {
+        const boneState = inject("boneState")
         const state = reactive({})
 
         function changeEvent(event){
@@ -30,6 +29,7 @@ export default defineComponent({
 
         return {
             state,
+          boneState,
             changeEvent
         }
     }

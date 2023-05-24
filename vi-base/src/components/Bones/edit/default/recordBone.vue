@@ -3,6 +3,8 @@
       :value="value"
       :name="name"
       :index="index"
+      :disabled="boneState.bonestructure['readonly']"
+      @change="changeEvent"
     >
 
     </Wrapper_nested>
@@ -10,7 +12,7 @@
 
 <script lang="ts">
 //@ts-nocheck
-import {reactive, defineComponent, onMounted} from 'vue'
+import {reactive, defineComponent, onMounted, inject} from 'vue'
 import Wrapper_nested from '../wrapper_nested.vue'
 
 export default defineComponent({
@@ -18,25 +20,28 @@ export default defineComponent({
         name:String,
         value:Object,
         index:Number,
-        lang:String,
-        readonly:Boolean,
-        params:Object,
+        lang:String
     },
     components: { Wrapper_nested },
     emits:["change"],
     setup(props, context) {
-        const state = reactive({})
+        const boneState = inject("boneState")
+        const state = reactive({
+          value:{}
+        })
 
-        function changeEvent(event){
-            context.emit("change",props.name,event.target.value,props.lang,props.index)
+        function changeEvent(data){
+            state.value[data.name]=data.value
+            context.emit("change",props.name,state.value,props.lang,props.index,true)
         }
 
         onMounted(()=>{
-            context.emit("change",props.name,props.value,props.lang,props.index) //init
+            context.emit("change",props.name,state.value,props.lang,props.index) //init
         })
 
         return {
             state,
+            boneState,
             changeEvent
         }
     }

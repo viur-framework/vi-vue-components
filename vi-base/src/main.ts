@@ -20,6 +20,8 @@ app.use(pinia)
 pinia.use(piniaPluginPersistedstate)
 app.use(router)
 
+import bone from "./components/Bones/edit/bone.vue";
+app.component("bone",bone)
 
 const i18n = createI18n({
     locale: "de",

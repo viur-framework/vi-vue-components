@@ -234,8 +234,8 @@ export default defineComponent({
       return widget
     }
 
-    function updateValue(name: string, value: any) {
-      state.formValues[name] = value
+    function updateValue(data) {
+      state.formValues[data.name] = data.value
       return 0
       if(event.detail.type==="edit")
       {

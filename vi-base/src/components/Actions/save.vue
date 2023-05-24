@@ -75,6 +75,7 @@ export default defineComponent({
         if (handlerState.action === "edit") {
           if (responsedata["action"] === "edit") {//Something went wrong we must thorw (show) errors
             handlerState.errors = responsedata["errors"];
+            state.loading=false
           } else {
             messageStore.addMessage("success", `Edit`, "Entry edited successfully");
             state.loading=false
@@ -87,6 +88,7 @@ export default defineComponent({
         if (handlerState.action === "add"|| handlerState.action === "clone") {
           if (responsedata["action"] === "add") {//Something went wrong we must thorw (show) errors
             handlerState.errors = responsedata["errors"];
+            state.loading=false
           } else {
             messageStore.addMessage("success", `Add`, "Added edited successfully");
             state.loading=false

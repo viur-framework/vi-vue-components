@@ -3,13 +3,15 @@
     In Order to use this Bone register the bone component globally in your main file
   </sl-alert>
   <div class="form" v-else>
-    <template v-for="data,name in state.structure">
+    <template v-for="(data,name) in state.structure">
       <bone
           :is="getBoneWidget(data['type'])"
           :name="name"
           :structure="state.structure"
           :skel="state.value"
-          @change="changeEvent"
+          :errors="boneState.errors"
+          :readonly="boneState.bonestructure['readonly']?true:undefined"
+          @change-internal="changeEvent"
         >
 
       </bone>
@@ -41,8 +43,8 @@ export default defineComponent({
           globalRegistration:false
         })
 
-        function changeEvent(event){
-            context.emit("change",props.name,state.value,props.lang,props.index)
+        function changeEvent(data){
+            context.emit("change",data)
         }
 
         onMounted(()=>{
@@ -52,7 +54,6 @@ export default defineComponent({
           }else{
             state.globalRegistration=false
           }
-           context.emit("change",props.name,props.value,props.lang,props.index) //init
         })
 
         function updateValue(e){

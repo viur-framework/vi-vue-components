@@ -1,5 +1,5 @@
 <template>
-    <sl-input :type="state.typeString" :value="state.value" @sl-change="changeEvent"></sl-input>
+    <sl-input :disabled="boneState.readonly" :type="state.typeString" :value="state.value" @sl-change="changeEvent"></sl-input>
 </template>
 
 <script lang="ts">
@@ -11,9 +11,7 @@ export default defineComponent({
         name:String,
         value:Object,
         index:Number,
-        lang:String,
-        readonly:Boolean,
-        params:Object,
+        lang:String
     },
     components: {},
     emits:["change"],

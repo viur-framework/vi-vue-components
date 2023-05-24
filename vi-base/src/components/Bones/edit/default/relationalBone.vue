@@ -1,7 +1,8 @@
 <template>
     <div class="record">
-      <sl-input :value="formatString(state.format,value)"></sl-input>
-
+      <sl-input v-if="boneState.bonestructure['multiple']" :disabled="boneState.readonly" :value="formatString(state.format,value)"></sl-input>
+      <sl-combobox :disabled="boneState.readonly" :source="getList" hoist v-else
+      @sl-item-select="changeEvent"></sl-combobox>
       <Wrapper_nested
         :value="value"
         :name="name"
@@ -23,9 +24,7 @@ export default defineComponent({
         name:String,
         value:Object,
         index:Number,
-        lang:String,
-        readonly:Boolean,
-        params:Object,
+        lang:String
     },
     components: {Wrapper_nested},
     emits:["change"],
@@ -35,12 +34,24 @@ export default defineComponent({
         const state = reactive({
           format:computed(()=>{
             return boneState?.bonestructure['format']
-          })
-
+          }),
         })
 
+
+        function getList(search:String){
+          return Request.get(`/json/${boneState.bonestructure["module"]}/list?limit=99`).then(async(resp)=>{ //?viurTags$lk=${search.toLowerCase()
+            const data = await resp.json()
+            return data["skellist"]?.map((d:any)=>{
+              return {text: formatString(boneState.bonestructure["format"], {dest:d}),
+                    value:d.key,
+                    data:d
+            }
+            })
+          })
+        }
+
         function changeEvent(event){
-            context.emit("change",props.name,event.target.value,props.lang,props.index)
+            context.emit("change",props.name,event.detail.item.value,props.lang,props.index)
         }
 
         onMounted(()=>{
@@ -51,7 +62,8 @@ export default defineComponent({
             state,
             boneState,
             formatString,
-            changeEvent
+            changeEvent,
+          getList
         }
     }
 })

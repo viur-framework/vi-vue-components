@@ -1,5 +1,6 @@
 <template>
     <sl-input type="number"
+      :disabled="boneState.readonly"
       :value="value"
       :min="state.minAmount"
       :max="state.maxAmount"
@@ -21,9 +22,7 @@ export default defineComponent({
         name:String,
         value:Object,
         index:Number,
-        lang:String,
-        readonly:Boolean,
-        params:Object,
+        lang:String
     },
     components: {},
     emits:["change"],
@@ -50,6 +49,7 @@ export default defineComponent({
 
         return {
             state,
+            boneState,
             changeEvent
         }
     }

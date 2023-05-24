@@ -37,7 +37,7 @@ export default defineComponent({
       })
 
       function getList(search:String){
-        return Request.get(`/json/${boneState.bonestructure["module"]}/list?viurTags$lk=${search.toLowerCase()}`).then(async(resp)=>{
+        return Request.get(`/json/${boneState.bonestructure["module"]}/list?limit=99`).then(async(resp)=>{ //?viurTags$lk=${search.toLowerCase()}
           const data = await resp.json()
           state.skels = data["skellist"].reduce((acc,curr)=> (acc[curr["key"]]=curr,acc),{});
 

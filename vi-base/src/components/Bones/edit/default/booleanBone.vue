@@ -1,5 +1,5 @@
 <template>
-    <sl-switch :disabled="boneState.bonestructure['readonly']" :checked="state.value" @sl-change="changeEvent"></sl-switch>
+    <sl-switch :disabled="boneState.readonly" :checked="state.value" @sl-change="changeEvent"></sl-switch>
 </template>
 
 <script lang="ts">
@@ -19,7 +19,6 @@ export default defineComponent({
         const boneState = inject("boneState")
         const state = reactive({
           value:computed(()=>{
-            console.log(props.value)
             return ![false,null, undefined,""].includes(props.value)
           })
         })
