@@ -5,7 +5,7 @@
 
       <sl-details open summary="Modul Info"
                   v-if="modulesStore.state.loaded && modulesStore.state.modules[module]['help_text']">
-        {{modulesStore.state.modules[module]["help_text"]}}
+        <div v-html="modulesStore.state.modules[module]['help_text']"></div>
       </sl-details>
 
         <sl-table moveablecolumns

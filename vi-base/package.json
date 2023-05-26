@@ -15,8 +15,10 @@
     "src/*"
   ],
   "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^38.0.1",
+    "@ckeditor/ckeditor5-vue": "^5.1.0",
     "@viur/viur-shoelace": "^2.4.0-viur-0.5.17",
-    "@viur/viur-vue-utils": "^0.7.0-rc.1",
+    "@viur/viur-vue-utils": "^0.7.0-rc.2",
     "logics-js": "^0.3.4",
     "pinia": "^2.0.35",
     "pinia-plugin-persistedstate": "^3.1.0",

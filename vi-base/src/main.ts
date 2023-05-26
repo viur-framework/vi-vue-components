@@ -7,19 +7,26 @@ import App from './App.vue'
 
 const app = createApp(App)
 
+
+
 import router from './routes'
 import {createPinia} from 'pinia'
 import {createI18n} from "vue-i18n";
 import en from "./translations/en"
 import de from "./translations/de"
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+import CKEditor from '@ckeditor/ckeditor5-vue';
+
+app.use(CKEditor)
 
 const pinia = createPinia()
 app.use(pinia)
 
 pinia.use(piniaPluginPersistedstate)
 app.use(router)
-
+// @ts-ignore
+import {bone} from "@viur/viur-vue-utils";
+app.component("bone",bone)
 
 
 const i18n = createI18n({
@@ -32,7 +39,5 @@ app.use(i18n)
 
 app.mount('#app')
 
-// @ts-ignore
-import {bone} from "@viur/viur-vue-utils";
-app.component("bone",bone)
+
 
