@@ -20,8 +20,7 @@ app.use(pinia)
 pinia.use(piniaPluginPersistedstate)
 app.use(router)
 
-import bone from "./components/Bones/edit/bone.vue";
-app.component("bone",bone)
+
 
 const i18n = createI18n({
     locale: "de",
@@ -32,3 +31,8 @@ const i18n = createI18n({
 app.use(i18n)
 
 app.mount('#app')
+
+// @ts-ignore
+import {bone} from "@viur/viur-vue-utils";
+app.component("bone",bone)
+

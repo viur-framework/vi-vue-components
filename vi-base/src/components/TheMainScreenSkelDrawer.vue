@@ -19,13 +19,14 @@
 </template>
 
 <script lang="ts">
+// @ts-nocheck
 import {reactive, defineComponent} from 'vue'
 import {useAppStore} from "../stores/app";
-import bones from './Bones/view/index'
+import {boneWidgets} from "@viur/viur-vue-utils"
 
 export default defineComponent({
     props: {},
-    components: {...bones},
+    components: {...boneWidgets},
     setup(props, context) {
         const state = reactive({})
         const appStore = useAppStore()
@@ -36,7 +37,7 @@ export default defineComponent({
             if (appStore.state["skeldrawer.structure"]?.[boneName]["type"]) {
                 // @ts-ignore
                 const typeName = appStore.state["skeldrawer.structure"][boneName]["type"].replace(/\./g, "_")
-                if (Object.keys(bones).includes(typeName)) {
+                if (Object.keys(boneWidgets).includes(typeName)) {
                     widget = typeName
                 }
             }

@@ -10,7 +10,7 @@
                :closed="x['parententry']!==x['parentrepo']"
                :moduleInfo="x"
     >
-      <menu-tree v-if="Object.keys(x).includes('children') && x['children'].length>0" :tree="x['children']"
+      <menu-tree v-if="Object.keys(x).includes('children') && x['children'].length>0 && x['display']!=='hidden'" :tree="x['children']"
                  :layer="layer+1"></menu-tree>
     </component>
   </template>

@@ -80,14 +80,13 @@ import {reactive, defineComponent, onBeforeMount, computed, provide, toRaw} from
 import {Request} from "@viur/viur-vue-utils";
 import {useAppStore} from "../../stores/app";
 import {useRoute} from "vue-router";
-import bone from "../../components/Bones/edit/bone.vue";
 import EntryBar from "../Bars/EntryBar.vue";
 import {useModulesStore} from "../../stores/modules";
 import handlers from "../DataHandler/handlers";
-import bone from '../Bones/edit/bone.vue';
-import {getBoneWidget} from "../Bones/edit/index.ts"
+import {bone, getBoneWidget} from "@viur/viur-vue-utils"
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
+
 
 export default defineComponent({
   props: {
