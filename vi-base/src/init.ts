@@ -4,6 +4,9 @@ import {useUserStore} from "./stores/user";
 import {useAppStore} from "./stores/app";
 import {useColorStore} from "./stores/color";
 import {useModulesStore} from "./stores/modules";
+// custom Bones
+import {addBoneWidget} from '@viur/viur-vue-utils'
+import selectaccessBone from './components/Bones/selectaccessBone.vue';
 
 export function useInitConnection(){
     const userStore = useUserStore();
@@ -11,7 +14,9 @@ export function useInitConnection(){
     const colorStore = useColorStore();
     useModulesStore().setmodules();
 
+
     onBeforeMount(() => {
+      initBones() // init CustomBones
       Request.get("/vi/settings").then(
         async (resp: Response) => {
           let data = await resp.json();
@@ -40,6 +45,11 @@ export function useInitConnection(){
       ).catch(()=>{
         console.log("Viur settings not Found")
       })
+
+
+      function initBones(){
+        addBoneWidget("select.access", selectaccessBone) //add Bone to store
+      }
 
       //check access on reactivation
       document.addEventListener("visibilitychange",()=>{

@@ -30,10 +30,6 @@ export default {
     },
     open:"Öffnen",
   },
-  bone: {
-    add: "Hinzufügen",
-    del: "Entfernen",
-  },
   sidebar: {
     workspace: "Arbeitsbereich",
     administration: "Administration",

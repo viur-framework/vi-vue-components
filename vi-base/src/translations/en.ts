@@ -23,10 +23,6 @@ export default {
     reset: "Reset",
     open:"Open",
   },
-  bone: {
-    add: "Add",
-    del: "Remove",
-  },
   sidebar: {
     workspace: "Workspace",
     administration: "Administration",

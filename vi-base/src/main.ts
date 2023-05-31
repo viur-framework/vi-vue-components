@@ -25,14 +25,15 @@ app.use(pinia)
 pinia.use(piniaPluginPersistedstate)
 app.use(router)
 // @ts-ignore
-import {bone} from "@viur/viur-vue-utils";
+import {bone, de_translations, en_translations} from "@viur/viur-vue-utils";
+import { useAppStore } from './stores/app'
 app.component("bone",bone)
 
 
 const i18n = createI18n({
     locale: "de",
     fallbackLocale: "en",
-    messages: {"en": en, "de": de}
+    messages: {"en": {...en_translations, ...en}, "de": {...de_translations, ...de}}
 })
 
 app.use(i18n)
