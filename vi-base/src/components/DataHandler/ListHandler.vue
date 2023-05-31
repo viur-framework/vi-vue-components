@@ -7,25 +7,33 @@
                   v-if="modulesStore.state.loaded && modulesStore.state.modules[module]['help_text']">
         <div v-html="modulesStore.state.modules[module]['help_text']"></div>
       </sl-details>
-
-        <sl-table moveablecolumns
-                  :rowselect="rowselect"
-                  :structure="currentlist.structure"
-                  :skellist="currentlist.state.skellist"
-                  :module="module"
-                  :editabletable="state.editableTable"
-                  @sl-selectionChanged="entrySelected"
-                  @sl-dblclick="openEditor"
-                  @table-fetchData="nextpage"
-                  height="100%"
-                  ref="tableInst"
-
-        >
-
-        </sl-table>
-
-        <floating-bar></floating-bar>
+      <div class="table-wrapper" @scroll="stickyHeader">
+        <table>
+          <thead>
+            <tr>
+              <th v-for="bone in state.selectedBones"
+                  :class="{'stick-header':state.sticky}"
+              >
+                {{ currentlist.structure?.[bone]["descr"] }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+              <tr v-for="(skel,idx) in currentlist.state.skellist"
+                  :class="{'selected':state.selectedRows.includes(idx)
+                          }"
+                  @click.exact="entrySelected(idx)"
+                  @click.ctrl="entrySelected(idx,'append')"
+                  @click.shift="entrySelected(idx,'range')"
+              >
+                <td v-for="(name) in state.selectedBones">{{ getBoneViewer(skel,name) }}</td>
+              </tr>
+          </tbody>
+        </table>
+      </div>
+      <floating-bar></floating-bar>
     </div>
+
 </template>
 
 <script lang="ts">
@@ -45,7 +53,7 @@ import {
   unref, inject
 } from 'vue'
 import HandlerBar from "../../components/Bars/HandlerBar.vue";
-import {ListRequest} from '@viur/viur-vue-utils'
+import {ListRequest, boneLogic} from '@viur/viur-vue-utils'
 import {useDBStore} from '../../stores/db'
 import {useMessageStore} from "../../stores/message";
 import router from "../../routes";
@@ -73,7 +81,6 @@ export default defineComponent({
     const route = useRoute()
     const messageStore = useMessageStore();
     const modulesStore = useModulesStore();
-    const tableInst = ref(null)
 
     const state = reactive({
       type:"listhandler",
@@ -86,14 +93,17 @@ export default defineComponent({
 
         return name
       }),
-      currentSelection: null,
+      currentSelection: [],
       module: computed(() => props.module),
       group: computed(() => props.group),
       view: computed(() => props.view),
       editableTable: false,
-      tableInst:computed(()=>tableInst),
       active:false,
       conf:{},
+
+      selectedBones:[],
+      selectedRows:[],
+      sticky:false
     })
     provide("state", state)
     const currentlist = ListRequest(state.storeName, {
@@ -107,9 +117,11 @@ export default defineComponent({
 
 
     function reloadAction() {
+      state.selectedBones = []
       return currentlist.fetch().catch((error) => {
         messageStore.addMessage("error", `${error.message}`, error.response?.url)
       }).then((resp) => {
+        setSelectedBones()
         messageStore.addMessage("success", `Reload`, "Liste neu geladen")
       })
     }
@@ -133,7 +145,10 @@ export default defineComponent({
         }
       }
 
-      currentlist.fetch().catch((error) => {
+      currentlist.fetch().then((resp)=>{
+        setSelectedBones()
+
+      }).catch((error) => {
         messageStore.addMessage("error", `${error.message}`, error.response.url)
       })
     })
@@ -152,17 +167,33 @@ export default defineComponent({
       state.active = false
     })
 
-    function entrySelected(e: Event) {
-      state.currentSelection = e.detail.data
-      context.emit("currentSelection", state.currentSelection)
-      if (e.detail.data.length > 0) {
-        dbStore.state['skeldrawer.entry'] = e.detail.data[e.detail.data.length - 1]
-        dbStore.state['skeldrawer.structure'] = currentlist.structure
-      } else {
-        dbStore.state['skeldrawer.entry'] = {}
-        dbStore.state['skeldrawer.structure'] = {}
+    function entrySelected(idx, action='replace') {
+
+      if(action === "append"){
+        if(state.selectedRows.includes(idx)){
+          state.selectedRows.splice(state.selectedRows.indexOf(idx),1)
+        }else{
+          state.selectedRows.push(idx)
+        }
+      }else if (action === "range"){
+        let lastEntry = state.selectedRows[state.selectedRows.length -1]
+        let end = idx
+        let start = lastEntry
+        if (lastEntry>idx){ //selection is smaller than last number
+          start = idx
+          end = lastEntry
+        }
+        state.selectedRows = state.selectedRows.concat(new Array(end+1 - start).fill().map((d, i) => i + start))
+
+      }else{
+        state.selectedRows = [idx]
       }
 
+      state.selectedRows = [...new Set(state.selectedRows)] // remove duplicates and sort
+
+      state.currentSelection = currentlist.state.skellist.filter((entry,idx)=> state.selectedRows.includes(idx))
+
+      context.emit("currentSelection", state.currentSelection)
     }
 
     function openEditor(e: Event) {
@@ -178,16 +209,39 @@ export default defineComponent({
     provide("nextpage", nextpage)
     provide("currentlist", currentlist)
 
+    function getBoneViewer(skel, boneName){
+      const {getBoneValue, bones_state} = boneLogic(skel, currentlist.structure)
+      return getBoneValue(boneName, skel=skel)
+    }
+
+    function stickyHeader(e){
+      if (e.target.scrollTop > 10){
+        state.sticky=true
+      }else{
+        state.sticky=false
+      }
+    }
+
+    function setSelectedBones(){
+      let bones = []
+      for(const [k,v] of Object.entries(currentlist.structure)){
+        if(v["visible"]) bones.push(k)
+      }
+
+
+      state.selectedBones = bones
+    }
+
     return {
       state,
       currentlist,
       entrySelected,
       openEditor,
       modulesStore,
-      tableInst,
       dbStore,
       nextpage,
-
+      getBoneViewer,
+      stickyHeader
     }
   }
 })
@@ -200,18 +254,10 @@ export default defineComponent({
   flex-direction: column;
   height: 0;
   position: relative;
+  width: 100%;
 }
-
-sl-table {
-  flex: 1;
-  display: flex;
-  height: 0;
-
-  &::part(base) {
-    margin-top: 0;
-    border: none;
-    border-radius: 0;
-  }
+table{
+  width:100%;
 }
 
 .loader{
@@ -219,6 +265,59 @@ sl-table {
     width: 100%;
     height:50%
   }
+table{
+  width: 100%;
+  table-layout: fixed;
+  tbody{
+    tr{
+
+      td{
+        overflow: hidden;
+        word-wrap: break-word;
+      }
+    }
+
+
+    tr:hover{
+      background-color: var(--sl-color-gray-200);
+    }
+    tr.selected{
+      background-color: var(--sl-color-primary-200);
+    }
+  }
+
+  thead{
+    th {
+      background-color: var(--sl-color-gray-400);
+    padding: 10px 15px;
+    resize: horizontal;
+    overflow: hidden;
+
+    &::-webkit-resizer {
+      border-style: solid;
+      border-width: 0 0px 100px 100px;
+      border-color: transparent transparent rgba(255, 255, 255, .2) transparent;
+      display: block;
+      transition: all ease .3s;
+    }
+
+    &:hover {
+      &::-webkit-resizer {
+        border-color: transparent transparent rgba(255, 255, 255, .9) transparent;
+      }
+    }
+  }
+  }
+}
+
+.table-wrapper{
+  overflow:scroll;
+}
+.stick-header{
+  position:sticky;
+  top:0;
+}
+
 
 sl-details{
   &::part(prefix){

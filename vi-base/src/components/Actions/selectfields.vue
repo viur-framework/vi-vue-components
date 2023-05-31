@@ -47,10 +47,11 @@ export default defineComponent({
     }
 
     function visibleChange(boneName) {
-      let tbl = handlerState.tableInst
-      let column = tbl._value.tableInstance.getColumns().filter(i=>i["_column"]["field"]===boneName)
-      if (column.length >0 ){
-        column[0].toggle();
+      if (handlerState.selectedBones.includes(boneName)){
+        console.log(handlerState.selectedBones)
+        handlerState.selectedBones.splice(handlerState.selectedBones.indexOf(boneName),1)
+      }else{
+        handlerState.selectedBones.unshift(boneName)
       }
     }
 

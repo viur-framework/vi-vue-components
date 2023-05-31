@@ -134,18 +134,10 @@ export const useDBStore = defineStore("db", () => {
     const router = useRouter()
     const state = reactive({
         //vi section
-        "vi.version": [3, 5, 0],
+
         "vi.access.open": ["root", "admin"],
-        //requested with /vi/config
-        "vi.name": "Administration",
         "vi.modules.groups": {},
         "vi.modules": {},
-
-
-        //core section
-        "core.version": null,
-        "core.version.min": [3, 0, 0],
-        "core.version.max": [3, 5, 0],
 
         //lists
         "list.amount.default": 30,
