@@ -1,17 +1,17 @@
 <template>
     <sl-drawer label="Details"
-               :open="appStore.state['skeldrawer.opened']"
-               @sl-request-close="appStore.state['skeldrawer.opened']=false"
+               :open="dbStore.state['skeldrawer.opened']"
+               @sl-request-close="dbStore.state['skeldrawer.opened']=false"
     >
-        <span v-if="Object.keys(appStore.state['skeldrawer.entry']).length===0">{{ $t('skeldrawer.noentry') }}</span>
+        <span v-if="Object.keys(dbStore.state['skeldrawer.entry']).length===0">{{ $t('skeldrawer.noentry') }}</span>
 
-        <div v-for="(bone,boneName) in appStore.state['skeldrawer.entry']">
+        <div v-for="(bone,boneName) in dbStore.state['skeldrawer.entry']">
             {{ boneName }}:
             <component
                 :is="getWidget(boneName)"
                 :boneName="boneName"
-                :skel="appStore.state['skeldrawer.entry']"
-                :structure="appStore.state['skeldrawer.structure']"
+                :skel="dbStore.state['skeldrawer.entry']"
+                :structure="dbStore.state['skeldrawer.structure']"
             ></component>
         </div>
 
@@ -21,20 +21,20 @@
 <script lang="ts">
 // @ts-nocheck
 import {reactive, defineComponent} from 'vue'
-import {useAppStore} from "../stores/app";
+import {useDBStore} from "../stores/db";
 
 export default defineComponent({
     props: {},
     setup(props, context) {
         const state = reactive({})
-        const appStore = useAppStore()
+        const dbStore = useDBStore()
 
         function getWidget(boneName: string) {
             let widget = "base_item"
             // @ts-ignore
-            if (appStore.state["skeldrawer.structure"]?.[boneName]["type"]) {
+            if (dbStore.state["skeldrawer.structure"]?.[boneName]["type"]) {
                 // @ts-ignore
-                const typeName = appStore.state["skeldrawer.structure"][boneName]["type"].replace(/\./g, "_")
+                const typeName = dbStore.state["skeldrawer.structure"][boneName]["type"].replace(/\./g, "_")
                 if (Object.keys({}).includes(typeName)) {
                     widget = typeName
                 }
@@ -44,7 +44,7 @@ export default defineComponent({
 
         return {
             state,
-            appStore,
+            dbStore,
             getWidget
         }
     }

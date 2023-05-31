@@ -11,7 +11,7 @@
 <script lang="ts">
 // @ts-nocheck
 import {reactive, defineComponent, inject, computed, ref} from 'vue'
-import {useAppStore} from "../../stores/app";
+import {useDBStore} from "../../stores/db";
 import {useUserStore} from "../../stores/user";
 import {useRoute} from "vue-router";
 import {Request} from "@viur/viur-vue-utils"
@@ -22,7 +22,7 @@ export default defineComponent({
     setup(props, context) {
         const handlerState: any = inject("state")
       const tableReload: any = inject("reloadAction")
-        const appStore = useAppStore();
+        const dbStore = useDBStore();
         const userStore = useUserStore();
         const route = useRoute();
         const fileinput = ref()

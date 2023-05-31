@@ -1,6 +1,6 @@
 <template>
     ACCESS {{ state.moduleActions }}
-    <sl-button-group v-for="mod in state.moduleActions">
+    <sl-button-group v-for="mod in state.moduleActions['modules']">
       <sl-button v-for="right in mod" :title="right['name']">
         <sl-icon :name="right['icon']" slot="prefix"></sl-icon>
       </sl-button>
@@ -31,7 +31,8 @@ export default defineComponent({
       const boneState = inject("boneState")
         const state = reactive({
           moduleActions:computed(()=>{
-            let mods = {}
+            const actionmap = {"add":2, "view":0,"edit":1,"delete":3,"manage":4}
+            let mods = {"flags":{}, "modules":{}}
             for (const [k, v] of boneState['bonestructure']['values']){
               let parts = k.split("-")
               let name = parts[parts.length-1]
@@ -46,16 +47,23 @@ export default defineComponent({
                 icon = "plus"
               }
 
-
+              if (parts[0].startsWith("_")) continue
 
               let element = {"key":k,"icon":icon,"name":name}
-              if (Object.keys(mods).includes(parts[0])){
-                mods[parts[0]].push(element)
+              if (Object.keys(mods['modules']).includes(parts[0])){
+                mods['modules'][parts[0]] = {...mods['modules'][parts[0]], ...{[actionmap[name]]:element}}
               }else{
-                mods[parts[0]] = [element]
+                if(!actionmap[name]){ //flags
+                  mods['flags'][parts[0]] = {[actionmap[name]]:element}
+                }else{
+                  mods['modules'][parts[0]] = {[actionmap[name]]:element}
+                }
+
+
               }
 
             }
+
             return mods
         })
         })

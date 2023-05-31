@@ -28,7 +28,7 @@ import TheSidebar from "../TheMainScreenSidebar.vue";
 import { useRoute, useRouter } from "vue-router";
 import { Request } from "@viur/viur-vue-utils";
 import { defineComponent, onBeforeMount, unref } from "vue";
-import { useAppStore } from "../../stores/app";
+import { useDBStore } from "../../stores/db";
 
 //default top actions
 import ViAction from "../../components/TopBarActions/vi.vue";
@@ -51,19 +51,19 @@ export default defineComponent({
   setup() {
     const route = useRoute();
     const router = useRouter();
-    const appStore = useAppStore();
+    const dbStore = useDBStore();
 
     function collectViurConfig() {
       Request.get("/vi/config").then(async (resp: Response) => {
         let data = await resp.json();
-        appStore.state["vi.name"] = data["configuration"]["vi.name"];
-        appStore.state["vi.modules.groups"] =
+        dbStore.state["vi.name"] = data["configuration"]["vi.name"];
+        dbStore.state["vi.modules.groups"] =
           data["configuration"]["moduleGroups"];
-        appStore.state["vi.modules"] = data["modules"];
+        dbStore.state["vi.modules"] = data["modules"];
 
         if (route.path !== "/") {
           let new_route = router.resolve(unref(route));
-          appStore.addOpened(
+          dbStore.addOpened(
             new_route,
             new_route.params["module"],
             new_route.query["view"]
@@ -72,13 +72,13 @@ export default defineComponent({
       });
       Request.get("/vi/getVersion").then(async (resp: Response) => {
         let data = await resp.json();
-        appStore.state["core.version"] = data;
+        dbStore.state["core.version"] = data;
       });
     }
 
     function initTopBarActions() {
-      appStore.addTopBarAction(LogAction);
-      appStore.addTopBarAction(ViAction);
+      dbStore.addTopBarAction(LogAction);
+      dbStore.addTopBarAction(ViAction);
     }
 
     onBeforeMount(() => {

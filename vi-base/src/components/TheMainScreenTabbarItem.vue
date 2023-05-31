@@ -27,7 +27,7 @@
 <script lang="ts">
 // @ts-nocheck
 import {reactive, defineComponent, computed} from 'vue'
-import {useAppStore} from "../stores/app";
+import {useDBStore} from "../stores/db";
 import {useRouter} from "vue-router";
 
 export default defineComponent({
@@ -64,7 +64,7 @@ export default defineComponent({
     },
     components: {},
     setup(props, context) {
-        const appStore = useAppStore()
+        const dbStore = useDBStore()
         const router = useRouter()
         const state = reactive({
             icon:true,
@@ -80,7 +80,7 @@ export default defineComponent({
 
         function onTabClose(){
             // @ts-ignore
-            appStore.removeOpened(props.to)
+            dbStore.removeOpened(props.to)
         }
         //close tab with middel mouse click.
         function clickEvent(e:Event)

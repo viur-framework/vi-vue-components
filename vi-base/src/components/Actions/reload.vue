@@ -7,7 +7,7 @@
 
 <script lang="ts">
 import {reactive, defineComponent, inject} from 'vue'
-import {useAppStore} from "../../stores/app";
+import {useDBStore} from "../../stores/db";
 
 export default defineComponent({
     props: {},

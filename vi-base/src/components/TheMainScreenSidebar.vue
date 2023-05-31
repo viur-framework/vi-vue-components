@@ -5,9 +5,9 @@
       <menu-tree :tree="userStore.favoriteModules"></menu-tree>
     </the-menubar-group>
     <the-menubar-group :name="$t('sidebar.administration')">
-      <menu-tree :tree="appStore.modulesTree"></menu-tree>
+      <menu-tree :tree="dbStore.modulesTree"></menu-tree>
     </the-menubar-group>
-    <div class="loader" v-if="appStore.modulesTree.length===0">
+    <div class="loader" v-if="dbStore.modulesTree.length===0">
       <loader></loader>
     </div>
   </nav>
@@ -15,7 +15,7 @@
 
 <script lang="ts">
 import MenuTree from "../components/TheMenubar/MenuTree.vue";
-import {useAppStore} from "../stores/app";
+import {useDBStore} from "../stores/db";
 import {computed, defineComponent, reactive} from "vue";
 import TheMenubarGroup from "./TheMenubar/TheMenubarGroup.vue";
 import TheMenubarItem from "./TheMenubar/TheMenubarItem.vue";
@@ -25,12 +25,12 @@ import Loader from "./Generic/Loader.vue";
 export default defineComponent({
   components: {Loader, TheMenubarItem, TheMenubarGroup, MenuTree},
   setup(props, context) {
-    const appStore = useAppStore();
+    const dbStore = useDBStore();
     const userStore = useUserStore();
 
     const state = reactive({
     })
-    return {state, appStore, userStore}
+    return {state, dbStore, userStore}
   },
 
 })

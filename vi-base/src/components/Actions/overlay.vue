@@ -8,14 +8,14 @@
 
 <script lang="ts">
 import {reactive, defineComponent, inject, computed} from 'vue'
-import {useAppStore} from "../../stores/app";
+import {useDBStore} from "../../stores/db";
 
 export default defineComponent({
     props: {},
     components: {},
     setup(props, context) {
         const handlerState: any = inject("state")
-        const appStore = useAppStore()
+        const dbStore = useDBStore()
         const state = reactive({
             active: computed(() => {
                 return handlerState.currentSelection && handlerState.currentSelection.length > 0
@@ -23,7 +23,7 @@ export default defineComponent({
         })
 
         function openDrawer() {
-            appStore.state["skeldrawer.opened"] = !appStore.state["skeldrawer.opened"]
+            dbStore.state["skeldrawer.opened"] = !dbStore.state["skeldrawer.opened"]
         }
 
         return {

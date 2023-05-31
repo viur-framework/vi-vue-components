@@ -54,7 +54,7 @@
 <script lang="ts">
 //@ts-nocheck
 import {reactive, defineComponent, computed, inject} from 'vue'
-import {useAppStore} from "../../stores/app";
+import {useDBStore} from "../../stores/db";
 import {useRoute} from "vue-router";
 
 
@@ -70,9 +70,9 @@ export default defineComponent({
       live_preview:false,
       opened:false
     });
-    const appStore = useAppStore();
+    const dbStore = useDBStore();
     const route = useRoute();
-    const conf = appStore.getConfByRoute(route);
+    const conf = dbStore.getConfByRoute(route);
     const currentlist: any = inject("currentlist")
 
     function openFilterDrawer() {

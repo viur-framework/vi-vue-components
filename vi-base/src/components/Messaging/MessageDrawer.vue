@@ -33,20 +33,20 @@
 import {reactive, defineComponent} from 'vue'
 import Message from "./Message.vue"
 import {useMessageStore} from "../../stores/message";
-import {useAppStore} from "../../stores/app";
+import {useDBStore} from "../../stores/db";
 
 export default defineComponent({
     props: {},
     components: {Message},
     setup(props, context) {
         const messageStore = useMessageStore()
-        const appStore = useAppStore()
+        const dbStore = useDBStore()
         const state = reactive({})
 
         return {
             state,
             messageStore,
-            appStore
+            dbStore
         }
     }
 })

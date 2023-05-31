@@ -24,7 +24,7 @@
 <script lang="ts">
 //@ts-nocheck
 import {reactive, defineComponent, inject} from 'vue'
-import {useAppStore} from "../../stores/app";
+import {useDBStore} from "../../stores/db";
 import {useRoute} from "vue-router";
 
 
@@ -34,12 +34,12 @@ export default defineComponent({
   setup(props, context) {
     const handlerState: any = inject("state")
     const state = reactive({structure: {}});
-    const appStore = useAppStore()
+    const dbStore = useDBStore()
     const route = useRoute();
 
 
     function openSelectDialog() {
-      let store = appStore.getListStoreByRoute(route);
+      let store = dbStore.getListStoreByRoute(route);
       const dialog = document.getElementById("dialog-selectfields");
       console.log(store)
       state.structure = store.structure;

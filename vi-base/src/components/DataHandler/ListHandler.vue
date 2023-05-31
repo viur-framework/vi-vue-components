@@ -46,7 +46,7 @@ import {
 } from 'vue'
 import HandlerBar from "../../components/Bars/HandlerBar.vue";
 import {ListRequest} from '@viur/viur-vue-utils'
-import {useAppStore} from '../../stores/app'
+import {useDBStore} from '../../stores/db'
 import {useMessageStore} from "../../stores/message";
 import router from "../../routes";
 import {useModulesStore} from "../../stores/modules";
@@ -69,7 +69,7 @@ export default defineComponent({
   emits:['currentSelection'],
   components: {FloatingBar, Loader, HandlerBar},
   setup(props, context) {
-    const appStore = useAppStore();
+    const dbStore = useDBStore();
     const route = useRoute()
     const messageStore = useMessageStore();
     const modulesStore = useModulesStore();
@@ -103,7 +103,7 @@ export default defineComponent({
       renderer:"vi"
     })
 
-    appStore.setListStore(currentlist) //backup access
+    dbStore.setListStore(currentlist) //backup access
 
 
     function reloadAction() {
@@ -124,7 +124,7 @@ export default defineComponent({
     provide("setLimit", setLimit)
 
     onMounted(() => {
-      state.conf = appStore.getConfByRoute(route)
+      state.conf = dbStore.getConfByRoute(route)
       if (state.conf) {
         if (Object.keys(state.conf).indexOf("filter") > -1) {
           for (const key in state.conf["filter"]) {
@@ -141,9 +141,9 @@ export default defineComponent({
     onActivated(()=>{
       state.active = true
 
-      if (appStore.getActiveTab()["update"]){
+      if (dbStore.getActiveTab()["update"]){
         reloadAction()
-        appStore.getActiveTab()["update"]=false
+        dbStore.getActiveTab()["update"]=false
       }
 
     })
@@ -156,11 +156,11 @@ export default defineComponent({
       state.currentSelection = e.detail.data
       context.emit("currentSelection", state.currentSelection)
       if (e.detail.data.length > 0) {
-        appStore.state['skeldrawer.entry'] = e.detail.data[e.detail.data.length - 1]
-        appStore.state['skeldrawer.structure'] = currentlist.structure
+        dbStore.state['skeldrawer.entry'] = e.detail.data[e.detail.data.length - 1]
+        dbStore.state['skeldrawer.structure'] = currentlist.structure
       } else {
-        appStore.state['skeldrawer.entry'] = {}
-        appStore.state['skeldrawer.structure'] = {}
+        dbStore.state['skeldrawer.entry'] = {}
+        dbStore.state['skeldrawer.structure'] = {}
       }
 
     }
@@ -168,7 +168,7 @@ export default defineComponent({
     function openEditor(e: Event) {
       const url = `/db/${state.module}/edit/${e.detail.cell.getRow().getData().key}?_=${new Date().getTime()}`;
       let route = router.resolve(unref(url))
-      appStore.addOpened(route, state.module, state.view);
+      dbStore.addOpened(route, state.module, state.view);
       router.push(url);
     }
 
@@ -185,7 +185,7 @@ export default defineComponent({
       openEditor,
       modulesStore,
       tableInst,
-      appStore,
+      dbStore,
       nextpage,
 
     }

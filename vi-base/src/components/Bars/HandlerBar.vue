@@ -30,7 +30,7 @@
 <script lang="ts">
 //@ts-nocheck
 import {reactive, defineComponent, computed} from 'vue'
-import {useAppStore} from "../../stores/app";
+import {useDBStore} from "../../stores/db";
 import {useRoute} from "vue-router";
 import actions from '../../components/Actions/actions'
 
@@ -48,7 +48,7 @@ export default defineComponent({
   },
   components: {...actions},
   setup(props, context) {
-    const appStore = useAppStore()
+    const dbStore = useDBStore()
     const route = useRoute()
 
 
@@ -89,7 +89,7 @@ export default defineComponent({
         if (props.actions?.length > 0) return props.actions
 
         // find matching conf
-        let conf = appStore.getConfByRoute(route);
+        let conf = dbStore.getConfByRoute(route);
         let actions = {...listActions}
         if (!conf) return actions;
         if (conf["handler"].startsWith("tree.node")) {

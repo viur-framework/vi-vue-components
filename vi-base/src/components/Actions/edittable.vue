@@ -8,14 +8,14 @@
 <script lang="ts">
 import {reactive, defineComponent, inject, computed} from 'vue'
 import {useRoute} from "vue-router";
-import {useAppStore} from "../../stores/app";
+import {useDBStore} from "../../stores/db";
 
 export default defineComponent({
   props: {},
   components: {},
   setup(props, context) {
     const handlerState: any = inject("state")
-    const appStore = useAppStore()
+    const dbStore = useDBStore()
 
 
     function changeeditState(event: any) {

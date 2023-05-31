@@ -3,7 +3,7 @@ import {reactive, computed} from 'vue';
 import {defineStore} from "pinia";
 import {Request} from "@viur/viur-vue-utils";
 import utils from '../utils'
-import {useAppStore} from "./app";
+import {useDBStore} from "./db";
 import {useRoute} from "vue-router";
 
 const googleConfig = {
@@ -285,8 +285,8 @@ export const useUserStore = defineStore("user", () => {
       return
     }
     if (route) {
-      const appStore = useAppStore();
-      const conf = appStore.getConfByRoute(route);
+      const dbStore = useDBStore();
+      const conf = dbStore.getConfByRoute(route);
       if (!conf) return;
       const action = {
         "url": route.fullPath,
@@ -374,7 +374,7 @@ export const useUserStore = defineStore("user", () => {
   })
   const favoriteModules = computed(() => {
     //return the modules
-    const appStore = useAppStore();
+    const dbStore = useDBStore();
     if (!state.user["admin_config"]) return;
     let configObj = state.user["admin_config"]; //maybe we can use the
     if (configObj === null) {
@@ -382,7 +382,7 @@ export const useUserStore = defineStore("user", () => {
     }
     state.favoriteModules = [];
 
-    for (const module of appStore.modulesTree) {
+    for (const module of dbStore.modulesTree) {
       if (configObj["favoriteModules"].indexOf(module["module"]) > -1) {
         state.favoriteModules.push(module);
 

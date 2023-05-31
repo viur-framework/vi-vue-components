@@ -28,7 +28,7 @@
 
 <script lang="ts">
 import {reactive, defineComponent, computed, inject, unref} from 'vue'
-import {useAppStore} from "../../stores/app";
+import {useDBStore} from "../../stores/db";
 import {useRouter} from "vue-router";
 import app from "../../App.vue";
 import {useUserStore} from "../../stores/user";
@@ -44,14 +44,14 @@ export default defineComponent({
     const route = useRouter()
     const router = useRouter()
     const handlerState: any = inject("state")
-    const appStore = useAppStore();
+    const dbStore = useDBStore();
     const userStore = useUserStore()
     const tableReload: any = inject("reloadAction")
 
     const state = reactive({
       confirm:false,
       info: computed(() => {
-        let conf = appStore.state["vi.modules"][handlerState["module"]]
+        let conf = dbStore.state["vi.modules"][handlerState["module"]]
         if (handlerState["view"]) {
           conf = conf["children"][handlerState["view"]]
         }
@@ -149,7 +149,7 @@ export default defineComponent({
         console.log(new_route)
         console.log(urlparts)
 
-        appStore.addOpened(new_route, urlparts[0])
+        dbStore.addOpened(new_route, urlparts[0])
         return
       }
     }

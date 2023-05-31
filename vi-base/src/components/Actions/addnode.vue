@@ -13,7 +13,7 @@
 <script lang="ts">
 // @ts-nocheck
 import {reactive, defineComponent, inject, computed} from 'vue'
-import {useAppStore} from "../../stores/app";
+import {useDBStore} from "../../stores/db";
 import {useUserStore} from "../../stores/user";
 import {useRoute} from "vue-router";
 
@@ -22,7 +22,7 @@ export default defineComponent({
     components: {},
     setup(props, context) {
         const handlerState: any = inject("state")
-        const appStore = useAppStore();
+        const dbStore = useDBStore();
         const userStore = useUserStore();
         const route = useRoute();
 
@@ -52,7 +52,7 @@ export default defineComponent({
         })
 
         function createAndNavigate(route: any) {
-            appStore.addOpened(route, handlerState["module"], handlerState["view"])
+            dbStore.addOpened(route, handlerState["module"], handlerState["view"])
         }
 
         return {

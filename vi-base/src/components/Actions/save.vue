@@ -9,7 +9,7 @@
 //@ts-nocheck
 import {reactive, defineComponent, inject, computed} from 'vue'
 import {useRoute, useRouter} from "vue-router";
-import {useAppStore} from "../../stores/app";
+import {useDBStore} from "../../stores/db";
 import {Request} from "@viur/viur-vue-utils";
 import {useMessageStore} from "../../stores/message";
 export default defineComponent({
@@ -33,7 +33,7 @@ export default defineComponent({
     const handlerState: any = inject("state");
     const router = useRouter();
     const route = useRoute();
-    const appStore = useAppStore();
+    const dbStore = useDBStore();
     const state = reactive({
       loading:false
     });
@@ -79,9 +79,9 @@ export default defineComponent({
           } else {
             messageStore.addMessage("success", `Edit`, "Entry edited successfully");
             state.loading=false
-            appStore.markHandlersToUpdate(handlerState.module,handlerState.group)
+            dbStore.markHandlersToUpdate(handlerState.module,handlerState.group)
             if (props.close) {
-              appStore.removeOpened(route);
+              dbStore.removeOpened(route);
             }
           }
         }
@@ -92,9 +92,9 @@ export default defineComponent({
           } else {
             messageStore.addMessage("success", `Add`, "Added edited successfully");
             state.loading=false
-            appStore.markHandlersToUpdate(handlerState.module,handlerState.group)
+            dbStore.markHandlersToUpdate(handlerState.module,handlerState.group)
             if (props.close) {
-              appStore.removeOpened(route);
+              dbStore.removeOpened(route);
             }
           }
         }

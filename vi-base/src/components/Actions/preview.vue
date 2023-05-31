@@ -11,7 +11,7 @@
 <script lang="ts">
 //@ts-nocheck
 import {reactive, defineComponent, inject, computed} from 'vue'
-import {useAppStore} from "../../stores/app";
+import {useDBStore} from "../../stores/db";
 import {useRoute} from "vue-router";
 
 export default defineComponent({
@@ -19,7 +19,7 @@ export default defineComponent({
     components: {},
     setup(props, context) {
         const handlerState: any = inject("state")
-        const appStore = useAppStore();
+        const dbStore = useDBStore();
         const route = useRoute();
         const state = reactive({
             active: computed(() => {
@@ -33,7 +33,7 @@ export default defineComponent({
             module = route.params['parentmodule']
           }
 
-          let conf = appStore.state["vi.modules"][module]
+          let conf = dbStore.state["vi.modules"][module]
           if (Object.keys(conf).includes("previewurls")){
             for (const [k, v] of Object.entries(conf['previewurls'])) {
               for(let selection of handlerState.currentSelection){

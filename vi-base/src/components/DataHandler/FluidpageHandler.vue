@@ -53,7 +53,7 @@ import {
 } from 'vue'
 import HandlerBar from "../../components/Bars/HandlerBar.vue";
 import {ListRequest, Request} from '@viur/viur-vue-utils'
-import {useAppStore} from '../../stores/app'
+import {useDBStore} from '../../stores/db'
 import {useMessageStore} from "../../stores/message";
 import router from "../../routes";
 import {useModulesStore} from "../../stores/modules";
@@ -76,7 +76,7 @@ export default defineComponent({
   emits:['currentSelection'],
   components: {Loader, HandlerBar, Element},
   setup(props, context) {
-    const appStore = useAppStore();
+    const dbStore = useDBStore();
     const route = useRoute()
     const messageStore = useMessageStore();
     const modulesStore = useModulesStore();
@@ -133,7 +133,7 @@ export default defineComponent({
       group: props.group,
       renderer:"vi"
     })
-    appStore.setListStore(currentlist) //backup access
+    dbStore.setListStore(currentlist) //backup access
     provide("currentlist",currentlist)
 
     function changeOrder(oldkey, newkey){
@@ -238,9 +238,9 @@ export default defineComponent({
     onActivated(()=>{
       state.active = true
 
-      if (appStore.getActiveTab()["update"]){
+      if (dbStore.getActiveTab()["update"]){
         reloadAction()
-        appStore.getActiveTab()["update"]=false
+        dbStore.getActiveTab()["update"]=false
       }
 
     })
@@ -252,8 +252,8 @@ export default defineComponent({
     function entrySelected(skel) {
       state.currentSelection = [skel]
       context.emit("currentSelection", state.currentSelection)
-      appStore.state['skeldrawer.entry'] = skel
-      appStore.state['skeldrawer.structure'] = currentlist.structure
+      dbStore.state['skeldrawer.entry'] = skel
+      dbStore.state['skeldrawer.structure'] = currentlist.structure
     }
      provide("entrySelected", entrySelected);
 
@@ -261,7 +261,7 @@ export default defineComponent({
       const url = `/db/${state.module}/edit/${e.detail.cell.getRow().getData().key}?_=${new Date().getTime()}`;
       let route = router.resolve(unref(url))
 
-      appStore.addOpened(route, state.module, state.view);
+      dbStore.addOpened(route, state.module, state.view);
       router.push(url);
     }
 
@@ -273,7 +273,7 @@ export default defineComponent({
       openEditor,
       modulesStore,
       tableInst,
-      appStore
+      dbStore
 
     }
   }

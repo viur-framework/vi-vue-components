@@ -78,7 +78,7 @@
 //@ts-nocheck
 import {reactive, defineComponent, onBeforeMount, computed, provide, toRaw} from 'vue'
 import {Request} from "@viur/viur-vue-utils";
-import {useAppStore} from "../../stores/app";
+import {useDBStore} from "../../stores/db";
 import {useRoute} from "vue-router";
 import EntryBar from "../Bars/EntryBar.vue";
 import {useModulesStore} from "../../stores/modules";
@@ -103,7 +103,7 @@ export default defineComponent({
   },
   components: {EntryBar, bone, ...handlers,VueJsonPretty},
   setup(props, context) {
-    const appStore = useAppStore();
+    const dbStore = useDBStore();
     const route = useRoute();
     const modulesStore = useModulesStore();
     const values = reactive({})
@@ -113,7 +113,7 @@ export default defineComponent({
       structure: {},
       errors: [],
       conf: computed(() => {
-        return appStore.getConf(props.module)
+        return dbStore.getConf(props.module)
       }),
       formGroups: computed(() => {
         let groups = {"default": {"name": "Allgemein", "bones": [], "groupVisible": false}}
@@ -247,14 +247,14 @@ export default defineComponent({
       //state.formValues[event.detail.boneName] = event.detail.formValue;
 
       if (event.detail.boneName === "name") {
-        appStore.updateActiveTabName(event.detail.formValue[0]["name"])
+        dbStore.updateActiveTabName(event.detail.formValue[0]["name"])
       }
     }
 
     function relationSelection(event,bone) {
       bone["bone_instance"] = event.target
       bone["bone_instance_boneName"] = event["detail"]["boneName"]
-      bone["bone_conf"] = appStore.getConf(bone['boneStructure']['module'])
+      bone["bone_conf"] = dbStore.getConf(bone['boneStructure']['module'])
 
       state.relation_opened.push(bone)
     }

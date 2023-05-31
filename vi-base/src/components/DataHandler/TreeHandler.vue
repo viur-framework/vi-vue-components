@@ -16,7 +16,7 @@
 import {reactive, defineComponent, computed, provide, onBeforeMount, watch, onActivated, onDeactivated} from 'vue'
 import HandlerBar from "../../components/Bars/HandlerBar.vue";
 import {ListRequest} from '@viur/viur-vue-utils'
-import {useAppStore} from '../../stores/app'
+import {useDBStore} from '../../stores/db'
 import {Request} from "@viur/viur-vue-utils";
 import FileBrowser from '../../components/Tree/FileBrowser.vue';
 import {useMessageStore} from "../../stores/message";
@@ -33,7 +33,7 @@ export default defineComponent({
     emits:["currentSelection"],
     components: {FileBrowser, HandlerBar},
     setup(props, context) {
-        const appStore = useAppStore()
+        const dbStore = useDBStore()
         const userStore = useUserStore()
 
 
@@ -80,9 +80,9 @@ export default defineComponent({
         onActivated(()=>{
           state.active = true
 
-          if (appStore.getActiveTab()["update"]){
+          if (dbStore.getActiveTab()["update"]){
             reloadAction()
-            appStore.getActiveTab()["update"]=false
+            dbStore.getActiveTab()["update"]=false
           }
 
         })

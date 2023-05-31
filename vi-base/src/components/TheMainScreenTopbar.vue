@@ -6,13 +6,13 @@
         <sl-icon src="logo-cube.svg"></sl-icon>
       </div>
       <h1 class="main-headline">
-        {{ appStore.state["vi.name"] }}
+        {{ appStore.state["admin.name"] }}
       </h1>
     </div>
     <!-- </router-link> -->
 
     <div class="main-group">
-      <!--<component v-for="action in appStore.state['topbar.actions']" :is="action">
+      <!--<component v-for="action in dbStore.state['topbar.actions']" :is="action">
             </component>-->
 
       <sl-avatar
@@ -87,6 +87,7 @@
 <script lang="ts">
 import { useUserStore } from "../stores/user";
 import { useAppStore } from "../stores/app";
+import { useDBStore } from "../stores/db";
 import { defineComponent, reactive, computed } from "vue";
 import router from "../routes";
 
@@ -94,6 +95,7 @@ export default defineComponent({
   setup(props, context) {
     const userStore = useUserStore();
     const appStore = useAppStore();
+    const dbStore = useDBStore();
     const state = reactive({
       sidebarOpen: false,
       nameInitials: computed(() => {
@@ -163,13 +165,14 @@ export default defineComponent({
     });
 
     function homebutton() {
-      appStore.state["handlers.active"] = 0;
+      dbStore.state["handlers.active"] = 0;
       router.push("/");
     }
 
     return {
       userStore,
       appStore,
+      dbStore,
       state,
       homebutton,
     };

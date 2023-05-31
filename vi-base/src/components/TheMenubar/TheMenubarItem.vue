@@ -54,7 +54,7 @@
 
     <teleport v-if="state.maxtabsReached" to="#dialogs" :disabled="!state.maxtabsReached">
       <sl-dialog open label="Max tabs">
-        {{ $t("tab.amount_warning", { amount: appStore.state["handlers.opened.max.modules"][moduleInfo["module"]] ,module:name}) }}
+        {{ $t("tab.amount_warning", { amount: dbStore.state["handlers.opened.max.modules"][moduleInfo["module"]] ,module:name}) }}
         <sl-button slot="footer" @click="handleMaxTabOpen(route)">{{ $t("actions.open") }}</sl-button>
       </sl-dialog>
     </teleport>
@@ -123,7 +123,7 @@
 // @ts-nocheck
 import {computed, reactive, onMounted, onUpdated, defineComponent, unref} from "vue";
 import Utils from '../../utils';
-import {useAppStore} from "../../stores/app";
+import {useDBStore} from "../../stores/db";
 import {useRoute, useRouter} from "vue-router";
 import {useUserStore} from "../../stores/user";
 import {Request} from "@viur/viur-vue-utils";
@@ -170,7 +170,7 @@ export default defineComponent({
     }
   },
   setup(props, context) {
-    const appStore = useAppStore();
+    const dbStore = useDBStore();
     const router = useRouter();
     const userStore = useUserStore();
 
@@ -198,18 +198,18 @@ export default defineComponent({
 
     function removeItem() {
       // @ts-ignore
-      appStore.removeOpened(props.to)
+      dbStore.removeOpened(props.to)
     }
 
     function openItem(route) {
       route.query["_"] = new Date().getTime()
       let new_route = router.resolve(unref(route))
-      state.maxtabsReached = !appStore.addOpened(new_route, route.params["module"], route.query["view"])
+      state.maxtabsReached = !dbStore.addOpened(new_route, route.params["module"], route.query["view"])
     }
 
     function openConfig(){
       let new_route = router.resolve(unref(`/db/_moduleconf/edit/${props.moduleInfo["module"]}`))
-      appStore.addOpened(new_route, props.moduleInfo["module"])
+      dbStore.addOpened(new_route, props.moduleInfo["module"])
     }
 
     function toogleFavItem() {
@@ -246,7 +246,7 @@ export default defineComponent({
     {
 
       state.maxtabsReached = false;
-      appStore.state["handlers.opened.max.modules"][props.moduleInfo["module"]] += 1;
+      dbStore.state["handlers.opened.max.modules"][props.moduleInfo["module"]] += 1;
       openItem(route);
     }
     onMounted(() => {
@@ -263,7 +263,7 @@ export default defineComponent({
     return {
       state,
       openGroup,
-      appStore,
+      dbStore,
       removeItem,
       openItem,
       getRoute,

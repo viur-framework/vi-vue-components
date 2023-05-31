@@ -53,7 +53,7 @@ import {
 } from 'vue'
 import HandlerBar from "../../components/Bars/HandlerBar.vue";
 import {Request} from '@viur/viur-vue-utils'
-import {useAppStore} from '../../stores/app'
+import {useDBStore} from '../../stores/db'
 import {useRoute} from "vue-router";
 import {useUserStore} from "../../stores/user";
 
@@ -69,7 +69,7 @@ export default defineComponent({
   emits:['currentSelection'],
   components: {HandlerBar},
   setup(props, context) {
-    const appStore = useAppStore();
+    const dbStore = useDBStore();
     const userStore = useUserStore();
     const route = useRoute();
 
@@ -106,7 +106,7 @@ export default defineComponent({
         state.currentRootNodes = data;
         state.currentRootNode = data[0]
         state.currentNode = data[0];
-        const conf = appStore.getConfByRoute(route);
+        const conf = dbStore.getConfByRoute(route);
         conf["rootNode"] = data[0];
         fetchNodes(state.currentRootNode["key"]);
 
@@ -279,9 +279,9 @@ export default defineComponent({
     onActivated(()=>{
       state.active = true
 
-      if (appStore.getActiveTab()["update"]){
+      if (dbStore.getActiveTab()["update"]){
         reloadAction()
-         appStore.getActiveTab()["update"]=false
+         dbStore.getActiveTab()["update"]=false
       }
 
     })

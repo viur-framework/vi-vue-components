@@ -27,7 +27,7 @@
 import {reactive, defineComponent, inject, computed} from 'vue'
 import {Request} from "@viur/viur-vue-utils";
 import {useMessageStore} from "../../stores/message";
-import {useAppStore} from "../../stores/app";
+import {useDBStore} from "../../stores/db";
 import {useRoute} from "vue-router";
 import {useUserStore} from "../../stores/user";
 

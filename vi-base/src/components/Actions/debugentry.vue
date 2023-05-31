@@ -16,7 +16,7 @@
 // @ts-nocheck
 import {reactive, defineComponent, inject, computed} from 'vue'
 import {useRoute} from "vue-router";
-import {useAppStore} from "../../stores/app";
+import {useDBStore} from "../../stores/db";
 import {useUserStore} from "../../stores/user";
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
@@ -26,7 +26,7 @@ export default defineComponent({
   components: {VueJsonPretty},
   setup(props, context) {
     const handlerState: any = inject("state")
-    const appStore = useAppStore();
+    const dbStore = useDBStore();
     const userStore = useUserStore();
     const route = useRoute()
     const state = reactive({
