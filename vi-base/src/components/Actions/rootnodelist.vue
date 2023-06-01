@@ -15,15 +15,7 @@ export default defineComponent({
   setup(props, context) {
     const state = reactive({
       initValue: computed(() => {
-        console.log("crn",handlerState['currentRootNodes'])
-        if (handlerState['currentRootNodes']) {
-          console.log("crn2",handlerState['currentRootNodes'],handlerState['currentRootNodes'])
-          if (handlerState['currentRootNodes'].length > 0) {
-            return handlerState['currentRootNodes'][0]['key']
-          }
-        }
-
-        return ""
+        return handlerState['currentRootNode']?.['key']
       })
     });
     const handlerState: any = inject("state");

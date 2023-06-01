@@ -1,40 +1,30 @@
 <template>
   <div class="main-wrapper">
     <handler-bar :module="module"></handler-bar>
-    <sl-table moveablerows
-              rowselect
-              :structure="state.structure"
-              :nodes='state.nodes'
-              :module="state.module"
-              height="100%"
-              mode="hierarchy"
-              @table-fetchNodes="fetchNodesEvent"
-              @table-rowMovedDataTree="rowMovedDataTree"
-              @table-newSortIndex="newSortIndex"
-              @table-move_and_SortIndex="move_and_SortIndex"
-              @sl-selectionChanged="entrySelected"
 
-
-    ></sl-table>
-    <div class="more-entries">
-       <sl-button size="small">
-              <sl-icon slot="prefix" aria-hidden="true" library="default" v-once name="arrow-repeat"></sl-icon>
-              Filtern
-          </sl-button>
-          <sl-button size="small">
-              <sl-icon slot="prefix" aria-hidden="true" library="default" v-once name="arrow-repeat"></sl-icon>
-              Weitere Einträge
-          </sl-button>
-          <sl-select size="small" label="Anzahl">
-            <sl-option value="1">30</sl-option>
-            <sl-option value="2">60</sl-option>
-            <sl-option value="3">90</sl-option>
-          </sl-select>
-          <sl-button size="small">
-              <sl-icon slot="prefix" aria-hidden="true" library="default" v-once name="arrow-repeat"></sl-icon>
-              Neuladen
-          </sl-button>
+    <sl-details open summary="Modul Info"
+      v-if="modulesStore.state.loaded && modulesStore.state.modules[module]['help_text']">
+        <div v-html="modulesStore.state.modules[module]['help_text']"></div>
+    </sl-details>
+    <div class="table-wrapper" @scroll="stickyHeader" v-if="Object.keys(state.selectedPath).length > 0" >
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th></th>
+            <th v-for="(bone,name) in state.structure"
+                :class="{'stick-header':state.sticky}"
+            >
+              {{ state.structure?.[name]["descr"] }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <table-node-item :module="module" :path="state.currentRootNode?[0]:[]"></table-node-item>
+        </tbody>
+      </table>
     </div>
+    <floating-bar></floating-bar>
   </div>
 </template>
 
@@ -54,8 +44,12 @@ import {
 import HandlerBar from "../../components/Bars/HandlerBar.vue";
 import {Request} from '@viur/viur-vue-utils'
 import {useDBStore} from '../../stores/db'
+import { useModulesStore } from '../../stores/modules';
 import {useRoute} from "vue-router";
 import {useUserStore} from "../../stores/user";
+import TableNodeItem from "../Tree/TableNodeItem.vue";
+import FloatingBar from "../Bars/FloatingBar.vue";
+import useTree from '../Tree/tree';
 
 
 export default defineComponent({
@@ -67,10 +61,11 @@ export default defineComponent({
     view: null
   },
   emits:['currentSelection'],
-  components: {HandlerBar},
+  components: {HandlerBar, TableNodeItem, FloatingBar},
   setup(props, context) {
     const dbStore = useDBStore();
     const userStore = useUserStore();
+    const modulesStore = useModulesStore();
     const route = useRoute();
 
     const state = reactive({
@@ -91,190 +86,58 @@ export default defineComponent({
       group: null,
       view: computed(() => props.view),
       structure: {},
-      active:false
+      active:false,
+      selectedBones:[],
+      selectedRows:[],
+      sticky:false,
+
+      dragging:true,
+      selectedPath: [],
+      draggedEntry: null,
+      refreshList: false,
+      tree: [],
+      selectedEntries: computed(() => {
+        let retVal = []
+        let entry = state.tree
+        let x = 0
+        for (let i of state.selectedPath) {
+          if (Array.isArray(entry)) {
+            entry = entry[i]
+            if (!entry) break;
+            entry["_expanded"] = true
+            retVal.push(entry)
+          }
+          if (state.selectedPath.length - 1 !== x && Object.keys(entry).includes("_nodes")) {
+            entry = entry["_nodes"]
+          }
+          x += 1
+        }
+        return retVal
+      }),
+      currentEntry:computed(()=>{
+        return tree.EntryFromPath(state.selectedPath)
+      }),
+      currentSelection:[],
     })
     provide("state", state) // expose to components
-
-    fetchRoots();
-    fetchStructure();
-
-    function fetchRoots() {
-      return Request.get(`/vi/${props.module}/listRootNodes`).then(async (resp) => {
-        let data = await resp.json()
-
-
-        state.currentRootNodes = data;
-        state.currentRootNode = data[0]
-        state.currentNode = data[0];
-        const conf = dbStore.getConfByRoute(route);
-        conf["rootNode"] = data[0];
-        fetchNodes(state.currentRootNode["key"]);
-
-      }).catch((error)=>{
-              if(error.statusCode === 401) userStore.updateUser()
-            })
-    }
-
-    function fetchStructure() {
-      return Request.getStructure(props.module).then(async (resp) => {
-        let data = await resp.json();
-        data = data["viewNodeSkel"];
-
-        if (Array.isArray(data)) {
-          let struct = {};
-          for (const idx in data) {
-            struct[data[idx][0]] = data[idx][1];
-          }
-          state.structure = struct;
-        }else{
-          state.structure = data;
-        }
-
-      }).catch((error)=>{
-              if(error.statusCode === 401) userStore.updateUser()
-            })
-    }
-
+    const tree = useTree(props.module,state,state)
 
     function reloadAction() {
-      return new Promise((resolve, reject) => {
-        fetchNodes(state.currentRootNode.key).then(() => {
-          resolve()
-        })
-          .catch(() => {
-            reject()
-          })
+      state.selectedPath = []
+      return fetchRoots().then(()=>{
+        state.tree = [state.currentRootNode]
+        state.selectedPath = [0]
       })
     }
-
     provide("reloadAction", reloadAction)
 
 
     function entrySelected(e) {
-      console.log(e.detail.data)
-      if (e.detail.data.length > 0) {
-        state.currentSelection = [e.detail.data[0]]
-      } else {
-        state.currentSelection = [];
-      }
+      console.log(state.selectedEntries)
 
-      context.emit("currentSelection", state.currentSelection)
-
+      return 0
     }
 
-    function changeParentEntry(event) {
-      state.currentNode = {
-        "name": event.detail.selection[0]["dataset"]["name"],
-        "key": event.detail.selection[0]["dataset"]["key"]
-      }
-      currentlistleafs.filter({...currentlistleafs.state.params, ...{"parententry": state.currentNode["key"]}})
-    }
-
-    function fetchNodes(key) {
-
-      state.nodes = [];
-      return Request.get(`/vi/${props.module}/list/node?parententry=${key}`).then(async (resp) => {
-        const data = await resp.json();
-        for (const node of data["skellist"]) {
-          if (node.hasOwnProperty("childcount")) {
-            console.log("has child count", node["childcount"])
-            if (node["childcount"] > 0) {
-              node["_children"] = [];
-            } else if (node["childcount"] === -1) {
-              node["_children"] = [];
-            }
-          } else // "old core"
-          {
-            node["_children"] = [];
-          }
-
-
-        }
-        state.nodes = data["skellist"];
-
-
-      }).catch((error)=>{
-              if(error.statusCode === 401) userStore.updateUser()
-            })
-    }
-
-    function fetchNodesEvent(event: CustomEvent) {
-      console.log("fetchnode event")
-      Request.get(`/vi/${props.module}/list/node?parententry=${event.detail.key}`).then(async (resp) => {
-        let data = await resp.json();
-        const treeChildren = event.detail.row.getTreeChildren();
-        for (const node of data["skellist"]) {
-          if (node.hasOwnProperty("childcount")) {
-            console.log("has child count", node["childcount"])
-            if (node["childcount"] > 0) {
-              node["_children"] = [];
-            } else if (node["childcount"] === -1) {
-              node["_children"] = [];
-            }
-          } else // "old core"
-          {
-            node["_children"] = [];
-          }
-          let found = false;
-          for (const child of treeChildren) {
-            if (child.getData()["key"] === node["key"]) {
-              found = true;
-              break
-            }
-          }
-          if (!found) {
-            event.detail.row.addTreeChild(node);
-          }
-
-        }
-
-
-      }).catch((error)=>{
-        if(error.statusCode === 401) userStore.updateUser()
-      })
-    }
-
-    function rowMovedDataTree(e: Event) {
-
-      return Request.securePost(`/vi/${props.module}/move`, {
-        dataObj: {
-          "skelType": "node",
-          "key": e.detail.srcKey,
-          "parentNode": e.detail.destKey,
-        }
-      })
-    }
-
-    function newSortIndex(e: Event) {
-
-      return Request.securePost(`/vi/${props.module}/edit`, {
-        dataObj: {
-          "skelType": "node",
-          "key": e.detail.srcKey,
-          "sortindex": e.detail.sortindex,
-        }
-      })
-    }
-
-    function move_and_SortIndex(e) {
-      console.log("move_and_SortIndex")
-      rowMovedDataTree(e).then(() => {
-        newSortIndex(e)
-      });
-    }
-
-    function changerootNode(key: string) {
-
-      fetchNodes(key)
-      for (const node of state.currentRootNodes) {
-        if (key === node["key"]) {
-          state.currentRootNode = node;
-          break;
-        }
-      }
-
-
-    }
 
     onActivated(()=>{
       state.active = true
@@ -290,22 +153,129 @@ export default defineComponent({
       state.active = false
     })
 
-    provide("changerootNode", changerootNode)
+    function fetchRoots() {
+      return Request.get(`/vi/${props.module}/listRootNodes`).then(async (resp) => {
+        let data = await resp.json()
+        state.currentRootNodes = data;
+        if (!state.currentRootNode){
+          state.currentRootNode = data[0]
+        }
 
+      })
+    }
+
+    onBeforeMount(()=>{
+      fetchRoots().then(()=>{
+        state.tree = [state.currentRootNode]
+        state.selectedPath = [0]
+      })
+    })
+
+    watch(() => state.selectedEntries, (newVal, oldVal) => {
+      state.currentSelection = [state.currentEntry]
+    })
+
+    function changerootNode(key: string) {
+      state.currentRootNode = state.currentRootNodes.filter(i=>i["key"]===key)[0]
+      console.log(state.currentRootNode)
+      reloadAction()
+    }
+    provide("changerootNode", changerootNode)
     return {
       state,
       entrySelected,
-      changeParentEntry,
-      fetchNodesEvent,
-      rowMovedDataTree,
-      newSortIndex,
-      move_and_SortIndex
+      modulesStore
     }
   }
 })
 </script>
 
 <style scoped lang="less">
+
+.table-wrapper{
+  overflow:scroll;
+}
+
+table{
+  width: 100%;
+  table-layout: fixed;
+
+  tbody{
+    tr{
+      cursor: pointer;
+      transition: all ease .3s;
+
+      td{
+        padding: .4em .6em;
+        overflow: hidden;
+        word-wrap: break-word;
+        border-right: 1px solid var(--sl-color-gray-300);
+        border-bottom: 1px solid var(--sl-color-gray-300);
+
+        &:last-child{
+          border-right: 0;
+        }
+      }
+
+      &:nth-child(even){
+        background-color: var(--sl-color-gray-100);
+      }
+
+      &:hover{
+        background-color: var(--sl-color-gray-200);
+      }
+    }
+
+    tr.selected{
+      background-color: var(--sl-color-primary-50);
+
+      td{
+        font-weight: 700;
+      }
+    }
+  }
+
+  thead{
+    th {
+      position: relative;
+      padding: .4em .6em;
+      resize: horizontal;
+      overflow: hidden;
+      background: linear-gradient( var(--vi-background-color) 0%, var(--vi-background-color) calc(100% - 2px), var(--sl-color-neutral-700) 100% );
+      font-weight: 700;
+      border-right: 1px solid var(--sl-color-gray-300);
+      text-overflow: ellipsis;
+
+        &:last-child{
+          border-right: 0;
+        }
+
+
+      &::-webkit-resizer {
+        border-color: transparent;
+        display: block;
+      }
+
+      &:after {
+        content:"";
+        border-style: solid;
+        border-width: 0 0 12px 12px;
+        border-color: transparent transparent var(--sl-color-neutral-200) transparent;
+        z-index: 1;
+        position: absolute;
+        right: 0;
+        bottom: 2px;
+        pointer-events: none;
+    }
+
+      &:hover {
+        &:after {
+          border-color: transparent transparent var(--sl-color-neutral-700) transparent;
+        }
+      }
+    }
+  }
+}
 
 .main-wrapper{
   flex: 1;

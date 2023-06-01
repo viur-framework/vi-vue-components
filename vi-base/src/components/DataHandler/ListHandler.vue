@@ -8,12 +8,12 @@
         <div v-html="modulesStore.state.modules[module]['help_text']"></div>
       </sl-details>
       <div class="table-wrapper" @scroll="stickyHeader">
-        <table>
+        <table ref="datatable">
           <thead>
             <tr>
               <th v-for="bone in state.selectedBones"
                   :class="{'stick-header':state.sticky}"
-                  style="width: 150px;"
+                  :style="{width: state.tableWidth+'px'}"
               >
                 {{ currentlist.structure?.[bone]["descr"] }}
               </th>
@@ -82,6 +82,7 @@ export default defineComponent({
     const route = useRoute()
     const messageStore = useMessageStore();
     const modulesStore = useModulesStore();
+    const datatable = ref(null)
 
     const state = reactive({
       type:"listhandler",
@@ -104,7 +105,13 @@ export default defineComponent({
 
       selectedBones:[],
       selectedRows:[],
-      sticky:false
+      sticky:false,
+      tableWidth:computed(()=>{
+        if(state.selectedBones.length>0){
+          return Math.round(parseInt(datatable.value.clientWidth) / state.selectedBones.length)
+        }
+        return "150px"
+      })
     })
     provide("state", state)
     const currentlist = ListRequest(state.storeName, {
@@ -242,7 +249,8 @@ export default defineComponent({
       dbStore,
       nextpage,
       getBoneViewer,
-      stickyHeader
+      stickyHeader,
+      datatable
     }
   }
 })
