@@ -13,6 +13,7 @@
             <tr>
               <th v-for="bone in state.selectedBones"
                   :class="{'stick-header':state.sticky}"
+                  style="width: 150px;"
               >
                 {{ currentlist.structure?.[bone]["descr"] }}
               </th>
@@ -256,62 +257,97 @@ export default defineComponent({
   position: relative;
   width: 100%;
 }
-table{
-  width:100%;
-}
 
 .loader{
     position:absolute;
     width: 100%;
     height:50%
   }
+
 table{
   width: 100%;
   table-layout: fixed;
+
   tbody{
     tr{
+      cursor: pointer;
+      transition: all ease .3s;
 
       td{
+        padding: .4em .6em;
         overflow: hidden;
         word-wrap: break-word;
+        border-right: 1px solid var(--sl-color-gray-300);
+        border-bottom: 1px solid var(--sl-color-gray-300);
+
+        &:last-child{
+          border-right: 0;
+        }
+      }
+
+      &:nth-child(even){
+        background-color: var(--sl-color-gray-100);
+      }
+
+      &:hover{
+        background-color: var(--sl-color-gray-200);
       }
     }
 
-
-    tr:hover{
-      background-color: var(--sl-color-gray-200);
-    }
     tr.selected{
-      background-color: var(--sl-color-primary-200);
+      background-color: var(--sl-color-primary-50);
+
+      td{
+        font-weight: 700;
+      }
     }
   }
 
   thead{
     th {
-      background-color: var(--sl-color-gray-400);
-    padding: 10px 15px;
-    resize: horizontal;
-    overflow: hidden;
+      position: relative;
+      padding: .4em .6em;
+      resize: horizontal;
+      overflow: hidden;
+      background: linear-gradient( var(--vi-background-color) 0%, var(--vi-background-color) calc(100% - 2px), var(--sl-color-neutral-700) 100% );
+      font-weight: 700;
+      border-right: 1px solid var(--sl-color-gray-300);
+      text-overflow: ellipsis;
 
-    &::-webkit-resizer {
-      border-style: solid;
-      border-width: 0 0px 100px 100px;
-      border-color: transparent transparent rgba(255, 255, 255, .2) transparent;
-      display: block;
-      transition: all ease .3s;
+        &:last-child{
+          border-right: 0;
+        }
+
+
+      &::-webkit-resizer {
+        border-color: transparent;
+        display: block;
+      }
+
+      &:after {
+        content:"";
+        border-style: solid;
+        border-width: 0 0 12px 12px;
+        border-color: transparent transparent var(--sl-color-neutral-200) transparent;
+        z-index: 1;
+        position: absolute;
+        right: 0;
+        bottom: 2px;
+        pointer-events: none;
     }
 
-    &:hover {
-      &::-webkit-resizer {
-        border-color: transparent transparent rgba(255, 255, 255, .9) transparent;
+      &:hover {
+        &:after {
+          border-color: transparent transparent var(--sl-color-neutral-700) transparent;
+        }
       }
     }
-  }
   }
 }
 
 .table-wrapper{
   overflow:scroll;
+  flex: 1;
 }
 .stick-header{
   position:sticky;
