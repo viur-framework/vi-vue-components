@@ -150,7 +150,7 @@ export const useDBStore = defineStore("db", () => {
 
         //dynamic child buckets
         "handlers.opened": [{"to":{'name': 'home'},"url":"/","name":"Dashboard","icon":"dashboard","closeable":false}], // {'url','name','library'}
-        "handlers.opened.max":5,
+        "handlers.opened.max":3,
         "handlers.opened.max.modules":{},
         "handlers.active":0, //current active index
 

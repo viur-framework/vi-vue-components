@@ -2,7 +2,12 @@
   <sl-button @click="loadnextpage" :loading="state.loading" :disabled="state.disable" size="small"
              :title="$t('actions.nextpage')">
     <sl-icon slot="prefix" name="menu"></sl-icon>
-       {{ $t("actions.nextpage") }}
+      <template v-if="state.disable">
+        {{ $t("actions.nextpage_finish") }}
+      </template>
+      <template v-else>
+        {{ $t("actions.nextpage") }}
+      </template>
   </sl-button>
 
 </template>

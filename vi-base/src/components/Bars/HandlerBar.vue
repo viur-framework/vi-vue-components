@@ -59,22 +59,22 @@ export default defineComponent({
         },
       actions: computed(() => {
         let listActions = {
-          ":options": [["edittable","selectfields","overlay"]],
+          ":options": [["selectfields","overlay"]],
           "default": [[":options"],["delete", "clone","preview", "edit", "add"]],
         }
 
         const hierarchyActions = {
-          ":options": [["edittable","selectfields","overlay"]],
+          ":options": [["selectfields","overlay"]],
           "default": [[":options","rootnodelist"],["delete", "clone","preview", "edit", "addnode"]],
         }
 
         const treeActions = {
-          ":options": [["edittable","selectfields","overlay"]],
+          ":options": [["selectfields","overlay"]],
           "default": [[":options", "rootnodelist"],["delete", "clone","preview", "edit", "addfolder","addfile"]],
         }
 
         let fluidpageActions = {
-          ":options": [["edittable","selectfields","overlay"]],
+          ":options": [["selectfields","overlay"]],
           "default": [[":options"],["fluidpage","delete", "clone","preview", "edit", "add"]],
         }
 
