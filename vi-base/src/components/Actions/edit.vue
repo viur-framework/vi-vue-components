@@ -1,20 +1,18 @@
 <template>
-  <router-link :to="state.url" custom v-slot="{route}">
     <sl-button size="small"
                variant="info"
                :disabled="!state.active || !state.canEdit"
-               @click="createAndNavigate(route)"
+               @click="createAndNavigate()"
                :title="$t('actions.edit')"
     >
       <sl-icon slot="prefix" name="pencil"></sl-icon>
     </sl-button>
-  </router-link>
 </template>
 
 <script lang="ts">
 // @ts-nocheck
 import {reactive, defineComponent, inject, computed} from 'vue'
-import {useRoute} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import {useDBStore} from "../../stores/db";
 import {useUserStore} from "../../stores/user";
 
@@ -26,29 +24,33 @@ export default defineComponent({
     const dbStore = useDBStore();
     const userStore = useUserStore();
     const route = useRoute()
+    const router = useRouter()
     const state = reactive({
       active: computed(() => {
         return handlerState.currentSelection && handlerState.currentSelection.length > 0
       }),
-      url: computed(() => {
-        if (!state.active) return ""
-        if(handlerState.type=="hierarchyhandler")
-        {
-          return `/db/${handlerState.module}/edit/node/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
+      urls: computed(() => {
+        let urls = []
+        if (!state.active) return urls
+
+        for(let selection of handlerState.currentSelection){
+          if(handlerState.type=="hierarchyhandler")
+          {
+            urls.push( `/db/${handlerState.module}/edit/node/${selection["key"]}?_=${new Date().getTime()}`)
+          }
+
+          if(handlerState.type=="treehandler")
+          {
+            urls.push( `/db/${handlerState.module}/edit/${handlerState?.currentSelectionType}/${selection["key"]}?_=${new Date().getTime()}`)
+          }
+
+          if(handlerState.group){
+            urls.push( `/db/${handlerState.module}/edit/${handlerState.group}/${selection["key"]}?_=${new Date().getTime()}`)
+          }else{
+            urls.push( `/db/${handlerState.module}/edit/${selection["key"]}?_=${new Date().getTime()}`)
+          }
         }
-
-        if(handlerState.type=="treehandler")
-        {
-          return `/db/${handlerState.module}/edit/${handlerState?.currentSelectionType}/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
-        }
-
-        if(handlerState.group){
-          return `/db/${handlerState.module}/edit/${handlerState.group}/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
-        }else{
-          return `/db/${handlerState.module}/edit/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
-        }
-
-
+        return urls
       }),
       canEdit: computed(() => {
        if(userStore.state.user.access.indexOf("root") !== -1 )
@@ -59,8 +61,16 @@ export default defineComponent({
       })
     })
 
-    function createAndNavigate(route: any) {
-      dbStore.addOpened(route, handlerState["module"], handlerState["view"])
+    function createAndNavigate() {
+      console.log(state.urls)
+      for(let url of state.urls){
+        console.log(url)
+        let new_route = router.resolve(url)
+        dbStore.addOpened(new_route, handlerState["module"], handlerState["view"])
+      }
+
+
+
     }
 
     return {
