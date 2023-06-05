@@ -145,9 +145,6 @@ export const useDBStore = defineStore("db", () => {
         //storesMap
         "stores.map": {},
 
-        //handlers
-        "handlers": {},
-
         //topactions
         "topbar.actions": [],
 

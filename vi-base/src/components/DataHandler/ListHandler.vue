@@ -15,7 +15,7 @@
                   :class="{'stick-header':state.sticky}"
                   :style="{width: state.tableWidth+'px'}"
               >
-                {{ currentlist.structure?.[bone]["descr"] }}
+                {{ currentlist.structure?.[bone]?.["descr"] }}
               </th>
             </tr>
           </thead>
@@ -126,6 +126,7 @@ export default defineComponent({
 
     function reloadAction() {
       state.selectedBones = []
+      currentlist.reset();
       return currentlist.fetch().catch((error) => {
         messageStore.addMessage("error", `${error.message}`, error.response?.url)
       }).then((resp) => {
@@ -163,12 +164,19 @@ export default defineComponent({
 
     onActivated(()=>{
       state.active = true
-
       if (dbStore.getActiveTab()["update"]){
         reloadAction()
         dbStore.getActiveTab()["update"]=false
       }
 
+    })
+
+
+    watch(()=>dbStore.getActiveTab()["update"],(newVal, oldVal)=>{
+      if(newVal){
+        reloadAction()
+        dbStore.getActiveTab()["update"]=false
+      }
     })
 
     onDeactivated(()=>{

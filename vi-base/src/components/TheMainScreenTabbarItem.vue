@@ -5,6 +5,8 @@
             @sl-close="onTabClose"
             :data-id="position"
             @auxclick ="clickEvent"
+            @click="forceUpdate"
+            :active="active"
     >
         <router-link class="link-wrap" :to="to" :title="name">
           <sl-avatar label="Rounded avatar">
@@ -60,6 +62,10 @@ export default defineComponent({
         mode:{
           type:String,
           default:"view"
+        },
+        active:{
+          type:Boolean,
+          default:false
         }
     },
     components: {},
@@ -89,11 +95,16 @@ export default defineComponent({
           onTabClose();
           return false;
         }
+        function forceUpdate(){
+          dbStore.state['handlers.active'] = props.position
+        }
+
         return {
             state,
             onIconError,
             onTabClose,
             clickEvent,
+            forceUpdate
         }
     }
 })
