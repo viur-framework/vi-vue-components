@@ -1,5 +1,5 @@
 <template>
-  <sl-button variant="success" size="small" @click="save" :loading="state.loading" title="$t(name)">
+  <sl-button variant="success" size="small" @click="save" :loading="state.loading" title="$t(name)" :outline="name==='actions.save_next'">
     <sl-icon slot="prefix" :name="icon"></sl-icon>
     {{ $t(name) }}
   </sl-button>
@@ -90,12 +90,18 @@ export default defineComponent({
             handlerState.errors = responsedata["errors"];
             state.loading=false
           } else {
-            messageStore.addMessage("success", `Add`, "Added edited successfully");
+            messageStore.addMessage("success", `Add`, "Entry added successfully");
             state.loading=false
             dbStore.markHandlersToUpdate(handlerState.module,handlerState.group)
-            if (props.close) {
+            if (props.name !=="actions.save_next"){
               dbStore.removeOpened(route);
+              if (!props.close) {
+                let new_route = router.resolve(`/db/${handlerState.module}/edit/${responsedata['values']['key']}`)
+                new_route.query["_"] = new Date().getTime().toString()
+                dbStore.addOpened(new_route, handlerState.module)
+              }
             }
+
           }
         }
       }).catch((error)=>{

@@ -18,7 +18,7 @@
       {{ modulesStore.state.modules[module][`help_text_${action}`] }}
     </sl-details>
 
-    <div class="scroll-content">
+    <div class="scroll-content" v-if="!state.loading">
       <template v-for="(group,key) in state.formGroups">
         <sl-details :summary="group['name']" v-show="group['groupVisible']" open>
           <template v-for="bone in group['bones']">
@@ -155,7 +155,8 @@ export default defineComponent({
       group: props.group,
       skelkey: props.skelkey,
       skeltype: props.skeltype,
-      relation_opened: []
+      relation_opened: [],
+      loading: false
     })
     provide("state", state)
 
@@ -172,6 +173,7 @@ export default defineComponent({
     }
 
     function fetchData() {
+      state.loading=true
       let url = `/vi/${props.module}/${props.action === "clone" ? "edit" : props.action}`;
 
       if (props.group) url + `/${props.group}`
@@ -218,9 +220,12 @@ export default defineComponent({
         state.skel = data["values"]
         state.structure = structureToDict(data["structure"])
         state.errors = data["errors"]
+        state.loading=false
       })
 
     }
+    provide("fetchData",fetchData)
+
 
     function getWidget(boneName: string) {
       let widget = "base_item"
@@ -287,6 +292,7 @@ export default defineComponent({
     onBeforeMount(() => {
       fetchData()
     })
+
     return {
       state,
       values,
@@ -299,7 +305,8 @@ export default defineComponent({
       relationUpdateSelection,
       relationApplySelection,
       relationRemoveHandler,
-      getBoneWidget
+      getBoneWidget,
+      fetchData
     }
   }
 })
