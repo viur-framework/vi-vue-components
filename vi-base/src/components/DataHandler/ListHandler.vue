@@ -173,7 +173,8 @@ export default defineComponent({
 
 
     watch(()=>dbStore.getActiveTab()["update"],(newVal, oldVal)=>{
-      if(newVal){
+      const currentUpdate = dbStore.getActiveTab()
+      if(currentlist.state.module===currentUpdate['module'] && newVal){
         reloadAction()
         dbStore.getActiveTab()["update"]=false
       }
