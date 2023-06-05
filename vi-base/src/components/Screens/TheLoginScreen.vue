@@ -28,10 +28,10 @@
         <sl-tab-panel name="userpassword">
           <div v-show="userStore.state['user.loggedin']==='no'">
 
-            <sl-input type="text" name="name" v-model="state.name" placeholder="username" clearable
+            <sl-input type="text" name="name" v-model="state.name" placeholder="E-Mail" clearable
                       @sl-clear="state.name=''"></sl-input>
             <sl-input @keydown.enter="userLogin" type="password" name="password" v-model="state.password"
-                      placeholder="password" @sl-clear="state.password=''" toggle-password></sl-input>
+                      placeholder="Passwort" @sl-clear="state.password=''" toggle-password></sl-input>
             <sl-button @click="userLogin" variant="primary"
                        v-if="['no', 'loading', 'error'].includes(userStore.state['user.loggedin'])"
                        :disabled="!state.userDataFilled"
