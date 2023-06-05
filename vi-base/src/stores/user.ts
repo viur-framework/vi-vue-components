@@ -159,8 +159,7 @@ export const useUserStore = defineStore("user", () => {
           }
         }
       ).then(async (respLogin: Response) => {
-        const logindata = await respLogin.json()
-        if (logindata === "OKAY") {
+        if (respLogin.statusText === "OK") {
           Request.get("/vi/user/view/self").then(
             async (resp: Response) => {
               let data = await resp.json()
