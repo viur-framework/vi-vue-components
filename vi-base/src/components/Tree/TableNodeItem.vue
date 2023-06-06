@@ -15,21 +15,25 @@
               'active':isactive(idx)
       }"
     >
-      <td class="dragger" v-if="treeState.dragging"
-                @mouseup="tree.mouseUpHandle($event, idx)"
-                @mousedown="tree.mouseDownHandle($event, idx)">
-                <sl-icon name="menu"></sl-icon>
-      </td>
 
-      <td class="chevron"
-          @click="clickToExpand(idx)">
+      <td class="expand-cell" @click="clickToExpand(idx)">
 
-          <sl-icon name="play"  :style="{marginLeft:((path.concat([idx]).length-2)*10)+'px'}"
+        <div class="chevron" :style="{marginLeft:((path.concat([idx]).length-2))+'em'}">
+          <sl-icon name="play"
             :class="{disabled:child['_disabled'], expanded:child['_expanded']}"
-        ></sl-icon>
+          ></sl-icon>
+        </div>
 
         <div class="loading" v-if="child['_status']==='loading'">
           <sl-spinner></sl-spinner>
+        </div>
+      </td>
+
+      <td class="drag-cell" v-if="treeState.dragging"
+                @mouseup="tree.mouseUpHandle($event, idx)"
+                @mousedown="tree.mouseDownHandle($event, idx)">
+        <div class="dragger">
+          <sl-icon name="menu"></sl-icon>
         </div>
       </td>
 
@@ -163,7 +167,6 @@ export default defineComponent({
   border-top: 4px solid var(--sl-color-neutral-400) !important;
 }
 
-
 tr{
   cursor: pointer;
   transition: all ease .3s;
@@ -180,6 +183,32 @@ tr{
     }
   }
 
+  &.selected{
+    background-color: var(--sl-color-primary-50);
+
+    td{
+      font-weight: 700;
+    }
+  }
+
+  &:not([data-layer="1"]){
+    .chevron{
+      position: relative;
+
+      &:before{
+        content: '';
+        display: inline-block;
+        position: absolute;
+        width: .3em;
+        height: .5em;
+        top: 0;
+        left: -.35em;
+        border-bottom: 1px solid var(--sl-color-neutral-600);
+        border-left: 1px solid var(--sl-color-neutral-600);
+      }
+    }
+  }
+
   &:nth-child(even){
     background-color: var(--sl-color-gray-100);
   }
@@ -189,24 +218,28 @@ tr{
   }
 }
 
-tr.selected{
-  background-color: var(--sl-color-primary-50);
 
-  td{
-    font-weight: 700;
-  }
-}
-
-
-
-
-.dragger{
-  padding-right: var(--sl-spacing-x-small);
-  height: 100%;
+.drag-cell{
+  padding: .4em .3em;
   cursor: move;
   opacity: .2;
   transition: opacity ease .3s;
   color: var(--vi-foreground-color);
+  border-right: none;
+  position: relative;
+
+  &:hover{
+    opacity: 1;
+  }
+}
+
+.dragger{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 1em;
+  height: 1em;
+  margin-right: var(--sl-spacing-x-small);
 
   sl-icon{
     font-size: .7em;
@@ -237,6 +270,11 @@ tr.selected{
   justify-content: center;
   align-items: center;
   background-color: rgba(255, 255, 255, 0.6);
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 
 .item {
@@ -252,22 +290,30 @@ tr.selected{
   color: var(--vi-foreground-color);
 }
 
+.expand-cell{
+  border-right: none;
+  padding: .4em .3em;
+}
+
 .chevron{
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 1em;
   height: 1em;
   margin-right: var(--sl-spacing-x-small);
 
   sl-icon{
-	font-size: .4em;
-  color: var(--vi-foreground-color);
+    font-size: .4em;
+    color: var(--vi-foreground-color);
 
-	&.expanded{
-	  transform: rotate(90deg);
-	}
+    &.expanded{
+      transform: rotate(90deg);
+    }
 
-	&.disabled{
-	  opacity: .4;
-	}
+    &.disabled{
+      opacity: .4;
+    }
   }
 }
 

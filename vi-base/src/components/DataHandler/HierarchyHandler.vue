@@ -10,9 +10,10 @@
       <table>
         <thead>
           <tr>
-            <th></th>
-            <th></th>
-            <th v-for="(name) in state.selectedBones"
+            <th style="width: 30px" class="open-column"></th>
+            <th style="width: 30px" class="drag-column"></th>
+            <th style="width: 150px"
+                v-for="(bone,name) in state.structure"
                 :class="{'stick-header':state.sticky}"
             >
               {{ state.structure?.[name]["descr"] }}{{ name }}
@@ -206,6 +207,7 @@ export default defineComponent({
 
 .table-wrapper{
   overflow:scroll;
+  flex: 1;
 }
 
 table{
@@ -351,6 +353,26 @@ sl-table {
     border: none;
     border-radius: 0;
   }
+}
+
+.drag-column{
+  resize: none;
+  border-right: none;
+
+  &:after{
+    content: none;
+  }
+
+}
+
+.open-column{
+  resize: none;
+  border-right: none;
+
+  &:after{
+    content: none;
+  }
+
 }
 
 </style>
