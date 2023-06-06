@@ -40,9 +40,13 @@ export default defineComponent({
 
     function openSelectDialog() {
       let store = dbStore.getListStoreByRoute(route);
+      console.log(handlerState)
+      if (store===undefined){
+        state.structure = handlerState.structure
+      }else{
+        state.structure = store.structure;
+      }
       const dialog = document.getElementById("dialog-selectfields");
-      console.log(store)
-      state.structure = store.structure;
       dialog.show();
     }
 

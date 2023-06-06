@@ -33,7 +33,7 @@
         </div>
       </td>
 
-      <template v-for="(name) in Object.keys(child)">
+      <template v-for="(name) in treeState.selectedBones">
         <td @click="selectChild(idx)" v-if="!name?.startsWith('_')">{{ getBoneViewer(child,name) }}</td>
       </template>
     </tr>
@@ -57,7 +57,7 @@ export default defineComponent({
       type: Array
     }
   },
-
+  emit:['loaded'],
   setup(props, context) {
     const treeState = inject("state")
     const state = reactive({
@@ -100,6 +100,7 @@ export default defineComponent({
           state.currentEntry['_dragging'] = false
           state.currentEntry['_isover'] = false
           state.currentEntry['_drop'] = null
+          context.emit("loaded")
         })
       }
     })

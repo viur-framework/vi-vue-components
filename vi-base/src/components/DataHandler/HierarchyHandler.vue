@@ -12,15 +12,15 @@
           <tr>
             <th></th>
             <th></th>
-            <th v-for="(bone,name) in state.structure"
+            <th v-for="(name) in state.selectedBones"
                 :class="{'stick-header':state.sticky}"
             >
-              {{ state.structure?.[name]["descr"] }}
+              {{ state.structure?.[name]["descr"] }}{{ name }}
             </th>
           </tr>
         </thead>
         <tbody>
-          <table-node-item :module="module" :path="state.currentRootNode?[0]:[]"></table-node-item>
+          <table-node-item :module="module" :path="state.currentRootNode?[0]:[]" @loaded="setSelectedBones"></table-node-item>
         </tbody>
       </table>
     </div>
@@ -168,12 +168,23 @@ export default defineComponent({
       fetchRoots().then(()=>{
         state.tree = [state.currentRootNode]
         state.selectedPath = [0]
+
       })
     })
 
     watch(() => state.selectedEntries, (newVal, oldVal) => {
       state.currentSelection = [state.currentEntry]
     })
+
+    function setSelectedBones(){
+      let bones = []
+      for(const [k,v] of Object.entries(state.structure)){
+        if(v["visible"]) bones.push(k)
+      }
+
+      console.log(bones)
+      state.selectedBones = bones
+    }
 
     function changerootNode(key: string) {
       state.currentRootNode = state.currentRootNodes.filter(i=>i["key"]===key)[0]
@@ -184,7 +195,8 @@ export default defineComponent({
     return {
       state,
       entrySelected,
-      modulesStore
+      modulesStore,
+      setSelectedBones
     }
   }
 })
