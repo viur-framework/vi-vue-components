@@ -86,7 +86,7 @@ export default defineComponent({
 
             return mods
         }),
-        values:props.value,
+        values:props.value || [],
         filter:""
 
 
