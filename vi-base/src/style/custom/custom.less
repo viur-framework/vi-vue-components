@@ -139,6 +139,31 @@ sl-button{
       }
     }
   }
+
+  sl-spinner{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: var(--sl-border-radius-medium);
+    overflow: hidden;
+
+    &:before{
+      content:'';
+      display: inline-block;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      opacity: .85;
+      background-color: var(--sl-color-neutral-200);
+    }
+  }
 }
 
 

@@ -1,11 +1,13 @@
 <template>
-    <sl-input clearable @sl-input="state.filter = $event.target.value">
+    <sl-input class="search" clearable @sl-input="state.filter = $event.target.value">
       <sl-icon name="funnel" slot="suffix"></sl-icon>
     </sl-input>
 
     <template v-for="(mod,modname) in state.moduleActions['flags']">
       <sl-button-group v-if="modname.includes(state.filter)">
-        <span>{{modname}}</span>
+        <div class="access-name">
+          {{modname}}
+        </div>
         <sl-button v-for="right in mod"
                   :title="right['name']"
                   :disabled="boneState.readonly"
@@ -19,7 +21,9 @@
 
     <template v-for="(mod,modname) in state.moduleActions['modules']">
       <sl-button-group v-if="modname.includes(state.filter)">
-        <span>{{ dbStore.getConf(modname)?.name }}</span>
+        <div class="access-name">
+          {{ dbStore.getConf(modname)?.name }}
+        </div>
         <sl-button v-for="right in mod"
                   :title="right['name']"
                   :disabled="boneState.readonly"
@@ -116,7 +120,51 @@ export default defineComponent({
 </script>
 
 <style scoped lang="less">
-    sl-button-group{
-      display: block;
+
+  .search{
+    &::part(base){
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
     }
+  }
+
+  sl-button-group{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    width: 100%;
+    margin-top: var(--sl-spacing-x-small);
+
+    &::part(base){
+      width: 100%;
+    }
+
+    sl-button{
+      sl-icon{
+        color: var(--sl-color-neutral-500);
+      }
+
+      &:hover{
+        sl-icon{
+          color: var(--sl-color-neutral-700);
+        }
+      }
+
+      &[variant="success"]{
+        sl-icon{
+          color: #fff;
+        }
+      }
+    }
+  }
+
+ .access-name{
+   display: flex;
+   align-items: center;
+   padding: 0 var(--sl-spacing-small);
+   flex: 1;
+   border: 1px solid var(--sl-color-neutral-500);
+   border-top-left-radius: var(--sl-border-radius-medium);
+   border-bottom-left-radius: var(--sl-border-radius-medium);
+ }
 </style>
