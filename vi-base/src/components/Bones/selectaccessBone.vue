@@ -1,22 +1,42 @@
 <template>
-    ACCESS {{ state.moduleActions }}
-    <sl-button-group v-for="mod in state.moduleActions['modules']">
-      <sl-button v-for="right in mod" :title="right['name']">
-        <sl-icon :name="right['icon']" slot="prefix"></sl-icon>
-      </sl-button>
-    </sl-button-group>
+    <sl-input clearable @sl-input="state.filter = $event.target.value">
+      <sl-icon name="funnel" slot="suffix"></sl-icon>
+    </sl-input>
 
+    <template v-for="(mod,modname) in state.moduleActions['flags']">
+      <sl-button-group v-if="modname.includes(state.filter)">
+        <span>{{modname}}</span>
+        <sl-button v-for="right in mod"
+                  :title="right['name']"
+                  :disabled="boneState.readonly"
+                  @click="toggleAccessRight(right['key'])"
+                  :variant="state.values.includes(right['key'])?'success':'default'"
+                  >
+          <sl-icon :name="right['icon']" slot="prefix"></sl-icon>
+        </sl-button>
+      </sl-button-group>
+    </template>
 
-    <sl-select :disabled="boneState.readonly" :value="value?.toString()" @sl-change="changeEvent" :multiple="boneState['bonestructure']['multiple']">
-      <sl-option :value="value[0]" v-for="value in boneState['bonestructure']['values']">
-          {{ value[1] }}
-      </sl-option>
-    </sl-select>
+    <template v-for="(mod,modname) in state.moduleActions['modules']">
+      <sl-button-group v-if="modname.includes(state.filter)">
+        <span>{{ dbStore.getConf(modname)?.name }}</span>
+        <sl-button v-for="right in mod"
+                  :title="right['name']"
+                  :disabled="boneState.readonly"
+                  @click="toggleAccessRight(right['key'])"
+                  :variant="state.values.includes(right['key'])?'success':'default'"
+                  >
+          <sl-icon :name="right['icon']" slot="prefix"></sl-icon>
+        </sl-button>
+      </sl-button-group>
+    </template>
 </template>
 
 <script lang="ts">
 //@ts-nocheck
 import {reactive, defineComponent, onMounted, inject,computed} from 'vue'
+import {useDBStore} from "../../stores/db";
+
 
 export default defineComponent({
     props:{
@@ -29,6 +49,7 @@ export default defineComponent({
     emits:["change"],
     setup(props, context) {
       const boneState = inject("boneState")
+      const dbStore = useDBStore();
         const state = reactive({
           moduleActions:computed(()=>{
             const actionmap = {"add":2, "view":0,"edit":1,"delete":3,"manage":4}
@@ -47,39 +68,48 @@ export default defineComponent({
                 icon = "plus"
               }
 
-              if (parts[0].startsWith("_")) continue
+              //if (parts[0].startsWith("_")) continue
 
-              let element = {"key":k,"icon":icon,"name":name}
+              let element = {"key":k,"icon":icon,"name":name, "module":parts[0]}
               if (Object.keys(mods['modules']).includes(parts[0])){
                 mods['modules'][parts[0]] = {...mods['modules'][parts[0]], ...{[actionmap[name]]:element}}
               }else{
                 if(!actionmap[name]){ //flags
-                  mods['flags'][parts[0]] = {[actionmap[name]]:element}
+                  element['icon'] = "check"
+                  mods['flags'][parts[0]] = {[k]:element}
                 }else{
                   mods['modules'][parts[0]] = {[actionmap[name]]:element}
                 }
-
-
               }
 
             }
 
             return mods
-        })
-        })
+        }),
+        values:props.value,
+        filter:""
 
-        function changeEvent(event){
-            context.emit("change",props.name,event.target.value,props.lang,props.index)
-        }
+
+        })
 
         onMounted(()=>{
             context.emit("change",props.name,props.value,props.lang,props.index) //init
         })
 
+        function toggleAccessRight(key){
+          if (state.values.includes(key)){
+            state.values.splice(state.values.indexOf(key),1)
+          }else{
+            state.values.push(key)
+          }
+          context.emit("change",props.name,state.values,props.lang,props.index)
+        }
+
         return {
             state,
             boneState,
-            changeEvent
+            toggleAccessRight,
+            dbStore
         }
     }
 })
