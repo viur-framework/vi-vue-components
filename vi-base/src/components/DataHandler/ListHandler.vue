@@ -23,6 +23,7 @@
               <tr v-for="(skel,idx) in currentlist.state.skellist"
                   :class="{'selected':state.selectedRows.includes(idx)
                           }"
+                  @dblclick="openEditor"
                   @click.exact="entrySelected(idx)"
                   @click.ctrl="entrySelected(idx,'append')"
                   @click.shift="entrySelected(idx,'range')"
@@ -214,7 +215,7 @@ export default defineComponent({
     }
 
     function openEditor(e: Event) {
-      const url = `/db/${state.module}/edit/${e.detail.cell.getRow().getData().key}?_=${new Date().getTime()}`;
+      const url = `/db/${state.module}/edit/${state.currentSelection[0]['key']}?_=${new Date().getTime()}`;
       let route = router.resolve(unref(url))
       dbStore.addOpened(route, state.module, state.view);
       router.push(url);
