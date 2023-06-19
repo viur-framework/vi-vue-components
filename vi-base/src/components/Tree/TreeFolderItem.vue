@@ -66,7 +66,7 @@ export default defineComponent({
   },
 
   setup(props, context) {
-    const treeState = inject("state")
+    const treeState = inject("handlerState")
     const state = reactive({
       currentEntry: {},
     })

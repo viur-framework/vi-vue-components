@@ -9,7 +9,12 @@
     <div class="content" slot="end">
       <the-main-screen-tabbar></the-main-screen-tabbar>
       <router-view v-slot="{ Component }">
-        <view-wrapper :component="Component"></view-wrapper>
+        <div class="wrap-for-popup">
+          <template v-for="tab in dbStore.state['handlers.opened']">
+            <div :id="'view_dialogs_'+tab?.['id']" v-show="dbStore.getActiveTab()['id'] === tab?.['id']"> </div>
+          </template>
+          <view-wrapper :component="Component"></view-wrapper>
+        </div>
       </router-view>
     </div>
   </sl-split-panel>
@@ -86,8 +91,10 @@ export default defineComponent({
       initTopBarActions();
     });
 
+
     return {
       route,
+      dbStore
     };
   },
 });
@@ -145,4 +152,13 @@ export default defineComponent({
   max-height: 100%;
   height: 100%;
 }
+
+.wrap-for-popup{
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 1px;
+  position: relative;
+}
+
 </style>

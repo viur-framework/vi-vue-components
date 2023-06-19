@@ -149,7 +149,7 @@ export const useDBStore = defineStore("db", () => {
         "topbar.actions": [],
 
         //dynamic child buckets
-        "handlers.opened": [{"to":{'name': 'home'},"url":"/","name":"Dashboard","icon":"dashboard","closeable":false}], // {'url','name','library'}
+        "handlers.opened": [{"to":{'name': 'home',"fullPath":"/"},"url":"/","name":"Dashboard","icon":"dashboard","closeable":false, "id":0}], // {'url','name','library'}
         "handlers.opened.max":3,
         "handlers.opened.max.modules":{},
         "handlers.active":0, //current active index
@@ -231,15 +231,19 @@ export const useDBStore = defineStore("db", () => {
         if( !state["topbar.actions"].includes(action)){
             state["topbar.actions"].push(action)
         }
-
     }
 
     function addOpened(route, module: string, view = null, name = "", icon = "", library = "") {
         let currentConf = getConf(module, view)
         let currentModuleConf = getConf(module)
         let moduleIconData = currentConf["icon"].split("___")
-        let url = route.fullPath
         let mode = "view"
+
+        if (!Object.keys(route.query).includes("_")){
+          route.query["_"] = new Date().getTime()
+        }
+
+        let url = route.fullPath
 
         if (url){
           if (url.includes("/add")){
@@ -257,9 +261,9 @@ export const useDBStore = defineStore("db", () => {
                 name = `${currentModuleConf["name"]} / ${currentConf["name"]}`
             }
         }
-
         let entry = {
             "to": route,
+            "id": route.query["_"],
             "url": url,
             "icon": icon ? icon : moduleIconData[1],
             "library": library ? library : moduleIconData[2],
@@ -317,7 +321,7 @@ export const useDBStore = defineStore("db", () => {
                 findStorename +=`___${conf['view_number']}`
             }
             findStorename+= `___${route.query["_"]}`
-            console.log(findStorename)
+
             if (Object.keys(state["stores.map"]).includes(findStorename)){
                 destroyStore(state["stores.map"][findStorename])
             }
@@ -326,6 +330,28 @@ export const useDBStore = defineStore("db", () => {
 
     function getActiveTab(){
       return state["handlers.opened"][state["handlers.active"]]
+    }
+
+    function getTabByRoute(route){
+      let handlers = state["handlers.opened"].filter((e)=>{
+        if (e["to"]?.["fullPath"] === route?.["fullPath"]){
+          return true
+        }
+        return false
+      })
+      return handlers.length>0?handlers[0]:null
+    }
+
+    function getTab(module, group=null){
+      let handlers = state["handlers.opened"].filter((e)=>{
+        if (e["module"]===module && !group){
+            return true
+        }else if(e["module"]===module && e["group"]===group){
+            return true
+        }
+        return false
+      })
+      return handlers.length>0?handlers[0]:null
     }
 
     function updateActiveTabName(detail){
@@ -360,6 +386,8 @@ export const useDBStore = defineStore("db", () => {
         addOpened,
         removeOpened,
         getActiveTab,
+        getTab,
+        getTabByRoute,
         updateActiveTabName,
         markHandlersToUpdate
     }

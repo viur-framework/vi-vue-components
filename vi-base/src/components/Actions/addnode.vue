@@ -21,7 +21,7 @@ export default defineComponent({
     props: {},
     components: {},
     setup(props, context) {
-        const handlerState: any = inject("state")
+        const handlerState: any = inject("handlerState")
         const dbStore = useDBStore();
         const userStore = useUserStore();
         const route = useRoute();
@@ -30,11 +30,11 @@ export default defineComponent({
             url: computed(() => {
               if(handlerState && handlerState["currentSelection"] && handlerState["currentSelection"][0])
               {
-                return `/db/${handlerState.module}/add/node/${handlerState["currentSelection"][0]["key"]}?_=${new Date().getTime()}`
+                return `/db/${handlerState.module}/add/node/${handlerState["currentSelection"][0]["key"]}}`
               }
               if(handlerState && handlerState["currentRootNode"])
               {
-                return `/db/${handlerState.module}/add/node/${handlerState["currentRootNode"]["key"]}?_=${new Date().getTime()}`
+                return `/db/${handlerState.module}/add/node/${handlerState["currentRootNode"]["key"]}}`
               }
               return ""
 

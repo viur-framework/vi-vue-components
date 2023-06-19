@@ -16,7 +16,7 @@
                 v-for="(name) in state.selectedBones"
                 :class="{'stick-header':state.sticky}"
             >
-              {{ state.structure?.[name]["descr"] }}{{ name }}
+              {{ state.structure?.[name]["descr"] }}
             </th>
           </tr>
         </thead>
@@ -120,7 +120,7 @@ export default defineComponent({
       }),
       currentSelection:[],
     })
-    provide("state", state) // expose to components
+    provide("handlerState", state) // expose to components
     const tree = useTree(props.module,state,state)
 
     function reloadAction() {

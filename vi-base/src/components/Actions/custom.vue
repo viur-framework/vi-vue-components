@@ -43,7 +43,7 @@ export default defineComponent({
   setup(props, context) {
     const route = useRouter()
     const router = useRouter()
-    const handlerState: any = inject("state")
+    const handlerState: any = inject("handlerState")
     const dbStore = useDBStore();
     const userStore = useUserStore()
     const tableReload: any = inject("reloadAction")
@@ -144,7 +144,6 @@ export default defineComponent({
       if (selection === null) {
         let urlparts = state.info?.['url'].split("/")
         let new_route = router.resolve("/"+state.info?.['url'])
-        new_route.query["_"] = new Date().getTime().toString()
 
         console.log(new_route)
         console.log(urlparts)

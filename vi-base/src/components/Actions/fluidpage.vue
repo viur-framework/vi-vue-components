@@ -20,7 +20,7 @@ export default defineComponent({
   props: {},
   components: {},
   setup(props, context) {
-    const handlerState: any = inject("state")
+    const handlerState: any = inject("handlerState")
     const dbStore = useDBStore();
     const userStore = useUserStore();
     const route = useRoute()
@@ -33,7 +33,7 @@ export default defineComponent({
 
         let conf = dbStore.getConfByRoute(route);
         let module = conf["handler"].split(".").at(-1)
-        return `/db/${module}/fluidpage/${route.params['module']}/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
+        return `/db/${module}/fluidpage/${route.params['module']}/${handlerState.currentSelection[0]["key"]}`
       }),
       canEdit: computed(() => {
        if(userStore.state.user.access.indexOf("root") !== -1 )

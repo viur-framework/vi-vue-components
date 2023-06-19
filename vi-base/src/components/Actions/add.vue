@@ -30,7 +30,7 @@ export default defineComponent({
     },
     components: {},
     setup(props, context) {
-        const handlerState: any = inject("state")
+        const handlerState: any = inject("handlerState")
         const dbStore = useDBStore();
         const userStore = useUserStore();
 
@@ -42,7 +42,7 @@ export default defineComponent({
                   url +=`/db/${handlerState.group}`
                 }
 
-                url +="?"+new URLSearchParams({...props.params, "_":new Date().getTime()}).toString()
+                url +="?"+new URLSearchParams(props.params).toString()
 
                 return url
 

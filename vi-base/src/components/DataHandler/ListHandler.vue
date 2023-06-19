@@ -73,7 +73,7 @@ export default defineComponent({
     group: String,
     view: null,
     rowselect:{
-      default:true
+      default:2 //0 == disabled, 1==select One, 2: select multiple
     }
   },
   emits:['currentSelection'],
@@ -109,12 +109,16 @@ export default defineComponent({
       sticky:false,
       tableWidth:computed(()=>{
         if(state.selectedBones.length>0){
+          let val = Math.round(parseInt(datatable.value.clientWidth) / state.selectedBones.length)
+          if (val<150){
+            return "150"
+          }
           return Math.round(parseInt(datatable.value.clientWidth) / state.selectedBones.length)
         }
-        return "150px"
+        return "150"
       })
     })
-    provide("state", state)
+    provide("handlerState", state)
     const currentlist = ListRequest(state.storeName, {
       module: props.module,
       params: {},
@@ -187,13 +191,13 @@ export default defineComponent({
 
     function entrySelected(idx, action='replace') {
 
-      if(action === "append"){
+      if(action === "append" && props.rowselect>1){
         if(state.selectedRows.includes(idx)){
           state.selectedRows.splice(state.selectedRows.indexOf(idx),1)
         }else{
           state.selectedRows.push(idx)
         }
-      }else if (action === "range"){
+      }else if (action === "range" && props.rowselect>1){
         let lastEntry = state.selectedRows[state.selectedRows.length -1]
         let end = idx
         let start = lastEntry
@@ -203,7 +207,7 @@ export default defineComponent({
         }
         state.selectedRows = state.selectedRows.concat(new Array(end+1 - start).fill().map((d, i) => i + start))
 
-      }else{
+      }else if( props.rowselect>0 ){
         state.selectedRows = [idx]
       }
 
@@ -215,7 +219,7 @@ export default defineComponent({
     }
 
     function openEditor(e: Event) {
-      const url = `/db/${state.module}/edit/${state.currentSelection[0]['key']}?_=${new Date().getTime()}`;
+      const url = `/db/${state.module}/edit/${state.currentSelection[0]['key']}`;
       let route = router.resolve(unref(url))
       dbStore.addOpened(route, state.module, state.view);
       router.push(url);

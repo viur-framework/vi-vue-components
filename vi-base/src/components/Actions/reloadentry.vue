@@ -31,7 +31,7 @@ export default defineComponent({
   },
   components: {},
   setup(props, context) {
-    const handlerState: any = inject("state");
+    const handlerState: any = inject("handlerState");
     const fetchData:any = inject("fetchData")
     const router = useRouter();
     const route = useRoute();
