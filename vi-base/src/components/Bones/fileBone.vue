@@ -59,6 +59,14 @@
     </sl-button>
   </div>
 
+  <Wrapper_nested
+        :value="value"
+        :name="name"
+        :index="index"
+  >
+
+  </Wrapper_nested>
+
   <relational-selector
       :open="state.openedSelection"
       :name="boneState.bonestructure['descr']"
@@ -77,6 +85,7 @@ import { reactive, defineComponent, onMounted, inject, ref, computed, unref } fr
 import { useRouter } from "vue-router";
 import { Request } from "@viur/viur-vue-utils";
 import relationalSelector from './components/relationalSelector.vue'
+import Wrapper_nested from '@viur/viur-vue-utils/bones/edit/wrapper_nested.vue'
 import { useDBStore } from '../../stores/db'
 
 export default defineComponent({
@@ -86,7 +95,7 @@ export default defineComponent({
     index: Number,
     lang: String,
   },
-  components: {relationalSelector},
+  components: {relationalSelector,Wrapper_nested},
   emits: ["change"],
   setup(props, context) {
     const boneState = inject("boneState");

@@ -262,7 +262,6 @@ export default defineComponent({
       let route = router.resolve(unref(url))
 
       dbStore.addOpened(route, state.module, state.view);
-      router.push(url);
     }
 
 

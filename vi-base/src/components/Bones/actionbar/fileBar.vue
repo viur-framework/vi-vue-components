@@ -23,9 +23,7 @@
       >
           <sl-icon name="menu"></sl-icon>
       </sl-button>
-      <sl-button @click="editSelection" variant="info" outline v-if="value">
-        <sl-icon name="pencil"></sl-icon>
-      </sl-button>
+
 
       <sl-button variant="success"
                  v-if="boneState.multiple && !readonly"

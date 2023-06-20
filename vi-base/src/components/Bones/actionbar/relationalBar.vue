@@ -86,13 +86,10 @@ export default defineComponent({
           })
         })
       }
-      function clearSelection(lang){
-
-      }
       function openSelector(lang){
         state.openedSelection=true
-        //addMultipleEntry(lang, {'dest':state.skels?.[$event.detail.item.value],'rel':null})
       }
+
       function relationCloseAction(selection){
         state.openedSelection=false
         if(selection){
