@@ -224,8 +224,8 @@ table{
         padding: .4em .6em;
         overflow: hidden;
         word-wrap: break-word;
-        border-right: 1px solid var(--sl-color-gray-300);
-        border-bottom: 1px solid var(--sl-color-gray-300);
+        border-right: 1px solid var(--sl-color-neutral-300);
+        border-bottom: 1px solid var(--sl-color-neutral-300);
 
         &:last-child{
           border-right: 0;
@@ -233,11 +233,11 @@ table{
       }
 
       &:nth-child(even){
-        background-color: var(--sl-color-gray-100);
+        background-color: var(--sl-color-neutral-100);
       }
 
       &:hover{
-        background-color: var(--sl-color-gray-200);
+        background-color: var(--sl-color-neutral-200);
       }
     }
 
@@ -258,7 +258,7 @@ table{
       overflow: hidden;
       background: linear-gradient( var(--vi-background-color) 0%, var(--vi-background-color) calc(100% - 2px), var(--sl-color-neutral-700) 100% );
       font-weight: 700;
-      border-right: 1px solid var(--sl-color-gray-300);
+      border-right: 1px solid var(--sl-color-neutral-300);
       text-overflow: ellipsis;
 
         &:last-child{

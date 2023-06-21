@@ -146,13 +146,14 @@ tr {
   position: relative;
   cursor: pointer;
   transition: background-color ease .3s;
+    border-bottom: solid 1px  var(--sl-color-neutral-300) !important;
 
   &:nth-child(odd) {
-    background-color: rgba(0, 0, 0, .1)
+    background-color: var(--sl-color-neutral-100);
   }
 
   &:hover {
-    background-color: rgba(0, 0, 0, .15)
+    background-color: var(--sl-color-neutral-200);
   }
 
   &.isSelected {

@@ -214,6 +214,7 @@ export default defineComponent({
   justify-content: center;
   align-items: center;
   width: 1em;
+  min-width: 1em;
   height: 1em;
   margin-right: var(--sl-spacing-x-small);
 
