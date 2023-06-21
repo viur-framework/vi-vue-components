@@ -335,7 +335,7 @@ export default defineComponent({
 
 .top-headline {
   margin-right: auto;
-  color: var(--vi-foreground-color);
+  color: var(--sl-color-primary-500);
   font-weight: bold;
   white-space: nowrap;
   overflow: hidden;
@@ -378,6 +378,10 @@ sl-details {
     border-left: none;
     border-right: none;
     border-top: none;
+    border-bottom: solid 1px var(--sl-color-neutral-300);
+  }
+  &::part(summary){
+    font-weight: 700;
   }
 }
 

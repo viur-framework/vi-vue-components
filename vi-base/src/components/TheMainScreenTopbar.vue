@@ -20,6 +20,7 @@
         @click="state.sidebarOpen = !state.sidebarOpen"
         :label="state.name"
         :initials="state.nameInitials"
+        class="user"
       ></sl-avatar>
 
       <sl-drawer
@@ -241,6 +242,7 @@ sl-drawer {
   &::part(overlay) {
     background-color: var(--vi-background-color);
     opacity: 0.8;
+    cursor: pointer;
   }
 
   &::part(header) {
@@ -313,7 +315,7 @@ sl-drawer {
 
     &:hover {
       &::part(base) {
-        background-color: var(--sl-hover-color);
+        background-color: var(--sl-color-neutral-200);
       }
     }
   }
@@ -334,5 +336,9 @@ sl-drawer {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.user{
+  cursor: pointer;
 }
 </style>

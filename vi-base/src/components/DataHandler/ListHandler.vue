@@ -27,7 +27,11 @@
                   @click.ctrl="entrySelected(idx,'append')"
                   @click.shift="entrySelected(idx,'range')"
               >
-                <td v-for="(name) in state.selectedBones">{{ getBoneViewer(skel,name) }}</td>
+                <td v-for="(name) in state.selectedBones">
+                  <div class="ellipsis">
+                    {{ getBoneViewer(skel,name) }}
+                  </div>
+                </td>
               </tr>
           </tbody>
         </table>
@@ -281,6 +285,14 @@ export default defineComponent({
     height:50%
   }
 
+.ellipsis{
+  display: -webkit-box;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 table{
   width: 100%;
   table-layout: fixed;
@@ -294,8 +306,9 @@ table{
         padding: .4em .6em;
         overflow: hidden;
         word-wrap: break-word;
-        border-right: 1px solid var(--sl-color-gray-300);
-        border-bottom: 1px solid var(--sl-color-gray-300);
+        border-right: 1px solid var(--sl-color-neutral-300);
+        border-bottom: 1px solid var(--sl-color-neutral-300);
+
 
         &:last-child{
           border-right: 0;
@@ -303,16 +316,16 @@ table{
       }
 
       &:nth-child(even){
-        background-color: var(--sl-color-gray-100);
+        background-color: var(--sl-color-neutral-100);
       }
 
       &:hover{
-        background-color: var(--sl-color-gray-200);
+        background-color: var(--sl-color-neutral-200);
       }
     }
 
     tr.selected{
-      background-color: var(--sl-color-primary-50);
+      background-color: var(--sl-color-neutral-300);
 
       td{
         font-weight: 700;
@@ -328,7 +341,7 @@ table{
       overflow: hidden;
       background: linear-gradient( var(--vi-background-color) 0%, var(--vi-background-color) calc(100% - 2px), var(--sl-color-neutral-700) 100% );
       font-weight: 700;
-      border-right: 1px solid var(--sl-color-gray-300);
+      border-right: 1px solid var(--sl-color-neutral-300);
       text-overflow: ellipsis;
 
         &:last-child{
@@ -363,6 +376,7 @@ table{
 }
 
 .table-wrapper{
+  color: var(--vi-foreground-color);
   overflow:scroll;
   flex: 1;
 }

@@ -321,7 +321,7 @@ export default defineComponent({
   }
 
   &:hover {
-    background-color: var(--sl-hover-color);
+    background-color: var(--sl-color-neutral-200);
 
     .dropdown sl-icon-button{
       opacity: 1;

@@ -38,7 +38,11 @@
       </td>
 
       <template v-for="(name) in treeState.selectedBones">
-        <td @click="selectChild(idx)" v-if="!name?.startsWith('_')">{{ getBoneViewer(child,name) }}</td>
+        <td @click="selectChild(idx)" v-if="!name?.startsWith('_')">
+          <div class="ellipsis">
+            {{ getBoneViewer(child,name) }}
+          </div>
+        </td>
       </template>
     </tr>
     <table-node-item v-if="child['_expanded']" :module="module" :path="path.concat([idx])"></table-node-item>
@@ -167,6 +171,14 @@ export default defineComponent({
   border-top: 4px solid var(--sl-color-neutral-400) !important;
 }
 
+.ellipsis{
+  display: -webkit-box;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 tr{
   cursor: pointer;
   transition: all ease .3s;
@@ -175,8 +187,8 @@ tr{
     padding: .4em .6em;
     overflow: hidden;
     word-wrap: break-word;
-    border-right: 1px solid var(--sl-color-gray-300);
-    border-bottom: 1px solid var(--sl-color-gray-300);
+    border-right: 1px solid var(--sl-color-neutral-300);
+    border-bottom: 1px solid var(--sl-color-neutral-300);
 
     &:last-child{
       border-right: 0;
@@ -210,11 +222,11 @@ tr{
   }
 
   &:nth-child(even){
-    background-color: var(--sl-color-gray-100);
+    background-color: var(--sl-color-neutral-100);
   }
 
   &:hover{
-    background-color: var(--sl-color-gray-200);
+    background-color: var(--sl-color-neutral-200);
   }
 }
 

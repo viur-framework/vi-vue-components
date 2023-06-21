@@ -255,10 +255,10 @@ export default defineComponent({
 
 sl-breadcrumb{
   padding: 7px 10px;
-  border-bottom: 2px solid rgba(0, 0, 0, .4);
+  border-bottom: 2px solid var(--sl-color-neutral-300);
 
   .mq-max(@breakSmall,{
-	margin-bottom: 10px;
+	  margin-bottom: 10px;
   });
 }
 
@@ -266,7 +266,12 @@ sl-breadcrumb-item{
 
   &::part(base){
   	font-weight: 400;
-    color: var(--vi-foreground-color)
+    color: var(--vi-foreground-color);
+  }
+
+  &::part(label){
+  	font-weight: 400;
+    color: var(--vi-foreground-color);
   }
 
   &::part(separator){
@@ -290,7 +295,12 @@ sl-split-panel {
 
   &::part(divider){
     width: 2px;
-    background-color: var(--vi-divider-color);
+    transition: all ease .3s;
+    background-color: var(--sl-color-neutral-300);
+
+    &:hover{
+      background-color: var(--sl-color-neutral-400);
+    }
   }
 
   .mq-max(@breakSmall,{
@@ -306,6 +316,7 @@ sl-split-panel {
 
 .tree-wrapper {
   overflow-y: auto;
+  flex: 1;
 
   &::-webkit-scrollbar-track {
 	  background-color: transparent;
@@ -318,7 +329,7 @@ sl-split-panel {
   }
 
   &::-webkit-scrollbar-thumb {
-	  background-color: #afafaf;
+	  background-color: var(--sl-color-neutral-400);
 	  border-radius: 3px;
   }
 }
@@ -333,12 +344,14 @@ th {
   padding: 6px 8px;
   resize: horizontal;
   overflow: hidden;
-
+  border-bottom: 1px solid var(--sl-color-neutral-300);
+  position: relative;
 
   :deep(sl-icon) {
     height: .4em;
     padding-top: .5em;
-    color: var(--vi-foreground-color)
+    color: var(--sl-color-neutral-400);
+    transition: all ease .3s;
   }
 
   &.thimg {
@@ -356,7 +369,40 @@ th {
     overflow: hidden;
     text-overflow: ellipsis;
     width: 100%;
-    color: var(--vi-foreground-color)
+    color: var(--sl-color-neutral-400);
+  }
+
+  &::-webkit-resizer {
+    border-color: transparent;
+    display: block;
+  }
+
+  &:after {
+    content:"";
+    border-style: solid;
+    border-width: 0 0 10px 10px;
+    border-color: transparent transparent var(--sl-color-neutral-200) transparent;
+    z-index: 1;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+  }
+
+  &:hover {
+    border-bottom: 1px solid var(--sl-color-neutral-700);
+
+    :deep(sl-icon) {
+      color: var(--sl-color-neutral-700);
+    }
+
+    .th-inner {
+       color: var(--sl-color-neutral-700);
+    }
+
+    &:after {
+      border-color: transparent transparent var(--sl-color-neutral-700) transparent;
+    }
   }
 }
 
@@ -410,7 +456,7 @@ sl-format-date {
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: #afafaf;
+    background-color: var(--sl-color-neutral-400);
     border-radius: 3px;
   }
 }
@@ -477,7 +523,7 @@ sl-format-date {
 
     &:hover {
       &::-webkit-scrollbar-thumb {
-        background-color: #afafaf;
+        background-color: var(--sl-color-neutral-400);
       }
     }
   }
@@ -520,13 +566,13 @@ sl-format-date {
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: #afafaf;
+    background-color: var(--sl-color-neutral-400);
     border-radius: 3px;
   }
 }
 
 .alert{
-  margin: 10px 5px;
+  margin: 15px;
 
   &::part(icon){
     padding: 15px 0px 15px 15px;
