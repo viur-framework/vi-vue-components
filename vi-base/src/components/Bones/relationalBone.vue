@@ -1,7 +1,7 @@
 <template>
     <div class="record">
       <div class="single-entry">
-        <sl-input v-if="value" :disabled="boneState.readonly" :value="value?formatString(state.format,value):''"></sl-input>
+        <sl-input v-if="state.selection" :disabled="true" :value="value?formatString(state.format,state.selection):''"></sl-input>
         <sl-combobox v-else :disabled="boneState.readonly"
                      :source="getList" hoist
                      @sl-item-select="changeEvent">
@@ -26,10 +26,12 @@
         </sl-button>
       </div>
 
-      <Wrapper_nested
-        :value="value"
+      <Wrapper_nested v-if="boneState?.bonestructure['using']"
+        :value="value['rel']"
         :name="name"
         :index="index"
+        :disabled="boneState.bonestructure['readonly']"
+        @change="changeEventNested"
       >
 
       </Wrapper_nested>
@@ -49,7 +51,7 @@
 
 <script lang="ts">
 //@ts-nocheck
-import {reactive, defineComponent, onMounted, inject, computed, unref} from 'vue'
+import {reactive, defineComponent, onMounted, inject, computed, unref, watch} from 'vue'
 import { Request } from "@viur/viur-vue-utils"
 import Wrapper_nested from '@viur/viur-vue-utils/bones/edit/wrapper_nested.vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -79,7 +81,14 @@ export default defineComponent({
           }),
           openedSelection:false,
           moduleInfo:computed(()=>dbStore.getConf(boneState?.bonestructure['module'])),
-          selection:null
+          selection:null,
+          entry:computed(()=>{
+            if(typeof props.value !=="object"){
+              return {"dest":props.value, rel:null}
+            }
+            return props.value
+          }),
+          skellistdata:null
         })
 
         function getList(search:String){
@@ -92,6 +101,11 @@ export default defineComponent({
 
           return Request.get(`/json/${boneState.bonestructure["module"]}/list?${params}limit=99`).then(async(resp)=>{ //?viurTags$lk=${search.toLowerCase()
             const data = await resp.json()
+            state.skellistdata = {}
+            for(let e of data["skellist"]){
+              state.skellistdata[e['key']] = e
+            }
+
             return data["skellist"]?.map((d:any)=>{
               return {text: formatString(boneState.bonestructure["format"], {dest:d}),
                     value:d.key,
@@ -101,13 +115,21 @@ export default defineComponent({
           })
         }
 
+        function changeEventNested(val){
+          console.log(val)
+          state.selection["rel"][val.name] = val.value
+          context.emit("change",props.name,state.selection,props.lang,props.index)
+        }
+
         function changeEvent(event){
-          context.emit("change",props.name,event.detail.item.value,props.lang,props.index)
+          console.log(event)
+          state.selection = {"dest":state.skellistdata[event.detail.item.value]}
+          context.emit("change",props.name,state.selection,props.lang,props.index)
         }
 
         onMounted(()=>{
-            context.emit("change",props.name,props.value,props.lang,props.index) //init
-
+          state.selection=props.value
+          context.emit("change",props.name,props.value,props.lang,props.index) //init
         })
 
         function openRelationalSelection(){
@@ -117,8 +139,12 @@ export default defineComponent({
         function relationCloseAction(selection){
           state.openedSelection=false
           if(selection){
-            state.selection = selection
-            context.emit("change",props.name,selection,props.lang,props.index)
+            if(state.selection){
+              state.selection["dest"] = selection
+            }else{
+              state.selection = {"dest":selection}
+            }
+            context.emit("change",props.name,state.selection,props.lang,props.index)
           }
 
         }
@@ -137,6 +163,7 @@ export default defineComponent({
             dbStore,
             formatString,
             changeEvent,
+            changeEventNested,
             getList,
             openRelationalSelection,
             relationCloseAction,

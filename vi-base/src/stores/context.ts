@@ -14,7 +14,7 @@ export const useContextStore = defineStore("contextStore", () => {
       if(Object.keys(state.localContext).includes(handlerId)){
         state.localContext[handlerId][key] = value
       }else{
-        state.localContext[handlerId] = {key:value}
+        state.localContext[handlerId] = {[key]:value}
       }
 
     }else{
@@ -22,20 +22,30 @@ export const useContextStore = defineStore("contextStore", () => {
     }
   }
 
-  function getContext(handlerId){
+  function copyLocalContext(oldHandlerId, newHandlerId){
+    let old = getLocalContext(oldHandlerId)
+    state.localContext[newHandlerId] = old
+  }
+
+  function getLocalContext(handlerId){
     let context = {}
     if(Object.keys(state.localContext).includes(handlerId)){
       context = unref(state.localContext[handlerId])
     }
-    context = {...state.globalContext, ...context}
-
     return context
   }
+
+  function getContext(handlerId){
+    return {...unref(state.globalContext), ...getLocalContext(handlerId)}
+  }
+
 
 
   return {
     state,
     getContext,
-    setContext
+    setContext,
+    getLocalContext,
+    copyLocalContext
   }
 })

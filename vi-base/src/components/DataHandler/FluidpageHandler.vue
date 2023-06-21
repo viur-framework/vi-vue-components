@@ -198,16 +198,16 @@ export default defineComponent({
       currentlist.state.skellist[currentidx] = newEntry
 
       if (state.debounceSave) {
-            clearTimeout(state.debounceSave);
-        }
+        clearTimeout(state.debounceSave);
+      }
 
-        state.debounceSave = setTimeout(() => {
-            Request.edit(props.module,key,{dataObj:{
-              "width":width
-            }}).then((resp)=>{
-              messageStore.addMessage("success", `Edit`, "Entry saved successfully");
-            })
-        }, 500);
+      state.debounceSave = setTimeout(()=>{
+          Request.edit(props.module,key,{dataObj:{
+            "width":width
+          }}).then((resp)=>{
+            messageStore.addMessage("success", `Edit`, "Entry saved successfully");
+          })
+      }, 1000);
     }
     provide("updateWidth",updateWidth)
 

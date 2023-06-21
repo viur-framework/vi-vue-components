@@ -1,6 +1,7 @@
 import view_missing from "../views/view_missing.vue";
 import {createRouter, createWebHashHistory} from "vue-router";
 import {useUserStore} from "../stores/user";
+import { useContextStore } from "../stores/context";
 
 const routes = [
   {
@@ -89,6 +90,36 @@ const router = createRouter({
   routes
 })
 router.afterEach((to, from) => {
-  useUserStore().addAction();
+  //useUserStore().addAction();
 })
+
+router.beforeEach(( to, from, next )=>{
+  const contextStore = useContextStore()
+  let localContext = {}
+  let handlerId = to.query["_"]?.toString()
+  if (!handlerId) next()
+  if (Object.keys(contextStore.state.localContext).includes(handlerId)){
+    localContext = contextStore.state.localContext[handlerId]
+  }
+  let newQuery = {...to.query, ...contextStore.state.globalContext, ...localContext}
+
+  if(Object.keys(to.query).every((key) => (to.query[key] === newQuery[key] && to.query.hasOwnProperty(key) && newQuery.hasOwnProperty(key))) &&
+     Object.keys(newQuery).every((key) => (to.query[key] === newQuery[key] && to.query.hasOwnProperty(key) && newQuery.hasOwnProperty(key)))
+  ){
+    for(const [k,v] of Object.entries(to.query)){
+      if (k.startsWith("_")) continue
+      if(Object.keys(contextStore.state.localContext).includes(handlerId)){
+        contextStore.state.localContext[handlerId][k]=v
+      }else{
+        contextStore.state.localContext[handlerId] = {[k]:v}
+      }
+
+    }
+    next() // no change
+  }else{
+    to.query = newQuery
+    next(to)
+  }
+})
+
 export default router

@@ -2,9 +2,10 @@
 
 import {reactive, computed, Component, getCurrentInstance} from 'vue';
 import {defineStore, StoreDefinition} from "pinia";
-import {useRouter} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import {useViewStore} from "./views";
 import {useUserStore} from "./user";
+import { useContextStore } from './context';
 import {destroyStore} from "@viur/viur-vue-utils/utils/handlers";
 import hierarchyhandler from "../components/DataHandler/HierarchyHandler.vue";
 
@@ -132,6 +133,8 @@ function flattenTree(tree) {
 export const useDBStore = defineStore("db", () => {
     const viewStore = useViewStore()
     const router = useRouter()
+    const currentRoute = useRoute()
+    const contextStore = useContextStore()
     const state = reactive({
         //vi section
 
@@ -233,7 +236,7 @@ export const useDBStore = defineStore("db", () => {
         }
     }
 
-    function addOpened(route, module: string, view = null, name = "", icon = "", library = "") {
+    function addOpened(route, module: string, view = null, name = "", icon = "", library = "", contextInheritance=true) {
         let currentConf = getConf(module, view)
         let currentModuleConf = getConf(module)
         let moduleIconData = currentConf["icon"].split("___")
@@ -242,6 +245,10 @@ export const useDBStore = defineStore("db", () => {
         if (!Object.keys(route.query).includes("_")){
           route.query["_"] = new Date().getTime()
         }
+        if(contextInheritance){
+          contextStore.copyLocalContext( currentRoute.query["_"], route.query["_"] )
+        }
+
 
         let url = route.fullPath
 

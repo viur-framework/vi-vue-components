@@ -17,7 +17,7 @@
     </template>
     <br>
     <br>
-    <template v-if="userStore.state.lastActions.length>0">
+    <template v-if="false && userStore.state.lastActions.length>0">
       <h2 class="headline">Zuletzt geöffnet</h2>
 
       <div class="home-grid">

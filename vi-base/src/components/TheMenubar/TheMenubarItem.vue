@@ -199,12 +199,12 @@ export default defineComponent({
 
     function openItem(route) {
       let new_route = router.resolve(unref(route))
-      state.maxtabsReached = !dbStore.addOpened(new_route, route.params["module"], route.query["view"])
+      state.maxtabsReached = !dbStore.addOpened(new_route, route.params["module"], route.query["view"], "", "", "", false)
     }
 
     function openConfig(){
       let new_route = router.resolve(unref(`/db/_moduleconf/edit/${props.moduleInfo["module"]}`))
-      dbStore.addOpened(new_route, props.moduleInfo["module"])
+      dbStore.addOpened(new_route, props.moduleInfo["module"], view = null, "", "", "", false)
     }
 
     function toogleFavItem() {
