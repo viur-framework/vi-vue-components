@@ -19,7 +19,7 @@ export default defineComponent({
   props: {},
   components: {},
   setup(props, context) {
-    const handlerState: any = inject("state");
+    const handlerState: any = inject("handlerState");
     const dbStore = useDBStore();
     const route = useRoute();
     const state = reactive({
@@ -29,9 +29,9 @@ export default defineComponent({
       url: computed(() => {
         if (!state.active) return ""
         if(handlerState.group){
-          return `/db/${handlerState.module}/clone/${handlerState.group}/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
+          return `/db/${handlerState.module}/clone/${handlerState.group}/${handlerState.currentSelection[0]["key"]}`
         }else{
-          return `/db/${handlerState.module}/clone/${handlerState.currentSelection[0]["key"]}?_=${new Date().getTime()}`
+          return `/db/${handlerState.module}/clone/${handlerState.currentSelection[0]["key"]}`
         }
       })
     })

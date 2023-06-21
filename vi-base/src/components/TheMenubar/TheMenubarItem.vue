@@ -188,10 +188,6 @@ export default defineComponent({
       maxtabsReached: false,
     });
 
-    function getRoute() {
-      return {...props.to, "query": {...props.to?.query, "_": new Date().getTime()}}
-    }
-
     function openGroup() {
       state.open = !state.open;
     }
@@ -202,7 +198,6 @@ export default defineComponent({
     }
 
     function openItem(route) {
-      route.query["_"] = new Date().getTime()
       let new_route = router.resolve(unref(route))
       state.maxtabsReached = !dbStore.addOpened(new_route, route.params["module"], route.query["view"])
     }
@@ -266,7 +261,6 @@ export default defineComponent({
       dbStore,
       removeItem,
       openItem,
-      getRoute,
       toogleFavItem,
       userStore,
       openConfig,

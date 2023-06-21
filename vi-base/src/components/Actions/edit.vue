@@ -20,7 +20,7 @@ export default defineComponent({
   props: {},
   components: {},
   setup(props, context) {
-    const handlerState: any = inject("state")
+    const handlerState: any = inject("handlerState")
     const dbStore = useDBStore();
     const userStore = useUserStore();
     const route = useRoute()
@@ -36,18 +36,18 @@ export default defineComponent({
         for(let selection of handlerState.currentSelection){
           if(handlerState.type=="hierarchyhandler")
           {
-            urls.push( `/db/${handlerState.module}/edit/node/${selection["key"]}?_=${new Date().getTime()}`)
+            urls.push( `/db/${handlerState.module}/edit/node/${selection["key"]}`)
           }
 
           if(handlerState.type=="treehandler")
           {
-            urls.push( `/db/${handlerState.module}/edit/${handlerState?.currentSelectionType}/${selection["key"]}?_=${new Date().getTime()}`)
+            urls.push( `/db/${handlerState.module}/edit/${handlerState?.currentSelectionType}/${selection["key"]}`)
           }
 
           if(handlerState.group){
-            urls.push( `/db/${handlerState.module}/edit/${handlerState.group}/${selection["key"]}?_=${new Date().getTime()}`)
+            urls.push( `/db/${handlerState.module}/edit/${handlerState.group}/${selection["key"]}`)
           }else{
-            urls.push( `/db/${handlerState.module}/edit/${selection["key"]}?_=${new Date().getTime()}`)
+            urls.push( `/db/${handlerState.module}/edit/${selection["key"]}`)
           }
         }
         return urls

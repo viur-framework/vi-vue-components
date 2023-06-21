@@ -13,10 +13,10 @@
             <th style="width: 30px" class="open-column"></th>
             <th style="width: 30px" class="drag-column"></th>
             <th style="width: 150px"
-                v-for="(bone,name) in state.structure"
+                v-for="(name) in state.selectedBones"
                 :class="{'stick-header':state.sticky}"
             >
-              {{ state.structure?.[name]["descr"] }}{{ name }}
+              {{ state.structure?.[name]["descr"] }}
             </th>
           </tr>
         </thead>
@@ -120,7 +120,7 @@ export default defineComponent({
       }),
       currentSelection:[],
     })
-    provide("state", state) // expose to components
+    provide("handlerState", state) // expose to components
     const tree = useTree(props.module,state,state)
 
     function reloadAction() {
@@ -193,6 +193,7 @@ export default defineComponent({
       reloadAction()
     }
     provide("changerootNode", changerootNode)
+
     return {
       state,
       entrySelected,

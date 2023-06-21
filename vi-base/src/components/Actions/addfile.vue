@@ -20,7 +20,7 @@ export default defineComponent({
     props: {},
     components: {},
     setup(props, context) {
-        const handlerState: any = inject("state")
+        const handlerState: any = inject("handlerState")
       const tableReload: any = inject("reloadAction")
         const dbStore = useDBStore();
         const userStore = useUserStore();

@@ -155,7 +155,7 @@ export default defineComponent({
       selectedNode:null,
       selectedType:null
     })
-    provide("state", state) // expose to components
+    provide("handlerState", state) // expose to components
 
     const tree = useTree(props.module,state,state)
 

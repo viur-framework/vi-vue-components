@@ -18,7 +18,7 @@ export default defineComponent({
     props: {},
     components: {},
     setup(props, context) {
-        const handlerState: any = inject("state")
+        const handlerState: any = inject("handlerState")
         const dbStore = useDBStore();
         const route = useRoute();
         const state = reactive({

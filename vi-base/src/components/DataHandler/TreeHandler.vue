@@ -48,7 +48,7 @@ export default defineComponent({
             currentSelection:null,
             currentSelectionType:null
         })
-        provide("state", state) // expose to components
+        provide("handlerState", state) // expose to components
 
         function fetchRoots() {
             return Request.get(`/vi/${props.module}/listRootNodes`).then(async (resp) => {

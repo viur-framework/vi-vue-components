@@ -18,7 +18,7 @@ export default defineComponent({
         return handlerState['currentRootNode']?.['key']
       })
     });
-    const handlerState: any = inject("state");
+    const handlerState: any = inject("handlerState");
     const changerootNode: any = inject("changerootNode")
 
     function rootNodeChange(e: Event) {

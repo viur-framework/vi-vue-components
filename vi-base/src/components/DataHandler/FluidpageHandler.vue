@@ -123,7 +123,7 @@ export default defineComponent({
       draggedKeys:[],
       debounceSave:null
     })
-    provide("state", state)
+    provide("handlerState", state)
     const currentlist = ListRequest(state.storeName, {
       module: props.module,
       params: {
@@ -258,11 +258,10 @@ export default defineComponent({
      provide("entrySelected", entrySelected);
 
     function openEditor(e: Event) {
-      const url = `/db/${state.module}/edit/${e.detail.cell.getRow().getData().key}?_=${new Date().getTime()}`;
+      const url = `/db/${state.module}/edit/${e.detail.cell.getRow().getData().key}`;
       let route = router.resolve(unref(url))
 
       dbStore.addOpened(route, state.module, state.view);
-      router.push(url);
     }
 
 

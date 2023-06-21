@@ -27,7 +27,7 @@ export default defineComponent({
   components: {Debugentry, Save, Reloadentry},
   setup(props, context) {
     const state = reactive({})
-    const handlerState: any = inject("state");
+    const handlerState: any = inject("handlerState");
     return {state, handlerState}
   }
 })

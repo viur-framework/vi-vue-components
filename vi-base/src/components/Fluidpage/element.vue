@@ -116,7 +116,7 @@ export default {
     const updateDragged = inject('updateDragged')
     const updateWidth = inject('updateWidth')
     const entrySelected = inject('entrySelected')
-    const handlerState = inject("state")
+    const handlerState = inject("handlerState")
     const calculateIndex = inject("calculateIndex")
     const currentlist = inject("currentlist")
 

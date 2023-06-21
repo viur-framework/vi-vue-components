@@ -38,10 +38,13 @@
       </td>
 
       <template v-for="(name) in treeState.selectedBones">
-        <td @click="selectChild(idx)" v-if="!name?.startsWith('_')">
+        <td @click="selectChild(idx)"
+            @dblclick="openEditor"
+            v-if="!name?.startsWith('_')"
+            >
           <div class="ellipsis">
             {{ getBoneViewer(child,name) }}
-          </div>
+         </div>
         </td>
       </template>
     </tr>
@@ -51,6 +54,8 @@
 
 <script lang="js">
 import {reactive, defineComponent, inject, onBeforeMount, watch, computed, onMounted, unref, toRaw} from 'vue'
+import { useRouter } from 'vue-router';
+import { useDBStore } from '../../stores/db';
 import {Request,boneLogic} from "@viur/viur-vue-utils";
 import useTree from "./tree.js";
 
@@ -67,7 +72,9 @@ export default defineComponent({
   },
   emit:['loaded'],
   setup(props, context) {
-    const treeState = inject("state")
+    const treeState = inject("handlerState")
+    const dbStore = useDBStore();
+    const router = useRouter()
     const state = reactive({
       currentEntry: {},
       layer:computed(()=>props.path.length)
@@ -146,13 +153,22 @@ export default defineComponent({
       return getBoneValue(boneName, skel=skel)
     }
 
+    function openEditor(e) {
+      const url = `/db/${treeState.module}/edit/node/${treeState.currentSelection[0]['key']}`;
+      console.log(url)
+      let route = router.resolve(unref(url))
+      dbStore.addOpened(route, treeState.module, treeState.view);
+      router.push(url);
+    }
+
     return {
       state, treeState,
       clickToExpand,
       isactive,
       selectChild,
       tree,
-      getBoneViewer
+      getBoneViewer,
+      openEditor
     }
   }
 })

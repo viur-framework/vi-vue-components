@@ -25,7 +25,7 @@ export default defineComponent({
   props: {},
   components: {VueJsonPretty},
   setup(props, context) {
-    const handlerState: any = inject("state")
+    const handlerState: any = inject("handlerState")
     const dbStore = useDBStore();
     const userStore = useUserStore();
     const route = useRoute()

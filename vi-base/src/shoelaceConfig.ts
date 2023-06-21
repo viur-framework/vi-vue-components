@@ -40,6 +40,8 @@ import "@viur/viur-shoelace/dist/components/dialog/dialog"
 import "@viur/viur-shoelace/dist/components/format-bytes/format-bytes"
 import "@viur/viur-shoelace/dist/components/format-date/format-date"
 import "@viur/viur-shoelace/dist/components/color-picker/color-picker"
+import "@viur/viur-shoelace/dist/components/textarea/textarea"
+
 
 import '@viur/viur-shoelace/dist/components/bone/bone';
 

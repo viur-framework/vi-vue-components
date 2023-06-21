@@ -30,7 +30,7 @@ export default defineComponent({
   },
   components: {},
   setup(props, context) {
-    const handlerState: any = inject("state");
+    const handlerState: any = inject("handlerState");
     const router = useRouter();
     const route = useRoute();
     const dbStore = useDBStore();
@@ -97,7 +97,6 @@ export default defineComponent({
               dbStore.removeOpened(route);
               if (!props.close) {
                 let new_route = router.resolve(`/db/${handlerState.module}/edit/${responsedata['values']['key']}`)
-                new_route.query["_"] = new Date().getTime().toString()
                 dbStore.addOpened(new_route, handlerState.module)
               }
             }
