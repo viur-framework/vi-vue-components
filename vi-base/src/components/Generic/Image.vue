@@ -1,5 +1,4 @@
 <template>
-
     <picture v-if="srcset">
         <source type="image/webp" :srcset="srcset"/>
 
@@ -76,7 +75,7 @@ export default {
                 return ""
             }),
             opened:false,
-            image: props.src?props.src:props.fallback
+            image: computed(()=>props.src?props.src:props.fallback)
         })
 
         function updateLoading(loading) {

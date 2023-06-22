@@ -71,6 +71,13 @@ export default defineComponent({
 
       Request.securePost(url, {dataObj: obj}).then(async (resp: Response) => {
         let responsedata = await resp.json()
+
+        if (responsedata.status!==200){
+          messageStore.addMessage("error", `Error on Save`, "Error on Save");
+          state.loading=false
+          return 0
+        }
+
         handlerState.errors = [];
         if (handlerState.action === "edit") {
           if (responsedata["action"] === "edit") {//Something went wrong we must thorw (show) errors

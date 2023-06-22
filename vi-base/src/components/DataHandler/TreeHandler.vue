@@ -28,7 +28,8 @@ export default defineComponent({
             type: String,
             required: true
         },
-        view: null
+        view: null,
+        selector:false
     },
     emits:["currentSelection"],
     components: {FileBrowser, HandlerBar},
@@ -46,7 +47,10 @@ export default defineComponent({
             view: computed(() => props.view),
             active:false,
             currentSelection:null,
-            currentSelectionType:null
+            currentSelectionType:null,
+            selector:computed(()=>props.selector),
+            selectedBones:[],
+            selectedRows:[],
         })
         provide("handlerState", state) // expose to components
 
@@ -103,6 +107,14 @@ export default defineComponent({
           context.emit("currentSelection", state.currentSelection)
         }
 
+
+        function setSelectedBones(){
+          let bones = []
+          for(const [k,v] of Object.entries(state.structure)){
+            if(v["visible"]) bones.push(k)
+          }
+          state.selectedBones = bones
+        }
 
         return {
             state,

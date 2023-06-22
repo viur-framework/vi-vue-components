@@ -27,10 +27,13 @@
       </div>
     </td>
     <td @click="changeParentEntry(idx)">
-      <sl-format-date year="numeric" month="numeric" day="2-digit" :date="skel['creationdat']"></sl-format-date>
+      <sl-format-date year="numeric" month="numeric" day="2-digit" :date="skel['changedate']"></sl-format-date>
     </td>
     <td @click="changeParentEntry(idx)">
-      <sl-format-date year="numeric" month="numeric" day="2-digit" :date="skel['changedate']"></sl-format-date>
+      Ordner
+    </td>
+    <td @click="changeParentEntry(idx)">
+      -
     </td>
   </tr>
 </template>

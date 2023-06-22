@@ -24,10 +24,16 @@
       </div>
     </td>
     <td>
-      <sl-format-date year="numeric" month="numeric" day="2-digit" :date="skel.creationdate"></sl-format-date>
+      <sl-format-date year="numeric" month="numeric" day="2-digit" :date="skel.changedate"></sl-format-date>
     </td>
     <td>
-      <sl-format-date year="numeric" month="numeric" day="2-digit" :date="skel.changedate"></sl-format-date>
+      <sl-tooltip :content="skel.mimetype">
+        <div class="file-type" v-html="skel.name.split('.').pop().length > 0 ? skel.name.split('.').pop() : skel.name">
+        </div>
+      </sl-tooltip>
+    </td>
+    <td>
+      <sl-format-bytes :value="skel['size']"></sl-format-bytes>
     </td>
   </tr>
 

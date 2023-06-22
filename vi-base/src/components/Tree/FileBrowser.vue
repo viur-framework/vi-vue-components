@@ -5,7 +5,7 @@
     </sl-breadcrumb-item>
   </sl-breadcrumb>
 
-  <sl-split-panel class="main" position-in-pixels="250" snap="250px">
+  <sl-split-panel class="main" position="30" snap="30%" style="--min: 200px; --max: 30%;">
     <div class="tree-wrapper"
          slot="start"
     >
@@ -14,21 +14,25 @@
       </ul>
     </div>
 
-    <sl-split-panel slot="end" :position="state.leafView">
+    <sl-split-panel slot="end" position="70" style="--max: 70%" >
       <div slot="start" class="start-slot">
         <slot :nodes="state.currentEntry?.['_nodes']" :leafs="state.currentEntry?.['_leafs']">
+
           <sl-table-wrapper  :search="filter" sortable class="scroller">
             <table ref="currentTable" class="table">
               <thead>
-              <tr>
-                <th>
-                  <div class="th-inner">Dateiname</div>
-                </th>
-                <th>
-                  <div class="th-inner">Erstellungsdatum</div>
+                <tr>
+                <th style="width:50%">
+                  <div class="th-inner" >Dateiname</div>
                 </th>
                 <th>
                   <div class="th-inner">Änderungsdatum</div>
+                </th>
+                <th>
+                  <div class="th-inner">Typ</div>
+                </th>
+                <th>
+                  <div class="th-inner">Größe</div>
                 </th>
               </tr>
               </thead>
@@ -63,9 +67,11 @@
       <div class="file-info" v-if="state.selected_leaf?.name" slot="end">
         <slot :selection="state.selected_leaf" name="details">
           <div class="headline" v-html="state.selected_leaf.name"></div>
-          <div class="file-preview" @click="openFileNewTab(state.selected_leaf)">
-            <vi-image v-if="state.selected_leaf?.mimetype && state.selected_leaf?.mimetype.startsWith('image/')"
-                      :src="Request.downloadUrlFor({'dest': state.selected_leaf},true)">
+          <div class="file-preview"
+                @click="openFileNewTab(state.selected_leaf)"
+                v-if="state.selected_leaf?.mimetype && state.selected_leaf?.mimetype.startsWith('image/')"
+              >
+            <vi-image :src="Request.downloadUrlFor({'dest': state.selected_leaf},true)">
             </vi-image>
           </div>
           <div class="details">
