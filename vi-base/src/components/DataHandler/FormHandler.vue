@@ -145,10 +145,13 @@ export default defineComponent({
           if (boneStructure["visible"] === true) {
             groups[category]["groupVisible"] = true
           }
-
-
         }
-        return groups
+        let sortedGroups = {}
+        Object.keys(groups).sort().forEach(function(key) {
+          sortedGroups[key] = groups[key];
+        });
+
+        return sortedGroups
       }),
       formValues: {},
       module: props.module,

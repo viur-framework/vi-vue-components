@@ -27,7 +27,7 @@
       </div>
 
       <Wrapper_nested v-if="boneState?.bonestructure['using']"
-        :value="value['rel']"
+        :value="value?.['rel']"
         :name="name"
         :index="index"
         :disabled="boneState.bonestructure['readonly']"
