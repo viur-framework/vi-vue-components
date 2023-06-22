@@ -59,9 +59,10 @@ export default defineComponent({
       type: String,
       required: true
     },
-    view: null
+    view: null,
+    selector:false
   },
-  emits:['currentSelection'],
+  emits:['currentSelection','closeSelector'],
   components: {HandlerBar, TableNodeItem, FloatingBar},
   setup(props, context) {
     const dbStore = useDBStore();
@@ -119,6 +120,7 @@ export default defineComponent({
         return tree.EntryFromPath(state.selectedPath)
       }),
       currentSelection:[],
+      selector:computed(()=>props.selector)
     })
     provide("handlerState", state) // expose to components
     const tree = useTree(props.module,state,state)
@@ -138,7 +140,6 @@ export default defineComponent({
 
       return 0
     }
-
 
     onActivated(()=>{
       state.active = true
@@ -193,6 +194,11 @@ export default defineComponent({
       reloadAction()
     }
     provide("changerootNode", changerootNode)
+
+    function closeSelector(){
+      context.emit("closeSelector")
+    }
+    provide("closeSelector",closeSelector)
 
     return {
       state,

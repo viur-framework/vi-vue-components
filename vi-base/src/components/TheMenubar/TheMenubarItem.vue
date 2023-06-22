@@ -204,7 +204,7 @@ export default defineComponent({
 
     function openConfig(){
       let new_route = router.resolve(unref(`/db/_moduleconf/edit/${props.moduleInfo["module"]}`))
-      dbStore.addOpened(new_route, props.moduleInfo["module"], view = null, "", "", "", false)
+      dbStore.addOpened(new_route, props.moduleInfo["module"], null, "", "", "", false)
     }
 
     function toogleFavItem() {

@@ -116,13 +116,16 @@ export default defineComponent({
         }
 
         function changeEventNested(val){
-          console.log(val)
-          state.selection["rel"][val.name] = val.value
+          if (Object.keys(state.selection).includes('rel')){
+            state.selection["rel"][val.name] = val.value
+          }else{
+            state.selection["rel"] = {[val.name]:val.value}
+          }
+
           context.emit("change",props.name,state.selection,props.lang,props.index)
         }
 
         function changeEvent(event){
-          console.log(event)
           state.selection = {"dest":state.skellistdata[event.detail.item.value]}
           context.emit("change",props.name,state.selection,props.lang,props.index)
         }

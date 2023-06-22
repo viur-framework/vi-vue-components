@@ -78,9 +78,10 @@ export default defineComponent({
     view: null,
     rowselect:{
       default:2 //0 == disabled, 1==select One, 2: select multiple
-    }
+    },
+    selector:false
   },
-  emits:['currentSelection'],
+  emits:['currentSelection','closeSelector'],
   components: {FloatingBar, Loader, HandlerBar},
   setup(props, context) {
     const dbStore = useDBStore();
@@ -223,6 +224,10 @@ export default defineComponent({
     }
 
     function openEditor(e: Event) {
+      if(props.selector){
+        context.emit("closeSelector")
+        return 0
+      }
       const url = `/db/${state.module}/edit/${state.currentSelection[0]['key']}`;
       let route = router.resolve(unref(url))
       dbStore.addOpened(route, state.module, state.view);

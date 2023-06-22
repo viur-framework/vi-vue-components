@@ -73,6 +73,7 @@ export default defineComponent({
   emit:['loaded'],
   setup(props, context) {
     const treeState = inject("handlerState")
+    const closeSelector = inject('closeSelector')
     const dbStore = useDBStore();
     const router = useRouter()
     const state = reactive({
@@ -154,8 +155,12 @@ export default defineComponent({
     }
 
     function openEditor(e) {
+      if(treeState.selector){
+        closeSelector()
+        return 0
+      }
+
       const url = `/db/${treeState.module}/edit/node/${treeState.currentSelection[0]['key']}`;
-      console.log(url)
       let route = router.resolve(unref(url))
       dbStore.addOpened(route, treeState.module, treeState.view);
       router.push(url);

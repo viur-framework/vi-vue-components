@@ -12,10 +12,9 @@
       ></entry-bar>
 
     </div>
-
     <sl-details open summary="Info"
                 v-if="modulesStore.state.loaded && modulesStore.state.modules[module][`help_text_${action}`]">
-      {{ modulesStore.state.modules[module][`help_text_${action}`] }}
+      <p v-html="modulesStore.state.modules[module][`help_text_${action}`]"></p>
     </sl-details>
 
     <div class="scroll-content" v-if="!state.loading">

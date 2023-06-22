@@ -12,6 +12,8 @@
         :module="module"
         @currentSelection="relationUpdateSelection($event)"
         :rowselect="rowselect"
+        :selector="true"
+        @closeSelector="relationApplySelection()"
       >
 
       </component>
@@ -19,7 +21,7 @@
       <div class="footer" slot="footer">
           <sl-button @click="relationCloseAction()" variant="danger" size="small" outline>{{ $t("relation.abort") }}</sl-button>
           <sl-button
-                      @click="relationApplySelection(bone)"
+                      @click="relationApplySelection()"
                       variant="success"
                       size="small">
             {{ $t("relation.select") }}
