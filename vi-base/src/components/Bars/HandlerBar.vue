@@ -60,7 +60,7 @@ export default defineComponent({
       actions: computed(() => {
         let listActions = {
           ":options": [["selectfields","overlay"]],
-          "default": [[":options"],["delete", "clone","preview", "edit", "add"]],
+          "default": [[":options"],["search","delete", "clone","preview", "edit", "add"]],
         }
 
         const hierarchyActions = {

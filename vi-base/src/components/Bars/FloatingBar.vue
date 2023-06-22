@@ -1,6 +1,6 @@
 <template>
   <div class="more-entries">
-    <filter-action></filter-action>
+    <!--<filter-action></filter-action>-->
     <next-page></next-page>
     <set-amount></set-amount>
     <reload></reload>

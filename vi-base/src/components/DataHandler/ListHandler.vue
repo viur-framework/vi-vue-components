@@ -7,13 +7,14 @@
                   v-if="modulesStore.state.loaded && modulesStore.state.modules[module]['help_text']">
         <div v-html="modulesStore.state.modules[module]['help_text']"></div>
       </sl-details>
+
       <div class="table-wrapper" @scroll="stickyHeader">
         <table ref="datatable">
           <thead>
             <tr>
               <th v-for="bone in state.selectedBones"
                   :class="{'stick-header':state.sticky}"
-                  :style="{width: state.tableWidth+'px'}"
+                  :style="{width: '150px'}"
               >
                 {{ currentlist.structure?.[bone]?.["descr"] }}
               </th>
@@ -112,16 +113,7 @@ export default defineComponent({
       selectedBones:[],
       selectedRows:[],
       sticky:false,
-      tableWidth:computed(()=>{
-        if(state.selectedBones.length>0){
-          let val = Math.round(parseInt(datatable.value.clientWidth) / state.selectedBones.length)
-          if (val<150){
-            return "150"
-          }
-          return Math.round(parseInt(datatable.value.clientWidth) / state.selectedBones.length)
-        }
-        return "150"
-      })
+      tableWidth: "150",
     })
     provide("handlerState", state)
     const currentlist = ListRequest(state.storeName, {
@@ -219,6 +211,10 @@ export default defineComponent({
       state.selectedRows = [...new Set(state.selectedRows)] // remove duplicates and sort
 
       state.currentSelection = currentlist.state.skellist.filter((entry,idx)=> state.selectedRows.includes(idx))
+      if (state.currentSelection.length>0){
+        dbStore.state['skeldrawer.entry'] = state.currentSelection[0]
+        dbStore.state['skeldrawer.structure'] = currentlist.structure
+      }
 
       context.emit("currentSelection", state.currentSelection)
     }
@@ -262,6 +258,18 @@ export default defineComponent({
 
       state.selectedBones = bones
     }
+    /*
+    computed(()=>{
+        if(state.selectedBones.length>0){
+          let val = Math.round(parseInt(datatable.value.clientWidth) / state.selectedBones.length)
+          if (val<150){
+            return "150"
+          }
+          return Math.round(parseInt(datatable.value.clientWidth) / state.selectedBones.length)
+        }
+        return "150"
+      })*/
+
 
     return {
       state,
