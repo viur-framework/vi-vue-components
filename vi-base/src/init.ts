@@ -5,6 +5,7 @@ import {useAppStore} from "./stores/app";
 import {useColorStore} from "./stores/color";
 import {useModulesStore} from "./stores/modules";
 // custom Bones
+//@ts-ignore
 import {addBoneWidget, addBoneActionbar } from '@viur/viur-vue-utils'
 import selectaccessBone from './components/Bones/selectaccessBone.vue';
 import relationalBone from './components/Bones/relationalBone.vue';
