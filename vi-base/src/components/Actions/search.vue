@@ -15,9 +15,9 @@ export default defineComponent({
         const currentlist: any = inject("currentlist")
         const state = reactive({
           disabled:computed(()=>{
+            return false
             let searchableBone=false
-            for(const [k,v] of Object.entries(currentlist.structure)){
-              console.log(v)
+            for(const [k,v] of Object.entries(currentlist?.structure)){
               if(Object.keys(v).includes("searchable") && v["searchable"]){
                 searchableBone=true
               }

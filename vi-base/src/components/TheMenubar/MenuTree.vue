@@ -20,7 +20,7 @@
 import TheMenubarItem from "./TheMenubarItem.vue";
 import TheMenubarGroup from "./TheMenubarGroup.vue";
 import {defineComponent} from "vue";
-import {ModuleInfo} from '../../stores/app'
+import {ModuleInfo} from '../../stores/db'
 
 export default defineComponent({
   components: {TheMenubarGroup, TheMenubarItem},
