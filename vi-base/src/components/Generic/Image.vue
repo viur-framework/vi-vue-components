@@ -57,7 +57,7 @@ export default {
         },
         fallback: {
             type: String,
-            default: 'static/image-fallback.webp'
+            default: 'logo.svg'
         },
         popup:{
             type:Boolean,
@@ -108,6 +108,7 @@ img.is-loading {
 
 .image {
     width: 100%;
+    height: 100%;
     background-image: v-bind('state.background');
     background-repeat: no-repeat;
     background-position: center center;

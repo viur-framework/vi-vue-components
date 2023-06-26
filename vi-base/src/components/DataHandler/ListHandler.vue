@@ -13,10 +13,14 @@
           <thead>
             <tr>
               <th v-for="bone in state.selectedBones"
-                  :class="{'stick-header':state.sticky}"
-                  :style="{width: '150px'}"
+                :class="{'stick-header':state.sticky}"
+                :style="{width: '150px'}"
               >
                 {{ currentlist.structure?.[bone]?.["descr"] }}
+                <div v-if="currentlist.state.state===2">
+                  <sl-icon name="chevron-up" @click="sorting(bone,'asc')" class="sort-arrow" :class="{'sort-active':state.sorting===bone+'$asc'}"></sl-icon>
+                  <sl-icon name="chevron-down" @click="sorting(bone,'desc')" class="sort-arrow" :class="{'sort-active':state.sorting===bone+'$desc'}"></sl-icon>
+                </div>
               </th>
             </tr>
           </thead>
@@ -28,6 +32,7 @@
                   @click.exact="entrySelected(idx)"
                   @click.ctrl="entrySelected(idx,'append')"
                   @click.shift="entrySelected(idx,'range')"
+
               >
                 <td v-for="(name) in state.selectedBones">
                   <div class="ellipsis">
@@ -114,6 +119,7 @@ export default defineComponent({
       selectedRows:[],
       sticky:false,
       tableWidth: "150",
+      sorting:""
     })
     provide("handlerState", state)
     const currentlist = ListRequest(state.storeName, {
@@ -258,6 +264,80 @@ export default defineComponent({
 
       state.selectedBones = bones
     }
+
+    function filter_update(skel) {
+        let wordlist = state.filter ? state.filter.split(" ") : []
+        if (Object.keys(skel).includes(props.filterField)) {
+            let tags = skel[props.filterField]
+            if (tags) {
+                for (let word of wordlist) {
+                    word = word.toLowerCase().replace(/[\W_]+/g, ""); //remove all nun alphanum chars
+
+                    if (!word || word.length === 0) {
+
+                    } else {
+                        let cmatch = tags.some(function valmatch(val) {
+                            if (val.toLowerCase().includes(word)) {
+                                return true
+                            }
+                            return false
+                        })
+                        if (!cmatch) {
+                            return false
+                        }
+                    }
+                }
+            }
+        }
+        return true
+    }
+
+    function sorting(field, direction) {
+      if (field+"$"+direction === state.sorting){
+        return 0
+      }
+      state.sorting = field+"$"+direction
+      if (direction === "asc") {
+        currentlist.state.skellist.sort((a, b) => {
+
+          let aValue = a[field] || ''
+          let bValue = b[field] || ''
+
+
+          if(typeof aValue !== 'string'){
+            aValue = aValue.toString()
+          }
+          if(typeof bValue !== 'string'){
+            bValue = bValue.toString()
+          }
+          if (aValue.toLowerCase() > bValue.toLowerCase()) {
+            return 1
+          } else {
+            return -1
+          }
+        })
+      } else {
+        currentlist.state.skellist.sort((a, b) => {
+          let aValue = a[field] || ''
+          let bValue = b[field] || ''
+
+          if(typeof aValue !== 'string'){
+            aValue = aValue.toString()
+          }
+          if(typeof bValue !== 'string'){
+            bValue = bValue.toString()
+          }
+
+          if (aValue.toLowerCase() < bValue.toLowerCase()) {
+            return 1
+          } else {
+            return -1
+          }
+        })
+      }
+    }
+
+
     /*
     computed(()=>{
         if(state.selectedBones.length>0){
@@ -281,7 +361,8 @@ export default defineComponent({
       nextpage,
       getBoneViewer,
       stickyHeader,
-      datatable
+      datatable,
+      sorting
     }
   }
 })
@@ -309,6 +390,14 @@ export default defineComponent({
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.sort-active{
+  color: var(--sl-color-primary-500);
+}
+
+.sort-arrow{
+  cursor: pointer;
 }
 
 table{

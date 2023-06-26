@@ -30,18 +30,16 @@
       <sl-icon name="download" slot="prefix"></sl-icon>
     </sl-button>
     <div class="box" v-if="!boneState.isEmpty">
-      <div
-        class="preview"
-        v-if="value?.['dest']?.['mimetype'].includes('image')"
-        :style="{backgroundImage: `url(${createBackgroundImage()})`}"
-      >
+      <div class="preview" v-if="value?.['dest']?.['mimetype'].includes('image')">
+      <vi-image :src="Request.downloadUrlFor(value)" popup>
+      </vi-image>
       </div>
+
       <div class="preview" v-else>
         <sl-icon v-if="value?.['dest']?.['name']" name="file-earmark"></sl-icon>
       </div>
       <div v-if="value?.['dest']?.['name']">
         {{ decodeURIComponent(value?.["dest"]?.["name"]) }}
-        <img :src="createBackgroundImage()" alt="">
       </div>
     </div>
     <sl-button @click="editSelection" variant="info" outline v-if="value">
@@ -87,6 +85,7 @@ import { Request } from "@viur/viur-vue-utils";
 import relationalSelector from './components/relationalSelector.vue'
 import Wrapper_nested from '@viur/viur-vue-utils/bones/edit/wrapper_nested.vue'
 import { useDBStore } from '../../stores/db'
+import ViImage from "../../components/Generic/Image.vue";
 
 export default defineComponent({
   props: {
@@ -95,7 +94,7 @@ export default defineComponent({
     index: Number,
     lang: String,
   },
-  components: {relationalSelector,Wrapper_nested},
+  components: {relationalSelector,Wrapper_nested,ViImage},
   emits: ["change"],
   setup(props, context) {
     const boneState = inject("boneState");
@@ -133,8 +132,9 @@ export default defineComponent({
         Request.securePost("/vi/file/getUploadURL", { dataObj: filedata })
           .then(async (resp) => {
             let uploadURLdata = await resp.json();
-            Request.post(uploadURLdata["values"]["uploadUrl"], {
-              dataObj: file,
+            fetch(uploadURLdata["values"]["uploadUrl"], {
+              body:file,
+              method: "POST",
               mode: "no-cors",
             })
               .then(async (uploadresp) => {
@@ -213,13 +213,14 @@ export default defineComponent({
 
     function editSelection(){
       const mod = boneState.bonestructure["module"]
-      const url = `/db/${mod}/edit/${props.value['dest']['key']}`;
+      const url = `/db/${mod}/edit/leaf/${props.value['dest']['key']}`;
       let route = router.resolve(unref(url))
       dbStore.addOpened(route, mod);
     }
 
     return {
       state,
+      Request,
       boneState,
       handlerState,
       downloadFile,
@@ -247,6 +248,7 @@ export default defineComponent({
   border: 1px solid var(--sl-color-gray-500);
   border-radius: 5px;
   min-height: 40px;
+  max-height: 40px;
 }
 
 .preview {
