@@ -6,7 +6,7 @@
         <sl-icon src="logo-cube.svg"></sl-icon>
       </div>
       <h1 class="main-headline">
-        {{ appStore.state["admin.name"] }} {{ dbStore.state["handlers.active"] }}
+        {{ appStore.state["admin.name"] }}<!-- {{ dbStore.state["handlers.active"] }}-->
       </h1>
     </div>
     <!-- </router-link> -->

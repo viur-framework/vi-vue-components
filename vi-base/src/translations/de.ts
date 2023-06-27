@@ -65,4 +65,8 @@ export default {
   confirm: "Bestätigen",
   create: "Erstellen",
   select: "Auswählen",
+  search:{
+    local:"Suche wird in der Liste ausgeführt",
+    database:"Suche wird online ausgeführt"
+  }
 };

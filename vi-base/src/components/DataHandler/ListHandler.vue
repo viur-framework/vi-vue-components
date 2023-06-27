@@ -25,8 +25,10 @@
             </tr>
           </thead>
           <tbody>
-              <tr v-for="(skel,idx) in currentlist.state.skellist"
-                  :class="{'selected':state.selectedRows.includes(idx)
+            <template v-for="(skel,idx) in state.renderedList">
+              <tr
+                  :class="{'selected':state.selectedRows.includes(idx),
+                           'is-hidden':!filter_update(skel)
                           }"
                   @dblclick="openEditor"
                   @click.exact="entrySelected(idx)"
@@ -36,10 +38,11 @@
               >
                 <td v-for="(name) in state.selectedBones">
                   <div class="ellipsis">
-                    {{ getBoneViewer(skel,name) }}
+                    {{skel[name]}}
                   </div>
                 </td>
               </tr>
+            </template>
           </tbody>
         </table>
       </div>
@@ -119,7 +122,17 @@ export default defineComponent({
       selectedRows:[],
       sticky:false,
       tableWidth: "150",
-      sorting:""
+      sorting:"",
+      renderedList:computed(()=>{
+        return currentlist.state.skellist.map(skel => {
+          let vSkel = {}
+          for(const [k,v] of Object.entries(skel)){
+            vSkel[k] = getBoneViewer(skel,k).toString()
+          }
+          return vSkel
+        })
+      }),
+      filter:null
     })
     provide("handlerState", state)
     const currentlist = ListRequest(state.storeName, {
@@ -256,40 +269,35 @@ export default defineComponent({
     }
 
     function setSelectedBones(){
-      let bones = []
-      for(const [k,v] of Object.entries(currentlist.structure)){
-        if(v["visible"]) bones.push(k)
+      state.conf = dbStore.getConfByRoute(route)
+      if (state.conf && state.conf?.['columns']) {
+        state.selectedBones = state.conf['columns']
+      }else{
+        let bones = []
+        for(const [k,v] of Object.entries(currentlist.structure)){
+          if(v["visible"]) bones.push(k)
+        }
+        state.selectedBones = bones
       }
-
-
-      state.selectedBones = bones
     }
 
     function filter_update(skel) {
+        if (state.filter===null) return true
         let wordlist = state.filter ? state.filter.split(" ") : []
-        if (Object.keys(skel).includes(props.filterField)) {
-            let tags = skel[props.filterField]
-            if (tags) {
-                for (let word of wordlist) {
-                    word = word.toLowerCase().replace(/[\W_]+/g, ""); //remove all nun alphanum chars
+        for(const [k,v] of Object.entries(skel)){
+          for (let word of wordlist) {
+            word = word.toLowerCase().replace(/[\W_]+/g, ""); //remove all nun alphanum chars
 
-                    if (!word || word.length === 0) {
+            if (!word || word.length === 0) {
 
-                    } else {
-                        let cmatch = tags.some(function valmatch(val) {
-                            if (val.toLowerCase().includes(word)) {
-                                return true
-                            }
-                            return false
-                        })
-                        if (!cmatch) {
-                            return false
-                        }
-                    }
+            } else {
+                if(v.includes(word)){
+                  return true
                 }
             }
+          }
         }
-        return true
+        return false
     }
 
     function sorting(field, direction) {
@@ -362,7 +370,8 @@ export default defineComponent({
       getBoneViewer,
       stickyHeader,
       datatable,
-      sorting
+      sorting,
+      filter_update
     }
   }
 })
@@ -491,7 +500,6 @@ table{
   position:sticky;
   top:0;
 }
-
 
 sl-details{
   &::part(prefix){

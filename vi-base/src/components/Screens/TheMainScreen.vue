@@ -18,7 +18,6 @@
       </router-view>
     </div>
   </sl-split-panel>
-
   <the-main-screen-skel-drawer></the-main-screen-skel-drawer>
 
   <message-drawer></message-drawer>

@@ -53,4 +53,12 @@ export default {
     amount_warning:
       "You have already opened {amount} entries of '{module}'. Do you still want to open another one?",
   },
+  abort: "Abort",
+  confirm: "Confirm",
+  create: "Create",
+  select: "Select",
+  search:{
+    local:"Search in list",
+    database:"Search Online"
+  }
 };

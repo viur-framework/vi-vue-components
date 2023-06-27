@@ -6,7 +6,7 @@
   </sl-button>
 
   <sl-dialog :label='$t("actions.selectfields")' id="dialog-selectfields">
-    <sl-checkbox v-for="(bone,boneName) in state.structure" :checked="bone['visible']"
+    <sl-checkbox v-for="(bone,boneName) in state.structure" :checked="setChecked(boneName)"
                @sl-change="visibleChange(boneName)" class="selectfieldswitch">
       {{ bone["descr"] !== "" ? bone["descr"] : boneName }}
     </sl-checkbox>
@@ -40,7 +40,6 @@ export default defineComponent({
 
     function openSelectDialog() {
       let store = dbStore.getListStoreByRoute(route);
-      console.log(handlerState)
       if (store===undefined){
         state.structure = handlerState.structure
       }else{
@@ -71,7 +70,18 @@ export default defineComponent({
       document.querySelectorAll(".selectfieldswitch").forEach(switchElement => switchElement.checked = !switchElement.checked);
     }
 
-    return {state, openSelectDialog, visibleChange, selectall, unselectall,invertselect}
+    function setChecked(boneName){
+      let conf = dbStore.getConfByRoute(route)
+      if (conf && conf?.['columns']) {
+        if(conf['columns'].includes(boneName)){
+          return true
+        }
+      }else{
+        return state.structure[boneName]['visible']
+      }
+    }
+
+    return {state, openSelectDialog, visibleChange, selectall, unselectall,invertselect, setChecked}
   }
 })
 </script>

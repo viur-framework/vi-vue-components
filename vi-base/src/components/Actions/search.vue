@@ -1,6 +1,9 @@
 <template>
     <sl-input :disabled="state.disabled" placeholder="Suche" clearable @sl-input="search_input" @sl-clear="reset_filter">
-      <sl-icon name="search" slot="suffix"></sl-icon>
+
+      <sl-icon v-if="state.searchType==='database'" name="database" slot="suffix" :title="$t('search.database')"></sl-icon>
+      <sl-icon v-else-if="state.searchType==='local'" name="list-ul" slot="suffix" :title="$t('search.local')"></sl-icon>
+      <sl-icon v-else name="search" slot="suffix"></sl-icon>
     </sl-input>
 </template>
 
@@ -13,6 +16,7 @@ export default defineComponent({
     components: {},
     setup(props, context) {
         const currentlist: any = inject("currentlist")
+        const handlerState: any = inject("handlerState")
         const state = reactive({
           disabled:computed(()=>{
             return false
@@ -25,13 +29,19 @@ export default defineComponent({
 
             return false //till core update
             return !searchableBone
+          }),
+          searchType:computed(()=>{
+            return currentlist.state.state===2?'local':'database'
           })
         })
 
         function search_input(event){
-          currentlist.filter({"search":event.target.value}).then(()=>{
-
-          })
+          if (state.searchType==='local'){
+            handlerState.filter = event.target.value
+          }else {
+            currentlist.filter({"search": event.target.value}).then(() => {
+            })
+          }
         }
         function reset_filter(){
           currentlist.filter({})
