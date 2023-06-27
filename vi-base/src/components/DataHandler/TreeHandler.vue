@@ -21,6 +21,7 @@ import {Request} from "@viur/viur-vue-utils";
 import FileBrowser from '../../components/Tree/FileBrowser.vue';
 import {useMessageStore} from "../../stores/message";
 import {useUserStore} from "../../stores/user";
+import {useContextStore} from "../../stores/context";
 
 export default defineComponent({
     props: {
@@ -36,6 +37,7 @@ export default defineComponent({
     setup(props, context) {
         const dbStore = useDBStore()
         const userStore = useUserStore()
+        const contextStore = useContextStore()
 
 
         const state = reactive({
@@ -55,6 +57,13 @@ export default defineComponent({
         provide("handlerState", state) // expose to components
 
         function fetchRoots() {
+            let context = contextStore.getCurrentContext()
+            if(Object.keys(context).includes('parentrepo')){
+              state.currentRootNode = {"name":"Repo","key":context['parentrepo']}
+              state.currentRootNodes = [state.currentRootNode]
+              return 0
+            }
+
             return Request.get(`/vi/${props.module}/listRootNodes`).then(async (resp) => {
                 let data = await resp.json()
                 state.currentRootNodes = data
@@ -65,8 +74,7 @@ export default defineComponent({
         }
 
         function fetchInitData() {
-            return fetchRoots().then(() => {
-            })
+            return fetchRoots()
         }
 
         function reloadAction() {

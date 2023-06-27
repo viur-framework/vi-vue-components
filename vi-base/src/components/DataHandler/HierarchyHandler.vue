@@ -190,7 +190,6 @@ export default defineComponent({
 
     function changerootNode(key: string) {
       state.currentRootNode = state.currentRootNodes.filter(i=>i["key"]===key)[0]
-      console.log(state.currentRootNode)
       reloadAction()
     }
     provide("changerootNode", changerootNode)

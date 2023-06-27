@@ -29,9 +29,10 @@
 <script lang="ts">
 import {reactive, defineComponent, computed, inject, unref} from 'vue'
 import {useDBStore} from "../../stores/db";
-import {useRouter} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import app from "../../App.vue";
 import {useUserStore} from "../../stores/user";
+import {useContextStore} from "../../stores/context";
 import Logics from "logics-js"
 import {Request} from "@viur/viur-vue-utils";
 
@@ -41,10 +42,11 @@ export default defineComponent({
   },
   components: {},
   setup(props, context) {
-    const route = useRouter()
+    const route = useRoute()
     const router = useRouter()
     const handlerState: any = inject("handlerState")
     const dbStore = useDBStore();
+    const contextStore = useContextStore()
     const userStore = useUserStore()
     const tableReload: any = inject("reloadAction")
 
@@ -103,7 +105,7 @@ export default defineComponent({
 
     function triggerAction() {
       let actions = handlerState.currentSelection
-      if (!actions) {
+      if (actions.length===0) {
         actions = [null]
       }
 
@@ -116,6 +118,7 @@ export default defineComponent({
           handleOpen(i)
         }
       }
+      state.confirm=false
     }
 
     function handleFetch(selection) {
@@ -140,16 +143,24 @@ export default defineComponent({
 
     function handleView(selection) {
       if (!state.info?.['url']) return
-
       if (selection === null) {
         let urlparts = state.info?.['url'].split("/")
-        let new_route = router.resolve("/"+state.info?.['url'])
-
-        console.log(new_route)
-        console.log(urlparts)
-
+        let new_route = router.resolve("/db/"+state.info?.['url'])
         dbStore.addOpened(new_route, urlparts[0])
         return
+      }else{
+        let searchParams = ""
+        if(state.info?.['params']){
+          let params = state.info?.['params']
+          for( const [k,v] of Object.entries(params)){
+            let akey = k
+            if (k === "rootNode") akey="parentrepo"
+            contextStore.setContext(akey, selection[akey], route.query["_"])
+          }
+        }
+        let urlparts = state.info?.['url'].split("/")
+        let new_route = router.resolve("/db/"+state.info?.['url'])
+        dbStore.addOpened(new_route, urlparts[0])
       }
     }
 

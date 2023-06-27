@@ -1,6 +1,7 @@
 // @ts-nocheck
 import {reactive, unref} from "vue";
 import {defineStore} from "pinia";
+import {useRoute} from "vue-router";
 
 
 export const useContextStore = defineStore("contextStore", () => {
@@ -35,6 +36,12 @@ export const useContextStore = defineStore("contextStore", () => {
     return context
   }
 
+  function getCurrentContext(){
+    let route = useRoute()
+    let handlerId = route.query?.["_"]
+    return getContext(handlerId)
+  }
+
   function getContext(handlerId){
     return {...unref(state.globalContext), ...getLocalContext(handlerId)}
   }
@@ -46,6 +53,7 @@ export const useContextStore = defineStore("contextStore", () => {
     getContext,
     setContext,
     getLocalContext,
-    copyLocalContext
+    copyLocalContext,
+    getCurrentContext
   }
 })
