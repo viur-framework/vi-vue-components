@@ -72,7 +72,7 @@ export default defineComponent({
       Request.securePost(url, {dataObj: obj}).then(async (resp: Response) => {
         let responsedata = await resp.json()
 
-        if (responsedata.status!==200){
+        if (resp.status!==200){
           messageStore.addMessage("error", `Error on Save`, "Error on Save");
           state.loading=false
           return 0
