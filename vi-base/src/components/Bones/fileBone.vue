@@ -57,13 +57,15 @@
     </sl-button>
   </div>
 
-  <Wrapper_nested
-        :value="value"
+    <Wrapper_nested v-if="boneState?.bonestructure['using']"
+        :value="value?.['rel']"
         :name="name"
         :index="index"
-  >
+        :disabled="boneState.bonestructure['readonly']"
+        @change="changeEventNested"
+      >
 
-  </Wrapper_nested>
+      </Wrapper_nested>
 
   <relational-selector
       :open="state.openedSelection"
@@ -107,9 +109,11 @@ export default defineComponent({
       droparea: false,
       openedSelection:false,
       moduleInfo:computed(()=>dbStore.getConf(boneState?.bonestructure['module'])),
+      selection:null
     });
 
     onMounted(() => {
+      state.selection=props.value
       context.emit("change", props.name, props.value, props.lang, props.index); //init
     });
 
@@ -170,10 +174,11 @@ export default defineComponent({
       state.loading = true;
       for (let file of event.target.files) {
         let fileresult = await uploadFile(file);
+        state.selection = { dest: fileresult, rel: null }
         context.emit(
           "change",
           props.name,
-          { dest: fileresult, rel: null },
+          state.selection,
           props.lang,
           props.index
         );
@@ -186,10 +191,11 @@ export default defineComponent({
       state.droparea = false;
       for (let file of event.dataTransfer.files) {
         let fileresult = await uploadFile(file);
+         state.selection = { dest: fileresult, rel: null }
         context.emit(
           "change",
           props.name,
-          { dest: fileresult, rel: null },
+          state.selection,
           props.lang,
           props.index
         );
@@ -218,6 +224,15 @@ export default defineComponent({
       dbStore.addOpened(route, mod);
     }
 
+    function changeEventNested(val){
+      if (Object.keys(state.selection).includes('rel')){
+        state.selection["rel"][val.name] = val.value
+      }else{
+        state.selection["rel"] = {[val.name]:val.value}
+      }
+      context.emit("change",props.name,state.selection,props.lang,props.index)
+    }
+
     return {
       state,
       Request,
@@ -230,7 +245,8 @@ export default defineComponent({
       handleDrop,
       openRelationalSelection,
       relationCloseAction,
-      editSelection
+      editSelection,
+      changeEventNested
     };
   },
 });
