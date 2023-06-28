@@ -30,11 +30,11 @@ export default defineComponent({
             url: computed(() => {
               if(handlerState && handlerState["currentSelection"] && handlerState["currentSelection"][0])
               {
-                return `/db/${handlerState.module}/add/node/${handlerState["currentSelection"][0]["key"]}}`
+                return `/db/${handlerState.module}/add/node/${handlerState["currentSelection"][0]["key"]}`
               }
               if(handlerState && handlerState["currentRootNode"])
               {
-                return `/db/${handlerState.module}/add/node/${handlerState["currentRootNode"]["key"]}}`
+                return `/db/${handlerState.module}/add/node/${handlerState["currentRootNode"]["key"]}`
               }
               return ""
 
