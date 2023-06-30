@@ -3,11 +3,12 @@
   <div class="main-wrapper">
       <handler-bar :module="module"></handler-bar>
 
-      <sl-details open summary="Modul Info"
-                  v-if="modulesStore.state.loaded && modulesStore.state.modules[module]['help_text']">
-        <div v-html="modulesStore.state.modules[module]['help_text']"></div>
-      </sl-details>
+
       <div class="table-wrapper" @scroll="stickyHeader">
+        <sl-details open summary="Modul Info"
+                  v-if="modulesStore.state.loaded && modulesStore.state.modules[module]['help_text']">
+          <div v-html="modulesStore.state.modules[module]['help_text']"></div>
+        </sl-details>
         <table ref="datatable">
           <thead>
             <tr>
@@ -27,7 +28,11 @@
                   @click.ctrl="entrySelected(idx,'append')"
                   @click.shift="entrySelected(idx,'range')"
               >
-                <td v-for="(name) in state.selectedBones">{{ getBoneViewer(skel,name) }}</td>
+                <td v-for="(name) in state.selectedBones">
+                  <div class="ellipsis">
+                    {{ getBoneViewer(skel,name) }}
+                  </div>
+                </td>
               </tr>
           </tbody>
         </table>
@@ -392,5 +397,12 @@ sl-details{
     border-radius: 0;
     border-bottom: 1px solid var(--vi-border-color);
   }
+}
+
+.ellipsis{
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 </style>
