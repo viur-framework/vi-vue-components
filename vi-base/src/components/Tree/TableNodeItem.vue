@@ -38,6 +38,7 @@
       </td>
 
       <template v-for="(name) in treeState.selectedBones">
+
         <td @click="selectChild(idx)"
             @dblclick="openEditor"
             v-if="!name?.startsWith('_')"
@@ -260,6 +261,7 @@ tr{
   color: var(--vi-foreground-color);
   border-right: none;
   position: relative;
+  vertical-align: middle;
 
   &:hover{
     opacity: 1;
@@ -270,8 +272,8 @@ tr{
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 1em;
-  height: 1em;
+  width: 100%;
+  min-height: 100%;
   margin-right: var(--sl-spacing-x-small);
 
   sl-icon{
@@ -326,6 +328,7 @@ tr{
 .expand-cell{
   border-right: none;
   padding: .4em .3em;
+  vertical-align: middle;
 }
 
 .chevron{
@@ -359,6 +362,13 @@ tr{
 
 .disabled {
   opacity: .4;
+}
+
+.ellipsis{
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 </style>

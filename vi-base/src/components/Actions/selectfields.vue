@@ -106,7 +106,6 @@ export default defineComponent({
 
 sl-dialog{
   &::part(body){
-    padding-top: 0;
   }
 }
 

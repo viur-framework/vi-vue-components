@@ -2,11 +2,11 @@
   <div class="main-wrapper">
     <handler-bar :module="module"></handler-bar>
 
-    <sl-details open summary="Modul Info"
-      v-if="modulesStore.state.loaded && modulesStore.state.modules[module]['help_text']">
-        <div v-html="modulesStore.state.modules[module]['help_text']"></div>
-    </sl-details>
     <div class="table-wrapper" @scroll="stickyHeader" v-if="Object.keys(state.selectedPath).length > 0" >
+      <sl-details open summary="Modul Info"
+        v-if="modulesStore.state.loaded && modulesStore.state.modules[module]['help_text']">
+          <div v-html="modulesStore.state.modules[module]['help_text']"></div>
+      </sl-details>
       <table>
         <thead>
           <tr>
