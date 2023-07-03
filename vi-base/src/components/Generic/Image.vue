@@ -25,7 +25,8 @@
 
     <sl-dialog v-if="popup"
                label="Preview"
-               :open="state.opened">
+               :open="state.opened"
+              @sl-hide="state.opened=!state.opened">
         <img
          draggable="false"
          :title="alt?alt:null"

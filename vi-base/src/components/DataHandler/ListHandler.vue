@@ -4,10 +4,6 @@
       <handler-bar :module="module"></handler-bar>
 
       <div class="table-wrapper" @scroll="stickyHeader">
-        <sl-details open summary="Modul Info"
-                  v-if="modulesStore.state.loaded && modulesStore.state.modules[module]['help_text']">
-          <div v-html="modulesStore.state.modules[module]['help_text']"></div>
-        </sl-details>
         <table ref="datatable">
           <thead>
             <tr>
@@ -124,7 +120,7 @@ export default defineComponent({
       editableTable: false,
       active:false,
       conf:{},
-
+      open: false,
       selectedBones:[],
       selectedRows:[],
       sticky:false,
@@ -578,4 +574,5 @@ sl-details{
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
 </style>

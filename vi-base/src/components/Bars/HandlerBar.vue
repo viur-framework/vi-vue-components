@@ -1,5 +1,20 @@
 <template>
   <div class="bar">
+    <sl-button variant="info"
+                   size="small"
+                   class="module-info"
+                    title="Module Info"
+                   v-if="modulesStore.state.modules[module]['help_text']"
+                    @click="state.open=!state.open">
+      <sl-icon name="question"></sl-icon>
+    </sl-button>
+    <sl-dialog
+          :label="modulesStore.state.modules[module]['name']"
+           :open="state.open"
+          @sl-hide="state.open=!state.open"
+           >
+      <div v-html="modulesStore.state.modules[module]['help_text']"></div>
+    </sl-dialog>
     <template v-for="(actionlist,index) in state.actions['default']">
       <template v-for="action in actionlist">
         <group_action v-if="action.startsWith(':')" :group="state.actionGroups[action.substring(1)]">
@@ -33,6 +48,7 @@ import {reactive, defineComponent, computed} from 'vue'
 import {useDBStore} from "../../stores/db";
 import {useRoute} from "vue-router";
 import actions from '../../components/Actions/actions'
+import {useModulesStore} from "../../stores/modules";
 
 
 export default defineComponent({
@@ -50,6 +66,7 @@ export default defineComponent({
   setup(props, context) {
     const dbStore = useDBStore()
     const route = useRoute()
+    const modulesStore = useModulesStore();
 
 
     const state = reactive({
@@ -139,7 +156,10 @@ export default defineComponent({
         return actions
       })
     })
-    return {state}
+    return {
+      state,
+    modulesStore,
+    }
   }
 })
 </script>
@@ -205,4 +225,11 @@ sl-menu-item{
   }
 }
 
+
+.module-info{
+
+  &::part(base){
+    aspect-ratio: 1;
+  }
+}
 </style>

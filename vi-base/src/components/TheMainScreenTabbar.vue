@@ -48,6 +48,10 @@ export default defineComponent({
 sl-tab-group {
   --tab-flap-background-color: var(--vi-tab-background-color);
   z-index: 2;
+
+  &::part(scroll-button){
+    background-color: var(--vi-background-color);
+  }
 }
 
 </style>

@@ -35,7 +35,7 @@ export default defineComponent({
         return{
           shownName:props.group["shownName"]?props.group["shownName"]:false,
           name:props.group["name"],
-          icon:props.group["icon"]?props.group["icon"]:"chevron-down",
+          icon:props.group["icon"]?props.group["icon"]:"menu",
           library:props.group["library"]?props.group["library"]:"default",
 
         }
