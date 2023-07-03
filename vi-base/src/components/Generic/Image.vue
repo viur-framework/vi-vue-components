@@ -17,13 +17,16 @@
          :alt="alt?alt:null"
          :src="state.image"
          @load="updateLoading(false)"
-         class="image"
+         class="image has-preview"
          @click="state.opened=!state.opened"
          @error="onError"
     />
 
-    <sl-dialog v-if="popup" :open="state.opened">
-        <img style="display:block"
+
+    <sl-dialog v-if="popup"
+               label="Preview"
+               :open="state.opened">
+        <img
          draggable="false"
          :title="alt?alt:null"
          :alt="alt?alt:null"
@@ -31,7 +34,15 @@
          @load="updateLoading(false)"
 
     />
-        <sl-button :download="alt+'.jpg'" :href="src" variant="primary" target="_blank">Download</sl-button>
+      <div class="" slot="header-actions">
+        <sl-button :download="alt+'.jpg'"
+                   :href="src" variant="primary"
+                   target="_blank"
+                   class="download-btn"
+                   size="small"
+        >Download</sl-button>
+      </div>
+
     </sl-dialog>
 
 </template>
@@ -92,15 +103,6 @@ export default {
 </script>
 
 <style scoped lang="less">
-img {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    object-fit: contain;
-    object-position: center;
-    background-color: var(--sl-color-neutral-200);
-    transition: opacity 2s ease-in-out;
-
-}
 
 img.is-loading {
     filter: blur(4px);
@@ -109,11 +111,20 @@ img.is-loading {
 .image {
     width: 100%;
     height: 100%;
-    background-image: v-bind('state.background');
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: contain;
+    background-image: /* tint image */
+                    linear-gradient(to right, rgba(255, 255, 255, 0.87), rgba(255, 255, 255, 0.87)),
+                    /* checkered effect */
+                    linear-gradient(to right, black 50%, white 50%),
+                    linear-gradient(to bottom, black 50%, white 50%);
+    background-blend-mode: normal, difference, normal;
+    background-size: .65em .65em;
+
+  &.has-preview{
+    cursor: pointer;
+  }
 }
+
+
 .image:hover{
   object-fit: cover;
 }
@@ -122,9 +133,42 @@ sl-dialog::part(panel){
   width:100%;
 }
 
+
 sl-dialog{
-  img{
-    width:auto;
+  &::part(panel){
+    width: auto;
+    max-width: 1200px;
   }
+
+  &::part(body){
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: /* tint image */
+                  linear-gradient(to right, rgba(255, 255, 255, 0.87), rgba(255, 255, 255, 0.87)),
+                  /* checkered effect */
+                  linear-gradient(to right, black 50%, white 50%),
+                  linear-gradient(to bottom, black 50%, white 50%);
+    background-blend-mode: normal, difference, normal;
+    background-size: 1.2em 1.2em;
+    padding: 0;
+    position: relative;
+  }
+
+  &::part(header-actions){
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+  }
+
+  img{
+    width: auto;
+    height: auto;
+  }
+}
+
+.download-btn{
+  margin-right: var(--sl-spacing-x-small);
 }
 </style>

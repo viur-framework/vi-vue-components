@@ -31,8 +31,9 @@
     </sl-button>
     <div class="box" v-if="!boneState.isEmpty">
       <div class="preview" v-if="value?.['dest']?.['mimetype'].includes('image')">
-      <vi-image :src="Request.downloadUrlFor(value)" popup>
-      </vi-image>
+        <vi-image :src="Request.downloadUrlFor(value)"
+                  popup>
+        </vi-image>
       </div>
 
       <div class="preview" v-else>
@@ -42,7 +43,11 @@
         {{ decodeURIComponent(value?.["dest"]?.["name"]) }}
       </div>
     </div>
-    <sl-button @click="editSelection" variant="info" outline v-if="value">
+    <sl-button @click="editSelection"
+               class="edit-btn"
+               variant="info"
+               outline
+               v-if="value">
         <sl-icon name="pencil"></sl-icon>
       </sl-button>
     <sl-button
@@ -271,16 +276,26 @@ export default defineComponent({
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
+  height: var(--sl-input-height-medium);
+  width: var(--sl-input-height-medium);
   aspect-ratio: 1;
   border-right: 1px solid var(--sl-color-gray-500);
   margin-right: var(--sl-spacing-small);
-  background-position: center;
-  background-size: cover;
+
+  &.has-preview{
+    cursor: pointer;
+  }
 
   sl-icon {
     font-size: 1.1em;
     color: var(--sl-color-gray-400);
+  }
+
+  :deep(.image){
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background-color: transparent;
   }
 }
 
@@ -317,4 +332,24 @@ export default defineComponent({
     aspect-ratio: 1;
   }
 }
+
+.edit-btn {
+  &::part(base) {
+    aspect-ratio: 1;
+  }
+}
+
+
+.loader{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(255, 255, 255, .7);
+}
+
 </style>

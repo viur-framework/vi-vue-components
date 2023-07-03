@@ -15,10 +15,18 @@
                 :class="{'stick-header':state.sticky}"
                 :style="{width: '150px'}"
               >
-                {{ currentlist.structure?.[bone]?.["descr"] }}
-                <div v-if="currentlist.state.state===2">
-                  <sl-icon name="chevron-up" @click="sorting(bone,'asc')" class="sort-arrow" :class="{'sort-active':state.sorting===bone+'$asc'}"></sl-icon>
-                  <sl-icon name="chevron-down" @click="sorting(bone,'desc')" class="sort-arrow" :class="{'sort-active':state.sorting===bone+'$desc'}"></sl-icon>
+                <div class="th-inner">
+                  {{ currentlist.structure?.[bone]?.["descr"] }}
+                  <div class="sort-wrap" v-if="currentlist.state.state===2">
+                    <sl-icon name="play"
+                             @click="sorting(bone,'asc')"
+                             class="sort-arrow sort-arrow-up"
+                             :class="{'sort-active':state.sorting===bone+'$asc'}"></sl-icon>
+                    <sl-icon name="play"
+                             @click="sorting(bone,'desc')"
+                             class="sort-arrow sort-arrow-down"
+                             :class="{'sort-active':state.sorting===bone+'$desc'}"></sl-icon>
+                  </div>
                 </div>
               </th>
             </tr>
@@ -488,6 +496,48 @@ table{
       }
     }
   }
+}
+
+.th-inner{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
+.sort-wrap{
+  display: flex;
+  flex-direction: column;
+  font-size: .85em;
+  margin-left: auto;
+
+  &:hover{
+    .sort-arrow{
+      opacity: .6;
+    }
+  }
+}
+
+.sort-arrow{
+  transition: all ease .3s;
+  opacity: .15;
+  font-size: .7em;
+  padding: 1px var(--sl-spacing-2x-small);
+
+  &.sort-active{
+    opacity: 1 !important;
+  }
+
+  &:hover{
+    opacity: 1 !important;
+  }
+}
+
+.sort-arrow-up{
+  transform: rotate(-90deg);
+}
+
+.sort-arrow-down{
+  transform: rotate(90deg);
 }
 
 .table-wrapper{
