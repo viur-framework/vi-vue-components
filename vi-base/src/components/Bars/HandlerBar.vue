@@ -4,12 +4,12 @@
                    size="small"
                    class="module-info"
                     title="Module Info"
-                   v-if="modulesStore.state.modules[module]['help_text']"
+                   v-if="modulesStore.state.modules[module]?.['help_text']"
                     @click="state.open=!state.open">
       <sl-icon name="question"></sl-icon>
     </sl-button>
     <sl-dialog
-          :label="modulesStore.state.modules[module]['name']"
+          :label="modulesStore.state.modules[module]?.['name']"
            :open="state.open"
           @sl-hide="state.open=!state.open"
            >
