@@ -16,7 +16,7 @@
 // @ts-nocheck
 import {reactive, defineComponent} from 'vue'
 import {useDBStore} from "../stores/db";
-import {boneLogic} from '@viur/viur-vue-utils'
+import {boneLogic} from '@viur/vue-utils'
 
 export default defineComponent({
     props: {},

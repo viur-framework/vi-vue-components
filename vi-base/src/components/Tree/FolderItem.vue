@@ -41,7 +41,7 @@
 <script>
 import {reactive, defineComponent, onMounted, inject, computed, watch} from 'vue'
 import useTree from "./tree";
-import {Request} from "@viur/viur-vue-utils";
+import {Request} from "@viur/vue-utils";
 
 export default defineComponent({
   props: {

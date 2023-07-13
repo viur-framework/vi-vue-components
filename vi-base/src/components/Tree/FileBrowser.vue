@@ -103,7 +103,7 @@
 
 <script lang="js">
 import {reactive, defineComponent, computed, provide, onBeforeMount, watch} from 'vue'
-import {Request} from "@viur/viur-vue-utils";
+import {Request} from "@viur/vue-utils";
 import TreeFolderItem from "./TreeFolderItem.vue";
 import ViImage from "../../components/Generic/Image.vue";
 import useTree from "./tree.js";

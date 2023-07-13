@@ -57,7 +57,7 @@
 import {reactive, defineComponent, inject, onBeforeMount, watch, computed, onMounted, unref, toRaw} from 'vue'
 import { useRouter } from 'vue-router';
 import { useDBStore } from '../../stores/db';
-import {Request,boneLogic} from "@viur/viur-vue-utils";
+import {Request,boneLogic} from "@viur/vue-utils";
 import useTree from "./tree.js";
 
 export default defineComponent({

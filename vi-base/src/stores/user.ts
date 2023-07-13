@@ -1,7 +1,7 @@
 // @ts-nocheck
 import {reactive, computed} from 'vue';
 import {defineStore} from "pinia";
-import {Request} from "@viur/viur-vue-utils";
+import {Request} from "@viur/vue-utils";
 import utils from '../utils'
 import {useDBStore} from "./db";
 import {useRoute} from "vue-router";

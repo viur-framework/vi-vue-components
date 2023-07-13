@@ -25,7 +25,7 @@
 <script lang="ts">
 //@ts-nocheck
 import {reactive, defineComponent, inject, computed} from 'vue'
-import {Request} from "@viur/viur-vue-utils";
+import {Request} from "@viur/vue-utils";
 import {useMessageStore} from "../../stores/message";
 import {useDBStore} from "../../stores/db";
 import {useRoute} from "vue-router";

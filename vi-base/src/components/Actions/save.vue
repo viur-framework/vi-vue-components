@@ -10,7 +10,7 @@
 import {reactive, defineComponent, inject, computed} from 'vue'
 import {useRoute, useRouter} from "vue-router";
 import {useDBStore} from "../../stores/db";
-import {Request} from "@viur/viur-vue-utils";
+import {Request} from "@viur/vue-utils";
 import {useMessageStore} from "../../stores/message";
 export default defineComponent({
   props: {

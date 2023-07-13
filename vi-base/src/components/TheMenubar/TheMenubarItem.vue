@@ -126,7 +126,7 @@ import Utils from '../../utils';
 import {useDBStore} from "../../stores/db";
 import {useRoute, useRouter} from "vue-router";
 import {useUserStore} from "../../stores/user";
-import {Request} from "@viur/viur-vue-utils";
+import {Request} from "@viur/vue-utils";
 
 export default defineComponent({
   name: "TheMenubarItem",

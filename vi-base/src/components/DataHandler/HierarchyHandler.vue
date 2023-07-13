@@ -43,7 +43,7 @@ import {
   onDeactivated
 } from 'vue'
 import HandlerBar from "../../components/Bars/HandlerBar.vue";
-import {Request} from '@viur/viur-vue-utils'
+import {Request} from '@viur/vue-utils'
 import {useDBStore} from '../../stores/db'
 import { useModulesStore } from '../../stores/modules';
 import {useRoute} from "vue-router";

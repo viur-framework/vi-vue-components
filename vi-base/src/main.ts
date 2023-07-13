@@ -25,7 +25,7 @@ app.use(pinia)
 pinia.use(piniaPluginPersistedstate)
 app.use(router)
 // @ts-ignore
-import {bone, de_translations, en_translations} from "@viur/viur-vue-utils";
+import {bone, de_translations, en_translations} from "@viur/vue-utils";
 import { useDBStore } from './stores/db'
 app.component("bone",bone)
 

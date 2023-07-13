@@ -30,7 +30,7 @@
 import TheTopbar from "../TheMainScreenTopbar.vue";
 import TheSidebar from "../TheMainScreenSidebar.vue";
 import { useRoute, useRouter } from "vue-router";
-import { Request } from "@viur/viur-vue-utils";
+import { Request } from "@viur/vue-utils";
 import { defineComponent, onBeforeMount, unref } from "vue";
 import { useDBStore } from "../../stores/db";
 

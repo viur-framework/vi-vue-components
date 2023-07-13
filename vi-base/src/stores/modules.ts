@@ -1,7 +1,7 @@
 // @ts-nocheck
 import {reactive} from "vue";
 import {defineStore} from "pinia";
-import {ListRequest, Request} from "@viur/viur-vue-utils";
+import {ListRequest, Request} from "@viur/vue-utils";
 
 
 export const useModulesStore = defineStore("modulesStore", () => {

@@ -1,4 +1,4 @@
-import {Request} from "@viur/viur-vue-utils";
+import {Request} from "@viur/vue-utils";
 
 export default function useTree(module, treeState, state){
     function mouseDownHandle(e, idx, type="node") {

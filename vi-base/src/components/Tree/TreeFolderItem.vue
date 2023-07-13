@@ -50,7 +50,7 @@
 
 <script lang="js">
 import {reactive, defineComponent, inject, onBeforeMount, watch, computed, onMounted, unref, toRaw} from 'vue'
-import {Request} from "@viur/viur-vue-utils";
+import {Request} from "@viur/vue-utils";
 import useTree from "./tree.js";
 
 export default defineComponent({

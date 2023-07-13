@@ -88,9 +88,9 @@
 //@ts-nocheck
 import { reactive, defineComponent, onMounted, inject, ref, computed, unref } from "vue";
 import { useRouter } from "vue-router";
-import { Request } from "@viur/viur-vue-utils";
+import { Request } from "@viur/vue-utils";
 import relationalSelector from './components/relationalSelector.vue'
-import Wrapper_nested from '@viur/viur-vue-utils/bones/edit/wrapper_nested.vue'
+import Wrapper_nested from '@viur/vue-utils/bones/edit/wrapper_nested.vue'
 import { useDBStore } from '../../stores/db'
 import ViImage from "../../components/Generic/Image.vue";
 

@@ -39,7 +39,7 @@
 <script lang="ts">
 //@ts-nocheck
 import {reactive, defineComponent, onMounted, inject, computed} from 'vue'
-import { Request } from "@viur/viur-vue-utils"
+import { Request } from "@viur/vue-utils"
 import relationalSelector from '../components/relationalSelector.vue'
 import { useDBStore } from '../../../stores/db'
 

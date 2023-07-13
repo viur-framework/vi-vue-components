@@ -15,9 +15,9 @@
 //@ts-nocheck
 import {reactive, defineComponent, computed, provide, onBeforeMount, watch, onActivated, onDeactivated} from 'vue'
 import HandlerBar from "../../components/Bars/HandlerBar.vue";
-import {ListRequest} from '@viur/viur-vue-utils'
+import {ListRequest} from '@viur/vue-utils'
 import {useDBStore} from '../../stores/db'
-import {Request} from "@viur/viur-vue-utils";
+import {Request} from "@viur/vue-utils";
 import FileBrowser from '../../components/Tree/FileBrowser.vue';
 import {useMessageStore} from "../../stores/message";
 import {useUserStore} from "../../stores/user";

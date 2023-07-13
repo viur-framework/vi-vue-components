@@ -34,7 +34,7 @@ import app from "../../App.vue";
 import {useUserStore} from "../../stores/user";
 import {useContextStore} from "../../stores/context";
 import Logics from "logics-js"
-import {Request} from "@viur/viur-vue-utils";
+import {Request} from "@viur/vue-utils";
 
 export default defineComponent({
   props: {

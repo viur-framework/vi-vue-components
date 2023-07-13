@@ -10,7 +10,7 @@ import TheLoginScreen from "./components/Screens/TheLoginScreen.vue"
 import TheMainScreen from "./components/Screens/TheMainScreen.vue"
 import {useUserStore} from "./stores/user"
 import {computed, defineComponent, onBeforeMount} from "vue"
-import {Request} from "@viur/viur-vue-utils";
+import {Request} from "@viur/vue-utils";
 import {useDBStore} from "./stores/db";
 import {useColorStore} from "./stores/color";
 import {useModulesStore} from "./stores/modules";

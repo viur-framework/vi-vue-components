@@ -6,7 +6,7 @@ import {useRoute, useRouter} from "vue-router";
 import {useViewStore} from "./views";
 import {useUserStore} from "./user";
 import { useContextStore } from './context';
-import {destroyStore} from "@viur/viur-vue-utils/utils/handlers";
+import {destroyStore} from "@viur/vue-utils/utils/handlers";
 import hierarchyhandler from "../components/DataHandler/HierarchyHandler.vue";
 
 

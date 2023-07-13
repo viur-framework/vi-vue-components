@@ -71,7 +71,7 @@ import {
   unref, inject
 } from 'vue'
 import HandlerBar from "../../components/Bars/HandlerBar.vue";
-import {ListRequest, boneLogic} from '@viur/viur-vue-utils'
+import {ListRequest, boneLogic} from '@viur/vue-utils'
 import {useDBStore} from '../../stores/db'
 import {useMessageStore} from "../../stores/message";
 import router from "../../routes";

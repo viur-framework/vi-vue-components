@@ -34,7 +34,7 @@
 <script lang="ts">
 //@ts-nocheck
 import {reactive, defineComponent, onMounted, inject} from 'vue'
-import { Request } from "@viur/viur-vue-utils"
+import { Request } from "@viur/vue-utils"
 import handlers from "../../DataHandler/handlers";
 
 export default defineComponent({

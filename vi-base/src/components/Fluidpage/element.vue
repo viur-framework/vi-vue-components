@@ -79,7 +79,7 @@
 </template>
 
 <script>
-import {Request} from '@viur/viur-vue-utils'
+import {Request} from '@viur/vue-utils'
 import {computed, reactive, inject, provide} from "vue";
 import Utils from "../../utils"
 import Edit from "../Actions/edit.vue";

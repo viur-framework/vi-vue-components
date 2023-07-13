@@ -75,7 +75,7 @@
 <script lang="ts">
 import {useUserStore} from "../../stores/user"
 import {reactive, computed, onBeforeMount, defineComponent, ref} from 'vue'
-import {Request} from "@viur/viur-vue-utils";
+import {Request} from "@viur/vue-utils";
 import {useAppStore} from "../../stores/app";
 import Loader from "../Generic/Loader.vue";
 
