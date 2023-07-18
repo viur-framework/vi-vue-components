@@ -79,7 +79,6 @@ export default defineComponent({
         }
         return name
       }),
-      currentSelection: null,
       currentRootNodes: [],
       currentRootNode: null,
       currentNode: null,

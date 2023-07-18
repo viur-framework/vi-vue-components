@@ -82,7 +82,8 @@ import {useRoute} from "vue-router";
 import EntryBar from "../Bars/EntryBar.vue";
 import {useModulesStore} from "../stores/modules";
 import handlers from "../handler/handlers";
-import {bone, getBoneWidget} from "@viur/vue-utils"
+import bone from "@viur/vue-utils/bones/edit/bone.vue"
+import {getBoneWidget} from "@viur/vue-utils/bones/edit/index"
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
 
