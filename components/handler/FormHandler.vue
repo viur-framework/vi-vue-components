@@ -77,11 +77,11 @@
 //@ts-nocheck
 import {reactive, defineComponent, onBeforeMount, computed, provide, toRaw, unref} from 'vue'
 import {Request} from "@viur/vue-utils";
-import {useDBStore} from "../../stores/db";
+import {useDBStore} from "../stores/db";
 import {useRoute} from "vue-router";
 import EntryBar from "../Bars/EntryBar.vue";
-import {useModulesStore} from "../../stores/modules";
-import handlers from "../DataHandler/handlers";
+import {useModulesStore} from "../stores/modules";
+import handlers from "../handler/handlers";
 import {bone, getBoneWidget} from "@viur/vue-utils"
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';

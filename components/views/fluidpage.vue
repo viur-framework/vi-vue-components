@@ -11,7 +11,7 @@
 <script lang="ts">
 import {reactive, defineComponent, computed} from 'vue'
 import {onBeforeRouteUpdate, useRoute} from "vue-router";
-import FluidpageHandler from "../components/DataHandler/FluidpageHandler.vue";
+import FluidpageHandler from "../handler/FluidpageHandler.vue";
 import {useUserStore} from "../stores/user";
 
 export default defineComponent({

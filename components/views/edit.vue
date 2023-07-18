@@ -12,7 +12,7 @@
 <script lang="ts">
 //@ts-nocheck
 import {reactive, defineComponent, onDeactivated, watch, getCurrentInstance} from 'vue'
-import FormHandler from "../components/DataHandler/FormHandler.vue";
+import FormHandler from "../handler/FormHandler.vue";
 import {useRoute} from "vue-router";
 import {useDBStore} from "../stores/db";
 import utils from "../utils"

@@ -10,7 +10,7 @@
 <script lang="ts">
 //@ts-nocheck
 import {reactive, defineComponent, computed} from 'vue'
-import HierarchyHandler from "../components/DataHandler/HierarchyHandler.vue";
+import HierarchyHandler from "../handler/HierarchyHandler.vue";
 import {onBeforeRouteUpdate, useRoute} from "vue-router";
 import {useUserStore} from "../stores/user";
 

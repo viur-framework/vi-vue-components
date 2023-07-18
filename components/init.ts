@@ -1,3 +1,4 @@
+//@ts-nocheck
 import {onBeforeMount} from "vue";
 import {Request} from "@viur/vue-utils";
 import {useUserStore} from "./stores/user";
@@ -6,7 +7,7 @@ import {useColorStore} from "./stores/color";
 import {useModulesStore} from "./stores/modules";
 import {userRequestStore} from "@viur/vue-utils/"
 // custom Bones
-//@ts-ignore
+
 import {addBoneWidget, addBoneActionbar } from '@viur/vue-utils'
 import selectaccessBone from './bones/selectaccessBone.vue';
 import relationalBone from './bones/relationalBone.vue';

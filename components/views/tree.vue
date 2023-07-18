@@ -10,7 +10,7 @@
 <script lang="ts">
 //@ts-nocheck
 import {reactive, defineComponent, computed} from 'vue'
-import TreeHandler from "../components/DataHandler/TreeHandler.vue";
+import TreeHandler from "../handler/TreeHandler.vue";
 import {onBeforeRouteUpdate, useRoute} from "vue-router";
 import {useUserStore} from "../stores/user";
 

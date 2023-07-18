@@ -11,7 +11,7 @@
 <script lang="ts">
 import {reactive, defineComponent, computed} from 'vue'
 import {useRoute, onBeforeRouteUpdate} from "vue-router";
-import ListHandler from "../components/DataHandler/ListHandler.vue";
+import ListHandler from "../handler/ListHandler.vue";
 import {useUserStore} from "../stores/user";
 
 export default defineComponent({
