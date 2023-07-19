@@ -17,6 +17,7 @@ export default defineComponent({
     setup(props, context) {
         const currentlist: any = inject("currentlist")
         const handlerState: any = inject("handlerState")
+        const tableReload: any = inject("reloadAction")
         const state = reactive({
           disabled:computed(()=>{
             return false
@@ -36,21 +37,34 @@ export default defineComponent({
         })
 
         function search_input(event){
+          if (event.target.value===""){
+            reset_filter()
+          }
+
+
           if (state.searchType==='local'){
             handlerState.filter = event.target.value
+            try{
+              delete currentlist.filter['search']
+            }catch(e){}
+
           }else {
             currentlist.filter({"search": event.target.value}).then(() => {
             })
           }
         }
         function reset_filter(){
-          currentlist.filter({})
+          try{
+              delete currentlist.filter['search']
+            }catch(e){}
+          handlerState.filter=null
         }
 
         return {
             state,
             search_input,
-            reset_filter
+            reset_filter,
+            handlerState
         }
     }
 })

@@ -5,12 +5,12 @@
     <debugentry></debugentry>
     <save :module="module" :action="action" name="actions.save_next" v-if="['clone','add'].includes(handlerState.action)"></save>
     <save :module="module" :action="action"></save>
-    <save
+    <!--<save
       name="actions.save_close"
       icon="check-all"
       :close="true"
       :module="module" :action="action"
-    ></save>
+    ></save>-->
   </div>
 </template>
 

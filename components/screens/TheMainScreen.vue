@@ -82,7 +82,6 @@ export default defineComponent({
 
     function initTopBarActions() {
       dbStore.addTopBarAction(LogAction);
-      dbStore.addTopBarAction(ViAction);
     }
 
     onBeforeMount(() => {

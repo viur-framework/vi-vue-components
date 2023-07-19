@@ -55,7 +55,7 @@ export default defineComponent({
       info: computed(() => {
         let conf = dbStore.state["vi.modules"][handlerState["module"]]
         if (handlerState["view"]) {
-          conf = conf["children"][handlerState["view"]]
+          conf = conf["children"].filter(i=>i["view_number"]===parseInt(handlerState["view"]))?.[0]
         }
         return conf?.["customActions"]?.[props.name]
       }),

@@ -24,8 +24,8 @@ export default {
       nofilter: "Für dieses Modul sind keine Filter vorhanden"
     },
     reset: "Zurücksetzen",
-    nextpage: "weitere Einträge",
-    nextpage_finish: "alle Einträge geladen",
+    nextpage: "weitere Einträge ({amount})",
+    nextpage_finish: "alle Einträge geladen ({amount})",
     fluidpage: {
       edit: "Inhalt bearbeiten"
     },

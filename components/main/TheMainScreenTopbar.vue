@@ -6,14 +6,14 @@
         <sl-icon :src="appStore.state['admin.logo']" v-once></sl-icon>
       </div>
       <h1 class="main-headline">
-        {{ appStore.state["admin.name"] }}<!-- {{ dbStore.state["handlers.active"] }}-->
+        {{ appStore.state["admin.name"] }}
       </h1>
     </div>
     <!-- </router-link> -->
 
     <div class="main-group">
-      <!--<component v-for="action in dbStore.state['topbar.actions']" :is="action">
-            </component>-->
+      <component v-for="action in dbStore.state['topbar.actions']" :is="action">
+      </component>
 
       <sl-avatar
         :image="state.avatarUser"
@@ -228,6 +228,9 @@ header {
 
 .main-group {
   margin-right: 15px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 
 sl-avatar {

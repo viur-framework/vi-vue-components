@@ -76,6 +76,8 @@ import {useModulesStore} from "../stores/modules";
 import {useRoute} from "vue-router";
 import Loader from "@viur/vue-utils/generic/Loader.vue";
 import FloatingBar from "../bars/FloatingBar.vue";
+import { useContextStore } from '../stores/context';
+import { useLocalStore } from '../stores/local';
 
 export default defineComponent({
   props: {
@@ -97,6 +99,8 @@ export default defineComponent({
     const route = useRoute()
     const messageStore = useMessageStore();
     const modulesStore = useModulesStore();
+    const contextStore = useContextStore();
+    const localStore = useLocalStore();
     const datatable = ref(null)
 
     const state = reactive({
@@ -148,6 +152,7 @@ export default defineComponent({
     function reloadAction() {
       state.selectedBones = []
       currentlist.reset();
+      currentlist.state.params = {...currentlist.state.params, ...contextStore.getContext()}
       return currentlist.fetch().catch((error) => {
         messageStore.addMessage("error", `${error.message}`, error.response?.url)
       }).then((resp) => {
@@ -174,10 +179,11 @@ export default defineComponent({
           }
         }
       }
+      currentlist.state.params = {...currentlist.state.params, ...contextStore.getContext()}
+      currentlist.state.params["limit"]=localStore.state.listamount;
 
       currentlist.fetch().then((resp)=>{
         setSelectedBones()
-
       }).catch((error) => {
         messageStore.addMessage("error", `${error.message}`, error.response.url)
       })
@@ -199,6 +205,10 @@ export default defineComponent({
         reloadAction()
         dbStore.getActiveTab()["update"]=false
       }
+    })
+
+    watch(()=>Object.values(contextStore.state.globalContext),(newVal,oldVal)=>{
+      reloadAction()
     })
 
     onDeactivated(()=>{
@@ -282,7 +292,7 @@ export default defineComponent({
     }
 
     function filter_update(skel) {
-        if (state.filter===null) return true
+        if (state.filter===null || state.filter === "") return true
         let wordlist = state.filter ? state.filter.split(" ") : []
         for(const [k,v] of Object.entries(skel)){
           for (let word of wordlist) {

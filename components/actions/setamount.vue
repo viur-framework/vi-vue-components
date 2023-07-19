@@ -1,5 +1,5 @@
 <template>
-  <sl-select value="30" :label='$t("actions.setamount") + ":" ' @sl-change="amoutChange" size="small"
+  <sl-select :value="localStore.state.listamount" :label='$t("actions.setamount") + ":" ' @sl-change="amoutChange" size="small"
              :title="$t('actions.setamount')">
     <sl-option value="30">30</sl-option>
     <sl-option value="60">60</sl-option>
@@ -10,20 +10,22 @@
 
 <script lang="ts">
 // @ts-nocheck
-import {reactive, defineComponent, inject} from 'vue'
+import {reactive, defineComponent, inject, onBeforeMount} from 'vue'
+import { useLocalStore } from '../stores/local';
 
 export default defineComponent({
   props: {},
   components: {},
   setup(props, context) {
     const state = reactive({});
+    const localStore = useLocalStore()
 
     const setLimit: any = inject("setLimit")
     function amoutChange(e: Event) {
      setLimit(e.target.value);
+     localStore.state.listamount=e.target.value
     }
-
-    return {state, amoutChange}
+    return {state, amoutChange, localStore}
   }
 })
 </script>
