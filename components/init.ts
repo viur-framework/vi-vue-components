@@ -49,6 +49,7 @@ export function useInitConnection(){
               "clientId is required since the plugin is not initialized with a Client Id"
             );
           })
+          appStore.state['init'] = true
         }
       ).catch(()=>{
         console.log("Viur settings not Found")

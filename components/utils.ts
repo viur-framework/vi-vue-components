@@ -10,17 +10,18 @@ export default class Utils {
         let currentSlot = slot()
         let length = 0
         for (let slotElement of currentSlot) {
-            if (slotElement.type.toString() === "Symbol(Fragment)") {
-                if (!slotElement.children) continue
-                // @ts-ignore
-                length += slotElement.children.length;
-            } else if (slotElement.type.toString() === "Symbol(Comment)" || slotElement.type.toString() === "Symbol()") {
-                continue
-            } else {
-                length += 1
-            }
-        }
-        return length
+          if (slotElement.type.toString() === "Symbol(Fragment)") {
+              length += slotElement.children.length;
+          }else if(slotElement.type.toString() === "Symbol(Comment)" ||
+            slotElement.type.toString() === "Symbol(v-cmt)" ||
+            (slotElement.type.toString() === "Symbol()" && slotElement.scopeId === null)
+          ){
+              continue
+          } else {
+              length += 1
+          }
+      }
+      return length
     }
 
     static nameToInitials(name: string | undefined) {

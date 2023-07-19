@@ -8,7 +8,6 @@
   "author": "Andreas H. Kelch",
   "license": "MIT",
   "dependencies": {
-    "@viur/viur-shoelace": "^2.4.0-viur-0.5.17",
     "@viur/vue-utils": "file:../../../../viur-vue-utils/packages/viur-vue-utils",
     "logics-js": "^0.3.5",
     "pinia-plugin-persistedstate": "^3.1.0",

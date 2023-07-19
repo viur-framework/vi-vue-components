@@ -13,8 +13,9 @@ export const useAppStore = defineStore("appStore", () => {
     "core.version.max": [3, 5, 0],
 
     //settings
+    "init":false,
     "admin.name":" Administration",
-    "admin.logo":"",
+    "admin.logo":"s/logo-cube.svg",
     "admin.login.background":"/vi/s/login-background.jpg",
     "admin.login.logo":"/vi/s/logo.svg",
     "admin.color.primary":"",

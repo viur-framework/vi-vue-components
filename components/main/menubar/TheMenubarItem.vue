@@ -42,6 +42,10 @@
             <sl-icon slot="prefix" name="pencil" sprite></sl-icon>
             Berarbeiten
           </sl-menu-item>
+          <sl-menu-item @click="openItem(route,true)">
+            <sl-icon slot="prefix" name="plus" sprite></sl-icon>
+            öffnen
+          </sl-menu-item>
         </sl-menu>
       </sl-dropdown>
 
@@ -51,14 +55,6 @@
       <slot>
       </slot>
     </div>
-
-    <teleport v-if="state.maxtabsReached" to="#dialogs" :disabled="!state.maxtabsReached">
-      <sl-dialog open label="Max tabs">
-        {{ $t("tab.amount_warning", { amount: dbStore.state["handlers.opened.max.modules"][moduleInfo["module"]] ,module:name}) }}
-        <sl-button slot="footer" @click="handleMaxTabOpen(route)">{{ $t("actions.open") }}</sl-button>
-      </sl-dialog>
-    </teleport>
-
   </router-link>
   <a v-else-if="href" :href="href">
     <div class="item" @click.stop="openGroup">
@@ -197,9 +193,13 @@ export default defineComponent({
       dbStore.removeOpened(props.to)
     }
 
-    function openItem(route) {
+    function openItem(route,force=false) {
+      if (props.moduleInfo["display"]==="group" && !force){
+        openGroup()
+        return
+      }
       let new_route = router.resolve(unref(route))
-      state.maxtabsReached = !dbStore.addOpened(new_route, route.params["module"], route.query["view"], "", "", "", false)
+      state.maxtabsReached = !dbStore.addOpened(new_route, route.params["module"], route.query["view"], "", "", "", false,force)
     }
 
     function openConfig(){

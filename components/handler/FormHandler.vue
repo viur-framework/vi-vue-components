@@ -79,7 +79,7 @@ import {reactive, defineComponent, onBeforeMount, computed, provide, toRaw, unre
 import {Request} from "@viur/vue-utils";
 import {useDBStore} from "../stores/db";
 import {useRoute} from "vue-router";
-import EntryBar from "../Bars/EntryBar.vue";
+import EntryBar from "../bars/EntryBar.vue";
 import {useModulesStore} from "../stores/modules";
 import handlers from "../handler/handlers";
 import bone from "@viur/vue-utils/bones/edit/bone.vue"
@@ -388,8 +388,6 @@ sl-details {
     font-weight: 700;
   }
 }
-
-
 
 .footer{
   display: flex;

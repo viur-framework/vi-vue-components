@@ -153,7 +153,7 @@ export const useDBStore = defineStore("db", () => {
 
         //dynamic child buckets
         "handlers.opened": [{"to":{'name': 'home',"fullPath":"/"},"url":"/","name":"Dashboard","icon":"dashboard","closeable":false, "id":0}], // {'url','name','library'}
-        "handlers.opened.max":3,
+        "handlers.opened.max":1,
         "handlers.opened.max.modules":{},
         "handlers.active":0, //current active index
 
@@ -236,7 +236,7 @@ export const useDBStore = defineStore("db", () => {
         }
     }
 
-    function addOpened(route, module: string, view = null, name = "", icon = "", library = "", contextInheritance=true) {
+    function addOpened(route, module: string, view = null, name = "", icon = "", library = "", contextInheritance=true, force=false) {
         let currentConf = getConf(module, view)
         let currentModuleConf = getConf(module)
         let moduleIconData = currentConf["icon"].split("___")
@@ -284,20 +284,21 @@ export const useDBStore = defineStore("db", () => {
             "update":false
         }
 
-        let tabNames = state["handlers.opened"].map(e=>e["url"]).filter(name => name.startsWith(route.path+"?_="))
-
+        let tabNames = state["handlers.opened"].map(e=>e["url"]).filter(name => name.startsWith(url))
         if(!Object.keys(state["handlers.opened.max.modules"]).includes(module))
         {
           state["handlers.opened.max.modules"][module]=state["handlers.opened.max"]
         }
-        if(state["handlers.opened.max.modules"][module]>tabNames.length){
+        if(state["handlers.opened.max.modules"][module]>tabNames.length || force){
             state["handlers.opened"].push(entry)
 
             state["handlers.active"] = state["handlers.opened"].indexOf(entry)
 
             router.push(entry["to"])
         }else{
-            return false
+          state["handlers.active"] = state["handlers.opened"].map(e=>e["url"]).indexOf(url)
+          router.push(state["handlers.opened"][state["handlers.active"]]["to"])
+          return false
         }
         return true
     }
@@ -305,9 +306,12 @@ export const useDBStore = defineStore("db", () => {
     function removeOpened(route) {
         let url = route.fullPath
         let idx = state["handlers.opened"].findIndex(e=>e["url"]===url)
+        console.log(state["handlers.opened"])
+        console.log(idx)
+        console.log(url)
         if(idx===state["handlers.active"]){
              router.push(state["handlers.opened"][idx-1]["to"]).then(() => {
-                 console.log(state["handlers.opened"])
+
                 state["handlers.opened"].splice(idx, 1)
                 viewStore.destroy(url)
                 state["handlers.active"] = idx-1
@@ -336,6 +340,7 @@ export const useDBStore = defineStore("db", () => {
     }
 
     function getActiveTab(){
+      if (state["handlers.active"]>=state["handlers.opened"].length) return state["handlers.opened"][0]
       return state["handlers.opened"][state["handlers.active"]]
     }
 

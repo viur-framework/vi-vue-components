@@ -2,7 +2,6 @@
   <div class="wrapper">
     <sl-card>
       <img class="logo" :src="state.logo">
-      {{ userStore.state }}
       <sl-alert v-if="userStore.state['user.loggedin']==='error'" open variant="danger">
         Fehler beim Anmelden
       </sl-alert>

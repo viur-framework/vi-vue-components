@@ -262,10 +262,10 @@ export default defineComponent({
 sl-breadcrumb{
   padding: 7px 10px;
   border-bottom: 2px solid var(--sl-color-neutral-300);
-  /*
-  .mq-max(@breakSmall,{
-	  margin-bottom: 10px;
-  });*/
+
+  @media (max-width: 39.95em) {
+    margin-bottom: 10px;
+  }
 }
 
 sl-breadcrumb-item{
@@ -308,16 +308,20 @@ sl-split-panel {
       background-color: var(--sl-color-neutral-400);
     }
   }
-  /*
-  .mq-max(@breakSmall,{
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
 
-	&::part(start){
-	  display: none;
-	}
-  });*/
+  @media (max-width: (@max - 0.05)) {
+    @ruleset();
+  }
+
+
+  @media (max-width: 39.95em) {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    ::part(start) {
+      display: none;
+    }
+  }
 }
 
 .tree-wrapper {
@@ -508,7 +512,7 @@ sl-format-date {
     margin: 0;
     padding: 0;
     font-weight: 600;
-    color: @complementColor;
+    color: var(--sl-color-secondary-500);
     font-size: .9em;
     overflow-x: auto;
 

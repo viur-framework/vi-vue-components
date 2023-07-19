@@ -3,7 +3,7 @@
     <!-- <router-link to="/" class="head"> -->
     <div class="head" @click="homebutton()">
       <div class="logo">
-        <sl-icon src="s/logo-cube.svg" v-once></sl-icon>
+        <sl-icon :src="appStore.state['admin.logo']" v-once></sl-icon>
       </div>
       <h1 class="main-headline">
         {{ appStore.state["admin.name"] }}<!-- {{ dbStore.state["handlers.active"] }}-->

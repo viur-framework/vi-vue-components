@@ -1,5 +1,8 @@
 // @ts-nocheck
 //import "@viur/viur-shoelace/dist/themes/light.css"
+/*
+
+COPY TO PROJECT BECAUSE ONLY ONE SHOELACE CONFIG WORKS REALLY WELL
 import "@viur/viur-shoelace/dist/components/button/button"
 import "@viur/viur-shoelace/dist/components/button-group/button-group"
 import "@viur/viur-shoelace/dist/components/icon/icon"
@@ -48,7 +51,7 @@ if(import.meta.env.DEV){
 }else{
     setBasePath(`viur-shoelace`)
 }
-
+*/
 /*
 import {registerIconLibrary} from '@viviur/viur-shoelace/dist/utilities/icon-library';
 // Register a custom icons repository for this app
