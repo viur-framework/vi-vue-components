@@ -7,6 +7,7 @@
         <div v-html="modulesStore.state.modules[module]['help_text']"></div>
     </sl-details>
     <div class="table-wrapper" @scroll="stickyHeader" v-if="Object.keys(state.selectedPath).length > 0" >
+      <loader size="3" v-if="!state.ready"></loader>
       <table>
         <thead>
           <tr>
@@ -51,6 +52,7 @@ import {useUserStore} from "../stores/user";
 import TableNodeItem from "../tree/TableNodeItem.vue";
 import FloatingBar from "../bars/FloatingBar.vue";
 import useTree from '../tree/tree';
+import Loader from "@viur/vue-utils/generic/Loader.vue";
 
 
 export default defineComponent({
@@ -63,7 +65,7 @@ export default defineComponent({
     selector:false
   },
   emits:['currentSelection','closeSelector'],
-  components: {HandlerBar, TableNodeItem, FloatingBar},
+  components: {HandlerBar, TableNodeItem, FloatingBar, Loader},
   setup(props, context) {
     const dbStore = useDBStore();
     const userStore = useUserStore();
@@ -119,7 +121,8 @@ export default defineComponent({
         return tree.EntryFromPath(state.selectedPath)
       }),
       currentSelection:[],
-      selector:computed(()=>props.selector)
+      selector:computed(()=>props.selector),
+      ready:false
     })
     provide("handlerState", state) // expose to components
     const tree = useTree(props.module,state,state)
@@ -178,6 +181,7 @@ export default defineComponent({
     })
 
     function setSelectedBones(){
+      state.ready= true
       let bones = []
       for(const [k,v] of Object.entries(state.structure)){
         if(v["visible"]) bones.push(k)

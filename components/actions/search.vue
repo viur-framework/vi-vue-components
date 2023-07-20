@@ -10,6 +10,7 @@
 <script lang="ts">
 
 import {reactive, defineComponent, inject, computed} from 'vue'
+import { useMessageStore } from '../stores/message'
 
 export default defineComponent({
     props: {},
@@ -17,7 +18,8 @@ export default defineComponent({
     setup(props, context) {
         const currentlist: any = inject("currentlist")
         const handlerState: any = inject("handlerState")
-        const tableReload: any = inject("reloadAction")
+        const reloadAction: any = inject("reloadAction")
+        const messageStore = useMessageStore()
         const state = reactive({
           disabled:computed(()=>{
             return false
@@ -32,32 +34,35 @@ export default defineComponent({
             return !searchableBone
           }),
           searchType:computed(()=>{
-            return currentlist.state.state===2?'local':'database'
+            return currentlist?.state.state===2?'local':'database'
           })
         })
 
         function search_input(event){
-          if (event.target.value===""){
-            reset_filter()
-          }
-
-
           if (state.searchType==='local'){
             handlerState.filter = event.target.value
             try{
-              delete currentlist.filter['search']
+              delete currentlist.state.params['search']
             }catch(e){}
 
           }else {
-            currentlist.filter({"search": event.target.value}).then(() => {
+            if (event.target.value===""){
+              reset_filter()
+            }
+
+            currentlist.state.params['search'] = event.target.value
+            currentlist.fetch().catch((error) => {
+              messageStore.addMessage("error", `${error.message}`, error.response?.url)
             })
           }
         }
         function reset_filter(){
           try{
-              delete currentlist.filter['search']
+              delete currentlist.state.params['search']
             }catch(e){}
           handlerState.filter=null
+          reloadAction()
+          console.log(currentlist.state.params)
         }
 
         return {

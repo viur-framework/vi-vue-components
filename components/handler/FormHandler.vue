@@ -1,7 +1,6 @@
 <template>
   <div class="wrap-for-popup">
     <div class="topbar">
-
       <div class="top-headline">
         <span v-if="['clone', 'add'].includes(action)">Neuer</span>
         <span v-else-if="['edit'].includes(action)">Bearbeite</span>
@@ -12,6 +11,7 @@
       ></entry-bar>
 
     </div>
+    <loader size="3" v-if="state.loading"></loader>
     <sl-details open summary="Info"
                 v-if="modulesStore.state.loaded && modulesStore.state.modules[module][`help_text_${action}`]">
       <p v-html="modulesStore.state.modules[module][`help_text_${action}`]"></p>
@@ -28,6 +28,7 @@
               :skel="state.skel"
               :errors="state.errors"
               @change="updateValue"
+              v-show="state.structure[bone['boneName']]['visible']"
               >
 
               </bone>
@@ -84,6 +85,7 @@ import {useModulesStore} from "../stores/modules";
 import handlers from "../handler/handlers";
 import bone from "@viur/vue-utils/bones/edit/bone.vue"
 import {getBoneWidget} from "@viur/vue-utils/bones/edit/index"
+import Loader from "@viur/vue-utils/generic/Loader.vue";
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
 
@@ -101,7 +103,7 @@ export default defineComponent({
 
 
   },
-  components: {EntryBar, bone, ...handlers,VueJsonPretty},
+  components: {EntryBar, bone, ...handlers,VueJsonPretty, Loader},
   setup(props, context) {
     const dbStore = useDBStore();
     const route = useRoute();

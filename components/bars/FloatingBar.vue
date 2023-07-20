@@ -1,6 +1,8 @@
 <template>
   <div class="more-entries">
     <!--<filter-action></filter-action>-->
+    <component v-for="action in dbStore.state['floatingbar.actions']" :is="action">
+    </component>
     <next-page></next-page>
     <set-amount></set-amount>
     <reload></reload>
@@ -14,6 +16,7 @@ import Reload from "../actions/reload.vue";
 import SetAmount from "../actions/setamount.vue";
 import NextPage from "../actions/nextpage.vue";
 import FilterAction from "../actions/filter.vue";
+import { useDBStore } from '../stores/db';
 
 
 export default defineComponent({
@@ -21,7 +24,8 @@ export default defineComponent({
   components: {SetAmount, Reload, NextPage, FilterAction},
   setup(props, context) {
     const state = reactive({})
-    return {state}
+    const dbStore = useDBStore()
+    return {state,dbStore}
   }
 })
 </script>

@@ -3,12 +3,12 @@
   <sl-details open summary="Info" v-if="modulesStore.state.loaded && modulesStore.state.modules[module]?.['help_text']">
     {{modulesStore.state.modules[module]["help_text"]}}
   </sl-details>
-
+  <loader size="3" v-if="currentlist.state.state ===0"> </loader>
   <div class="fluid-wrap">
       <template v-for="grid in state.grids">
           <component v-if="grid[0] && grid[0]['width']==='fullwidth'"
                      v-for="contentSkel in grid"
-                     :is="'element'"
+                     :is="state.fluidpageElement"
                      :skel="contentSkel"
                      :key="contentSkel['key']"
                      @click="entrySelected(contentSkel)"
@@ -22,7 +22,7 @@
                   <div v-for="i in 12"></div>
               </div>
               <component v-for="contentSkel in grid"
-                         :is="'element'"
+                         :is="state.fluidpageElement"
                          :skel="contentSkel"
                          :key="contentSkel['key']"
                          @click="entrySelected(contentSkel)"
@@ -59,7 +59,6 @@ import router from "../routes";
 import {useModulesStore} from "../stores/modules";
 import {useRoute} from "vue-router";
 import Loader from "@viur/vue-utils/generic/Loader.vue";
-import Element from '../fluidpage/element.vue'
 
 export default defineComponent({
   props: {
@@ -74,7 +73,7 @@ export default defineComponent({
     }
   },
   emits:['currentSelection'],
-  components: {Loader, HandlerBar, Element},
+  components: {Loader, HandlerBar},
   setup(props, context) {
     const dbStore = useDBStore();
     const route = useRoute()
@@ -121,7 +120,8 @@ export default defineComponent({
       }),
       dragCurrentElement:null,
       draggedKeys:[],
-      debounceSave:null
+      debounceSave:null,
+      fluidpageElement:computed(()=>dbStore.state["fluidpage.element"])
     })
     provide("handlerState", state)
     const currentlist = ListRequest(state.storeName, {

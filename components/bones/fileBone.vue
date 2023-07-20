@@ -56,17 +56,17 @@
       <sl-icon name="x"></sl-icon>
     </sl-button>
   </div>
-
+  <div class="nested_wrapper">
     <Wrapper_nested v-if="boneState?.bonestructure['using']"
-        :value="value?.['rel']"
-        :name="name"
-        :index="index"
-        :disabled="boneState.bonestructure['readonly']"
-        @change="changeEventNested"
-      >
+      :value="value?.['rel']"
+      :name="name"
+      :index="index"
+      :disabled="boneState.bonestructure['readonly']"
+      @change="changeEventNested"
+    >
 
-      </Wrapper_nested>
-
+    </Wrapper_nested>
+  </div>
   <relational-selector
       :open="state.openedSelection"
       :name="boneState.bonestructure['descr']"
@@ -316,5 +316,9 @@ export default defineComponent({
   &::part(base) {
     aspect-ratio: 1;
   }
+}
+
+.nested_wrapper{
+  padding-top: 5px;
 }
 </style>

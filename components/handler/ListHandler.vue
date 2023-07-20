@@ -9,6 +9,7 @@
       </sl-details>
 
       <div class="table-wrapper" @scroll="stickyHeader">
+        <loader size="3" v-if="currentlist.state.state===0"></loader>
         <table ref="datatable">
           <thead>
             <tr>
@@ -45,6 +46,12 @@
             </template>
           </tbody>
         </table>
+        <div class="empty-message" v-if="state.renderedList.length===0 && currentlist.state.state>0">
+          <sl-alert variant="info" open class="alert">
+            <sl-icon slot="icon" name="exclamation-triangle"></sl-icon>
+            <strong>Keine Einträge</strong>
+          </sl-alert>
+        </div>
       </div>
       <floating-bar></floating-bar>
     </div>
@@ -105,6 +112,7 @@ export default defineComponent({
 
     const state = reactive({
       type:"listhandler",
+      tabId:computed(()=>unref(route.query?.["_"])),
       storeName: computed(() => {
         let name: string = `module___${props.module}`
         if (props.view) {
@@ -295,6 +303,7 @@ export default defineComponent({
         if (state.filter===null || state.filter === "") return true
         let wordlist = state.filter ? state.filter.split(" ") : []
         for(const [k,v] of Object.entries(skel)){
+          if(currentlist.structure?.[k]?.["visible"]===false) continue
           for (let word of wordlist) {
             word = word.toLowerCase().replace(/[\W_]+/g, ""); //remove all nun alphanum chars
 
@@ -531,5 +540,14 @@ sl-details{
     border-radius: 0;
     border-bottom: 1px solid var(--vi-border-color);
   }
+}
+
+.empty-message{
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  overflow: hidden;
+  justify-content: center;
 }
 </style>

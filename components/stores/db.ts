@@ -7,7 +7,8 @@ import {useViewStore} from "./views";
 import {useUserStore} from "./user";
 import { useContextStore } from './context';
 import {destroyStore} from "@viur/vue-utils/utils/handlers";
-import hierarchyhandler from "../components/DataHandler/HierarchyHandler.vue";
+import hierarchyhandler from "../components/handler/HierarchyHandler.vue";
+import Element from '../fluidpage/element.vue'
 
 
 export interface ModuleInfo {
@@ -148,8 +149,9 @@ export const useDBStore = defineStore("db", () => {
         //storesMap
         "stores.map": {},
 
-        //topactions
+        //actions
         "topbar.actions": [],
+        "floatingbar.actions": [],
 
         //dynamic child buckets
         "handlers.opened": [{"to":{'name': 'home',"fullPath":"/"},"url":"/","name":"Dashboard","icon":"dashboard","closeable":false, "id":0}], // {'url','name','library'}
@@ -161,6 +163,10 @@ export const useDBStore = defineStore("db", () => {
         "skeldrawer.opened": false,
         "skeldrawer.entry": {},
         "skeldrawer.structure": {},
+
+        //fluidpage Element
+        "fluidpage.element":Element
+
     })
     const modulesTree = computed(() => {
         let groups = {}

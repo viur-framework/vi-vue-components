@@ -1,5 +1,6 @@
 <template>
     <handler-bar :module="module"></handler-bar>
+  <loader size="3" v-if="!state.currentRootNode"></loader>
   <template v-if="state.currentRootNode">
     <file-browser :rootnode="state.currentRootNode"
                   :module="module"
@@ -22,6 +23,7 @@ import FileBrowser from '../tree/FileBrowser.vue';
 import {useMessageStore} from "../stores/message";
 import {useUserStore} from "../stores/user";
 import {useContextStore} from "../stores/context";
+import Loader from "@viur/vue-utils/generic/Loader.vue";
 
 export default defineComponent({
     props: {
@@ -33,7 +35,7 @@ export default defineComponent({
         selector:false
     },
     emits:["currentSelection"],
-    components: {FileBrowser, HandlerBar},
+    components: {FileBrowser, HandlerBar, Loader},
     setup(props, context) {
         const dbStore = useDBStore()
         const userStore = useUserStore()

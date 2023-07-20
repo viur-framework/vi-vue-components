@@ -1,7 +1,7 @@
 <template>
   <template v-if="state.access && state.info">
     <sl-button :disabled="state.disabled" size="small" @click="buttonClicked" :title="state.info['name']">
-      <sl-icon slot="prefix" :name="state.info['icon'].replace('icon-','')" :library="state.info['library']" sprite
+      <sl-icon slot="prefix" :name="state.iconInfo[1]" :library="state.iconInfo[0]" sprite
                v-once></sl-icon>
       {{ state.info["name"] }}
     </sl-button>
@@ -92,6 +92,18 @@ export default defineComponent({
         }
 
         return true
+      }),
+      iconInfo: computed(()=>{
+        let lib = "default"
+        let icon = ""
+        const icondata = state.info?.["icon"].split("___")
+        if (icondata.length===2){
+          lib = icondata[0]
+          icon = icondata[1]
+        }else{
+          icon = icondata[0]
+        }
+        return [lib, icon]
       })
     })
 

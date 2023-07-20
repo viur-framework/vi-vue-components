@@ -1,13 +1,13 @@
 <template>
   <sl-button-group>
     <sl-button @click="fetchAction" :loading="state.loading" :disabled="state.disable" size="small"
-              :title="$t('actions.nextpage',{amount:currentlist.state.skellist.length})">
+              :title="$t('actions.nextpage',{amount:currentlist?.state.skellist.length})">
       <sl-icon slot="prefix" name="menu"></sl-icon>
         <template v-if="state.disable">
-          {{ $t("actions.nextpage_finish",{amount:currentlist.state.skellist.length}) }}
+          {{ $t("actions.nextpage_finish",{amount:currentlist?.state.skellist.length}) }}
         </template>
         <template v-else>
-          {{ $t("actions.nextpage",{amount:currentlist.state.skellist.length}) }}
+          {{ $t("actions.nextpage",{amount:currentlist?.state.skellist.length}) }}
         </template>
     </sl-button>
     <sl-select :disabled="state.disable" value="1" @sl-change="amountChange" size="small" class="sl-button-group__button--last" style="width: 70px;">
