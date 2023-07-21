@@ -18,9 +18,9 @@
                 :style="{width: '150px'}"
               >
                 {{ currentlist.structure?.[bone]?.["descr"] }}
-                <div v-if="currentlist.state.state===2">
-                  <sl-icon name="chevron-up" @click="sorting(bone,'asc')" class="sort-arrow" :class="{'sort-active':state.sorting===bone+'$asc'}"></sl-icon>
-                  <sl-icon name="chevron-down" @click="sorting(bone,'desc')" class="sort-arrow" :class="{'sort-active':state.sorting===bone+'$desc'}"></sl-icon>
+                <div v-if="currentlist.state.state===2" style="display: inline">
+                  <sl-icon v-if="state.sorting==='' || state.sorting!==bone+'$asc'" name="chevron-up" @click="sorting(bone,'asc')" class="sort-arrow" :class="{'sort-active':state.sorting===bone+'$desc'}"></sl-icon>
+                  <sl-icon v-if="state.sorting===bone+'$asc'" name="chevron-down" @click="sorting(bone,'desc')" class="sort-arrow" :class="{'sort-active':state.sorting===bone+'$asc'}"></sl-icon>
                 </div>
               </th>
             </tr>
