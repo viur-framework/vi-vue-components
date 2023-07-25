@@ -138,7 +138,6 @@ export const useDBStore = defineStore("db", () => {
     const contextStore = useContextStore()
     const state = reactive({
         //vi section
-
         "vi.access.open": ["root", "admin"],
         "vi.modules.groups": {},
         "vi.modules": {},
@@ -165,7 +164,10 @@ export const useDBStore = defineStore("db", () => {
         "skeldrawer.structure": {},
 
         //fluidpage Element
-        "fluidpage.element":Element
+        "fluidpage.element":Element,
+
+        //Tasks
+        "tasks": []
 
     })
     const modulesTree = computed(() => {

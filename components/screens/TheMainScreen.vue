@@ -33,6 +33,7 @@ import { useRoute, useRouter } from "vue-router";
 import { Request } from "@viur/vue-utils";
 import { defineComponent, onBeforeMount, unref } from "vue";
 import { useDBStore } from "../stores/db";
+import {useAppStore} from "../stores/app";
 
 //default top actions
 import ViAction from "../main/topbar/vi.vue";
@@ -56,6 +57,7 @@ export default defineComponent({
     const route = useRoute();
     const router = useRouter();
     const dbStore = useDBStore();
+    const appStore = useAppStore()
 
     function collectViurConfig() {
       Request.get("/vi/config").then(async (resp: Response) => {
@@ -76,12 +78,13 @@ export default defineComponent({
       });
       Request.get("/vi/getVersion").then(async (resp: Response) => {
         let data = await resp.json();
-        dbStore.state["core.version"] = data;
+        appStore.state["core.version"] = data;
       });
     }
 
     function initTopBarActions() {
       dbStore.addTopBarAction(LogAction);
+      dbStore.addTopBarAction(ViAction);
     }
 
     onBeforeMount(() => {

@@ -38,12 +38,7 @@ export default {
     name: "Benutzereinstellungen",
     logout: "Ausloggen",
     section_general_name: "Allgemein",
-    section_general_configuration: "Einstellungen",
-    section_general_cache: "Cache leeren",
-    section_system_name: "System Jobs",
-    section_system_searchindex: "Rebuild Search Index",
-    section_system_vacuum: "Vacuum Viur Relations",
-    section_system_entities: "Clear all entities of a kind",
+    section_system_name: "Servertasks",
   },
   skeldrawer: {
     noentry: "Kein Eintrag ausgewählt",
