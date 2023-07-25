@@ -116,6 +116,7 @@ export default defineComponent({
         }
 
         function changeEventNested(val){
+          if (!state.selection) state.selection = []
           if (Object.keys(state.selection).includes('rel')){
             state.selection["rel"][val.name] = val.value
           }else{
@@ -158,6 +159,10 @@ export default defineComponent({
           let route = router.resolve(unref(url))
           dbStore.addOpened(route, mod);
         }
+
+        watch(()=>props.value,(newVal,oldVal)=>{
+          state.selection=newVal
+        })
 
         return {
             state,

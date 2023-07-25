@@ -81,7 +81,7 @@
 
 <script lang="ts">
 //@ts-nocheck
-import { reactive, defineComponent, onMounted, inject, ref, computed, unref } from "vue";
+import { reactive, defineComponent, onMounted, inject, ref, computed, unref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Request } from "@viur/vue-utils";
 import relationalSelector from './components/relationalSelector.vue'
@@ -232,6 +232,10 @@ export default defineComponent({
       }
       context.emit("change",props.name,state.selection,props.lang,props.index)
     }
+
+    watch(()=>props.value,(newVal,oldVal)=>{
+      state.selection=newVal
+    })
 
     return {
       state,

@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <div class="init-spinner"  style="position: relative;height:100%;width: 100%;">
-        <loader size="8" logo="s/dt-logos/duschtec.svg" color="#8e488a"></loader>
+        <loader size="8"></loader>
       </div>
   </div>
 

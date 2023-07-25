@@ -1,3 +1,4 @@
+//@ts-nocheck
 import {getCurrentInstance, Slot} from 'vue'
 
 export default class Utils {
