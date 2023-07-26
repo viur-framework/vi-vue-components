@@ -80,26 +80,33 @@ export default function useTree(module, treeState, state){
             //move element
               if (state.currentEntry['_nodes'][idx]["_drop"] === 'after') {
                 treeState.draggedEntry["parent"]['_nodes'].splice(treeState.draggedEntry["idx"], 1) // remove old one
-                state.currentEntry['_nodes'].splice(idx + 1, 0, treeState.draggedEntry["entry"]) //add a copy
+                let newPosition = idx+1
 
-                let sortidx = state.currentEntry['_nodes'][idx]['sortindex'] + 1
-                if (state.currentEntry['_nodes'].length-1 !== idx){
-                   sortidx = (state.currentEntry['_nodes'][idx]['sortindex'] + state.currentEntry['_nodes'][idx+1]['sortindex']) /2
+                if (treeState.draggedEntry["idx"]<idx){
+                  newPosition = idx
                 }
+                state.currentEntry['_nodes'].splice(newPosition, 0, treeState.draggedEntry["entry"]) //add a copy
 
+                let sortidx = state.currentEntry['_nodes'][newPosition-1]['sortindex'] + 1
+
+                if (state.currentEntry['_nodes'].length-1 !== idx){
+                    sortidx = (state.currentEntry['_nodes'][newPosition-1]['sortindex'] + state.currentEntry['_nodes'][newPosition+1]['sortindex']) /2
+                }
 
                 EntryMoved(treeState.draggedEntry["entry"], sortidx, state.currentEntry["key"])
 
               } else if (state.currentEntry['_nodes'][idx]["_drop"] === 'before') {
                 treeState.draggedEntry["parent"]['_nodes'].splice(treeState.draggedEntry["idx"], 1) // remove old one
+                let newPosition = idx
 
-                state.currentEntry['_nodes'].splice(idx, 0, treeState.draggedEntry["entry"]) //add a copy
+                if (treeState.draggedEntry["idx"]<idx){
+                  newPosition = idx-1
+                }
+                state.currentEntry['_nodes'].splice(newPosition, 0, treeState.draggedEntry["entry"]) //add a copy
 
-
-                let sortidx = state.currentEntry['_nodes'][idx]['sortindex'] - 1
-
+                let sortidx = state.currentEntry['_nodes'][newPosition+1]['sortindex'] - 1
                 if (idx !== 0){
-                   sortidx = (state.currentEntry['_nodes'][idx]['sortindex'] + state.currentEntry['_nodes'][idx-1]['sortindex']) /2
+                   sortidx = (state.currentEntry['_nodes'][newPosition-1]['sortindex'] + state.currentEntry['_nodes'][newPosition+1]['sortindex']) /2
                 }
 
                 EntryMoved(treeState.draggedEntry["entry"], sortidx, state.currentEntry["key"])
