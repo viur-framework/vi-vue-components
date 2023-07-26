@@ -66,6 +66,7 @@ export default function useTree(module, treeState, state){
     }
 
     function onDrop(e, idx) {
+        let newPosition = idx
         if (treeState.draggedEntry['type']!=="node"){
             treeState.draggedEntry["parent"]['_leafs'].splice(treeState.draggedEntry["idx"], 1) // remove old one
             if (state.currentEntry['_nodes'][idx]['_status'] === 'loaded') {
@@ -80,10 +81,8 @@ export default function useTree(module, treeState, state){
             //move element
               if (state.currentEntry['_nodes'][idx]["_drop"] === 'after') {
                 treeState.draggedEntry["parent"]['_nodes'].splice(treeState.draggedEntry["idx"], 1) // remove old one
-                let newPosition = idx+1
-
-                if (treeState.draggedEntry["idx"]<idx){
-                  newPosition = idx
+                if (treeState.draggedEntry["idx"]>idx){
+                  newPosition = idx+1
                 }
                 state.currentEntry['_nodes'].splice(newPosition, 0, treeState.draggedEntry["entry"]) //add a copy
 
@@ -97,8 +96,6 @@ export default function useTree(module, treeState, state){
 
               } else if (state.currentEntry['_nodes'][idx]["_drop"] === 'before') {
                 treeState.draggedEntry["parent"]['_nodes'].splice(treeState.draggedEntry["idx"], 1) // remove old one
-                let newPosition = idx
-
                 if (treeState.draggedEntry["idx"]<idx){
                   newPosition = idx-1
                 }
@@ -112,22 +109,24 @@ export default function useTree(module, treeState, state){
                 EntryMoved(treeState.draggedEntry["entry"], sortidx, state.currentEntry["key"])
 
               } else if (state.currentEntry['_nodes'][idx]["_drop"] === 'in') {
-
                 treeState.draggedEntry["parent"]['_nodes'].splice(treeState.draggedEntry["idx"], 1) // remove old one
-                if (state.currentEntry['_nodes'][idx]['_status'] === 'loaded') {
-                  state.currentEntry['_nodes'][idx]['_nodes'].push(treeState.draggedEntry["entry"]) //add a copy
+                if (treeState.draggedEntry["idx"]<idx){
+                  newPosition = idx-1
+                }
+                if (state.currentEntry['_nodes'][newPosition]['_status'] === 'loaded') {
+                  state.currentEntry['_nodes'][newPosition]['_nodes'].push(treeState.draggedEntry["entry"]) //add a copy
                 }else{
-                  requestChildren(idx).then(() =>
-                    state.currentEntry['_nodes'][idx]['_nodes'].push(treeState.draggedEntry["entry"]) //add a copy
+                  requestChildren(newPosition).then(() =>
+                    state.currentEntry['_nodes'][newPosition]['_nodes'].push(treeState.draggedEntry["entry"]) //add a copy
                   )
                 }
-                EntryMoved(treeState.draggedEntry["entry"], new Date().getTime(), state.currentEntry['_nodes'][idx]["key"])
+                EntryMoved(treeState.draggedEntry["entry"], new Date().getTime(), state.currentEntry['_nodes'][newPosition]["key"])
               }
         }
       //cleaning
-      state.currentEntry['_nodes'][idx]["_isover"] = false
-      state.currentEntry['_nodes'][idx]["_drop"] = null
-      state.currentEntry['_nodes'][idx]["_dragging"] = false
+      state.currentEntry['_nodes'][newPosition]["_isover"] = false
+      state.currentEntry['_nodes'][newPosition]["_drop"] = null
+      state.currentEntry['_nodes'][newPosition]["_dragging"] = false
     }
 
     function EntryMoved(entry, idx, newparent, entrytype="node") {
