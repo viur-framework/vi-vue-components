@@ -29,7 +29,7 @@
 </template>
 <script lang="ts">
 //@ts-nocheck
-import {reactive, defineComponent, computed} from 'vue'
+import {reactive, defineComponent, computed, inject} from 'vue'
 import {useDBStore} from "../stores/db";
 import {useRoute} from "vue-router";
 import actions from '../actions/actions'
@@ -48,6 +48,7 @@ export default defineComponent({
   },
   components: {...actions},
   setup(props, context) {
+    const handlerState = inject("handlerState")
     const dbStore = useDBStore()
     const route = useRoute()
 
@@ -89,7 +90,7 @@ export default defineComponent({
         if (props.actions?.length > 0) return props.actions
 
         // find matching conf
-        let conf = dbStore.getConf(props.module)
+        let conf = dbStore.getConf(handlerState.module,handlerState.view)
         let actions = {...listActions}
         if (!conf) return actions;
         if (conf["handler"].startsWith("tree.node")) {
@@ -134,8 +135,6 @@ export default defineComponent({
             actions[":"+groupName] = [config["actions"].join(" ").replace(/\n\s/g, "").replace(/\n/g, "").replace(/\|\s/g, "space").split(" ")]
           }
         }
-
-        console.log(actions)
         return actions
       })
     })

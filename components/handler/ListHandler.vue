@@ -298,7 +298,6 @@ export default defineComponent({
         if (state.filter===null || state.filter === "") return true
         let wordlist = state.filter ? state.filter.split(" ") : []
         for(const [k,v] of Object.entries(skel)){
-          console.log(k)
           if(currentlist.structure?.[k]?.["visible"]===false) continue
           for (let word of wordlist) {
             word = word.toLowerCase().replace(/[\W_]+/g, ""); //remove all nun alphanum chars
@@ -306,8 +305,7 @@ export default defineComponent({
             if (!word || word.length === 0) {
 
             } else {
-              console.log(v)
-                if(v.includes(word)){
+                if(v.toLowerCase().replace(/[\W_]+/g, "").includes(word)){
                   return true
                 }
             }
