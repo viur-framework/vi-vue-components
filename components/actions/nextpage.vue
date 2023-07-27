@@ -41,14 +41,17 @@ export default defineComponent({
 
     function loadnextpage(){
       state.loading = true
-
-      nextpage().then((resp)=>{
+        try{
+        nextpage().then((resp)=>{
+          state.loading = false
+          state.fetchamount = state.fetchamount -1
+          if (state.fetchamount>0){
+            loadnextpage()
+          }
+        })
+      }catch(e){
         state.loading = false
-        state.fetchamount = state.fetchamount -1
-        if (state.fetchamount>0){
-          loadnextpage()
-        }
-      })
+      }
     }
 
     function fetchAction(){

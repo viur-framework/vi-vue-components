@@ -2,7 +2,9 @@
   <div class="bar" style="z-index: 50">
     <reloadentry v-if="!['add'].includes(handlerState.action)"></reloadentry>
 
-    <debugentry></debugentry>
+    <template v-if="appStore.state.debug">
+      <debugentry></debugentry>
+    </template>
     <save :module="module" :action="action" name="actions.save_next" v-if="['clone','add'].includes(handlerState.action)"></save>
     <save :module="module" :action="action"></save>
     <!--<save
@@ -20,15 +22,17 @@ import {reactive, defineComponent, inject} from 'vue'
 import Save from "../actions/save.vue";
 import Debugentry from "../actions/debugentry.vue";
 import Reloadentry from '../actions/reloadentry.vue';
+import { useAppStore } from '../stores/app';
 
 
 export default defineComponent({
   props: {},
   components: {Debugentry, Save, Reloadentry},
   setup(props, context) {
+    const appStore = useAppStore()
     const state = reactive({})
     const handlerState: any = inject("handlerState");
-    return {state, handlerState}
+    return {state, handlerState,appStore}
   }
 })
 </script>

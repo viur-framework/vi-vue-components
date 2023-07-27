@@ -8,7 +8,7 @@
         </sl-combobox>
 
         <sl-button @click="openRelationalSelection">
-          <sl-icon name="menu"></sl-icon>
+          <sl-icon name="list-ul"></sl-icon>
         </sl-button>
 
         <sl-button @click="editSelection" variant="info" outline v-if="value">
@@ -185,6 +185,7 @@ export default defineComponent({
 <style scoped>
   .single-entry{
     display: flex;
+    gap:10px;
   }
 
   sl-input{

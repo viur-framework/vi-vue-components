@@ -102,7 +102,8 @@ export default defineComponent({
           dataObj: {
             "skelType": "node",
             "orderby": "sortindex",
-            "parententry": state.currentEntry["key"]
+            "parententry": state.currentEntry["key"],
+            "limit":99
           }
         }).then(async (resp) => {
           let data = await resp.json()
@@ -275,7 +276,7 @@ tr{
   margin-right: var(--sl-spacing-x-small);
 
   & sl-icon{
-    font-size: .7em;
+    font-size: .9em;
   }
 }
 
@@ -337,8 +338,8 @@ tr{
   margin-right: var(--sl-spacing-x-small);
 
   & sl-icon{
-    font-size: .4em;
-    color: var(--vi-foreground-color);
+    font-size: .5em;
+    color: var(--sl-color-neutral-700);
 
     &.expanded{
       transform: rotate(90deg);

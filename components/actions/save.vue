@@ -104,6 +104,10 @@ export default defineComponent({
               dbStore.removeOpened(route);
               if (!props.close) {
                 let new_route = router.resolve(`/db/${handlerState.module}/edit/${responsedata['values']['key']}`)
+                if (handlerState.skeltype==="node"){
+                  new_route = router.resolve(`/db/${handlerState.module}/edit/node/${responsedata['values']['key']}`)
+                }
+
                 dbStore.addOpened(new_route, handlerState.module)
               }
             }

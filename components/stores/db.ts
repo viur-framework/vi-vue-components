@@ -224,19 +224,19 @@ export const useDBStore = defineStore("db", () => {
     }
 
     function getListStoreByRoute(route): ModuleInfo | null {
-    //ts-ignore
+      //ts-ignore
 
-    const conf = getConfByRoute(route)
-    if (!conf) return null
+      const conf = getConfByRoute(route)
+      if (!conf) return null
 
-    let name: string = `module___${conf.module}`
-    if (Object.keys(conf).includes("view_number") && conf.view_number!==null) {
-      name += `___${conf.view_number}`
+      let name: string = `module___${conf.module}`
+      if (Object.keys(conf).includes("view_number") && conf.view_number!==null) {
+        name += `___${conf.view_number}`
+      }
+      name+= `___${route.query["_"]}`
+      return state["stores.map"][name];
+
     }
-    name+= `___${route.query["_"]}`
-    return state["stores.map"][name];
-
-  }
 
     function addTopBarAction(action: Component) {
         if( !state["topbar.actions"].includes(action)){
@@ -362,12 +362,22 @@ export const useDBStore = defineStore("db", () => {
       return handlers.length>0?handlers[0]:null
     }
 
-    function getTab(module, group=null){
+    function getTabs(module, group=null){
       let handlers = state["handlers.opened"].filter((e)=>{
         if (e["module"]===module && !group){
             return true
         }else if(e["module"]===module && e["group"]===group){
             return true
+        }
+        return false
+      })
+      return handlers
+    }
+
+    function getTabById(id){
+      let handlers = state["handlers.opened"].filter((e)=>{
+        if (e["id"] === id){
+          return true
         }
         return false
       })
@@ -406,7 +416,8 @@ export const useDBStore = defineStore("db", () => {
         addOpened,
         removeOpened,
         getActiveTab,
-        getTab,
+        getTabById,
+        getTabs,
         getTabByRoute,
         updateActiveTabName,
         markHandlersToUpdate

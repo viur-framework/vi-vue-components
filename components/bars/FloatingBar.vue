@@ -1,31 +1,34 @@
 <template>
   <div class="more-entries">
-    <!--<filter-action></filter-action>-->
-    <component v-for="action in dbStore.state['floatingbar.actions']" :is="action">
+
+    <template v-if="['listhandler'].includes(handerState['type'])">
+      <component v-for="action in dbStore.state['floatingbar.actions']" :is="action">
     </component>
-    <next-page></next-page>
-    <set-amount></set-amount>
+    </template>
+
+    <next-page v-if="['listhandler'].includes(handerState['type'])"></next-page>
+    <set-amount v-if="['listhandler'].includes(handerState['type'])"></set-amount>
     <reload></reload>
   </div>
 </template>
 
 <script lang="ts">
 //@ts-nocheck
-import {reactive, defineComponent} from 'vue'
+import {reactive, defineComponent, inject} from 'vue'
 import Reload from "../actions/reload.vue";
 import SetAmount from "../actions/setamount.vue";
-import NextPage from "../actions/nextpage.vue";
-import FilterAction from "../actions/filter.vue";
+import NextPage from "../actions/nextpage.vue";;
 import { useDBStore } from '../stores/db';
 
 
 export default defineComponent({
   props: {},
-  components: {SetAmount, Reload, NextPage, FilterAction},
+  components: {SetAmount, Reload, NextPage},
   setup(props, context) {
     const state = reactive({})
     const dbStore = useDBStore()
-    return {state,dbStore}
+    const handerState = inject('handlerState')
+    return {state,dbStore, handerState}
   }
 })
 </script>

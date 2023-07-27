@@ -30,12 +30,14 @@ export default defineComponent({
       active: computed(() => {
         return handlerState.currentSelection && handlerState.currentSelection.length > 0
       }),
+      contentModule:computed(()=>{
+        let conf = dbStore.getConf(handlerState.module);
+        let module = conf["handler"].split(".").at(-1)
+        return module
+      }),
       url: computed(() => {
         if (!state.active) return ""
-
-        let conf = dbStore.getConfByRoute(currentRoute);
-        let module = conf["handler"].split(".").at(-1)
-        return `/db/${module}/fluidpage/${currentRoute.params['module']}/${handlerState.currentSelection[0]["key"]}`
+        return `/db/${state.contentModule}/fluidpage/${currentRoute.params['module']}/${handlerState.currentSelection[0]["key"]}`
       }),
       canEdit: computed(() => {
        if(userStore.state.user.access.indexOf("root") !== -1 )
@@ -48,7 +50,7 @@ export default defineComponent({
 
     function createAndNavigate(route: any) {
       contextStore.setContext("fluidpage.dest.key", handlerState.currentSelection[0]["key"], currentRoute.query["_"])
-      dbStore.addOpened(route, handlerState["module"], handlerState["view"])
+      dbStore.addOpened(route, state.contentModule)
     }
 
     return {

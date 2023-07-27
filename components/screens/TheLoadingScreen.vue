@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <div class="init-spinner"  style="position: relative;height:100%;width: 100%;">
-        <loader size="8"></loader>
+        <loader size="8" :logo="appStore.state['admin.loader.logo']" :color="appStore.state['admin.loader.color']"></loader>
       </div>
   </div>
 
@@ -25,7 +25,8 @@ export default defineComponent({
     })
 
     return {
-      state
+      state,
+      appStore
     }
   },
 

@@ -18,7 +18,7 @@
                   :title='$t("bone.add")'
                  outline
                  class="add-btn">
-        <sl-icon name="menu"></sl-icon> {{$t("bone.add")}}
+        <sl-icon name="plus"></sl-icon> {{$t("bone.add")}}
       </sl-button>
   </div>
 

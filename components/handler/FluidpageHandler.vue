@@ -237,10 +237,11 @@ export default defineComponent({
 
     onActivated(()=>{
       state.active = true
+      let tabData = dbStore.getTabById(route.query["_"])
 
-      if (dbStore.getActiveTab()["update"]){
+      if (tabData?.["update"]){
         reloadAction()
-        dbStore.getActiveTab()["update"]=false
+        tabData["update"]=false
       }
 
     })

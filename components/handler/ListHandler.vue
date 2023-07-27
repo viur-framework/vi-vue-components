@@ -78,9 +78,8 @@ import HandlerBar from "../bars/HandlerBar.vue";
 import {ListRequest, boneLogic} from '@viur/vue-utils'
 import {useDBStore} from '../stores/db'
 import {useMessageStore} from "../stores/message";
-import router from "../routes";
 import {useModulesStore} from "../stores/modules";
-import {useRoute} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import Loader from "@viur/vue-utils/generic/Loader.vue";
 import FloatingBar from "../bars/FloatingBar.vue";
 import { useContextStore } from '../stores/context';
@@ -104,6 +103,7 @@ export default defineComponent({
   setup(props, context) {
     const dbStore = useDBStore();
     const route = useRoute()
+    const router = useRouter()
     const messageStore = useMessageStore();
     const modulesStore = useModulesStore();
     const contextStore = useContextStore();
@@ -179,7 +179,7 @@ export default defineComponent({
     provide("setLimit", setLimit)
 
     onMounted(() => {
-      state.conf = dbStore.getConfByRoute(route)
+      state.conf = dbStore.getConf(props.module,props.view)
       if (state.conf) {
         if (Object.keys(state.conf).indexOf("filter") > -1) {
           for (const key in state.conf["filter"]) {
@@ -199,20 +199,13 @@ export default defineComponent({
 
     onActivated(()=>{
       state.active = true
-      if (dbStore.getActiveTab()["update"]){
+      let tabData = dbStore.getTabById(route.query["_"])
+
+      if (tabData?.["update"]){
         reloadAction()
-        dbStore.getActiveTab()["update"]=false
+        tabData["update"]=false
       }
 
-    })
-
-
-    watch(()=>dbStore.getActiveTab()["update"],(newVal, oldVal)=>{
-      const currentUpdate = dbStore.getActiveTab()
-      if(currentlist.state.module===currentUpdate['module'] && newVal){
-        reloadAction()
-        dbStore.getActiveTab()["update"]=false
-      }
     })
 
     watch(()=>Object.values(contextStore.state.globalContext),(newVal,oldVal)=>{
@@ -257,7 +250,9 @@ export default defineComponent({
     }
 
     function openEditor(e: Event) {
+      console.log(props.selector)
       if(props.selector){
+        console.log("FFF")
         context.emit("closeSelector")
         return 0
       }
@@ -287,7 +282,7 @@ export default defineComponent({
     }
 
     function setSelectedBones(){
-      state.conf = dbStore.getConfByRoute(route)
+      state.conf = dbStore.getConf(props.module,props.view)
       if (state.conf && state.conf?.['columns']) {
         state.selectedBones = state.conf['columns']
       }else{
@@ -303,6 +298,7 @@ export default defineComponent({
         if (state.filter===null || state.filter === "") return true
         let wordlist = state.filter ? state.filter.split(" ") : []
         for(const [k,v] of Object.entries(skel)){
+          console.log(k)
           if(currentlist.structure?.[k]?.["visible"]===false) continue
           for (let word of wordlist) {
             word = word.toLowerCase().replace(/[\W_]+/g, ""); //remove all nun alphanum chars
@@ -310,6 +306,7 @@ export default defineComponent({
             if (!word || word.length === 0) {
 
             } else {
+              console.log(v)
                 if(v.includes(word)){
                   return true
                 }

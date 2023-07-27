@@ -11,7 +11,7 @@
       <table>
         <thead>
           <tr>
-            <th style="width: 30px" class="open-column"></th>
+            <th style="width: 75px" class="open-column"></th>
             <th style="width: 30px" class="drag-column"></th>
             <th style="width: 150px"
                 v-for="(name) in state.selectedBones"
@@ -146,9 +146,11 @@ export default defineComponent({
     onActivated(()=>{
       state.active = true
 
-      if (dbStore.getActiveTab()["update"]){
+      let tabData = dbStore.getTabById(route.query["_"])
+
+      if (tabData?.["update"]){
         reloadAction()
-         dbStore.getActiveTab()["update"]=false
+        tabData["update"]=false
       }
 
     })

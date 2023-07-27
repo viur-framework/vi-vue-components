@@ -6,7 +6,6 @@
                 @sl-after-hide="relationCloseAction()"
                 style="--width:85%"
     >
-
     <component
         :is="handler"
         :module="module"

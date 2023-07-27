@@ -5,6 +5,7 @@ import {defineStore} from "pinia";
 
 export const useAppStore = defineStore("appStore", () => {
   const state = reactive({
+    "debug":true,
     "vi.version": [4, 0, 0],
 
     //core section
@@ -16,10 +17,13 @@ export const useAppStore = defineStore("appStore", () => {
     "init":false,
     "admin.name":" Administration",
     "admin.logo":"s/logo-cube.svg",
+    "admin.loader.logo":undefined,
+    "admin.loader.color":undefined,
     "admin.login.background":"/vi/s/login-background.jpg",
     "admin.login.logo":"/vi/s/logo.svg",
     "admin.color.primary":"",
     "admin.color.secondary":"",
+
   })
 
 

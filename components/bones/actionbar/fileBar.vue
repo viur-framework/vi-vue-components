@@ -15,14 +15,16 @@
       <div class="droparea" v-if="state.droparea">Dateien hier hinziehen</div>
 
       <input hidden type="file" ref="uploadinput" :multiple="boneState.multiple" @change="handleUpload"/>
+      <!--
       <sl-button v-if="boneState.multiple && !readonly"
                  @click="openSelector(lang)"
                  outline
                  :title='$t("bone.list")'
                  class="add-btn"
       >
-          <sl-icon name="menu"></sl-icon>
+          <sl-icon name="plus"></sl-icon>
       </sl-button>
+      -->
 
 
       <sl-button variant="success"
@@ -93,26 +95,40 @@ export default defineComponent({
           "size": file.size.toString(),
         }
         return new Promise((resolve,reject)=>{
-          Request.securePost("/vi/file/getUploadURL", {dataObj:filedata}).then(async (resp)=>{
-            let uploadURLdata = await resp.json()
-            console.log(uploadURLdata)
-            Request.post(uploadURLdata["values"]['uploadUrl'],{dataObj:file,mode:'no-cors'}).then(async uploadresp=>{
-              const addData: Record<string, string> = {
-                "key": uploadURLdata["values"]["uploadKey"],
-                "node": undefined,
-                "skelType": "leaf",
-              }
-              Request.securePost("/vi/file/add",{dataObj:addData}).then(async addresp=>{
-                let addData = await addresp.json()
-                if (addData["action"]==="addSuccess"){
-                  resolve(addData["values"])
-                }else{
-                  reject(addData)
-                }
-
-              }).catch(error=>{reject(error)})
-            }).catch(error=>{reject(error)})
-          }).catch(error=>{reject(error)})
+          Request.securePost("/vi/file/getUploadURL", { dataObj: filedata })
+          .then(async (resp) => {
+            let uploadURLdata = await resp.json();
+            fetch(uploadURLdata["values"]["uploadUrl"], {
+              body:file,
+              method: "POST",
+              mode: "no-cors",
+            })
+              .then(async (uploadresp) => {
+                const addData: Record<string, string> = {
+                  key: uploadURLdata["values"]["uploadKey"],
+                  node: undefined,
+                  skelType: "leaf",
+                };
+                Request.securePost("/vi/file/add", { dataObj: addData })
+                  .then(async (addresp) => {
+                    let addData = await addresp.json();
+                    if (addData["action"] === "addSuccess") {
+                      resolve(addData["values"]);
+                    } else {
+                      reject(addData);
+                    }
+                  })
+                  .catch((error) => {
+                    reject(error);
+                  });
+              })
+              .catch((error) => {
+                reject(error);
+              });
+          })
+          .catch((error) => {
+            reject(error);
+          });
         })
       }
 

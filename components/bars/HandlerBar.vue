@@ -60,22 +60,22 @@ export default defineComponent({
       actions: computed(() => {
         let listActions = {
           ":options": [["selectfields","overlay"]],
-          "default": [[":options"],["search","delete", "clone","preview", "edit", "add"]],
+          "default": [["selectfields"],["search", "filter", "delete", "clone","preview", "edit", "add"]], //":options"
         }
 
         const hierarchyActions = {
           ":options": [["selectfields","overlay"]],
-          "default": [[":options","rootnodelist"],["delete", "clone","preview", "edit", "addnode"]],
+          "default": [["selectfields","rootnodelist"],["delete", "clone","preview", "edit", "addnode"]],
         }
 
         const treeActions = {
           ":options": [["selectfields","overlay"]],
-          "default": [[":options", "rootnodelist"],["delete", "clone","preview", "edit", "addfolder","addfile"]],
+          "default": [["selectfields", "rootnodelist"],["delete", "clone","preview", "edit", "addfolder","addfile"]],
         }
 
         let fluidpageActions = {
           ":options": [["selectfields","overlay"]],
-          "default": [[":options"],["fluidpage","delete", "clone","preview", "edit", "add"]],
+          "default": [["selectfields"],["search","fluidpage","delete", "clone","preview", "edit", "add"]],
         }
 
         let fluidpagecontentActions = {
@@ -89,7 +89,7 @@ export default defineComponent({
         if (props.actions?.length > 0) return props.actions
 
         // find matching conf
-        let conf = dbStore.getConfByRoute(route);
+        let conf = dbStore.getConf(props.module)
         let actions = {...listActions}
         if (!conf) return actions;
         if (conf["handler"].startsWith("tree.node")) {

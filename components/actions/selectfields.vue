@@ -33,17 +33,17 @@ export default defineComponent({
   components: {},
   setup(props, context) {
     const handlerState: any = inject("handlerState")
+    const currentlist: any = inject("currentlist")
     const state = reactive({structure: {}});
     const dbStore = useDBStore()
     const route = useRoute();
 
 
     function openSelectDialog() {
-      let store = dbStore.getListStoreByRoute(route);
-      if (store===undefined){
+      if (handlerState.structure){
         state.structure = handlerState.structure
-      }else{
-        state.structure = store.structure;
+      }else if (currentlist){
+        state.structure = currentlist.structure;
       }
       const dialog = document.getElementById("dialog-selectfields");
       dialog.show();
@@ -71,7 +71,7 @@ export default defineComponent({
     }
 
     function setChecked(boneName){
-      let conf = dbStore.getConfByRoute(route)
+      let conf = dbStore.getConf(props.module)
       if (conf && conf?.['columns']) {
         if(conf['columns'].includes(boneName)){
           return true

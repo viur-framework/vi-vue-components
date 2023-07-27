@@ -24,6 +24,7 @@ import {useMessageStore} from "../stores/message";
 import {useUserStore} from "../stores/user";
 import {useContextStore} from "../stores/context";
 import Loader from "@viur/vue-utils/generic/Loader.vue";
+import { useRoute } from 'vue-router';
 
 export default defineComponent({
     props: {
@@ -40,6 +41,7 @@ export default defineComponent({
         const dbStore = useDBStore()
         const userStore = useUserStore()
         const contextStore = useContextStore()
+        const route = useRoute()
 
 
         const state = reactive({
@@ -94,9 +96,11 @@ export default defineComponent({
         onActivated(()=>{
           state.active = true
 
-          if (dbStore.getActiveTab()["update"]){
+          let tabData = dbStore.getTabById(route.query["_"])
+
+          if (tabData?.["update"]){
             reloadAction()
-            dbStore.getActiveTab()["update"]=false
+            tabData["update"]=false
           }
 
         })

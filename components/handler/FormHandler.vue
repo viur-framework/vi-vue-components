@@ -19,7 +19,7 @@
 
     <div class="scroll-content" v-if="!state.loading">
       <template v-for="(group,key) in state.formGroups">
-        <sl-details :summary="group['name']" v-show="group['groupVisible']" open>
+        <sl-details :summary="group['name']" v-show="group['groupVisible']" :open="key!=='system'">
           <template v-for="bone in group['bones']">
             <bone
               :is="getBoneWidget(state.structure[bone['boneName']]['type'])"
@@ -35,13 +35,14 @@
           </template>
         </sl-details>
       </template>
-
-      <sl-details summary="DEBUG: Formdata">
-        <VueJsonPretty :deep="1" :data="state.formValues"></VueJsonPretty>
-      </sl-details>
-      <sl-details summary="DEBUG: Errors">
-        {{ state.errors }}
-      </sl-details>
+      <template v-if="appStore.state.debug">
+        <sl-details summary="DEBUG: Formdata">
+          <VueJsonPretty :deep="1" :data="state.formValues"></VueJsonPretty>
+        </sl-details>
+        <sl-details summary="DEBUG: Errors">
+          {{ state.errors }}
+        </sl-details>
+      </template>
     </div>
     <template v-if="state.relation_opened">
       <template v-for="bone in state.relation_opened">
@@ -86,8 +87,10 @@ import handlers from "../handler/handlers";
 import bone from "@viur/vue-utils/bones/edit/bone.vue"
 import {getBoneWidget} from "@viur/vue-utils/bones/edit/index"
 import Loader from "@viur/vue-utils/generic/Loader.vue";
+import {useAppStore} from '../stores/app';
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
+import Logics from "logics-js"
 
 
 export default defineComponent({
@@ -106,6 +109,7 @@ export default defineComponent({
   components: {EntryBar, bone, ...handlers,VueJsonPretty, Loader},
   setup(props, context) {
     const dbStore = useDBStore();
+    const appStore = useAppStore()
     const route = useRoute();
     const modulesStore = useModulesStore();
     const values = reactive({})
@@ -125,9 +129,8 @@ export default defineComponent({
           let boneStructure = state.structure[boneName]
           let boneValue = state.skel[boneName]
           if (bone?.params?.category) {
-            category = bone.params.category
+            category = bone.params.category.toLowerCase()
           }
-
 
           if (Object.keys(groups).includes(category)) {
             groups[category]["bones"].push({
@@ -137,7 +140,7 @@ export default defineComponent({
             })
           } else {
             groups[category] = {
-              "name": category, "bones": [{
+              "name": bone.params.category, "bones": [{
                 "boneName": boneName,
                 "boneStructure": boneStructure,
                 "boneValue": boneValue
@@ -149,6 +152,7 @@ export default defineComponent({
           }
         }
         let sortedGroups = {}
+        console.log(groups)
         Object.keys(groups).sort().forEach(function(key) {
           sortedGroups[key] = groups[key];
         });
@@ -246,20 +250,7 @@ export default defineComponent({
 
     function updateValue(data) {
       state.formValues[data.name] = data.value
-      return 0
-      if(event.detail.type==="edit")
-      {
-        state.formValues[event.detail.boneName] = event.detail.formValue;
-      }else if(props.action === "add"){
-        //HOTFIX
-        state.formValues[event.detail.boneName] = event.detail.formValue;
-      }
-
-      //state.formValues[event.detail.boneName] = event.detail.formValue;
-
-      if (event.detail.boneName === "name") {
-        dbStore.updateActiveTabName(event.detail.formValue[0]["name"])
-      }
+      visibleIf(data)
     }
 
     function relationSelection(event,bone) {
@@ -293,7 +284,21 @@ export default defineComponent({
       state.relation_opened = state.relation_opened.filter(i=>i!==bone)
     }
 
+    function visibleIf(changeddata){
+      try{
+        // we need more stable skel updates for logics
+        state.skel[changeddata["name"]] = changeddata["value"][0][changeddata["name"]]
+      }catch(e){
 
+      }
+
+      for (const [boneName, bone] of Object.entries(state.structure)) {
+        if (bone?.["params"]?.["visibleIf"]){
+          let ex = new Logics(bone?.["params"]?.["visibleIf"])
+          bone["visible"] = ex.run(state.skel).toBool()
+        }
+      }
+    }
 
     onBeforeMount(() => {
       fetchData()
@@ -305,6 +310,7 @@ export default defineComponent({
       getWidget,
       updateValue,
       modulesStore,
+      appStore,
       relationSelection,
       toRaw,
       relationCloseAction,
@@ -312,7 +318,8 @@ export default defineComponent({
       relationApplySelection,
       relationRemoveHandler,
       getBoneWidget,
-      fetchData
+      fetchData,
+      visibleIf
     }
   }
 })
