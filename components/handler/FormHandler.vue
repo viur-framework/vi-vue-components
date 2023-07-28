@@ -185,8 +185,7 @@ export default defineComponent({
     function fetchData() {
       state.loading=true
       let url = `/vi/${props.module}/${props.action === "clone" ? "edit" : props.action}`;
-
-      if (props.group) url + `/${props.group}`
+      if (props.group) url += `/${props.group}`
 
       if (props.action === "edit" || props.action === "clone") {
         if (state.skeltype === "node") {
@@ -196,7 +195,6 @@ export default defineComponent({
         }
         url += `/${props.skelkey}`
       }
-
       const dataObj = {}
       if (state.skeltype === "node" && props.action === "add") {
         dataObj["skelType"] = "node"

@@ -45,7 +45,6 @@ export default defineComponent({
             urls.push( `/db/${handlerState.module}/edit/${handlerState?.currentSelectionType}/${selection["key"]}`)
             continue
           }
-
           if(handlerState.group){
             urls.push( `/db/${handlerState.module}/edit/${handlerState.group}/${selection["key"]}`)
           }else{
@@ -64,9 +63,7 @@ export default defineComponent({
     })
 
     function createAndNavigate() {
-      console.log(state.urls)
       for(let url of state.urls){
-        console.log(url)
         let new_route = router.resolve(url)
         dbStore.addOpened(new_route, handlerState["module"], handlerState["view"])
       }

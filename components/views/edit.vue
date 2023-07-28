@@ -1,9 +1,11 @@
 <template>
+
     <form-handler
         :module="module"
-        :group="group"
+        :group="!['node','leaf'].includes(skeltype)?skeltype:''"
         :action="route.meta['action']"
         :skelkey="skelkey"
+        :skeltype="['node','leaf'].includes(skeltype)?skeltype:''"
     >
     </form-handler>
 
@@ -24,7 +26,8 @@ export default defineComponent({
             required: true
         },
         group: String,
-        skelkey: String
+        skelkey: String,
+        skeltype: String,
     },
     components: {FormHandler},
     setup(props, context) {
