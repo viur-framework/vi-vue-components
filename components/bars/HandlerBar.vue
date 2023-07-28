@@ -81,7 +81,7 @@ export default defineComponent({
 
         let fluidpagecontentActions = {
           ":options": [],
-          "default": [["reload"],["preview", "add"]],
+          "default": [["reload"],["add"]],
         }
 
 

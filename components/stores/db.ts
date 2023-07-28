@@ -376,7 +376,7 @@ export const useDBStore = defineStore("db", () => {
 
     function getTabById(id){
       let handlers = state["handlers.opened"].filter((e)=>{
-        if (e["id"] === id){
+        if (e["id"] === parseInt(id)){
           return true
         }
         return false

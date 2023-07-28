@@ -18,7 +18,7 @@ export default {
     setamount: "Anzahl",
     save: "Speichern",
     save_close: "Speichern und Schließen",
-    save_next: "Speichern und Nächster",
+    save_next: "Speichern und Kopie",
     filter: {
       text: "Filter",
       nofilter: "Für dieses Modul sind keine Filter vorhanden"
