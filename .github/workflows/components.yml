@@ -23,7 +23,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm install --prefix=packages/components
+    - run: npm install --prefix=components
     #- run: npm run build
     - uses: JS-DevTools/npm-publish@v1
       with:
