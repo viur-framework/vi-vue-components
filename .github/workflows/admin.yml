@@ -1,10 +1,9 @@
-name: Node.js CI
+name: Build Admin
 
 on:
   push:
-    #tags:
-    #  - "v4.*"
-    branches: [ main ]
+    tags:
+      - "v4.*"
 
 jobs:
   build:
@@ -25,8 +24,8 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: cd "app/sources"
-    - run: npm install --prefix=vi-base
-    - run: npm run build --prefix=vi-base
+    - run: npm install --prefix=admin
+    - run: npm run build --prefix=admin
     - uses: actions/upload-artifact@master
       with:
         name: buildfiles
