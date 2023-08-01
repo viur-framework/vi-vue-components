@@ -39,16 +39,15 @@ import "@viur/viur-shoelace/dist/components/color-picker/color-picker"
 import "@viur/viur-shoelace/dist/components/textarea/textarea"
 import "@viur/viur-shoelace/dist/components/animation/animation"
 
-import {setBasePath,getBasePath} from '@viur/viur-shoelace/dist/utilities/base-path';
-import {registerIconLibrary} from '@viur/viur-shoelace/dist/utilities/icon-library.js';
+import { setBasePath, getBasePath } from "@viur/viur-shoelace/dist/utilities/base-path"
+import { registerIconLibrary } from "@viur/viur-shoelace/dist/utilities/icon-library.js"
 
-let basePath=""
-if(import.meta.env.DEV){
-    setBasePath(`s/viur-shoelace`)
-    basePath="s/"
-}else{
-    setBasePath(`viur-shoelace`)
+let basePath = ""
+if (import.meta.env.DEV) {
+  setBasePath(`s/viur-shoelace`)
+  basePath = "s/"
+} else {
+  setBasePath(`viur-shoelace`)
 }
 
-import "@viur/vi-components/style/app.css"
-
+import "@viur/vue-components/style/app.css"
