@@ -2,9 +2,9 @@
   <sl-button
     size="small"
     variant="success"
-    @click="fileUpload"
     :disabled="!state.canAdd"
     :title="$t('actions.addfile')"
+    @click="fileUpload"
   >
     <sl-icon
       slot="prefix"
@@ -13,10 +13,10 @@
     {{ $t("actions.addfile") }}
   </sl-button>
   <input
-    type="file"
-    @change="fileuploaded"
     ref="fileinput"
+    type="file"
     style="display: none"
+    @change="fileuploaded"
   />
 </template>
 

@@ -1,21 +1,21 @@
 <template>
   <tr
+    :key="skel['key']"
     :draggable="treeState.dragging"
-    @dragstart="tree.onDragStart($event, idx, 'leaf')"
-    @drop.stop="tree.onDrop($event, idx)"
     :class="{
       isSelected: treeState.selected_leaf?.key === skel.key,
       dropin: state.currentEntry['_isover'] && state.currentEntry['_drop'] === 'in',
       dropafter: state.currentEntry['_isover'] && state.currentEntry['_drop'] === 'after',
       dropbefore: state.currentEntry['_isover'] && state.currentEntry['_drop'] === 'before'
     }"
-    :key="skel['key']"
+    @dragstart="tree.onDragStart($event, idx, 'leaf')"
+    @drop.stop="tree.onDrop($event, idx)"
   >
     <td>
       <div class="file">
         <div
-          class="dragger"
           v-if="treeState.dragging"
+          class="dragger"
           @mouseup="tree.mouseUpHandle($event, idx, 'leaf')"
           @mousedown="tree.mouseDownHandle($event, idx, 'leaf')"
         >
@@ -28,8 +28,8 @@
         ></sl-icon>
         <span
           class="filename"
-          v-html="skel.name"
           @click="entrySelected(skel)"
+          v-html="skel.name"
         ></span>
       </div>
     </td>

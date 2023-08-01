@@ -6,53 +6,53 @@
     @drop.prevent="handleDrop"
   >
     <div
-      class="droparea"
       v-if="state.droparea"
+      class="droparea"
     >
       Dateien hier hinziehen
     </div>
     <sl-button
       v-if="!boneState.readonly && (!value || state.loading)"
-      @click="uploadinput.click()"
       :title="$t('bone.upload')"
       outline
       class="upload-btn"
+      @click="uploadinput.click()"
     >
       <sl-icon name="upload"></sl-icon>
       <sl-spinner
-        slot="suffix"
         v-if="state.loading"
+        slot="suffix"
       ></sl-spinner>
     </sl-button>
     <sl-button
-      @click="openRelationalSelection"
       v-if="!boneState.readonly && (!value || state.loading)"
+      @click="openRelationalSelection"
     >
       <sl-icon name="menu"></sl-icon>
     </sl-button>
     <input
+      ref="uploadinput"
       hidden
       type="file"
-      ref="uploadinput"
       :multiple="boneState.multiple"
       @change="handleUpload"
     />
     <sl-button
-      @click="downloadFile"
       v-if="value"
+      @click="downloadFile"
     >
       <sl-icon
-        name="download"
         slot="prefix"
+        name="download"
       ></sl-icon>
     </sl-button>
     <div
-      class="box"
       v-if="!boneState.isEmpty"
+      class="box"
     >
       <div
-        class="preview"
         v-if="value?.['dest']?.['mimetype'].includes('image')"
+        class="preview"
       >
         <vi-image
           :src="Request.downloadUrlFor(value)"
@@ -62,8 +62,8 @@
       </div>
 
       <div
-        class="preview"
         v-else
+        class="preview"
       >
         <sl-icon
           v-if="value?.['dest']?.['name']"
@@ -75,10 +75,10 @@
       </div>
     </div>
     <sl-button
-      @click="editSelection"
+      v-if="value"
       variant="info"
       outline
-      v-if="value"
+      @click="editSelection"
     >
       <sl-icon name="pencil"></sl-icon>
     </sl-button>
@@ -86,9 +86,9 @@
       v-if="!boneState.multiple && !boneState.isEmpty"
       variant="danger"
       outline
-      @click="$emit('change', name, '', lang, index)"
       :title="$t('bone.del')"
       class="delete-btn"
+      @click="$emit('change', name, '', lang, index)"
     >
       <sl-icon name="x"></sl-icon>
     </sl-button>

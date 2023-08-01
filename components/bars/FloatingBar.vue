@@ -2,8 +2,8 @@
   <div class="more-entries">
     <template v-if="['listhandler'].includes(handerState['type'])">
       <component
-        v-for="action in dbStore.state['floatingbar.actions']"
         :is="action"
+        v-for="action in dbStore.state['floatingbar.actions']"
       >
       </component>
     </template>

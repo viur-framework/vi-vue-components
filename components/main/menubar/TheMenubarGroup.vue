@@ -5,8 +5,8 @@
       @click="openGroup"
     >
       <sl-icon
-        slot="icon"
         v-if="icon"
+        slot="icon"
         :name="icon"
         :library="library"
       ></sl-icon>

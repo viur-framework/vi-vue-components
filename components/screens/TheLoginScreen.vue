@@ -14,9 +14,9 @@
       </sl-alert>
 
       <div
+        v-if="state.waitForInit"
         class="init-spinner"
         style="position: relative; height: 40px"
-        v-if="state.waitForInit"
       >
         <loader></loader>
       </div>
@@ -42,52 +42,52 @@
         <sl-tab-panel name="userpassword">
           <div v-show="userStore.state['user.loggedin'] === 'no'">
             <sl-input
+              v-model="state.name"
               type="text"
               name="name"
-              v-model="state.name"
               placeholder="E-Mail"
               clearable
               autocomplete="on"
               @sl-clear="state.name = ''"
             ></sl-input>
             <sl-input
-              @keydown.enter="userLogin"
+              v-model="state.password"
               type="password"
               name="password"
-              v-model="state.password"
               autocomplete="on"
               placeholder="Passwort"
-              @sl-clear="state.password = ''"
               toggle-password
+              @keydown.enter="userLogin"
+              @sl-clear="state.password = ''"
             ></sl-input>
             <sl-button
-              @click="userLogin"
-              variant="primary"
               v-if="['no', 'loading', 'error'].includes(userStore.state['user.loggedin'])"
+              variant="primary"
               :disabled="!state.userDataFilled"
               :loading="userStore.state['user.loggedin'] === 'loading'"
+              @click="userLogin"
             >
               Login
             </sl-button>
             <sl-button
-              @click="logout"
               v-else
+              @click="logout"
               >Logout</sl-button
             >
           </div>
           <div v-show="userStore.state['user.loggedin'] === 'secound_factor_authenticator_otp'">
             <sl-input
+              v-model="state.otp"
               type="text"
               name="otp"
-              v-model="state.otp"
               placeholder="OTP"
               clearable
             ></sl-input>
 
             <sl-button
-              @click="userSecondFactor"
               variant="primary"
               :loading="userStore.state['user.loggedin'] === 'loading'"
+              @click="userSecondFactor"
             >
               Login
             </sl-button>
@@ -96,18 +96,18 @@
         <sl-tab-panel name="google">
           <div id="google_oauth"></div>
           <sl-button
-            @click="googleLogin"
-            variant="primary"
             v-if="['no', 'loading', 'error'].includes(userStore.state['user.loggedin'])"
+            variant="primary"
             :loading="userStore.state['user.loggedin'] === 'loading'"
+            @click="googleLogin"
           >
             Mit Google anmelden
           </sl-button>
           <sl-button
-            @click="logout"
-            variant="primary"
             v-else
+            variant="primary"
             :loading="state.waitForLogout"
+            @click="logout"
             >Logout</sl-button
           >
         </sl-tab-panel>

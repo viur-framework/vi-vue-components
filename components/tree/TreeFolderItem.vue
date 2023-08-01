@@ -7,20 +7,20 @@
     <div
       class="entry"
       :draggable="child['_dragging'] && treeState.dragging"
-      @dragstart="tree.onDragStart($event, idx)"
-      @dragenter.prevent="tree.onDragEnter($event, idx)"
-      @dragover.prevent="tree.onDragOver($event, idx)"
-      @dragleave="tree.onDragLeave($event, idx)"
-      @drop.stop="tree.onDrop($event, idx)"
       :class="{
         dropin: child['_isover'] && child['_drop'] === 'in',
         dropafter: child['_isover'] && child['_drop'] === 'after',
         dropbefore: child['_isover'] && child['_drop'] === 'before'
       }"
+      @dragstart="tree.onDragStart($event, idx)"
+      @dragenter.prevent="tree.onDragEnter($event, idx)"
+      @dragover.prevent="tree.onDragOver($event, idx)"
+      @dragleave="tree.onDragLeave($event, idx)"
+      @drop.stop="tree.onDrop($event, idx)"
     >
       <div
-        class="dragger"
         v-if="treeState.dragging"
+        class="dragger"
         @mouseup="tree.mouseUpHandle($event, idx)"
         @mousedown="tree.mouseDownHandle($event, idx)"
       >
@@ -38,16 +38,16 @@
       </div>
 
       <div
-        class="loading"
         v-if="child['_status'] === 'loading'"
+        class="loading"
       >
         <sl-spinner></sl-spinner>
       </div>
 
       <div
         class="item"
-        @click="selectChild(idx)"
         :class="{ active: isactive(idx) }"
+        @click="selectChild(idx)"
       >
         <sl-icon
           name="folder"
@@ -60,9 +60,9 @@
       </div>
     </div>
     <tree-folder-item
+      v-if="child['_expanded']"
       :module="module"
       :path="path.concat([idx])"
-      v-if="child['_expanded']"
     ></tree-folder-item>
   </li>
 </template>

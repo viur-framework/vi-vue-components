@@ -2,8 +2,8 @@
   <sl-breadcrumb>
     <sl-breadcrumb-item
       v-for="(entry, idx) in state.selectedEntries"
-      @click="changePath(idx)"
       :key="idx"
+      @click="changePath(idx)"
     >
       {{ entry["name"] }}
     </sl-breadcrumb-item>
@@ -16,8 +16,8 @@
     style="--min: 200px; --max: 30%"
   >
     <div
-      class="tree-wrapper"
       slot="start"
+      class="tree-wrapper"
     >
       <ul>
         <tree-folder-item
@@ -121,9 +121,9 @@
       </div>
 
       <div
-        class="file-info"
         v-if="state.selected_leaf?.name"
         slot="end"
+        class="file-info"
       >
         <slot
           :selection="state.selected_leaf"
@@ -134,9 +134,9 @@
             v-html="state.selected_leaf.name"
           ></div>
           <div
+            v-if="state.selected_leaf?.mimetype && state.selected_leaf?.mimetype.startsWith('image/')"
             class="file-preview"
             @click="openFileNewTab(state.selected_leaf)"
-            v-if="state.selected_leaf?.mimetype && state.selected_leaf?.mimetype.startsWith('image/')"
           >
             <vi-image :src="Request.downloadUrlFor({ dest: state.selected_leaf }, true)"> </vi-image>
           </div>

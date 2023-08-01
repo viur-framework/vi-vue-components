@@ -1,13 +1,13 @@
 <template>
   <div class="actionbar">
     <sl-button
+      v-if="boneState.multiple && !readonly"
       variant="danger"
       :disabled="boneState.isEmpty"
-      v-if="boneState.multiple && !readonly"
-      @click="removeMultipleEntries(index, lang)"
       :title="$t('bone.del')"
       outline
       class="delete-btn"
+      @click="removeMultipleEntries(index, lang)"
     >
       <sl-icon name="x"></sl-icon>
     </sl-button>
@@ -18,12 +18,12 @@
       @sl-item-select="addMultipleEntry(lang, { dest: state.skels?.[$event.detail.item.value], rel: null })"
     ></sl-combobox>
     <sl-button
-      variant="success"
       v-if="boneState.multiple && !readonly"
-      @click="openSelector(lang)"
+      variant="success"
       :title="$t('bone.add')"
       outline
       class="add-btn"
+      @click="openSelector(lang)"
     >
       <sl-icon name="plus"></sl-icon> {{ $t("bone.add") }}
     </sl-button>

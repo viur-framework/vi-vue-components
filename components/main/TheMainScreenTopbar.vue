@@ -6,8 +6,8 @@
     >
       <div class="logo">
         <sl-icon
-          :src="appStore.state['admin.logo']"
           v-once
+          :src="appStore.state['admin.logo']"
         ></sl-icon>
       </div>
       <h1 class="main-headline">
@@ -17,8 +17,8 @@
 
     <div class="main-group">
       <component
-        v-for="action in dbStore.state['topbar.actions']"
         :is="action"
+        v-for="action in dbStore.state['topbar.actions']"
       >
       </component>
     </div>

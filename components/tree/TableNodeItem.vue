@@ -6,11 +6,6 @@
     <tr
       :draggable="child['_dragging'] && treeState.dragging"
       :data-layer="state.layer"
-      @dragstart="tree.onDragStart($event, idx)"
-      @dragenter.prevent="tree.onDragEnter($event, idx)"
-      @dragover.prevent="tree.onDragOver($event, idx)"
-      @dragleave="tree.onDragLeave($event, idx)"
-      @drop.stop="tree.onDrop($event, idx)"
       class="entry"
       :class="{
         dropin: child['_isover'] && child['_drop'] === 'in',
@@ -18,6 +13,11 @@
         dropbefore: child['_isover'] && child['_drop'] === 'before',
         active: isactive(idx)
       }"
+      @dragstart="tree.onDragStart($event, idx)"
+      @dragenter.prevent="tree.onDragEnter($event, idx)"
+      @dragover.prevent="tree.onDragOver($event, idx)"
+      @dragleave="tree.onDragLeave($event, idx)"
+      @drop.stop="tree.onDrop($event, idx)"
     >
       <td
         class="expand-cell"
@@ -34,16 +34,16 @@
         </div>
 
         <div
-          class="loading"
           v-if="child['_status'] === 'loading'"
+          class="loading"
         >
           <sl-spinner></sl-spinner>
         </div>
       </td>
 
       <td
-        class="drag-cell"
         v-if="treeState.dragging"
+        class="drag-cell"
         @mouseup="tree.mouseUpHandle($event, idx)"
         @mousedown="tree.mouseDownHandle($event, idx)"
       >
@@ -54,9 +54,9 @@
 
       <template v-for="name in treeState.selectedBones">
         <td
+          v-if="!name?.startsWith('_')"
           @click="selectChild(idx)"
           @dblclick="openEditor"
-          v-if="!name?.startsWith('_')"
         >
           <div class="ellipsis">
             {{ getBoneViewer(child, name) }}

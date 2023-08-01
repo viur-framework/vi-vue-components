@@ -3,8 +3,8 @@
     variant="danger"
     size="small"
     :disabled="!state.active || !state.canDelete"
-    @click="openDeletePopup"
     :title="$t('actions.delete')"
+    @click="openDeletePopup"
   >
     <sl-icon
       slot="prefix"
@@ -18,17 +18,17 @@
     :disabled="!state.opened"
   >
     <sl-dialog
+      id="dialog-delete"
       :open="state.opened"
       :label="$t('actions.delete.text')"
-      id="dialog-delete"
     >
       {{ $t("actions.delete.msg", { amount: state.count })
       }}<!--TODO Translate-->
       <sl-button
         slot="footer"
         variant="primary"
-        @click="deleteEntries"
         :title="$t('actions.delete')"
+        @click="deleteEntries"
       >
         {{ $t("actions.delete.text") }}
       </sl-button>

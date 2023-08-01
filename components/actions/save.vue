@@ -2,10 +2,10 @@
   <sl-button
     variant="success"
     size="small"
-    @click="save"
     :loading="state.loading"
     title="$t(name)"
     :outline="name === 'actions.save_next'"
+    @click="save"
   >
     <sl-icon
       slot="prefix"

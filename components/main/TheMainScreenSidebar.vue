@@ -1,8 +1,8 @@
 <template>
   <nav class="nav">
     <the-menubar-group
-      :name="$t('sidebar.favorites')"
       v-if="userStore.favoriteModules?.length > 0"
+      :name="$t('sidebar.favorites')"
     >
       <menu-tree :tree="userStore.favoriteModules"></menu-tree>
     </the-menubar-group>
@@ -10,8 +10,8 @@
       <menu-tree :tree="dbStore.modulesTree"></menu-tree>
     </the-menubar-group>
     <div
-      class="loader"
       v-if="dbStore.modulesTree.length === 0"
+      class="loader"
     >
       <loader></loader>
     </div>

@@ -1,13 +1,13 @@
 <template>
   <sl-tab
     slot="nav"
-    :closable="closeable"
     :key="to"
-    @sl-close="onTabClose"
+    :closable="closeable"
     :data-id="position"
+    :active="active"
+    @sl-close="onTabClose"
     @auxclick="clickEvent"
     @click="forceUpdate"
-    :active="active"
   >
     <router-link
       class="link-wrap"
@@ -16,19 +16,19 @@
     >
       <sl-avatar label="Rounded avatar">
         <sl-icon
-          class="mode-icon"
           v-if="mode !== 'view'"
-          :name="state.modeIcon"
           slot="icon"
+          class="mode-icon"
+          :name="state.modeIcon"
           sprite
         ></sl-icon>
         <sl-icon
           v-else-if="state.icon"
-          @sl-error="onIconError"
+          slot="icon"
           :library="library"
           :name="icon"
-          slot="icon"
           sprite
+          @sl-error="onIconError"
         ></sl-icon>
       </sl-avatar>
       <span class="name"><slot></slot></span>

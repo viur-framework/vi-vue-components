@@ -2,16 +2,16 @@
   <tr
     class="noderow entry"
     :draggable="state.child?.['_dragging'] && treeState.dragging"
-    @dragstart="tree.onDragStart($event, idx)"
-    @dragenter.prevent="tree.onDragEnter($event, idx)"
-    @dragover.prevent="tree.onDragOver($event, idx)"
-    @dragleave="tree.onDragLeave($event, idx)"
-    @drop.stop="tree.onDrop($event, idx)"
     :class="{
       dropin: state.child?.['_isover'] && state.child?.['_drop'] === 'in',
       dropafter: state.child?.['_isover'] && state.child?.['_drop'] === 'after',
       dropbefore: state.child?.['_isover'] && state.child?.['_drop'] === 'before'
     }"
+    @dragstart="tree.onDragStart($event, idx)"
+    @dragenter.prevent="tree.onDragEnter($event, idx)"
+    @dragover.prevent="tree.onDragOver($event, idx)"
+    @dragleave="tree.onDragLeave($event, idx)"
+    @drop.stop="tree.onDrop($event, idx)"
   >
     <td>
       <div
@@ -34,8 +34,8 @@
         class="folder"
       >
         <div
-          class="dragger"
           v-if="treeState.dragging"
+          class="dragger"
           @mouseup="tree.mouseUpHandle($event, idx)"
           @mousedown="tree.mouseDownHandle($event, idx)"
         >
@@ -48,8 +48,8 @@
         ></sl-icon>
         <span
           class="filename"
-          v-html="skel['name']"
           @click="changeParentEntry(idx)"
+          v-html="skel['name']"
         ></span>
       </div>
     </td>

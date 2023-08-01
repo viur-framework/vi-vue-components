@@ -3,8 +3,8 @@
     size="small"
     variant="info"
     :disabled="!state.active || !state.canEdit"
-    @click="createAndNavigate()"
     :title="$t('actions.edit')"
+    @click="createAndNavigate()"
   >
     <sl-icon
       slot="prefix"

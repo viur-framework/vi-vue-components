@@ -5,16 +5,16 @@
     stay-open-on-select
   >
     <sl-button
-      size="small"
       slot="trigger"
+      size="small"
       :title="state.group.name"
       variant="default"
     >
       <sl-icon
+        v-once
         slot="prefix"
         aria-hidden="true"
         :library="state.group.library"
-        v-once
         :name="state.group.icon"
       >
       </sl-icon>

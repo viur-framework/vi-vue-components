@@ -8,34 +8,34 @@
       open
       :label="'Auswahl: ' + name"
       class="relation-popup"
-      @sl-after-hide="relationCloseAction()"
       style="--width: 85%"
+      @sl-after-hide="relationCloseAction()"
     >
       <component
         :is="handler"
         :module="module"
-        @currentSelection="relationUpdateSelection($event)"
         :rowselect="rowselect"
         :selector="true"
+        @currentSelection="relationUpdateSelection($event)"
         @closeSelector="relationApplySelection()"
       >
       </component>
 
       <div
-        class="footer"
         slot="footer"
+        class="footer"
       >
         <sl-button
-          @click="relationCloseAction()"
           variant="danger"
           size="small"
           outline
+          @click="relationCloseAction()"
           >{{ $t("relation.abort") }}</sl-button
         >
         <sl-button
-          @click="relationApplySelection()"
           variant="success"
           size="small"
+          @click="relationApplySelection()"
         >
           {{ $t("relation.select") }}
         </sl-button>

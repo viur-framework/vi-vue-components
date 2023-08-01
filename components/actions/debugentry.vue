@@ -3,8 +3,8 @@
     size="small"
     variant="danger"
     outline
-    @click="debugClicked"
     :title="$t('actions.debug')"
+    @click="debugClicked"
   >
     <sl-icon
       slot="prefix"

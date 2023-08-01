@@ -243,7 +243,8 @@ export const useUserStore = defineStore("user", () => {
           if (data.values["admin_config"]) {
             const obj = data.values["admin_config"]
             if (obj !== null) {
-              for (const key in obj["lastActions"]) { //back to array
+              for (const key in obj["lastActions"]) {
+                //back to array
                 state.lastActions.push(obj["lastActions"][key])
                 state.syncedlastActions.push(obj["lastActions"][key])
               }

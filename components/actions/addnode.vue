@@ -1,15 +1,15 @@
 <template>
   <router-link
+    v-slot="{ route }"
     :to="state.url"
     custom
-    v-slot="{ route }"
   >
     <sl-button
       size="small"
       variant="success"
-      @click="createAndNavigate(route)"
       :disabled="!state.canAdd"
       :title="$t('actions.addnode')"
+      @click="createAndNavigate(route)"
     >
       <sl-icon
         slot="prefix"

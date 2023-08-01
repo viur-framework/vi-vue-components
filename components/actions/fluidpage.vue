@@ -1,16 +1,16 @@
 <template>
   <router-link
+    v-slot="{ route }"
     :to="state.url"
     custom
-    v-slot="{ route }"
   >
     <sl-button
       size="small"
       outline
       variant="info"
       :disabled="!state.active || !state.canEdit"
-      @click="createAndNavigate(route)"
       :title="$t('actions.fluidpage.edit')"
+      @click="createAndNavigate(route)"
     >
       <sl-icon
         slot="prefix"

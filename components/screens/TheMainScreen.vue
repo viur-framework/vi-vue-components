@@ -7,23 +7,23 @@
     snap="300px"
   >
     <div
-      class="sidebar"
       slot="start"
+      class="sidebar"
     >
       <the-sidebar></the-sidebar>
     </div>
 
     <div
-      class="content"
       slot="end"
+      class="content"
     >
       <the-main-screen-tabbar></the-main-screen-tabbar>
       <router-view v-slot="{ Component }">
         <div class="wrap-for-popup">
           <template v-for="tab in dbStore.state['handlers.opened']">
             <div
-              :id="'view_dialogs_' + tab?.['id']"
               v-show="dbStore.getActiveTab()['id'] === tab?.['id']"
+              :id="'view_dialogs_' + tab?.['id']"
             ></div>
           </template>
           <view-wrapper :component="Component"></view-wrapper>

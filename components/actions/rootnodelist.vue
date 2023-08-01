@@ -1,7 +1,7 @@
 <template>
   <sl-select
-    @sl-change="rootNodeChange"
     :value="state.initValue"
+    @sl-change="rootNodeChange"
   >
     <sl-option
       v-for="node in handlerState['currentRootNodes']"

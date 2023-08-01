@@ -1,11 +1,11 @@
 <template>
   <sl-button-group>
     <sl-button
-      @click="fetchAction"
       :loading="state.loading"
       :disabled="state.disable"
       size="small"
       :title="$t('actions.nextpage', { amount: currentlist?.state.skellist.length })"
+      @click="fetchAction"
     >
       <sl-icon
         slot="prefix"
@@ -21,10 +21,10 @@
     <sl-select
       :disabled="state.disable"
       value="1"
-      @sl-change="amountChange"
       size="small"
       class="sl-button-group__button--last"
       style="width: 70px"
+      @sl-change="amountChange"
     >
       <sl-option value="1">1</sl-option>
       <sl-option value="5">5</sl-option>

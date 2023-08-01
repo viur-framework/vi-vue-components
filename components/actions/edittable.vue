@@ -1,8 +1,8 @@
 <template>
   <sl-switch
-    @sl-change="changeeditState"
     size="small"
     :title="$t('actions.edittable')"
+    @sl-change="changeeditState"
   >
     <span>{{ $t("actions.edittable") }}</span>
   </sl-switch>

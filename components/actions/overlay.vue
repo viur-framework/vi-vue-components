@@ -1,9 +1,9 @@
 <template>
   <sl-button
-    @click="openDrawer"
     :disabled="!state.active"
     size="small"
     :title="$t('actions.overlay')"
+    @click="openDrawer"
   >
     <sl-icon
       slot="prefix"

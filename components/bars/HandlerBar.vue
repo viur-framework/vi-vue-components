@@ -24,8 +24,8 @@
         </group_action>
 
         <component
-          v-else
           :is="`${action}_action`"
+          v-else
           size="small"
         >
           <custom_action :name="action"></custom_action>

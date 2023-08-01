@@ -3,12 +3,12 @@
     ref="logoutBtn"
     size="small"
     variant="default"
-    @click="logout"
     class="btn--mobile-simple"
+    @click="logout"
   >
     <sl-icon
-      name="logout"
       slot="prefix"
+      name="logout"
     ></sl-icon>
     <span>Logout</span>
   </sl-button>

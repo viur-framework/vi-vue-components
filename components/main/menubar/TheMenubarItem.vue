@@ -1,19 +1,19 @@
 <template>
   <router-link
     v-if="to"
+    v-slot="{ route }"
     :to="to"
     custom
-    v-slot="{ route }"
   >
     <div class="item">
       <sl-avatar
         shape="rounded"
-        @click="openItem(route)"
         :initials="icon ? '' : state.initials"
+        @click="openItem(route)"
       >
         <sl-icon
-          slot="icon"
           v-if="icon"
+          slot="icon"
           :name="icon"
           :library="library"
           sprite
@@ -39,8 +39,8 @@
       <div
         v-if="state.slotitems"
         class="arrow"
-        @click.stop="openGroup"
         :class="{ 'is-open': state.open }"
+        @click.stop="openGroup"
       >
         <sl-icon
           name="chevron-right"
@@ -50,8 +50,8 @@
       </div>
 
       <div
-        class="space"
         v-else
+        class="space"
       ></div>
 
       <sl-dropdown class="dropdown">
@@ -109,8 +109,8 @@
         :initials="icon ? '' : state.initials"
       >
         <sl-icon
-          slot="icon"
           v-if="icon"
+          slot="icon"
           :name="icon"
           :library="library"
           sprite
@@ -124,8 +124,8 @@
       <div
         v-if="state.slotitems"
         class="arrow"
-        @click.stop="openGroup"
         :class="{ 'is-open': state.open }"
+        @click.stop="openGroup"
       >
         <sl-icon
           name="chevron-right"
@@ -143,8 +143,8 @@
     </div>
   </a>
   <div
-    class="wrapper"
     v-else
+    class="wrapper"
   >
     <div
       class="item"
@@ -155,8 +155,8 @@
         :initials="icon ? '' : state.initials"
       >
         <sl-icon
-          slot="icon"
           v-if="icon"
+          slot="icon"
           :name="icon"
           :library="library"
           sprite
@@ -170,8 +170,8 @@
       <div
         v-if="state.slotitems"
         class="arrow"
-        @click.stop="openGroup"
         :class="{ 'is-open': state.open }"
+        @click.stop="openGroup"
       >
         <sl-icon
           name="chevron-right"

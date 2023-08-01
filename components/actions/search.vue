@@ -8,20 +8,20 @@
   >
     <sl-icon
       v-if="state.searchType === 'database'"
-      name="database"
       slot="suffix"
+      name="database"
       :title="$t('search.database')"
     ></sl-icon>
     <sl-icon
       v-else-if="state.searchType === 'local'"
-      name="list-ul"
       slot="suffix"
+      name="list-ul"
       :title="$t('search.local')"
     ></sl-icon>
     <sl-icon
       v-else
-      name="search"
       slot="suffix"
+      name="search"
     ></sl-icon>
   </sl-input>
 </template>

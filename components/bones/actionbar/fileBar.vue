@@ -6,27 +6,27 @@
     @drop.prevent="handleDrop"
   >
     <sl-button
-      variant="danger"
       v-if="boneState.multiple && !readonly"
-      @click="removeMultipleEntries(index, lang)"
+      variant="danger"
       :title="$t('bone.del')"
       outline
       class="delete-btn"
+      @click="removeMultipleEntries(index, lang)"
     >
       <sl-icon name="x"></sl-icon>
     </sl-button>
 
     <div
-      class="droparea"
       v-if="state.droparea"
+      class="droparea"
     >
       Dateien hier hinziehen
     </div>
 
     <input
+      ref="uploadinput"
       hidden
       type="file"
-      ref="uploadinput"
       :multiple="boneState.multiple"
       @change="handleUpload"
     />
@@ -42,18 +42,18 @@
       -->
 
     <sl-button
-      variant="success"
       v-if="boneState.multiple && !readonly"
-      @click="uploadinput.click()"
+      variant="success"
       outline
       :title="$t('bone.upload')"
       class="upload-btn"
+      @click="uploadinput.click()"
     >
       <sl-icon name="upload"></sl-icon>
       {{ $t("bone.upload") }}
       <sl-spinner
-        slot="suffix"
         v-if="state.loading"
+        slot="suffix"
       ></sl-spinner>
     </sl-button>
   </div>

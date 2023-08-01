@@ -5,8 +5,8 @@
     @sl-input="state.filter = $event.target.value"
   >
     <sl-icon
-      name="funnel"
       slot="suffix"
+      name="funnel"
     ></sl-icon>
   </sl-input>
 
@@ -19,12 +19,12 @@
         v-for="right in mod"
         :title="right['name']"
         :disabled="boneState.readonly"
-        @click="toggleAccessRight(right['key'])"
         :variant="state.values.includes(right['key']) ? 'success' : 'default'"
+        @click="toggleAccessRight(right['key'])"
       >
         <sl-icon
-          :name="right['icon']"
           slot="prefix"
+          :name="right['icon']"
         ></sl-icon>
       </sl-button>
     </sl-button-group>
@@ -39,12 +39,12 @@
         v-for="right in mod"
         :title="right['name']"
         :disabled="boneState.readonly"
-        @click="toggleAccessRight(right['key'])"
         :variant="state.values.includes(right['key']) ? 'success' : 'default'"
+        @click="toggleAccessRight(right['key'])"
       >
         <sl-icon
-          :name="right['icon']"
           slot="prefix"
+          :name="right['icon']"
         ></sl-icon>
       </sl-button>
     </sl-button-group>

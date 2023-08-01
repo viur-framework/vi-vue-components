@@ -1,25 +1,25 @@
 <template>
   <handler-bar :module="module"></handler-bar>
   <sl-details
+    v-if="modulesStore.state.loaded && modulesStore.state.modules[module]?.['help_text']"
     open
     summary="Info"
-    v-if="modulesStore.state.loaded && modulesStore.state.modules[module]?.['help_text']"
   >
     {{ modulesStore.state.modules[module]["help_text"] }}
   </sl-details>
   <loader
-    size="3"
     v-if="currentlist.state.state === 0"
+    size="3"
   >
   </loader>
   <div class="fluid-wrap">
     <template v-for="grid in state.grids">
       <component
-        v-if="grid[0] && grid[0]['width'] === 'fullwidth'"
-        v-for="contentSkel in grid"
         :is="state.fluidpageElement"
-        :skel="contentSkel"
+        v-for="contentSkel in grid"
+        v-if="grid[0] && grid[0]['width'] === 'fullwidth'"
         :key="contentSkel['key']"
+        :skel="contentSkel"
         @click="entrySelected(contentSkel)"
         @mouseenter="entrySelected(contentSkel)"
       >
@@ -33,10 +33,10 @@
           <div v-for="i in 12"></div>
         </div>
         <component
-          v-for="contentSkel in grid"
           :is="state.fluidpageElement"
-          :skel="contentSkel"
+          v-for="contentSkel in grid"
           :key="contentSkel['key']"
+          :skel="contentSkel"
           @click="entrySelected(contentSkel)"
           @mouseenter="entrySelected(contentSkel)"
         >

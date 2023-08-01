@@ -2,9 +2,9 @@
   <sl-button
     size="small"
     variant="success"
-    @click="openAction($event)"
     :disabled="!state.canAdd"
     :title="$t('actions.addfolder')"
+    @click="openAction($event)"
   >
     <sl-icon
       slot="prefix"
@@ -20,9 +20,9 @@
     @sl-request-close="closeAction($event)"
   >
     <sl-input
+      v-model="state.foldername"
       autofocus
       placeholder="name"
-      v-model="state.foldername"
     ></sl-input>
     {{ state.foldername }}
     <sl-button

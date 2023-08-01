@@ -3,15 +3,15 @@
     <sl-button
       :disabled="state.disabled"
       size="small"
-      @click="buttonClicked"
       :title="state.info['name']"
+      @click="buttonClicked"
     >
       <sl-icon
+        v-once
         slot="prefix"
         :name="state.iconInfo[1]"
         :library="state.iconInfo[0]"
         sprite
-        v-once
       ></sl-icon>
       {{ state.info["name"] }}
     </sl-button>
@@ -30,8 +30,8 @@
 
       <sl-button
         slot="footer"
-        @click="triggerAction"
         variant="success"
+        @click="triggerAction"
       >
         {{ $t("confirm") }}
       </sl-button>

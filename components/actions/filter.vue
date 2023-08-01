@@ -1,8 +1,8 @@
 <template>
   <sl-button
-    @click="openFilterDrawer"
     size="small"
     :title="$t('actions.filter.text')"
+    @click="openFilterDrawer"
   >
     <sl-icon
       slot="prefix"
@@ -37,15 +37,15 @@
     <sl-dialog
       :label="$t('actions.filter.text')"
       open
-      @sl-after-hide="closed"
       class="filter-dialog"
       style="--width: 55%"
+      @sl-after-hide="closed"
     >
       <sl-select
         placeholder="Auswahl"
         hoist
-        @sl-change="selectedBone"
         :value="state.activeBone?.['key']"
+        @sl-change="selectedBone"
       >
         <template v-for="(bone, boneName) in currentlist.structure">
           <sl-option
@@ -102,8 +102,8 @@
       <sl-button
         slot="footer"
         variant="success"
-        @click="addToFilter"
         :disabled="!state.addEnabled"
+        @click="addToFilter"
       >
         Filter hinzufügen
       </sl-button>

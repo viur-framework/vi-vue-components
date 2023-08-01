@@ -15,36 +15,36 @@
       ></entry-bar>
     </div>
     <loader
-      size="3"
       v-if="state.loading"
+      size="3"
     ></loader>
     <sl-details
+      v-if="modulesStore.state.loaded && modulesStore.state.modules[module][`help_text_${action}`]"
       open
       summary="Info"
-      v-if="modulesStore.state.loaded && modulesStore.state.modules[module][`help_text_${action}`]"
     >
       <p v-html="modulesStore.state.modules[module][`help_text_${action}`]"></p>
     </sl-details>
 
     <div
-      class="scroll-content"
       v-if="!state.loading"
+      class="scroll-content"
     >
       <template v-for="(group, key) in state.formGroups">
         <sl-details
-          :summary="group['name']"
           v-show="group['groupVisible']"
+          :summary="group['name']"
           :open="key !== 'system'"
         >
           <template v-for="bone in group['bones']">
             <bone
               :is="getBoneWidget(state.structure[bone['boneName']]['type'])"
+              v-show="state.structure[bone['boneName']]['visible']"
               :name="bone['boneName']"
               :structure="state.structure"
               :skel="state.skel"
               :errors="state.errors"
               @change="updateValue"
-              v-show="state.structure[bone['boneName']]['visible']"
             >
             </bone>
           </template>
@@ -79,21 +79,21 @@
           >
           </component>
           <div
-            class="footer"
             slot="footer"
+            class="footer"
           >
             <sl-button
-              @click="relationRemoveHandler(bone)"
               variant="danger"
               size="small"
               outline
+              @click="relationRemoveHandler(bone)"
               >{{ $t("relation.abort") }}</sl-button
             >
             <sl-button
               :disabled="!bone['currentSelection'] || bone['currentSelection']?.length === 0"
-              @click="relationApplySelection(bone)"
               variant="success"
               size="small"
+              @click="relationApplySelection(bone)"
             >
               {{ $t("relation.select") }}
             </sl-button>

@@ -1,8 +1,8 @@
 <template>
   <handler-bar :module="module"></handler-bar>
   <loader
-    size="3"
     v-if="!state.currentRootNode"
+    size="3"
   ></loader>
   <template v-if="state.currentRootNode">
     <file-browser

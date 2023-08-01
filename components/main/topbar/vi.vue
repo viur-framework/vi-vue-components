@@ -1,10 +1,10 @@
 <template>
   <sl-avatar
     :image="state.avatarUser"
-    @click="state.sidebarOpen = !state.sidebarOpen"
     :label="state.name"
     :initials="state.nameInitials"
     class="user"
+    @click="state.sidebarOpen = !state.sidebarOpen"
   ></sl-avatar>
 
   <sl-drawer
@@ -71,8 +71,8 @@
               TASK
               <sl-button
                 slot="footer"
-                @click=""
                 variant="success"
+                @click=""
               >
                 {{ $t("confirm") }}
               </sl-button>

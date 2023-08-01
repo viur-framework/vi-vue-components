@@ -12,7 +12,7 @@
       :layer="layer"
       :to="x['url']"
       :closed="x['parententry'] !== x['parentrepo']"
-      :moduleInfo="x"
+      :module-info="x"
     >
       <menu-tree
         v-if="Object.keys(x).includes('children') && x['children'].length > 0 && x['display'] !== 'hidden'"

@@ -1,9 +1,9 @@
 <template>
   <sl-button
-    @click="reload"
     :loading="state.loading"
     size="small"
     :title="$t('actions.reload')"
+    @click="reload"
   >
     <sl-icon
       slot="prefix"

@@ -3,20 +3,20 @@
     <handler-bar :module="module"></handler-bar>
 
     <sl-details
+      v-if="modulesStore.state.loaded && modulesStore.state.modules[module]['help_text']"
       open
       summary="Modul Info"
-      v-if="modulesStore.state.loaded && modulesStore.state.modules[module]['help_text']"
     >
       <div v-html="modulesStore.state.modules[module]['help_text']"></div>
     </sl-details>
     <div
+      v-if="Object.keys(state.selectedPath).length > 0"
       class="table-wrapper"
       @scroll="stickyHeader"
-      v-if="Object.keys(state.selectedPath).length > 0"
     >
       <loader
-        size="3"
         v-if="!state.ready"
+        size="3"
       ></loader>
       <table>
         <thead>
@@ -30,8 +30,8 @@
               class="drag-column"
             ></th>
             <th
-              style="width: 150px"
               v-for="name in state.selectedBones"
+              style="width: 150px"
               :class="{ 'stick-header': state.sticky }"
             >
               {{ state.structure?.[name]["descr"] }}

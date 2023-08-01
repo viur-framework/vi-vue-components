@@ -9,10 +9,10 @@
       <debugentry></debugentry>
     </template>
     <save
+      v-if="['clone', 'add'].includes(handlerState.action)"
       :module="module"
       :action="action"
       name="actions.save_next"
-      v-if="['clone', 'add'].includes(handlerState.action)"
     ></save>
     <save
       :module="module"

@@ -1,17 +1,17 @@
 <template>
   <sl-button
     size="small"
-    @click="handleClick"
     :loading="state.loading"
     title="$t(name)"
+    @click="handleClick"
   >
     <sl-icon
       slot="prefix"
       :name="icon"
     ></sl-icon>
     <sl-spinner
-      slot="suffix"
       v-if="handlerState.loading"
+      slot="suffix"
     ></sl-spinner>
     {{ $t(name) }}
   </sl-button>

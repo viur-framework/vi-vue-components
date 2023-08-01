@@ -1,8 +1,8 @@
 <template>
   <sl-button
-    @click="openSelectDialog"
     size="small"
     :title="$t('actions.selectfields')"
+    @click="openSelectDialog"
   >
     <sl-icon
       slot="prefix"
@@ -12,14 +12,14 @@
   </sl-button>
 
   <sl-dialog
-    :label="$t('actions.selectfields')"
     id="dialog-selectfields"
+    :label="$t('actions.selectfields')"
   >
     <sl-checkbox
       v-for="(bone, boneName) in state.structure"
       :checked="setChecked(boneName)"
-      @sl-change="visibleChange(boneName)"
       class="selectfieldswitch"
+      @sl-change="visibleChange(boneName)"
     >
       {{ bone["descr"] !== "" ? bone["descr"] : boneName }}
     </sl-checkbox>

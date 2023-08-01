@@ -3,9 +3,9 @@
     <handler-bar :module="module"></handler-bar>
 
     <sl-details
+      v-if="modulesStore.state.loaded && modulesStore.state.modules[module]['help_text']"
       open
       summary="Modul Info"
-      v-if="modulesStore.state.loaded && modulesStore.state.modules[module]['help_text']"
     >
       <div v-html="modulesStore.state.modules[module]['help_text']"></div>
     </sl-details>
@@ -15,8 +15,8 @@
       @scroll="stickyHeader"
     >
       <loader
-        size="3"
         v-if="currentlist.state.state === 0"
+        size="3"
       ></loader>
       <table ref="datatable">
         <thead>
@@ -34,16 +34,16 @@
                 <sl-icon
                   v-if="state.sorting === '' || state.sorting !== bone + '$asc'"
                   name="chevron-up"
-                  @click="sorting(bone, 'asc')"
                   class="sort-arrow"
                   :class="{ 'sort-active': state.sorting === bone + '$desc' }"
+                  @click="sorting(bone, 'asc')"
                 ></sl-icon>
                 <sl-icon
                   v-if="state.sorting === bone + '$asc'"
                   name="chevron-down"
-                  @click="sorting(bone, 'desc')"
                   class="sort-arrow"
                   :class="{ 'sort-active': state.sorting === bone + '$asc' }"
+                  @click="sorting(bone, 'desc')"
                 ></sl-icon>
               </div>
             </th>
@@ -68,8 +68,8 @@
         </tbody>
       </table>
       <div
-        class="empty-message"
         v-if="state.renderedList.length === 0 && currentlist.state.state > 0"
+        class="empty-message"
       >
         <sl-alert
           variant="info"

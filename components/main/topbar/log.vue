@@ -2,12 +2,12 @@
   <sl-button
     size="small"
     variant="default"
-    @click="openInfo"
     class="btn--mobile-simple"
+    @click="openInfo"
   >
     <sl-icon
-      name="clock"
       slot="prefix"
+      name="clock"
       sprite
     ></sl-icon>
   </sl-button>
