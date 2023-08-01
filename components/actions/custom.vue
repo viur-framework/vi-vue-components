@@ -1,40 +1,60 @@
 <template>
   <template v-if="state.access && state.info">
-    <sl-button :disabled="state.disabled" size="small" @click="buttonClicked" :title="state.info['name']">
-      <sl-icon slot="prefix" :name="state.iconInfo[1]" :library="state.iconInfo[0]" sprite
-               v-once></sl-icon>
+    <sl-button
+      :disabled="state.disabled"
+      size="small"
+      @click="buttonClicked"
+      :title="state.info['name']"
+    >
+      <sl-icon
+        slot="prefix"
+        :name="state.iconInfo[1]"
+        :library="state.iconInfo[0]"
+        sprite
+        v-once
+      ></sl-icon>
       {{ state.info["name"] }}
     </sl-button>
   </template>
-  <teleport v-if="state.confirm" to="#dialogs" :disabled="!state.confirm">
-    <sl-dialog :label="state.info?.['name']" open @sl-after-hide="state.confirm=false">
+  <teleport
+    v-if="state.confirm"
+    to="#dialogs"
+    :disabled="!state.confirm"
+  >
+    <sl-dialog
+      :label="state.info?.['name']"
+      open
+      @sl-after-hide="state.confirm = false"
+    >
       {{ state.info?.["confirm"] }}
 
-      <sl-button slot="footer"
-                 @click="triggerAction"
-                 variant="success">
-        {{$t('confirm')}}
+      <sl-button
+        slot="footer"
+        @click="triggerAction"
+        variant="success"
+      >
+        {{ $t("confirm") }}
       </sl-button>
-      <sl-button slot="footer" variant="danger"
-                 @click="state.confirm=false">
-        {{$t('abort')}}
+      <sl-button
+        slot="footer"
+        variant="danger"
+        @click="state.confirm = false"
+      >
+        {{ $t("abort") }}
       </sl-button>
     </sl-dialog>
   </teleport>
-
-
-
 </template>
 
 <script lang="ts">
-import {reactive, defineComponent, computed, inject, unref} from 'vue'
-import {useDBStore} from "../stores/db";
-import {useRoute, useRouter} from "vue-router";
-import app from "../../App.vue";
-import {useUserStore} from "../stores/user";
-import {useContextStore} from "../stores/context";
+import { reactive, defineComponent, computed, inject, unref } from "vue"
+import { useDBStore } from "../stores/db"
+import { useRoute, useRouter } from "vue-router"
+import app from "../../App.vue"
+import { useUserStore } from "../stores/user"
+import { useContextStore } from "../stores/context"
 import Logics from "logics-js"
-import {Request} from "@viur/vue-utils";
+import { Request } from "@viur/vue-utils"
 
 export default defineComponent({
   props: {
@@ -45,17 +65,17 @@ export default defineComponent({
     const route = useRoute()
     const router = useRouter()
     const handlerState: any = inject("handlerState")
-    const dbStore = useDBStore();
+    const dbStore = useDBStore()
     const contextStore = useContextStore()
     const userStore = useUserStore()
     const tableReload: any = inject("reloadAction")
 
     const state = reactive({
-      confirm:false,
+      confirm: false,
       info: computed(() => {
         let conf = dbStore.state["vi.modules"][handlerState["module"]]
         if (handlerState["view"]) {
-          conf = conf["children"].filter(i=>i["view_number"]===parseInt(handlerState["view"]))?.[0]
+          conf = conf["children"].filter((i) => i["view_number"] === parseInt(handlerState["view"]))?.[0]
         }
         return conf?.["customActions"]?.[props.name]
       }),
@@ -80,10 +100,14 @@ export default defineComponent({
           let disabled = true
 
           for (let selection of handlerState.currentSelection) {
-            if (ex.run({
-              "skel": selection,
-              "additionalEvalData": state.info?.["additionalEvalData"]
-            }).toBool()) {
+            if (
+              ex
+                .run({
+                  skel: selection,
+                  additionalEvalData: state.info?.["additionalEvalData"]
+                })
+                .toBool()
+            ) {
               disabled = false
               break
             }
@@ -93,14 +117,14 @@ export default defineComponent({
 
         return true
       }),
-      iconInfo: computed(()=>{
+      iconInfo: computed(() => {
         let lib = "default"
         let icon = ""
         const icondata = state.info?.["icon"].split("___")
-        if (icondata.length===2){
+        if (icondata.length === 2) {
           lib = icondata[0]
           icon = icondata[1]
-        }else{
+        } else {
           icon = icondata[0]
         }
         return [lib, icon]
@@ -108,16 +132,16 @@ export default defineComponent({
     })
 
     function buttonClicked() {
-      if (state.info?.["confirm"]){
-        state.confirm=true;
-      }else{
+      if (state.info?.["confirm"]) {
+        state.confirm = true
+      } else {
         triggerAction()
       }
     }
 
     function triggerAction() {
       let actions = handlerState.currentSelection
-      if (actions.length===0) {
+      if (actions.length === 0) {
         actions = [null]
       }
 
@@ -130,7 +154,7 @@ export default defineComponent({
           handleOpen(i)
         }
       }
-      state.confirm=false
+      state.confirm = false
     }
 
     function handleFetch(selection) {
@@ -141,7 +165,7 @@ export default defineComponent({
           } else if (state.info?.["then"] === "reload-vi") {
             window.location.reload()
           }
-          if (state.info?.["success"]){
+          if (state.info?.["success"]) {
             //MESSAGE
           }
         })
@@ -154,35 +178,34 @@ export default defineComponent({
     }
 
     function handleView(selection) {
-      if (!state.info?.['url']) return
+      if (!state.info?.["url"]) return
       if (selection === null) {
-        let urlparts = state.info?.['url'].split("/")
-        let new_route = router.resolve("/db/"+state.info?.['url'])
+        let urlparts = state.info?.["url"].split("/")
+        let new_route = router.resolve("/db/" + state.info?.["url"])
         dbStore.addOpened(new_route, urlparts[0])
         return
-      }else{
+      } else {
         let searchParams = ""
-        if(state.info?.['params']){
-          let params = state.info?.['params']
-          for( const [k,v] of Object.entries(params)){
+        if (state.info?.["params"]) {
+          let params = state.info?.["params"]
+          for (const [k, v] of Object.entries(params)) {
             let akey = k
-            if (k === "rootNode") akey="parentrepo"
+            if (k === "rootNode") akey = "parentrepo"
             contextStore.setContext(akey, selection[akey], route.query["_"])
           }
         }
-        let urlparts = state.info?.['url'].split("/")
-        let new_route = router.resolve("/db/"+state.info?.['url'])
+        let urlparts = state.info?.["url"].split("/")
+        let new_route = router.resolve("/db/" + state.info?.["url"])
         dbStore.addOpened(new_route, urlparts[0])
       }
     }
 
     function handleOpen(selection) {
       if (selection === null) {
-        window.open(state.info["url"], '_blank').focus();
+        window.open(state.info["url"], "_blank").focus()
         return
       }
     }
-
 
     return {
       state,
@@ -193,6 +216,4 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

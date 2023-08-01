@@ -1,14 +1,17 @@
 <template>
-  <sl-switch @sl-change="changeeditState" size="small"
-             :title="$t('actions.edittable')">
+  <sl-switch
+    @sl-change="changeeditState"
+    size="small"
+    :title="$t('actions.edittable')"
+  >
     <span>{{ $t("actions.edittable") }}</span>
   </sl-switch>
 </template>
 
 <script lang="ts">
-import {reactive, defineComponent, inject, computed} from 'vue'
-import {useRoute} from "vue-router";
-import {useDBStore} from "../stores/db";
+import { reactive, defineComponent, inject, computed } from "vue"
+import { useRoute } from "vue-router"
+import { useDBStore } from "../stores/db"
 
 export default defineComponent({
   props: {},
@@ -17,15 +20,12 @@ export default defineComponent({
     const handlerState: any = inject("handlerState")
     const dbStore = useDBStore()
 
-
     function changeeditState(event: any) {
       console.log(event.target.checked)
       handlerState.editableTable = event.target.checked
-
     }
 
     return {
-
       changeeditState
     }
   }
@@ -33,9 +33,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
-span{
-  font-size: .9em;
+span {
+  font-size: 0.9em;
 }
-
 </style>

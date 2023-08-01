@@ -5,7 +5,7 @@ export default {
     clone: "Clone",
     delete: {
       text: "Delete",
-      msg:"`Do you want to delete these {count} entries`"
+      msg: "`Do you want to delete these {count} entries`"
     },
     debug: "Debug",
     edit: "Edit",
@@ -18,10 +18,10 @@ export default {
     save_close: "Save and close",
     filter: {
       text: "Filter",
-      nofilter: "There are no filter for this module",
+      nofilter: "There are no filter for this module"
     },
     reset: "Reset",
-    open:"Open",
+    open: "Open"
   },
   sidebar: {
     workspace: "Workspace",
@@ -35,30 +35,29 @@ export default {
     section_system_name: "System Jobs",
     section_system_searchindex: "Rebuild Search Index",
     section_system_vacuum: "Vacuum Viur Relations",
-    section_system_entities: "Clear all entities of a kind",
+    section_system_entities: "Clear all entities of a kind"
   },
   skeldrawer: {
-    noentry: "No entry selected",
+    noentry: "No entry selected"
   },
   selectfields: {
     selectall: "Select all",
     unselectall: "Unselect all",
-    invertselect: "Invert selection",
+    invertselect: "Invert selection"
   },
   relation: {
     select: "Select",
-    abort: "Cancel",
+    abort: "Cancel"
   },
   tab: {
-    amount_warning:
-      "You have already opened {amount} entries of '{module}'. Do you still want to open another one?",
+    amount_warning: "You have already opened {amount} entries of '{module}'. Do you still want to open another one?"
   },
   abort: "Abort",
   confirm: "Confirm",
   create: "Create",
   select: "Select",
-  search:{
-    local:"Search in list",
-    database:"Search Online"
+  search: {
+    local: "Search in list",
+    database: "Search Online"
   }
-};
+}

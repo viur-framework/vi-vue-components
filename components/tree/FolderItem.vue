@@ -1,47 +1,75 @@
 <template>
-  <tr class="noderow entry"
-      :draggable="state.child?.['_dragging'] && treeState.dragging"
-      @dragstart="tree.onDragStart($event, idx)"
-      @dragenter.prevent="tree.onDragEnter($event, idx)"
-      @dragover.prevent="tree.onDragOver($event, idx)"
-      @dragleave="tree.onDragLeave($event, idx)"
-      @drop.stop="tree.onDrop($event, idx)"
-      :class="{'dropin':state.child?.['_isover'] && state.child?.['_drop']==='in',
-             'dropafter':state.child?.['_isover'] && state.child?.['_drop']==='after',
-             'dropbefore':state.child?.['_isover'] && state.child?.['_drop']==='before'
-      }"
+  <tr
+    class="noderow entry"
+    :draggable="state.child?.['_dragging'] && treeState.dragging"
+    @dragstart="tree.onDragStart($event, idx)"
+    @dragenter.prevent="tree.onDragEnter($event, idx)"
+    @dragover.prevent="tree.onDragOver($event, idx)"
+    @dragleave="tree.onDragLeave($event, idx)"
+    @drop.stop="tree.onDrop($event, idx)"
+    :class="{
+      dropin: state.child?.['_isover'] && state.child?.['_drop'] === 'in',
+      dropafter: state.child?.['_isover'] && state.child?.['_drop'] === 'after',
+      dropbefore: state.child?.['_isover'] && state.child?.['_drop'] === 'before'
+    }"
   >
     <td>
-      <div v-if="up" class="folder" >
-        <sl-icon name="folder" sprite @click="changeParentEntryUp"></sl-icon>
-        <span class="filename" @click="changeParentEntryUp">..</span>
+      <div
+        v-if="up"
+        class="folder"
+      >
+        <sl-icon
+          name="folder"
+          sprite
+          @click="changeParentEntryUp"
+        ></sl-icon>
+        <span
+          class="filename"
+          @click="changeParentEntryUp"
+          >..</span
+        >
       </div>
-      <div v-else class="folder" >
-        <div class="dragger" v-if="treeState.dragging"
-               @mouseup="tree.mouseUpHandle($event, idx)"
-               @mousedown="tree.mouseDownHandle($event, idx)">
-        <sl-icon name="menu"></sl-icon>
+      <div
+        v-else
+        class="folder"
+      >
+        <div
+          class="dragger"
+          v-if="treeState.dragging"
+          @mouseup="tree.mouseUpHandle($event, idx)"
+          @mousedown="tree.mouseDownHandle($event, idx)"
+        >
+          <sl-icon name="menu"></sl-icon>
         </div>
-        <sl-icon name="folder" sprite @click="changeParentEntry(idx)"></sl-icon>
-        <span class="filename" v-html="skel['name']" @click="changeParentEntry(idx)"></span>
+        <sl-icon
+          name="folder"
+          sprite
+          @click="changeParentEntry(idx)"
+        ></sl-icon>
+        <span
+          class="filename"
+          v-html="skel['name']"
+          @click="changeParentEntry(idx)"
+        ></span>
       </div>
     </td>
     <td @click="changeParentEntry(idx)">
-      <sl-format-date year="numeric" month="numeric" day="2-digit" :date="skel['changedate']"></sl-format-date>
+      <sl-format-date
+        year="numeric"
+        month="numeric"
+        day="2-digit"
+        :date="skel['changedate']"
+      ></sl-format-date>
     </td>
-    <td @click="changeParentEntry(idx)">
-      Ordner
-    </td>
-    <td @click="changeParentEntry(idx)">
-      -
-    </td>
+    <td @click="changeParentEntry(idx)">Ordner</td>
+    <td @click="changeParentEntry(idx)">-</td>
   </tr>
 </template>
 
 <script>
-import {reactive, defineComponent, onMounted, inject, computed, watch} from 'vue'
-import useTree from "./tree";
-import {Request} from "@viur/vue-utils";
+import { reactive, defineComponent, onMounted, inject, computed, watch } from "vue"
+import useTree from "./tree"
+import { Request } from "@viur/vue-utils"
 
 export default defineComponent({
   props: {
@@ -52,47 +80,48 @@ export default defineComponent({
     skel: {
       type: Object
     },
-    idx:{
-      type:Number
+    idx: {
+      type: Number
     },
-    path:{
-      type:Array
+    path: {
+      type: Array
     },
-    up:Boolean
+    up: Boolean
   },
   components: {},
   setup(props, context) {
     const treeState = inject("handlerState")
     const state = reactive({
-      currentEntry:{},
-      child:computed(()=>{
-        if (!state.currentEntry['_nodes']){
+      currentEntry: {},
+      child: computed(() => {
+        if (!state.currentEntry["_nodes"]) {
           return null
         }
-        return state.currentEntry['_nodes'][props.idx]
+        return state.currentEntry["_nodes"][props.idx]
       })
     })
-    const tree = useTree(props.module,treeState,state)
+    const tree = useTree(props.module, treeState, state)
 
     onMounted(() => {
       state.currentEntry = tree.EntryFromPath(props.path)
-      if (props.path && props.path.length === 1 && props.path[0] === 0) { // prefetch rootnode childs
-        state.currentEntry['_status'] = 'loading'
+      if (props.path && props.path.length === 1 && props.path[0] === 0) {
+        // prefetch rootnode childs
+        state.currentEntry["_status"] = "loading"
         Request.get(`/vi/${props.module}/list`, {
           dataObj: {
-            "skelType": "node",
-            "orderby": "sortindex",
-            "parententry": state.currentEntry["key"]
+            skelType: "node",
+            orderby: "sortindex",
+            parententry: state.currentEntry["key"]
           }
         }).then(async (resp) => {
           let data = await resp.json()
-          state.currentEntry['_nodes'] = data["skellist"]
-          state.currentEntry['_disabled'] = false
-          state.currentEntry['_status'] = 'loaded' //loading, loaded
-          state.currentEntry['_dragging'] = false
-          state.currentEntry['_isover'] = false
-          state.currentEntry['_overElement'] = null
-          state.currentEntry['_drop'] = null
+          state.currentEntry["_nodes"] = data["skellist"]
+          state.currentEntry["_disabled"] = false
+          state.currentEntry["_status"] = "loaded" //loading, loaded
+          state.currentEntry["_dragging"] = false
+          state.currentEntry["_isover"] = false
+          state.currentEntry["_overElement"] = null
+          state.currentEntry["_drop"] = null
         })
       }
     })
@@ -104,7 +133,7 @@ export default defineComponent({
     }
 
     function changeParentEntryUp() {
-      treeState.selectedPath = treeState.selectedPath.splice(0,-1)
+      treeState.selectedPath = treeState.selectedPath.splice(0, -1)
       treeState.selected_leaf = null
     }
 
@@ -120,7 +149,8 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.folder, .file {
+.folder,
+.file {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -138,8 +168,8 @@ export default defineComponent({
     margin-right: 10px;
   }
 
-  &:hover{
-    .dragger{
+  &:hover {
+    .dragger {
       opacity: 1;
     }
   }
@@ -148,8 +178,8 @@ export default defineComponent({
 tr {
   position: relative;
   cursor: pointer;
-  transition: background-color ease .3s;
-    border-bottom: solid 1px  var(--sl-color-neutral-300) !important;
+  transition: background-color ease 0.3s;
+  border-bottom: solid 1px var(--sl-color-neutral-300) !important;
 
   &:nth-child(odd) {
     background-color: var(--sl-color-neutral-100);
@@ -187,21 +217,19 @@ td {
   border-top: 4px solid var(--sl-color-neutral-400) !important;
 }
 
-.dragger{
+.dragger {
   display: flex;
   justify-content: center;
   align-items: center;
   padding-right: var(--sl-spacing-x-small);
   height: 100%;
   cursor: move;
-  opacity: .2;
-  transition: opacity ease .3s;
+  opacity: 0.2;
+  transition: opacity ease 0.3s;
   color: var(--vi-foreground-color);
 
-  & sl-icon{
-    font-size: .7em;
+  & sl-icon {
+    font-size: 0.7em;
   }
 }
-
-
 </style>

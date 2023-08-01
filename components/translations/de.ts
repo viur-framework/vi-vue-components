@@ -7,7 +7,7 @@ export default {
     clone: "Klonen",
     delete: {
       text: "Löschen",
-      msg:"Wollen sie {amount} Einträge löschen"
+      msg: "Wollen sie {amount} Einträge löschen"
     },
     debug: "Debuggen",
     edit: "Bearbeiten",
@@ -29,7 +29,7 @@ export default {
     fluidpage: {
       edit: "Inhalt bearbeiten"
     },
-    open:"Öffnen",
+    open: "Öffnen"
   },
   sidebar: {
     workspace: "Arbeitsbereich",
@@ -38,30 +38,30 @@ export default {
     name: "Benutzereinstellungen",
     logout: "Ausloggen",
     section_general_name: "Allgemein",
-    section_system_name: "Servertasks",
+    section_system_name: "Servertasks"
   },
   skeldrawer: {
-    noentry: "Kein Eintrag ausgewählt",
+    noentry: "Kein Eintrag ausgewählt"
   },
   selectfields: {
     selectall: "Alle auswählen",
     unselectall: "Alle abwählen",
-    invertselect: "Auswahl umkehren",
+    invertselect: "Auswahl umkehren"
   },
   relation: {
     select: "Auswählen",
-    abort: "Abbrechen",
+    abort: "Abbrechen"
   },
   tab: {
     amount_warning:
-      "Du hast bereits {amount} Einträge von '{module}' geöffnet. Möchtest du trotzdem einen weiteren öffnen?",
+      "Du hast bereits {amount} Einträge von '{module}' geöffnet. Möchtest du trotzdem einen weiteren öffnen?"
   },
   abort: "Abbrechen",
   confirm: "Bestätigen",
   create: "Erstellen",
   select: "Auswählen",
-  search:{
-    local:"Suche wird in der Liste ausgeführt",
-    database:"Suche wird online ausgeführt"
+  search: {
+    local: "Suche wird in der Liste ausgeführt",
+    database: "Suche wird online ausgeführt"
   }
-};
+}

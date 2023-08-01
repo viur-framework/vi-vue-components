@@ -1,13 +1,19 @@
 <template>
-  <sl-select @sl-change="rootNodeChange" :value="state.initValue">
-    <sl-option v-for="node in handlerState['currentRootNodes']" :value="node['key']">{{ node["name"] }}</sl-option>
+  <sl-select
+    @sl-change="rootNodeChange"
+    :value="state.initValue"
+  >
+    <sl-option
+      v-for="node in handlerState['currentRootNodes']"
+      :value="node['key']"
+      >{{ node["name"] }}</sl-option
+    >
   </sl-select>
-
 </template>
 
 <script lang="ts">
 // @ts-nocheck
-import {reactive, defineComponent, inject, computed} from 'vue'
+import { reactive, defineComponent, inject, computed } from "vue"
 
 export default defineComponent({
   props: {},
@@ -15,23 +21,22 @@ export default defineComponent({
   setup(props, context) {
     const state = reactive({
       initValue: computed(() => {
-        return handlerState['currentRootNode']?.['key']
+        return handlerState["currentRootNode"]?.["key"]
       })
-    });
-    const handlerState: any = inject("handlerState");
+    })
+    const handlerState: any = inject("handlerState")
     const changerootNode: any = inject("changerootNode")
 
     function rootNodeChange(e: Event) {
-      changerootNode(e.target.value);
+      changerootNode(e.target.value)
     }
 
-    return {state, rootNodeChange, handlerState}
+    return { state, rootNodeChange, handlerState }
   }
 })
 </script>
 
 <style scoped>
-
 sl-select {
   &::part(form-control) {
     display: flex;
@@ -44,5 +49,4 @@ sl-select {
     margin-bottom: 0;
   }
 }
-
 </style>

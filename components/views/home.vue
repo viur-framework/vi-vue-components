@@ -2,31 +2,32 @@
   <div class="home">
     <h1 class="main-headline">Hallo {{ state.name }}</h1>
 
-    <template v-if="userStore.favoriteModules?.length>0">
-
+    <template v-if="userStore.favoriteModules?.length > 0">
       <h2 class="headline">Deine Favoriten</h2>
       <div class="home-grid">
-        <widget-small v-for="i in userStore.favoriteModules"
-                      :icon="i['icon']"
-                      :library="i['library']"
-                      :to="i['to']"
+        <widget-small
+          v-for="i in userStore.favoriteModules"
+          :icon="i['icon']"
+          :library="i['library']"
+          :to="i['to']"
         >
-          {{ i['name'] }}
+          {{ i["name"] }}
         </widget-small>
       </div>
     </template>
-    <br>
-    <br>
-    <template v-if="false && userStore.state.lastActions.length>0">
+    <br />
+    <br />
+    <template v-if="false && userStore.state.lastActions.length > 0">
       <h2 class="headline">Zuletzt geöffnet</h2>
 
       <div class="home-grid">
-        <widget-small v-for="i in userStore.state.lastActions"
-                      :icon="i['icon']?.split('___')[1]"
-                      :library="i['library']?.split('___')[0]"
-                      :to="i['url']"
+        <widget-small
+          v-for="i in userStore.state.lastActions"
+          :icon="i['icon']?.split('___')[1]"
+          :library="i['library']?.split('___')[0]"
+          :to="i['url']"
         >
-          {{ i['name'] }}
+          {{ i["name"] }}
         </widget-small>
       </div>
     </template>
@@ -35,18 +36,18 @@
 
 <script lang="ts">
 // @ts-nocheck
-import {defineComponent, reactive,computed} from 'vue'
-import {useRoute} from "vue-router";
-import {useUserStore} from "../stores/user";
-import Utils from "../utils";
-import WidgetSmall from "../dashboard/WidgetSmall.vue";
+import { defineComponent, reactive, computed } from "vue"
+import { useRoute } from "vue-router"
+import { useUserStore } from "../stores/user"
+import Utils from "../utils"
+import WidgetSmall from "../dashboard/WidgetSmall.vue"
 
 export default defineComponent({
   props: {},
-  components: {WidgetSmall},
+  components: { WidgetSmall },
   setup(props, context) {
-    const route = useRoute();
-    const userStore = useUserStore();
+    const route = useRoute()
+    const userStore = useUserStore()
     const state = reactive({
       name: computed(() => {
         let name = ""
@@ -59,12 +60,11 @@ export default defineComponent({
         }
         return name
       })
-    });
+    })
 
     function createInitials(name: string) {
-      return Utils.nameToInitials(name);
+      return Utils.nameToInitials(name)
     }
-
 
     return {
       state,
@@ -77,7 +77,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
 .home {
   padding: 15px 30px;
   margin: 0 auto;
@@ -85,7 +84,7 @@ export default defineComponent({
   max-width: 1280px;
   flex: 1;
   overflow-y: auto;
-  color: var(--vi-foreground-color)
+  color: var(--vi-foreground-color);
 }
 
 .main-headline {

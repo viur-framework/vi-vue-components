@@ -1,12 +1,17 @@
 <template>
-  <teleport v-if="open" :to="'#view_dialogs_'+tabId" :disabled="!open">
-    <sl-dialog open
-                :label="'Auswahl: '+name"
-                class="relation-popup"
-                @sl-after-hide="relationCloseAction()"
-                style="--width:85%"
+  <teleport
+    v-if="open"
+    :to="'#view_dialogs_' + tabId"
+    :disabled="!open"
+  >
+    <sl-dialog
+      open
+      :label="'Auswahl: ' + name"
+      class="relation-popup"
+      @sl-after-hide="relationCloseAction()"
+      style="--width: 85%"
     >
-    <component
+      <component
         :is="handler"
         :module="module"
         @currentSelection="relationUpdateSelection($event)"
@@ -14,17 +19,26 @@
         :selector="true"
         @closeSelector="relationApplySelection()"
       >
-
       </component>
 
-      <div class="footer" slot="footer">
-          <sl-button @click="relationCloseAction()" variant="danger" size="small" outline>{{ $t("relation.abort") }}</sl-button>
-          <sl-button
-                      @click="relationApplySelection()"
-                      variant="success"
-                      size="small">
-            {{ $t("relation.select") }}
-          </sl-button>
+      <div
+        class="footer"
+        slot="footer"
+      >
+        <sl-button
+          @click="relationCloseAction()"
+          variant="danger"
+          size="small"
+          outline
+          >{{ $t("relation.abort") }}</sl-button
+        >
+        <sl-button
+          @click="relationApplySelection()"
+          variant="success"
+          size="small"
+        >
+          {{ $t("relation.select") }}
+        </sl-button>
       </div>
     </sl-dialog>
   </teleport>
@@ -32,58 +46,57 @@
 
 <script lang="ts">
 //@ts-nocheck
-import {reactive, defineComponent, onMounted, inject} from 'vue'
+import { reactive, defineComponent, onMounted, inject } from "vue"
 import { Request } from "@viur/vue-utils"
-import handlers from "../../handler/handlers";
+import handlers from "../../handler/handlers"
 
 export default defineComponent({
-  props:{
-      open:Boolean,
-      name:String,
-      handler:Object,
-      module:String,
-      tabId:String,
-      rowselect:{
-        default:1
-      }
+  props: {
+    open: Boolean,
+    name: String,
+    handler: Object,
+    module: String,
+    tabId: String,
+    rowselect: {
+      default: 1
+    }
   },
-  components: {...handlers},
-  emits:["close"],
+  components: { ...handlers },
+  emits: ["close"],
   setup(props, context) {
-      const state = reactive({
-        selection:null
-      })
+    const state = reactive({
+      selection: null
+    })
 
-      function relationCloseAction(){
-        state.selection=null
-        context.emit("close")
+    function relationCloseAction() {
+      state.selection = null
+      context.emit("close")
+    }
+
+    function relationApplySelection() {
+      context.emit("close", state.selection)
+    }
+
+    function relationUpdateSelection(selection) {
+      if (props.rowselect === 1) {
+        state.selection = selection[0]
+      } else {
+        state.selection = selection
       }
+    }
 
-      function relationApplySelection(){
-        context.emit("close",state.selection)
-      }
-
-      function relationUpdateSelection(selection){
-        if(props.rowselect===1){
-          state.selection = selection[0]
-        }else{
-          state.selection = selection
-        }
-
-      }
-
-      return {
-          state,
-          relationCloseAction,
-          relationApplySelection,
-          relationUpdateSelection
-      }
+    return {
+      state,
+      relationCloseAction,
+      relationApplySelection,
+      relationUpdateSelection
+    }
   }
 })
 </script>
 
 <style scoped>
-.relation-popup{
+.relation-popup {
   &::part(base) {
     position: absolute;
     height: 100%;
@@ -95,11 +108,11 @@ export default defineComponent({
     margin-bottom: 40px;
   }
 
-  &::part(body){
+  &::part(body) {
     display: contents;
   }
 
-  &::part(footer){
+  &::part(footer) {
     padding: var(--sl-spacing-small);
   }
 
@@ -107,23 +120,21 @@ export default defineComponent({
     position: absolute;
   }
 
-
-  &:deep(.bar sl-button[variant="success"]){
-    &::part(base){
+  &:deep(.bar sl-button[variant="success"]) {
+    &::part(base) {
       background-color: transparent;
       border: 1px solid var(--sl-color-success-500);
       aspect-ratio: 1;
       padding: 0;
     }
 
-    &::part(label){
+    &::part(label) {
       display: none;
     }
 
-    &::part(prefix){
+    &::part(prefix) {
       color: var(--sl-color-success-500);
     }
   }
 }
-
 </style>

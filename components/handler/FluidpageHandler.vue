@@ -1,37 +1,48 @@
 <template>
   <handler-bar :module="module"></handler-bar>
-  <sl-details open summary="Info" v-if="modulesStore.state.loaded && modulesStore.state.modules[module]?.['help_text']">
-    {{modulesStore.state.modules[module]["help_text"]}}
+  <sl-details
+    open
+    summary="Info"
+    v-if="modulesStore.state.loaded && modulesStore.state.modules[module]?.['help_text']"
+  >
+    {{ modulesStore.state.modules[module]["help_text"] }}
   </sl-details>
-  <loader size="3" v-if="currentlist.state.state ===0"> </loader>
+  <loader
+    size="3"
+    v-if="currentlist.state.state === 0"
+  >
+  </loader>
   <div class="fluid-wrap">
-      <template v-for="grid in state.grids">
-          <component v-if="grid[0] && grid[0]['width']==='fullwidth'"
-                     v-for="contentSkel in grid"
-                     :is="state.fluidpageElement"
-                     :skel="contentSkel"
-                     :key="contentSkel['key']"
-                     @click="entrySelected(contentSkel)"
-                     @mouseenter="entrySelected(contentSkel)"
-          >
+    <template v-for="grid in state.grids">
+      <component
+        v-if="grid[0] && grid[0]['width'] === 'fullwidth'"
+        v-for="contentSkel in grid"
+        :is="state.fluidpageElement"
+        :skel="contentSkel"
+        :key="contentSkel['key']"
+        @click="entrySelected(contentSkel)"
+        @mouseenter="entrySelected(contentSkel)"
+      >
+      </component>
 
-          </component>
-
-          <div v-else class="fluid-grid">
-              <div class="shadow-grid">
-                  <div v-for="i in 12"></div>
-              </div>
-              <component v-for="contentSkel in grid"
-                         :is="state.fluidpageElement"
-                         :skel="contentSkel"
-                         :key="contentSkel['key']"
-                         @click="entrySelected(contentSkel)"
-                         @mouseenter="entrySelected(contentSkel)"
-              >
-
-              </component>
-          </div>
-      </template>
+      <div
+        v-else
+        class="fluid-grid"
+      >
+        <div class="shadow-grid">
+          <div v-for="i in 12"></div>
+        </div>
+        <component
+          v-for="contentSkel in grid"
+          :is="state.fluidpageElement"
+          :skel="contentSkel"
+          :key="contentSkel['key']"
+          @click="entrySelected(contentSkel)"
+          @mouseenter="entrySelected(contentSkel)"
+        >
+        </component>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -50,15 +61,15 @@ import {
   onActivated,
   onDeactivated,
   unref
-} from 'vue'
-import HandlerBar from "../bars/HandlerBar.vue";
-import {ListRequest, Request} from '@viur/vue-utils'
-import {useDBStore} from '../stores/db'
-import {useMessageStore} from "../stores/message";
-import router from "../routes";
-import {useModulesStore} from "../stores/modules";
-import {useRoute} from "vue-router";
-import Loader from "@viur/vue-utils/generic/Loader.vue";
+} from "vue"
+import HandlerBar from "../bars/HandlerBar.vue"
+import { ListRequest, Request } from "@viur/vue-utils"
+import { useDBStore } from "../stores/db"
+import { useMessageStore } from "../stores/message"
+import router from "../routes"
+import { useModulesStore } from "../stores/modules"
+import { useRoute } from "vue-router"
+import Loader from "@viur/vue-utils/generic/Loader.vue"
 
 export default defineComponent({
   props: {
@@ -68,28 +79,28 @@ export default defineComponent({
     },
     group: String,
     view: null,
-    rowselect:{
-      default:true
+    rowselect: {
+      default: true
     }
   },
-  emits:['currentSelection'],
-  components: {Loader, HandlerBar},
+  emits: ["currentSelection"],
+  components: { Loader, HandlerBar },
   setup(props, context) {
-    const dbStore = useDBStore();
+    const dbStore = useDBStore()
     const route = useRoute()
-    const messageStore = useMessageStore();
-    const modulesStore = useModulesStore();
+    const messageStore = useMessageStore()
+    const modulesStore = useModulesStore()
 
     const tableInst = ref(null)
 
     const state = reactive({
-      type:"fluidpagehandler",
+      type: "fluidpagehandler",
       storeName: computed(() => {
         let name: string = `module___${props.module}`
         if (props.view) {
           name += `___${props.view}`
         }
-        name+= `___${route.query["_"]}`
+        name += `___${route.query["_"]}`
 
         return name
       }),
@@ -98,133 +109,140 @@ export default defineComponent({
       group: computed(() => props.group),
       view: computed(() => props.view),
       editableTable: false,
-      tableInst:computed(()=>tableInst),
-      active:false,
-      grids:computed(()=>{
-          let contentgrids = []
-          let currentgrid = []
-          if(currentlist.state.skellist.length>0){
-            for (const item of currentlist.state.skellist) {
-                if (item["width"] === "fullwidth"){
-                    contentgrids.push(currentgrid)
-                    contentgrids.push([item])
-                    currentgrid = []
-                }else{
-                    currentgrid.push(item)
-                }
+      tableInst: computed(() => tableInst),
+      active: false,
+      grids: computed(() => {
+        let contentgrids = []
+        let currentgrid = []
+        if (currentlist.state.skellist.length > 0) {
+          for (const item of currentlist.state.skellist) {
+            if (item["width"] === "fullwidth") {
+              contentgrids.push(currentgrid)
+              contentgrids.push([item])
+              currentgrid = []
+            } else {
+              currentgrid.push(item)
             }
-            //write last grid
-            contentgrids.push(currentgrid)
           }
-          return contentgrids
+          //write last grid
+          contentgrids.push(currentgrid)
+        }
+        return contentgrids
       }),
-      dragCurrentElement:null,
-      draggedKeys:[],
-      debounceSave:null,
-      fluidpageElement:computed(()=>dbStore.state["fluidpage.element"])
+      dragCurrentElement: null,
+      draggedKeys: [],
+      debounceSave: null,
+      fluidpageElement: computed(() => dbStore.state["fluidpage.element"])
     })
     provide("handlerState", state)
     const currentlist = ListRequest(state.storeName, {
       module: props.module,
       params: {
-        "limit":99,
+        limit: 99,
         "fluidpage.dest.key": route.params["key"]
       },
       group: props.group,
-      renderer:"vi"
+      renderer: "vi"
     })
     dbStore.setListStore(currentlist) //backup access
-    provide("currentlist",currentlist)
+    provide("currentlist", currentlist)
 
-    function changeOrder(oldkey, newkey){
-      state.draggedKeys = [oldkey,newkey]
-      let oldidx = currentlist.state.skellist.findIndex(e=>e["key"]===oldkey)
-      let newidx = currentlist.state.skellist.findIndex(e=>e["key"]===newkey)
+    function changeOrder(oldkey, newkey) {
+      state.draggedKeys = [oldkey, newkey]
+      let oldidx = currentlist.state.skellist.findIndex((e) => e["key"] === oldkey)
+      let newidx = currentlist.state.skellist.findIndex((e) => e["key"] === newkey)
 
       let element = currentlist.state.skellist[oldidx]
-      currentlist.state.skellist.splice(oldidx,1)
-      currentlist.state.skellist.splice(newidx,0, element)
+      currentlist.state.skellist.splice(oldidx, 1)
+      currentlist.state.skellist.splice(newidx, 0, element)
     }
-    provide("changeOrder",changeOrder)
+    provide("changeOrder", changeOrder)
 
-    function calculateIndex(new_position){
+    function calculateIndex(new_position) {
       let sortIndex = 0.0001
-      if (currentlist.state.skellist.length===0) return sortIndex
+      if (currentlist.state.skellist.length === 0) return sortIndex
 
-      if (new_position === 0){
+      if (new_position === 0) {
         let nextEntry = currentlist.state.skellist[new_position]
-        sortIndex = nextEntry["sortindex"]-1
-      }else if (new_position === currentlist.state.skellist.length){
-        let prevEntry = currentlist.state.skellist[new_position-1]
-        sortIndex = prevEntry["sortindex"]+1
-      }else{
+        sortIndex = nextEntry["sortindex"] - 1
+      } else if (new_position === currentlist.state.skellist.length) {
+        let prevEntry = currentlist.state.skellist[new_position - 1]
+        sortIndex = prevEntry["sortindex"] + 1
+      } else {
         let nextEntry = currentlist.state.skellist[new_position]
-        let prevEntry = currentlist.state.skellist[new_position-1]
-        sortIndex = prevEntry["sortindex"]+((nextEntry["sortindex"]-prevEntry["sortindex"])/2)
+        let prevEntry = currentlist.state.skellist[new_position - 1]
+        sortIndex = prevEntry["sortindex"] + (nextEntry["sortindex"] - prevEntry["sortindex"]) / 2
       }
       sortIndex += 0.0001
       return sortIndex
     }
-    provide("calculateIndex",calculateIndex)
+    provide("calculateIndex", calculateIndex)
 
-    function updateDragged(){
-      let idx = currentlist.state.skellist.findIndex(e=>e["key"]===state.draggedKeys[0])
+    function updateDragged() {
+      let idx = currentlist.state.skellist.findIndex((e) => e["key"] === state.draggedKeys[0])
 
       let currentEntry = currentlist.state.skellist[idx]
-      if (idx === 0){
-        let nextEntry = currentlist.state.skellist[idx+1]
-        currentEntry["sortindex"] = nextEntry["sortindex"]-1
-      }else if (idx === currentlist.state.skellist.length-1){
-        let prevEntry = currentlist.state.skellist[idx-1]
-        currentEntry["sortindex"] = prevEntry["sortindex"]+1
-      }else{
-        let nextEntry = currentlist.state.skellist[idx+1]
-        let prevEntry = currentlist.state.skellist[idx-1]
-        currentEntry["sortindex"] = prevEntry["sortindex"]+((nextEntry["sortindex"]-prevEntry["sortindex"])/2)
+      if (idx === 0) {
+        let nextEntry = currentlist.state.skellist[idx + 1]
+        currentEntry["sortindex"] = nextEntry["sortindex"] - 1
+      } else if (idx === currentlist.state.skellist.length - 1) {
+        let prevEntry = currentlist.state.skellist[idx - 1]
+        currentEntry["sortindex"] = prevEntry["sortindex"] + 1
+      } else {
+        let nextEntry = currentlist.state.skellist[idx + 1]
+        let prevEntry = currentlist.state.skellist[idx - 1]
+        currentEntry["sortindex"] = prevEntry["sortindex"] + (nextEntry["sortindex"] - prevEntry["sortindex"]) / 2
       }
       currentEntry["sortindex"] += 0.0001
-      Request.edit(props.module,currentEntry["key"],{dataObj:{
-        "sortindex":currentEntry["sortindex"]
-      }}).then((resp)=>{
-        messageStore.addMessage("success", `Edit`, "Entry saved successfully");
+      Request.edit(props.module, currentEntry["key"], {
+        dataObj: {
+          sortindex: currentEntry["sortindex"]
+        }
+      }).then((resp) => {
+        messageStore.addMessage("success", `Edit`, "Entry saved successfully")
       })
     }
-    provide("updateDragged",updateDragged)
+    provide("updateDragged", updateDragged)
 
-    function updateWidth(key, width){
-      let currentidx = currentlist.state.skellist.findIndex(e=>e["key"]===key)
+    function updateWidth(key, width) {
+      let currentidx = currentlist.state.skellist.findIndex((e) => e["key"] === key)
       let newEntry = currentlist.state.skellist[currentidx]
       newEntry["width"] = width
       currentlist.state.skellist[currentidx] = newEntry
 
       if (state.debounceSave) {
-        clearTimeout(state.debounceSave);
+        clearTimeout(state.debounceSave)
       }
 
-      state.debounceSave = setTimeout(()=>{
-          Request.edit(props.module,key,{dataObj:{
-            "width":width
-          }}).then((resp)=>{
-            messageStore.addMessage("success", `Edit`, "Entry saved successfully");
-          })
-      }, 1000);
+      state.debounceSave = setTimeout(() => {
+        Request.edit(props.module, key, {
+          dataObj: {
+            width: width
+          }
+        }).then((resp) => {
+          messageStore.addMessage("success", `Edit`, "Entry saved successfully")
+        })
+      }, 1000)
     }
-    provide("updateWidth",updateWidth)
+    provide("updateWidth", updateWidth)
 
     function reloadAction() {
-      return currentlist.fetch().catch((error) => {
-        messageStore.addMessage("error", `${error.message}`, error.response.url)
-      }).then((resp) => {
-        messageStore.addMessage("success", `Reload`, "Liste neu geladen")
-      })
+      return currentlist
+        .fetch()
+        .catch((error) => {
+          messageStore.addMessage("error", `${error.message}`, error.response.url)
+        })
+        .then((resp) => {
+          messageStore.addMessage("success", `Reload`, "Liste neu geladen")
+        })
     }
 
-    provide("reloadAction", reloadAction);
+    provide("reloadAction", reloadAction)
 
-    function setLimit(limit:any) {
-      currentlist.state.params["limit"]=limit;
-      currentlist.reset();
-      currentlist.fetch();
+    function setLimit(limit: any) {
+      currentlist.state.params["limit"] = limit
+      currentlist.reset()
+      currentlist.fetch()
     }
 
     provide("setLimit", setLimit)
@@ -235,36 +253,34 @@ export default defineComponent({
       })
     })
 
-    onActivated(()=>{
+    onActivated(() => {
       state.active = true
       let tabData = dbStore.getTabById(route.query["_"])
 
-      if (tabData?.["update"]){
+      if (tabData?.["update"]) {
         reloadAction()
-        tabData["update"]=false
+        tabData["update"] = false
       }
-
     })
 
-    onDeactivated(()=>{
+    onDeactivated(() => {
       state.active = false
     })
 
     function entrySelected(skel) {
       state.currentSelection = [skel]
       context.emit("currentSelection", state.currentSelection)
-      dbStore.state['skeldrawer.entry'] = skel
-      dbStore.state['skeldrawer.structure'] = currentlist.structure
+      dbStore.state["skeldrawer.entry"] = skel
+      dbStore.state["skeldrawer.structure"] = currentlist.structure
     }
-     provide("entrySelected", entrySelected);
+    provide("entrySelected", entrySelected)
 
     function openEditor(e: Event) {
-      const url = `/db/${state.module}/edit/${e.detail.cell.getRow().getData().key}`;
+      const url = `/db/${state.module}/edit/${e.detail.cell.getRow().getData().key}`
       let route = router.resolve(unref(url))
 
-      dbStore.addOpened(route, state.module, state.view);
+      dbStore.addOpened(route, state.module, state.view)
     }
-
 
     return {
       state,
@@ -274,18 +290,17 @@ export default defineComponent({
       modulesStore,
       tableInst,
       dbStore
-
     }
   }
 })
 </script>
 
 <style scoped>
-.loader{
-    position:absolute;
-    width: 100%;
-    height:50%
-  }
+.loader {
+  position: absolute;
+  width: 100%;
+  height: 50%;
+}
 
 .fluid-wrap {
   display: grid;
@@ -300,10 +315,9 @@ export default defineComponent({
 .fluid-grid {
   display: grid;
   grid-column: main;
-  grid-template-columns: repeat(12, minmax(0, 100px) );
+  grid-template-columns: repeat(12, minmax(0, 100px));
   grid-gap: 20px;
   position: relative;
-
 
   @media print {
     & {
@@ -316,14 +330,14 @@ export default defineComponent({
   }
 }
 
-.shadow-grid{
+.shadow-grid {
   position: absolute;
   top: -20px;
   left: 0;
   right: 0;
   bottom: -20px;
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 100px) );
+  grid-template-columns: repeat(12, minmax(0, 100px));
   grid-gap: 20px;
   z-index: 0;
 
@@ -514,6 +528,4 @@ export default defineComponent({
     grid-column: span 12;
   }
 }
-
-
 </style>

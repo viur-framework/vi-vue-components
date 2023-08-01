@@ -1,32 +1,54 @@
 <template>
-  <sl-button @click="openSelectDialog" size="small"
-             :title="$t('actions.selectfields')">
-    <sl-icon slot="prefix" name="list-ul"></sl-icon>
+  <sl-button
+    @click="openSelectDialog"
+    size="small"
+    :title="$t('actions.selectfields')"
+  >
+    <sl-icon
+      slot="prefix"
+      name="list-ul"
+    ></sl-icon>
     {{ $t("actions.selectfields") }}
   </sl-button>
 
-  <sl-dialog :label='$t("actions.selectfields")' id="dialog-selectfields">
-    <sl-checkbox v-for="(bone,boneName) in state.structure" :checked="setChecked(boneName)"
-               @sl-change="visibleChange(boneName)" class="selectfieldswitch">
+  <sl-dialog
+    :label="$t('actions.selectfields')"
+    id="dialog-selectfields"
+  >
+    <sl-checkbox
+      v-for="(bone, boneName) in state.structure"
+      :checked="setChecked(boneName)"
+      @sl-change="visibleChange(boneName)"
+      class="selectfieldswitch"
+    >
       {{ bone["descr"] !== "" ? bone["descr"] : boneName }}
     </sl-checkbox>
 
     <sl-button-group slot="footer">
-      <sl-button size="small" @click="selectall">{{ $t("selectfields.selectall") }}</sl-button>
-      <sl-button size="small" @click="unselectall">{{ $t("selectfields.unselectall") }}</sl-button>
-      <sl-button size="small" @click="invertselect">{{ $t("selectfields.invertselect") }}</sl-button>
+      <sl-button
+        size="small"
+        @click="selectall"
+        >{{ $t("selectfields.selectall") }}</sl-button
+      >
+      <sl-button
+        size="small"
+        @click="unselectall"
+        >{{ $t("selectfields.unselectall") }}</sl-button
+      >
+      <sl-button
+        size="small"
+        @click="invertselect"
+        >{{ $t("selectfields.invertselect") }}</sl-button
+      >
     </sl-button-group>
   </sl-dialog>
-
-
 </template>
 
 <script lang="ts">
 //@ts-nocheck
-import {reactive, defineComponent, inject} from 'vue'
-import {useDBStore} from "../stores/db";
-import {useRoute} from "vue-router";
-
+import { reactive, defineComponent, inject } from "vue"
+import { useDBStore } from "../stores/db"
+import { useRoute } from "vue-router"
 
 export default defineComponent({
   props: {},
@@ -34,54 +56,55 @@ export default defineComponent({
   setup(props, context) {
     const handlerState: any = inject("handlerState")
     const currentlist: any = inject("currentlist")
-    const state = reactive({structure: {}});
+    const state = reactive({ structure: {} })
     const dbStore = useDBStore()
-    const route = useRoute();
-
+    const route = useRoute()
 
     function openSelectDialog() {
-      if (handlerState.structure){
+      if (handlerState.structure) {
         state.structure = handlerState.structure
-      }else if (currentlist){
-        state.structure = currentlist.structure;
+      } else if (currentlist) {
+        state.structure = currentlist.structure
       }
-      const dialog = document.getElementById("dialog-selectfields");
-      dialog.show();
+      const dialog = document.getElementById("dialog-selectfields")
+      dialog.show()
     }
 
     function visibleChange(boneName) {
-      if (handlerState.selectedBones.includes(boneName)){
+      if (handlerState.selectedBones.includes(boneName)) {
         console.log(handlerState.selectedBones)
-        handlerState.selectedBones.splice(handlerState.selectedBones.indexOf(boneName),1)
-      }else{
+        handlerState.selectedBones.splice(handlerState.selectedBones.indexOf(boneName), 1)
+      } else {
         handlerState.selectedBones.unshift(boneName)
       }
     }
 
     function selectall() {
-      document.querySelectorAll(".selectfieldswitch").forEach(switchElement => switchElement.checked = true)
+      document.querySelectorAll(".selectfieldswitch").forEach((switchElement) => (switchElement.checked = true))
     }
 
     function unselectall() {
-      document.querySelectorAll(".selectfieldswitch").forEach(switchElement => switchElement.checked = false);
+      document.querySelectorAll(".selectfieldswitch").forEach((switchElement) => (switchElement.checked = false))
     }
 
     function invertselect() {
-      document.querySelectorAll(".selectfieldswitch").forEach(switchElement => switchElement.checked = !switchElement.checked);
+      document
+        .querySelectorAll(".selectfieldswitch")
+        .forEach((switchElement) => (switchElement.checked = !switchElement.checked))
     }
 
-    function setChecked(boneName){
+    function setChecked(boneName) {
       let conf = dbStore.getConf(props.module)
-      if (conf && conf?.['columns']) {
-        if(conf['columns'].includes(boneName)){
+      if (conf && conf?.["columns"]) {
+        if (conf["columns"].includes(boneName)) {
           return true
         }
-      }else{
-        return state.structure[boneName]['visible']
+      } else {
+        return state.structure[boneName]["visible"]
       }
     }
 
-    return {state, openSelectDialog, visibleChange, selectall, unselectall,invertselect, setChecked}
+    return { state, openSelectDialog, visibleChange, selectall, unselectall, invertselect, setChecked }
   }
 })
 </script>
@@ -91,35 +114,33 @@ export default defineComponent({
   display: flex;
   margin-bottom: 5px;
 
-  &::part(base){
+  &::part(base) {
     display: flex;
     flex-direction: row;
     align-items: center;
   }
 
-  &::part(control){
+  &::part(control) {
     width: 1em;
     height: 1em;
   }
-
 }
 
-sl-dialog{
-  &::part(body){
+sl-dialog {
+  &::part(body) {
     padding-top: 0;
   }
 }
 
-sl-button-group{
+sl-button-group {
   width: 100%;
 
-  &::part(base){
+  &::part(base) {
     width: 100%;
   }
 
-  & sl-button{
+  & sl-button {
     flex: 1;
   }
 }
-
 </style>

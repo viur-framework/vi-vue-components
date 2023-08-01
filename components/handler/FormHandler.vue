@@ -4,22 +4,38 @@
       <div class="top-headline">
         <span v-if="['clone', 'add'].includes(action)">Neuer</span>
         <span v-else-if="['edit'].includes(action)">Bearbeite</span>
-        {{ state.conf?.['name'] }} Eintrag
-        <span v-if="state.formValues?.['name']?.[0]['name']">: {{ state.formValues['name'][0]['name'] }}</span>
+        {{ state.conf?.["name"] }} Eintrag
+        <span v-if="state.formValues?.['name']?.[0]['name']">: {{ state.formValues["name"][0]["name"] }}</span>
       </div>
-      <entry-bar :module="module" :action="action" :skelkey="skelkey" skeltype="skeltype"
+      <entry-bar
+        :module="module"
+        :action="action"
+        :skelkey="skelkey"
+        skeltype="skeltype"
       ></entry-bar>
-
     </div>
-    <loader size="3" v-if="state.loading"></loader>
-    <sl-details open summary="Info"
-                v-if="modulesStore.state.loaded && modulesStore.state.modules[module][`help_text_${action}`]">
+    <loader
+      size="3"
+      v-if="state.loading"
+    ></loader>
+    <sl-details
+      open
+      summary="Info"
+      v-if="modulesStore.state.loaded && modulesStore.state.modules[module][`help_text_${action}`]"
+    >
       <p v-html="modulesStore.state.modules[module][`help_text_${action}`]"></p>
     </sl-details>
 
-    <div class="scroll-content" v-if="!state.loading">
-      <template v-for="(group,key) in state.formGroups">
-        <sl-details :summary="group['name']" v-show="group['groupVisible']" :open="key!=='system'">
+    <div
+      class="scroll-content"
+      v-if="!state.loading"
+    >
+      <template v-for="(group, key) in state.formGroups">
+        <sl-details
+          :summary="group['name']"
+          v-show="group['groupVisible']"
+          :open="key !== 'system'"
+        >
           <template v-for="bone in group['bones']">
             <bone
               :is="getBoneWidget(state.structure[bone['boneName']]['type'])"
@@ -29,15 +45,17 @@
               :errors="state.errors"
               @change="updateValue"
               v-show="state.structure[bone['boneName']]['visible']"
-              >
-
-              </bone>
+            >
+            </bone>
           </template>
         </sl-details>
       </template>
       <template v-if="appStore.state.debug">
         <sl-details summary="DEBUG: Formdata">
-          <VueJsonPretty :deep="1" :data="state.formValues"></VueJsonPretty>
+          <VueJsonPretty
+            :deep="1"
+            :data="state.formValues"
+          ></VueJsonPretty>
         </sl-details>
         <sl-details summary="DEBUG: Errors">
           {{ state.errors }}
@@ -46,52 +64,62 @@
     </div>
     <template v-if="state.relation_opened">
       <template v-for="bone in state.relation_opened">
-        <sl-dialog open style="--width:85%" class="relation-popup"
-                   :label="'Auswahl: '+bone['boneStructure']['descr']"
-                   @sl-request-close="relationCloseAction($event)"
+        <sl-dialog
+          open
+          style="--width: 85%"
+          class="relation-popup"
+          :label="'Auswahl: ' + bone['boneStructure']['descr']"
+          @sl-request-close="relationCloseAction($event)"
         >
           <component
             :is="bone['bone_conf']['handlerComponent']"
             :rowselect="1"
             :module="bone['boneStructure']['module']"
-            @currentSelection="relationUpdateSelection($event,bone)"
+            @currentSelection="relationUpdateSelection($event, bone)"
           >
-
           </component>
-          <div class="footer" slot="footer">
-              <sl-button @click="relationRemoveHandler(bone)" variant="danger" size="small" outline>{{ $t("relation.abort") }}</sl-button>
-              <sl-button :disabled="!bone['currentSelection'] || bone['currentSelection']?.length===0"
-                         @click="relationApplySelection(bone)"
-                         variant="success"
-                          size="small">
-                {{ $t("relation.select") }}
-              </sl-button>
+          <div
+            class="footer"
+            slot="footer"
+          >
+            <sl-button
+              @click="relationRemoveHandler(bone)"
+              variant="danger"
+              size="small"
+              outline
+              >{{ $t("relation.abort") }}</sl-button
+            >
+            <sl-button
+              :disabled="!bone['currentSelection'] || bone['currentSelection']?.length === 0"
+              @click="relationApplySelection(bone)"
+              variant="success"
+              size="small"
+            >
+              {{ $t("relation.select") }}
+            </sl-button>
           </div>
         </sl-dialog>
       </template>
     </template>
-
   </div>
-
 </template>
 
 <script lang="ts">
 //@ts-nocheck
-import {reactive, defineComponent, onBeforeMount, computed, provide, toRaw, unref} from 'vue'
-import {Request} from "@viur/vue-utils";
-import {useDBStore} from "../stores/db";
-import {useRoute} from "vue-router";
-import EntryBar from "../bars/EntryBar.vue";
-import {useModulesStore} from "../stores/modules";
-import handlers from "../handler/handlers";
+import { reactive, defineComponent, onBeforeMount, computed, provide, toRaw, unref } from "vue"
+import { Request } from "@viur/vue-utils"
+import { useDBStore } from "../stores/db"
+import { useRoute } from "vue-router"
+import EntryBar from "../bars/EntryBar.vue"
+import { useModulesStore } from "../stores/modules"
+import handlers from "../handler/handlers"
 import bone from "@viur/vue-utils/bones/edit/bone.vue"
-import {getBoneWidget} from "@viur/vue-utils/bones/edit/index"
-import Loader from "@viur/vue-utils/generic/Loader.vue";
-import {useAppStore} from '../stores/app';
-import VueJsonPretty from 'vue-json-pretty';
-import 'vue-json-pretty/lib/styles.css';
+import { getBoneWidget } from "@viur/vue-utils/bones/edit/index"
+import Loader from "@viur/vue-utils/generic/Loader.vue"
+import { useAppStore } from "../stores/app"
+import VueJsonPretty from "vue-json-pretty"
+import "vue-json-pretty/lib/styles.css"
 import Logics from "logics-js"
-
 
 export default defineComponent({
   props: {
@@ -103,27 +131,25 @@ export default defineComponent({
     group: null,
     skelkey: null,
     skeltype: null
-
-
   },
-  components: {EntryBar, bone, ...handlers,VueJsonPretty, Loader},
+  components: { EntryBar, bone, ...handlers, VueJsonPretty, Loader },
   setup(props, context) {
-    const dbStore = useDBStore();
+    const dbStore = useDBStore()
     const appStore = useAppStore()
-    const route = useRoute();
-    const modulesStore = useModulesStore();
+    const route = useRoute()
+    const modulesStore = useModulesStore()
     const values = reactive({})
     const state = reactive({
-      type:"formhandler",
+      type: "formhandler",
       skel: {},
       structure: {},
       errors: [],
       conf: computed(() => {
         return dbStore.getConf(props.module)
       }),
-      tabId:computed(()=>unref(route.query?.["_"])),
+      tabId: computed(() => unref(route.query?.["_"])),
       formGroups: computed(() => {
-        let groups = {"default": {"name": "Allgemein", "bones": [], "groupVisible": false}}
+        let groups = { default: { name: "Allgemein", bones: [], groupVisible: false } }
         for (const [boneName, bone] of Object.entries(state.structure)) {
           let category = "default"
           let boneStructure = state.structure[boneName]
@@ -134,17 +160,20 @@ export default defineComponent({
 
           if (Object.keys(groups).includes(category)) {
             groups[category]["bones"].push({
-              "boneName": boneName,
-              "boneStructure": boneStructure,
-              "boneValue": boneValue
+              boneName: boneName,
+              boneStructure: boneStructure,
+              boneValue: boneValue
             })
           } else {
             groups[category] = {
-              "name": bone.params.category, "bones": [{
-                "boneName": boneName,
-                "boneStructure": boneStructure,
-                "boneValue": boneValue
-              }]
+              name: bone.params.category,
+              bones: [
+                {
+                  boneName: boneName,
+                  boneStructure: boneStructure,
+                  boneValue: boneValue
+                }
+              ]
             }
           }
           if (boneStructure["visible"] === true) {
@@ -153,9 +182,11 @@ export default defineComponent({
         }
         let sortedGroups = {}
         console.log(groups)
-        Object.keys(groups).sort().forEach(function(key) {
-          sortedGroups[key] = groups[key];
-        });
+        Object.keys(groups)
+          .sort()
+          .forEach(function (key) {
+            sortedGroups[key] = groups[key]
+          })
 
         return sortedGroups
       }),
@@ -172,25 +203,25 @@ export default defineComponent({
 
     function structureToDict(structure: object) {
       if (Array.isArray(structure)) {
-          let struct = {};
-          for (const idx in structure) {
-            struct[structure[idx][0]] = structure[idx][1];
-          }
-          return struct;
-        }else{
-          return structure;
+        let struct = {}
+        for (const idx in structure) {
+          struct[structure[idx][0]] = structure[idx][1]
         }
+        return struct
+      } else {
+        return structure
+      }
     }
 
     function fetchData() {
-      state.loading=true
-      let url = `/vi/${props.module}/${props.action === "clone" ? "edit" : props.action}`;
+      state.loading = true
+      let url = `/vi/${props.module}/${props.action === "clone" ? "edit" : props.action}`
       if (props.group) url += `/${props.group}`
 
       if (props.action === "edit" || props.action === "clone") {
         if (state.skeltype === "node") {
           url += `/node`
-        }else if (state.skeltype === "leaf"){
+        } else if (state.skeltype === "leaf") {
           url += `/leaf`
         }
         url += `/${props.skelkey}`
@@ -206,21 +237,19 @@ export default defineComponent({
         dataObj["node"] = props.skelkey
       }
 
-
-
-      Request.post(url, {"dataObj": dataObj}).then(async (resp) => {
+      Request.post(url, { dataObj: dataObj }).then(async (resp) => {
         let data = await resp.json()
 
         for (const [key, val] of Object.entries(route.query)) {
-          if (Object.keys(data["values"]).includes(key)){
+          if (Object.keys(data["values"]).includes(key)) {
             data["values"][key] = val
-          }else if(key.includes(".")){
-            let  keyArr = key.split(".")
+          } else if (key.includes(".")) {
+            let keyArr = key.split(".")
             const bonename = keyArr[0]
             const lastelement = keyArr.pop()
-            let newVal = {[lastelement]:val};
+            let newVal = { [lastelement]: val }
             for (let element of keyArr.slice(1).reverse()) {
-              newVal = { [element]: newVal };
+              newVal = { [element]: newVal }
             }
             data["values"][bonename] = newVal
           }
@@ -228,12 +257,10 @@ export default defineComponent({
         state.skel = data["values"]
         state.structure = structureToDict(data["structure"])
         state.errors = data["errors"]
-        state.loading=false
+        state.loading = false
       })
-
     }
-    provide("fetchData",fetchData)
-
+    provide("fetchData", fetchData)
 
     function getWidget(boneName: string) {
       let widget = "base_item"
@@ -251,47 +278,45 @@ export default defineComponent({
       visibleIf(data)
     }
 
-    function relationSelection(event,bone) {
+    function relationSelection(event, bone) {
       bone["bone_instance"] = event.target
       bone["bone_instance_boneName"] = event["detail"]["boneName"]
-      bone["bone_conf"] = dbStore.getConf(bone['boneStructure']['module'])
+      bone["bone_conf"] = dbStore.getConf(bone["boneStructure"]["module"])
 
       state.relation_opened.push(bone)
     }
 
-    function relationUpdateSelection(event,bone){
+    function relationUpdateSelection(event, bone) {
       bone["currentSelection"] = event
     }
 
-    function relationApplySelection(bone){
-      for(let skel of bone["currentSelection"]){
-        bone["bone_instance"].addRelation(toRaw(skel),bone["bone_instance_boneName"] )
+    function relationApplySelection(bone) {
+      for (let skel of bone["currentSelection"]) {
+        bone["bone_instance"].addRelation(toRaw(skel), bone["bone_instance_boneName"])
       }
       relationRemoveHandler(bone)
     }
 
-    function relationCloseAction(event,bone) {
-      if (event.detail.source === 'overlay') {
+    function relationCloseAction(event, bone) {
+      if (event.detail.source === "overlay") {
         event.preventDefault()
         return 0
       }
       relationRemoveHandler(bone)
     }
 
-    function relationRemoveHandler(bone){
-      state.relation_opened = state.relation_opened.filter(i=>i!==bone)
+    function relationRemoveHandler(bone) {
+      state.relation_opened = state.relation_opened.filter((i) => i !== bone)
     }
 
-    function visibleIf(changeddata){
-      try{
+    function visibleIf(changeddata) {
+      try {
         // we need more stable skel updates for logics
         state.skel[changeddata["name"]] = changeddata["value"][0][changeddata["name"]]
-      }catch(e){
-
-      }
+      } catch (e) {}
 
       for (const [boneName, bone] of Object.entries(state.structure)) {
-        if (bone?.["params"]?.["visibleIf"]){
+        if (bone?.["params"]?.["visibleIf"]) {
           let ex = new Logics(bone?.["params"]?.["visibleIf"])
           bone["visible"] = ex.run(state.skel).toBool()
         }
@@ -324,7 +349,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
 .split {
   flex: 1;
   height: 0;
@@ -340,7 +364,7 @@ export default defineComponent({
   flex-direction: row;
   align-items: center;
   padding: var(--sl-spacing-small);
-  box-shadow: 0 0 5px 0 rgba(0, 0, 0, .25);
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.25);
   z-index: 1;
 }
 
@@ -391,24 +415,23 @@ sl-details {
     border-top: none;
     border-bottom: solid 1px var(--sl-color-neutral-300);
   }
-  &::part(summary){
+  &::part(summary) {
     font-weight: 700;
   }
 }
 
-.footer{
+.footer {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
   justify-content: space-between;
 }
 
-.wrap-for-popup{
+.wrap-for-popup {
   display: flex;
   flex-direction: column;
   flex: 1;
   height: 1px;
   position: relative;
 }
-
 </style>

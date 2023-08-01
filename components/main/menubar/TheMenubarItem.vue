@@ -1,133 +1,207 @@
 <template>
-  <router-link v-if="to" :to="to" custom v-slot="{route}">
+  <router-link
+    v-if="to"
+    :to="to"
+    custom
+    v-slot="{ route }"
+  >
     <div class="item">
-
-      <sl-avatar shape="rounded" @click="openItem(route)"
-                 :initials="icon?'':state.initials">
-        <sl-icon slot="icon" v-if="icon" :name="icon" :library="library" sprite></sl-icon>
+      <sl-avatar
+        shape="rounded"
+        @click="openItem(route)"
+        :initials="icon ? '' : state.initials"
+      >
+        <sl-icon
+          slot="icon"
+          v-if="icon"
+          :name="icon"
+          :library="library"
+          sprite
+        ></sl-icon>
       </sl-avatar>
 
-      <div class="name" @click="openItem(route)">
+      <div
+        class="name"
+        @click="openItem(route)"
+      >
         {{ name }}
       </div>
 
-      <sl-icon v-if="closeable"
-               sprite
-               name="x"
-               class="icon-end"
-               @click.stop="removeItem">
+      <sl-icon
+        v-if="closeable"
+        sprite
+        name="x"
+        class="icon-end"
+        @click.stop="removeItem"
+      >
       </sl-icon>
 
-
-      <div v-if="state.slotitems"
-           class="arrow"
-           @click.stop="openGroup"
-            :class="{'is-open':state.open}">
-          <sl-icon name="chevron-right" sprite>
-          </sl-icon>
+      <div
+        v-if="state.slotitems"
+        class="arrow"
+        @click.stop="openGroup"
+        :class="{ 'is-open': state.open }"
+      >
+        <sl-icon
+          name="chevron-right"
+          sprite
+        >
+        </sl-icon>
       </div>
 
-      <div class="space" v-else></div>
+      <div
+        class="space"
+        v-else
+      ></div>
 
       <sl-dropdown class="dropdown">
-        <sl-icon-button slot="trigger" name="three-dots">
-
+        <sl-icon-button
+          slot="trigger"
+          name="three-dots"
+        >
         </sl-icon-button>
         <sl-menu>
           <sl-menu-item @click="toogleFavItem()">
-            <sl-icon slot="prefix" name="heart" sprite></sl-icon>
+            <sl-icon
+              slot="prefix"
+              name="heart"
+              sprite
+            ></sl-icon>
             Favorisieren
           </sl-menu-item>
           <sl-menu-item @click="openConfig()">
-            <sl-icon slot="prefix" name="pencil" sprite></sl-icon>
+            <sl-icon
+              slot="prefix"
+              name="pencil"
+              sprite
+            ></sl-icon>
             Berarbeiten
           </sl-menu-item>
-          <sl-menu-item @click="openItem(route,true)">
-            <sl-icon slot="prefix" name="plus" sprite></sl-icon>
+          <sl-menu-item @click="openItem(route, true)">
+            <sl-icon
+              slot="prefix"
+              name="plus"
+              sprite
+            ></sl-icon>
             öffnen
           </sl-menu-item>
         </sl-menu>
       </sl-dropdown>
-
     </div>
 
-    <div v-show="state.open" class="sublist">
-      <slot>
-      </slot>
+    <div
+      v-show="state.open"
+      class="sublist"
+    >
+      <slot> </slot>
     </div>
   </router-link>
-  <a v-else-if="href" :href="href">
-    <div class="item" @click.stop="openGroup">
-
-      <sl-avatar shape="rounded"
-                 :initials="icon?'':state.initials">
-        <sl-icon slot="icon" v-if="icon" :name="icon" :library="library" sprite></sl-icon>
+  <a
+    v-else-if="href"
+    :href="href"
+  >
+    <div
+      class="item"
+      @click.stop="openGroup"
+    >
+      <sl-avatar
+        shape="rounded"
+        :initials="icon ? '' : state.initials"
+      >
+        <sl-icon
+          slot="icon"
+          v-if="icon"
+          :name="icon"
+          :library="library"
+          sprite
+        ></sl-icon>
       </sl-avatar>
 
       <div class="name">
         {{ name }}
       </div>
 
-      <div v-if="state.slotitems"
-           class="arrow"
-           @click.stop="openGroup"
-            :class="{'is-open':state.open}">
-          <sl-icon name="chevron-right" sprite>
-          </sl-icon>
+      <div
+        v-if="state.slotitems"
+        class="arrow"
+        @click.stop="openGroup"
+        :class="{ 'is-open': state.open }"
+      >
+        <sl-icon
+          name="chevron-right"
+          sprite
+        >
+        </sl-icon>
       </div>
-
     </div>
 
-    <div v-show="state.open" class="sublist">
-      <slot>
-      </slot>
+    <div
+      v-show="state.open"
+      class="sublist"
+    >
+      <slot> </slot>
     </div>
   </a>
-  <div class="wrapper" v-else>
-    <div class="item" @click.stop="openGroup">
-
-      <sl-avatar shape="rounded"
-                 :initials="icon?'':state.initials">
-        <sl-icon slot="icon" v-if="icon" :name="icon" :library="library" sprite></sl-icon>
+  <div
+    class="wrapper"
+    v-else
+  >
+    <div
+      class="item"
+      @click.stop="openGroup"
+    >
+      <sl-avatar
+        shape="rounded"
+        :initials="icon ? '' : state.initials"
+      >
+        <sl-icon
+          slot="icon"
+          v-if="icon"
+          :name="icon"
+          :library="library"
+          sprite
+        ></sl-icon>
       </sl-avatar>
 
       <div class="name">
         {{ name }}
       </div>
 
-      <div v-if="state.slotitems"
-           class="arrow"
-           @click.stop="openGroup"
-            :class="{'is-open':state.open}">
-          <sl-icon name="chevron-right" sprite>
-          </sl-icon>
+      <div
+        v-if="state.slotitems"
+        class="arrow"
+        @click.stop="openGroup"
+        :class="{ 'is-open': state.open }"
+      >
+        <sl-icon
+          name="chevron-right"
+          sprite
+        >
+        </sl-icon>
       </div>
-
-
     </div>
 
-    <div v-show="state.open" class="sublist">
-      <slot>
-      </slot>
+    <div
+      v-show="state.open"
+      class="sublist"
+    >
+      <slot> </slot>
     </div>
   </div>
-
-
 </template>
 
 <script lang="ts">
 // @ts-nocheck
-import {computed, reactive, onMounted, onUpdated, defineComponent, unref} from "vue";
-import Utils from '../../utils';
-import {useDBStore} from "../../stores/db";
-import {useRoute, useRouter} from "vue-router";
-import {useUserStore} from "../../stores/user";
-import {Request} from "@viur/vue-utils";
+import { computed, reactive, onMounted, onUpdated, defineComponent, unref } from "vue"
+import Utils from "../../utils"
+import { useDBStore } from "../../stores/db"
+import { useRoute, useRouter } from "vue-router"
+import { useUserStore } from "../../stores/user"
+import { Request } from "@viur/vue-utils"
 
 export default defineComponent({
   name: "TheMenubarItem",
   props: {
-
     to: {
       type: Object,
       default: undefined
@@ -166,9 +240,9 @@ export default defineComponent({
     }
   },
   setup(props, context) {
-    const dbStore = useDBStore();
-    const router = useRouter();
-    const userStore = useUserStore();
+    const dbStore = useDBStore()
+    const router = useRouter()
+    const userStore = useUserStore()
 
     const state = reactive({
       open: !props.closed,
@@ -179,13 +253,13 @@ export default defineComponent({
         if (props.layer > 2) {
           layer = 2
         }
-        return (1 - (layer * 0.1)).toString() + "em"
+        return (1 - layer * 0.1).toString() + "em"
       }),
-      maxtabsReached: false,
-    });
+      maxtabsReached: false
+    })
 
     function openGroup() {
-      state.open = !state.open;
+      state.open = !state.open
     }
 
     function removeItem() {
@@ -193,56 +267,59 @@ export default defineComponent({
       dbStore.removeOpened(props.to)
     }
 
-    function openItem(route,force=false) {
-      if (props.moduleInfo["display"]==="group" && !force){
+    function openItem(route, force = false) {
+      if (props.moduleInfo["display"] === "group" && !force) {
         openGroup()
         return
       }
       let new_route = router.resolve(unref(route))
-      state.maxtabsReached = !dbStore.addOpened(new_route, route.params["module"], route.query["view"], "", "", "", false,force)
+      state.maxtabsReached = !dbStore.addOpened(
+        new_route,
+        route.params["module"],
+        route.query["view"],
+        "",
+        "",
+        "",
+        false,
+        force
+      )
     }
 
-    function openConfig(){
+    function openConfig() {
       let new_route = router.resolve(unref(`/db/_moduleconf/edit/${props.moduleInfo["module"]}`))
       dbStore.addOpened(new_route, props.moduleInfo["module"], null, "", "", "", false)
     }
 
     function toogleFavItem() {
       let configObj = null
-      if (userStore.state.user["adminconfig"]){
-        configObj = JSON.parse(userStore.state.user["adminconfig"]);
+      if (userStore.state.user["adminconfig"]) {
+        configObj = JSON.parse(userStore.state.user["adminconfig"])
       }
       if (configObj === null) {
-        configObj = {"favoriteModules": []};
+        configObj = { favoriteModules: [] }
       }
 
-
-      const index = configObj["favoriteModules"].indexOf(props.moduleInfo["module"]);
+      const index = configObj["favoriteModules"].indexOf(props.moduleInfo["module"])
       if (index > -1) {
-        configObj["favoriteModules"].splice(index, 1);
+        configObj["favoriteModules"].splice(index, 1)
       } else {
-        configObj["favoriteModules"].push(props.moduleInfo["module"]);
+        configObj["favoriteModules"].push(props.moduleInfo["module"])
       }
 
-
-      userStore.state.user["adminconfig"] = JSON.stringify(configObj);
+      userStore.state.user["adminconfig"] = JSON.stringify(configObj)
       Request.securePost("/vi/user/edit", {
         dataObj: {
-          "key": userStore.state.user.key,
-          "admin_config": userStore.state.user["adminconfig"]
+          key: userStore.state.user.key,
+          admin_config: userStore.state.user["adminconfig"]
         }
       }).then((resp: object) => {
-          console.log("Update Userconfig Succesfully")
-        })
-
-
+        console.log("Update Userconfig Succesfully")
+      })
     }
-    function handleMaxTabOpen(route)
-    {
-
-      state.maxtabsReached = false;
-      dbStore.state["handlers.opened.max.modules"][props.moduleInfo["module"]] += 1;
-      openItem(route);
+    function handleMaxTabOpen(route) {
+      state.maxtabsReached = false
+      dbStore.state["handlers.opened.max.modules"][props.moduleInfo["module"]] += 1
+      openItem(route)
     }
     onMounted(() => {
       state.slotitems = Utils.getSlotLength(context.slots.default)
@@ -251,9 +328,6 @@ export default defineComponent({
     onUpdated(() => {
       state.slotitems = Utils.getSlotLength(context.slots.default)
     })
-
-
-
 
     return {
       state,
@@ -271,16 +345,15 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
 .router-link-exact-active {
   & .item {
-    background-color: rgba(22, 155, 167, .3);
+    background-color: rgba(22, 155, 167, 0.3);
   }
 }
 
 .wrapper {
   width: 100%;
-  font-size: v-bind('state.cssFontSize');
+  font-size: v-bind("state.cssFontSize");
 }
 
 .item {
@@ -298,16 +371,16 @@ export default defineComponent({
   grid-template-columns: 37px minmax(0, 1fr) auto auto;
   grid-template-rows: 1fr;
   justify-items: center;
-  transition: all ease .3s;
+  transition: all ease 0.3s;
 
   & sl-avatar {
     --size: 1.85em;
 
-    &::part(icon){
+    &::part(icon) {
       padding: 25%;
     }
 
-    &::part(base){
+    &::part(base) {
       border: 1px solid var(--vi-border-color);
       background-color: transparent;
       color: var(--vi-border-color);
@@ -317,16 +390,16 @@ export default defineComponent({
   &:hover {
     background-color: var(--sl-color-neutral-200);
 
-    & .dropdown sl-icon-button{
+    & .dropdown sl-icon-button {
       opacity: 1;
     }
 
-    & .arrow{
+    & .arrow {
       opacity: 1;
     }
 
     & sl-avatar {
-      &::part(base){
+      &::part(base) {
         border: 1px solid var(--vi-foreground-color);
         background-color: transparent;
         color: var(--vi-foreground-color);
@@ -335,7 +408,7 @@ export default defineComponent({
   }
 
   & .icon-end {
-    font-size: .75em;
+    font-size: 0.75em;
     padding-right: 10px;
   }
 }
@@ -356,7 +429,7 @@ export default defineComponent({
 
 sl-icon {
   font-size: 1.5em;
-  transition: all ease .3s;
+  transition: all ease 0.3s;
 }
 
 .arrow {
@@ -364,12 +437,12 @@ sl-icon {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0 var(--sl-spacing-small) ;
-  font-size: .5em;
-  opacity: .3;
+  padding: 0 var(--sl-spacing-small);
+  font-size: 0.5em;
+  opacity: 0.3;
   color: var(--vi-foreground-color);
 
-  &.is-open sl-icon{
+  &.is-open sl-icon {
     transform: rotate(90deg);
   }
 }
@@ -378,54 +451,50 @@ sl-icon {
   width: 41px;
 }
 
-
-.dropdown{
-  & sl-icon-button{
-    transition: all ease .3s;
-    opacity: .3;
-    rotate:90deg;
+.dropdown {
+  & sl-icon-button {
+    transition: all ease 0.3s;
+    opacity: 0.3;
+    rotate: 90deg;
     color: var(--vi-foreground-color);
 
-    &:hover{
-
-      &::part(base){
+    &:hover {
+      &::part(base) {
         color: var(--vi-foreground-color) !important;
       }
-
     }
   }
 
-  & sl-menu{
+  & sl-menu {
     padding: 0;
   }
 
-  & sl-menu-item{
-    & sl-icon{
-      font-size: .9em;
+  & sl-menu-item {
+    & sl-icon {
+      font-size: 0.9em;
       margin-right: var(--sl-spacing-small);
       color: var(--vi-foreground-color);
     }
 
-    &::part(base){
+    &::part(base) {
       padding: var(--sl-spacing-x-small) var(--sl-spacing-medium);
       color: var(--vi-foreground-color);
-      font-size: .9em;
+      font-size: 0.9em;
     }
 
-    &::part(checked-icon){
+    &::part(checked-icon) {
       display: none;
     }
 
-    & :deep(.menu-item__chevron){
+    & :deep(.menu-item__chevron) {
       display: none;
     }
   }
 }
 
-.sublist{
+.sublist {
   & .item {
     padding-left: var(--sl-spacing-medium);
   }
 }
-
 </style>

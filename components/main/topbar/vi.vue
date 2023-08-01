@@ -1,40 +1,41 @@
 <template>
   <sl-avatar
-      :image="state.avatarUser"
-      @click="state.sidebarOpen = !state.sidebarOpen"
-      :label="state.name"
-      :initials="state.nameInitials"
-      class="user"
+    :image="state.avatarUser"
+    @click="state.sidebarOpen = !state.sidebarOpen"
+    :label="state.name"
+    :initials="state.nameInitials"
+    class="user"
   ></sl-avatar>
 
   <sl-drawer
-      :label="$t('sidebar.name')"
-      class="drawer-overview"
-      :open="state.sidebarOpen"
+    :label="$t('sidebar.name')"
+    class="drawer-overview"
+    :open="state.sidebarOpen"
   >
     <div class="drawer-header">
       <sl-avatar
-          :image="state.avatarUser"
-          :label="state.name"
-          :initials="state.nameInitials"
-          @click="state.sidebarOpen = !state.sidebarOpen"
+        :image="state.avatarUser"
+        :label="state.name"
+        :initials="state.nameInitials"
+        @click="state.sidebarOpen = !state.sidebarOpen"
       ></sl-avatar>
 
       <div class="name">{{ state.name }}</div>
 
-      <sl-button variant="primary" size="small" @click="userStore.logout">{{
-          $t("sidebar.logout")
-        }}
+      <sl-button
+        variant="primary"
+        size="small"
+        @click="userStore.logout"
+        >{{ $t("sidebar.logout") }}
       </sl-button>
     </div>
 
     <div class="drawer-scroller">
-
       <div class="group">
         <div class="group-headline">
           {{ $t("sidebar.section_general_name") }}
         </div>
-          <sl-button size="medium">
+        <sl-button size="medium">
           <sl-icon name="gear"></sl-icon>
           Aktuelles Log
         </sl-button>
@@ -49,26 +50,41 @@
           {{ $t("sidebar.section_system_name") }}
         </div>
         <template v-for="item in dbStore.state['tasks']">
-          <sl-button size="medium" @click="state.openedTask=item['key']">
+          <sl-button
+            size="medium"
+            @click="state.openedTask = item['key']"
+          >
             <sl-icon name="gear"></sl-icon>
-            {{ item['name'] }}
+            {{ item["name"] }}
           </sl-button>
 
-          <teleport v-if="state.openedTask===item['key']" to="#dialogs" :disabled="state.openedTask!==item['key']">
-            <sl-dialog :label="item['name']" open @sl-after-hide="state.openedTask=null">
+          <teleport
+            v-if="state.openedTask === item['key']"
+            to="#dialogs"
+            :disabled="state.openedTask !== item['key']"
+          >
+            <sl-dialog
+              :label="item['name']"
+              open
+              @sl-after-hide="state.openedTask = null"
+            >
               TASK
-              <sl-button slot="footer"
-                         @click=""
-                         variant="success">
-                {{$t('confirm')}}
+              <sl-button
+                slot="footer"
+                @click=""
+                variant="success"
+              >
+                {{ $t("confirm") }}
               </sl-button>
-              <sl-button slot="footer" variant="danger"
-                         @click="state.openedTask=null">
-                {{$t('abort')}}
+              <sl-button
+                slot="footer"
+                variant="danger"
+                @click="state.openedTask = null"
+              >
+                {{ $t("abort") }}
               </sl-button>
             </sl-dialog>
           </teleport>
-
         </template>
 
         <!--<sl-button size="medium">
@@ -82,7 +98,10 @@
       </div>
     </div>
 
-    <div slot="footer" class="drawer-footer">
+    <div
+      slot="footer"
+      class="drawer-footer"
+    >
       <div class="footer-item">Vi: {{ state.viVersion }}</div>
       <div class="footer-item">Core: {{ state.coreVersion }}</div>
     </div>
@@ -90,12 +109,11 @@
 </template>
 
 <script lang="ts">
-import {reactive, defineComponent, computed, onMounted} from 'vue'
-import {useUserStore} from "../../stores/user";
-import {useAppStore} from "../../stores/app";
-import {useDBStore} from "../../stores/db";
-import {Request} from '@viur/vue-utils'
-
+import { reactive, defineComponent, computed, onMounted } from "vue"
+import { useUserStore } from "../../stores/user"
+import { useAppStore } from "../../stores/app"
+import { useDBStore } from "../../stores/db"
+import { Request } from "@viur/vue-utils"
 
 export default defineComponent({
   props: {},
@@ -107,84 +125,73 @@ export default defineComponent({
     const state = reactive({
       sidebarOpen: false,
       nameInitials: computed(() => {
-        let name = "";
-        if (!userStore.state.user) return name;
+        let name = ""
+        if (!userStore.state.user) return name
 
-        if (
-            userStore.state.user["firstname"] &&
-            userStore.state.user["lastname"]
-        ) {
-          name =
-              userStore.state.user["firstname"][0] +
-              userStore.state.user["lastname"][0];
+        if (userStore.state.user["firstname"] && userStore.state.user["lastname"]) {
+          name = userStore.state.user["firstname"][0] + userStore.state.user["lastname"][0]
         } else {
-          let nameSplitted = userStore.state.user["name"].split(" ");
+          let nameSplitted = userStore.state.user["name"].split(" ")
           for (let namePart in nameSplitted) {
-            name += namePart[0];
+            name += namePart[0]
           }
         }
-        return name;
+        return name
       }),
       name: computed(() => {
-        let name = "";
-        if (!userStore.state.user) return name;
+        let name = ""
+        if (!userStore.state.user) return name
 
-        if (
-            userStore.state.user["firstname"] &&
-            userStore.state.user["lastname"]
-        ) {
-          name =
-              userStore.state.user["firstname"] +
-              " " +
-              userStore.state.user["lastname"];
+        if (userStore.state.user["firstname"] && userStore.state.user["lastname"]) {
+          name = userStore.state.user["firstname"] + " " + userStore.state.user["lastname"]
         } else {
-          name = userStore.state.user["name"];
+          name = userStore.state.user["name"]
         }
-        return name;
+        return name
       }),
       avatarUser: computed(() => {
-        let avatar = "";
-        if (!userStore.state.user) return avatar;
+        let avatar = ""
+        if (!userStore.state.user) return avatar
 
-        return userStore.state.user["image"];
+        return userStore.state.user["image"]
       }),
       viVersion: computed(() => {
-        let vi = "";
-        if (!appStore.state["vi.version"]) return vi;
+        let vi = ""
+        if (!appStore.state["vi.version"]) return vi
         for (let i = 0; i < appStore.state["vi.version"].length; i++) {
-          vi += appStore.state["vi.version"][i];
+          vi += appStore.state["vi.version"][i]
           if (i < appStore.state["vi.version"].length - 1) {
-            vi += ".";
+            vi += "."
           }
         }
-        return vi;
+        return vi
       }),
       coreVersion: computed(() => {
-        let core = "";
-        if (!appStore.state["core.version"]) return core;
+        let core = ""
+        if (!appStore.state["core.version"]) return core
         for (let i = 0; i < appStore.state["core.version"].length; i++) {
-          core += appStore.state["core.version"][i];
+          core += appStore.state["core.version"][i]
           if (i < appStore.state["core.version"].length - 1) {
-            core += ".";
+            core += "."
           }
         }
-        return core;
+        return core
       }),
-      openedTask:null
-    });
+      openedTask: null
+    })
 
     function logout() {
       userStore.logout()
     }
 
-    onMounted(()=>{
-      Request.get("/vi/_tasks/list").then(async(resp)=>{
+    onMounted(() => {
+      Request.get("/vi/_tasks/list").then(async (resp) => {
         let data = await resp.json()
-        dbStore.state['tasks'] = data['skellist']
+        dbStore.state["tasks"] = data["skellist"]
       })
     })
 
-    function openTask(key){
+    function openTask(key) {
       console.log(key)
       state.openedTask = key
     }

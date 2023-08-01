@@ -4,46 +4,61 @@
     @dragstart="tree.onDragStart($event, idx, 'leaf')"
     @drop.stop="tree.onDrop($event, idx)"
     :class="{
-            isSelected: treeState.selected_leaf?.key === skel.key,
-           'dropin':state.currentEntry['_isover'] && state.currentEntry['_drop']==='in',
-           'dropafter':state.currentEntry['_isover'] && state.currentEntry['_drop']==='after',
-           'dropbefore':state.currentEntry['_isover'] && state.currentEntry['_drop']==='before'
+      isSelected: treeState.selected_leaf?.key === skel.key,
+      dropin: state.currentEntry['_isover'] && state.currentEntry['_drop'] === 'in',
+      dropafter: state.currentEntry['_isover'] && state.currentEntry['_drop'] === 'after',
+      dropbefore: state.currentEntry['_isover'] && state.currentEntry['_drop'] === 'before'
     }"
     :key="skel['key']"
   >
     <td>
       <div class="file">
-        <div class="dragger" v-if="treeState.dragging"
-               @mouseup="tree.mouseUpHandle($event, idx, 'leaf')"
-               @mousedown="tree.mouseDownHandle($event, idx, 'leaf')">
-
-        <sl-icon name="menu"></sl-icon>
+        <div
+          class="dragger"
+          v-if="treeState.dragging"
+          @mouseup="tree.mouseUpHandle($event, idx, 'leaf')"
+          @mousedown="tree.mouseDownHandle($event, idx, 'leaf')"
+        >
+          <sl-icon name="menu"></sl-icon>
         </div>
-        <sl-icon name="download" sprite @click="downloadFile(skel)"></sl-icon>
-        <span class="filename" v-html="skel.name"  @click="entrySelected(skel)"></span>
+        <sl-icon
+          name="download"
+          sprite
+          @click="downloadFile(skel)"
+        ></sl-icon>
+        <span
+          class="filename"
+          v-html="skel.name"
+          @click="entrySelected(skel)"
+        ></span>
       </div>
     </td>
     <td>
-      <sl-format-date year="numeric" month="numeric" day="2-digit" :date="skel.changedate"></sl-format-date>
+      <sl-format-date
+        year="numeric"
+        month="numeric"
+        day="2-digit"
+        :date="skel.changedate"
+      ></sl-format-date>
     </td>
     <td>
       <sl-tooltip :content="skel.mimetype">
-        <div class="file-type" v-html="skel.name.split('.').pop().length > 0 ? skel.name.split('.').pop() : skel.name">
-        </div>
+        <div
+          class="file-type"
+          v-html="skel.name.split('.').pop().length > 0 ? skel.name.split('.').pop() : skel.name"
+        ></div>
       </sl-tooltip>
     </td>
     <td>
       <sl-format-bytes :value="skel['size']"></sl-format-bytes>
     </td>
   </tr>
-
-
 </template>
 
 <script>
-import {reactive, defineComponent, onMounted, inject, computed} from 'vue'
-import useTree from "./tree";
-import {Request} from "@viur/vue-utils";
+import { reactive, defineComponent, onMounted, inject, computed } from "vue"
+import useTree from "./tree"
+import { Request } from "@viur/vue-utils"
 
 export default defineComponent({
   props: {
@@ -54,23 +69,23 @@ export default defineComponent({
     skel: {
       type: Object
     },
-    idx:{
-      type:Number
+    idx: {
+      type: Number
     },
-    path:{
-      type:Array
+    path: {
+      type: Array
     }
   },
   components: {},
   setup(props, context) {
     const treeState = inject("handlerState")
     const state = reactive({
-       currentEntry:{},
-      child:computed(()=>{
-        if (!state.currentEntry['_leafs']){
+      currentEntry: {},
+      child: computed(() => {
+        if (!state.currentEntry["_leafs"]) {
           return null
         }
-        return state.currentEntry['_leafs'][props.idx]
+        return state.currentEntry["_leafs"][props.idx]
       })
     })
 
@@ -78,16 +93,14 @@ export default defineComponent({
       state.currentEntry = tree.EntryFromPath(props.path)
     })
 
-
     //activate File
     function entrySelected(skel) {
       treeState.selected_leaf = skel
     }
-    function downloadFile(skel)
-    {
-       window.open(import.meta.env.VITE_API_URL+skel["downloadUrl"]+"&download=1", '_blank');
+    function downloadFile(skel) {
+      window.open(import.meta.env.VITE_API_URL + skel["downloadUrl"] + "&download=1", "_blank")
     }
-    const tree = useTree(props.module,treeState,state)
+    const tree = useTree(props.module, treeState, state)
     return {
       state,
       treeState,
@@ -118,8 +131,8 @@ export default defineComponent({
     margin-right: 10px;
   }
 
-  &:hover{
-    & .dragger{
+  &:hover {
+    & .dragger {
       opacity: 1;
     }
   }
@@ -127,9 +140,9 @@ export default defineComponent({
 
 tr {
   position: relative;
-  transition: all ease .3s;
+  transition: all ease 0.3s;
   cursor: pointer;
-  border-bottom: solid 1px  var(--sl-color-neutral-300) !important;
+  border-bottom: solid 1px var(--sl-color-neutral-300) !important;
 
   &:nth-child(odd) {
     background-color: var(--sl-color-neutral-100);
@@ -140,7 +153,6 @@ tr {
   }
 
   &.isSelected {
-
     * {
       font-weight: 600;
     }
@@ -154,20 +166,19 @@ td {
   padding: 6px 8px;
 }
 
-.dragger{
+.dragger {
   display: flex;
   justify-content: center;
   align-items: center;
   padding-right: var(--sl-spacing-x-small);
   height: 100%;
   cursor: move;
-  opacity: .2;
-  transition: opacity ease .3s;
+  opacity: 0.2;
+  transition: opacity ease 0.3s;
   color: var(--vi-foreground-color);
 
-  & sl-icon{
-    font-size: .7em;
+  & sl-icon {
+    font-size: 0.7em;
   }
 }
-
 </style>

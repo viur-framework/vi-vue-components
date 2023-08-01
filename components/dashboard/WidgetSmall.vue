@@ -1,27 +1,29 @@
 <template>
-      <div class="home-box" @click="openTab">
-        <div class="icon-wrap">
-          <sl-icon name="trash"></sl-icon>
-        </div>
-        <div class="home-name">
-          <slot></slot>
-        </div>
-      </div>
+  <div
+    class="home-box"
+    @click="openTab"
+  >
+    <div class="icon-wrap">
+      <sl-icon name="trash"></sl-icon>
+    </div>
+    <div class="home-name">
+      <slot></slot>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
-import {reactive, defineComponent} from 'vue'
-import {useDBStore} from "../stores/db";
-import {useRoute} from "vue-router";
+import { reactive, defineComponent } from "vue"
+import { useDBStore } from "../stores/db"
+import { useRoute } from "vue-router"
 export default defineComponent({
   props: {
-    icon:String,
-    library:{
-      type:String,
-      default:"default"
+    icon: String,
+    library: {
+      type: String,
+      default: "default"
     },
-    to:Object
-
+    to: Object
   },
   components: {},
   setup(props, context) {
@@ -29,7 +31,7 @@ export default defineComponent({
     const dbStore = useDBStore()
     const route = useRoute()
 
-    function openTab(){
+    function openTab() {
       dbStore.addOpened(props.to, props.to.params["module"], props.to.query["view"])
     }
 
@@ -42,7 +44,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.icon-wrap{
+.icon-wrap {
   background-color: var(--sl-color-primary-500);
   display: flex;
   justify-content: center;
@@ -50,13 +52,13 @@ export default defineComponent({
   height: 100%;
   aspect-ratio: 1;
 
-  & sl-icon{
+  & sl-icon {
     color: #fff;
     font-size: 1.3em;
   }
 }
 
-.home-box{
+.home-box {
   display: flex;
   flex-direction: row;
   overflow: hidden;
@@ -64,16 +66,16 @@ export default defineComponent({
   border: 1px solid var(--sl-color-neutral-200);
   cursor: pointer;
   background-color: #fff;
-  transition: all ease .3s;
+  transition: all ease 0.3s;
 
-  &:hover{
+  &:hover {
     background-color: var(--sl-color-neutral-50);
     border: 1px solid var(--sl-color-neutral-300);
     color: var(--sl-color-primary-500);
   }
 }
 
-.home-name{
+.home-name {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

@@ -1,50 +1,60 @@
 <template>
-  <router-link :to="state.url" custom v-slot="{route}">
-    <sl-button size="small" outline variant="info" :disabled="!state.active || !state.canEdit"
-               @click="createAndNavigate(route)"
-               :title="$t('actions.fluidpage.edit')"
+  <router-link
+    :to="state.url"
+    custom
+    v-slot="{ route }"
+  >
+    <sl-button
+      size="small"
+      outline
+      variant="info"
+      :disabled="!state.active || !state.canEdit"
+      @click="createAndNavigate(route)"
+      :title="$t('actions.fluidpage.edit')"
     >
-      <sl-icon slot="prefix" name="press"></sl-icon>
+      <sl-icon
+        slot="prefix"
+        name="press"
+      ></sl-icon>
     </sl-button>
   </router-link>
 </template>
 
 <script lang="ts">
 // @ts-nocheck
-import {reactive, defineComponent, inject, computed} from 'vue'
-import {useRoute} from "vue-router";
-import {useDBStore} from "../stores/db";
-import {useUserStore} from "../stores/user";
-import { useContextStore } from '../stores/context';
+import { reactive, defineComponent, inject, computed } from "vue"
+import { useRoute } from "vue-router"
+import { useDBStore } from "../stores/db"
+import { useUserStore } from "../stores/user"
+import { useContextStore } from "../stores/context"
 
 export default defineComponent({
   props: {},
   components: {},
   setup(props, context) {
     const handlerState: any = inject("handlerState")
-    const dbStore = useDBStore();
-    const userStore = useUserStore();
+    const dbStore = useDBStore()
+    const userStore = useUserStore()
     const contextStore = useContextStore()
     const currentRoute = useRoute()
     const state = reactive({
       active: computed(() => {
         return handlerState.currentSelection && handlerState.currentSelection.length > 0
       }),
-      contentModule:computed(()=>{
-        let conf = dbStore.getConf(handlerState.module);
+      contentModule: computed(() => {
+        let conf = dbStore.getConf(handlerState.module)
         let module = conf["handler"].split(".").at(-1)
         return module
       }),
       url: computed(() => {
         if (!state.active) return ""
-        return `/db/${state.contentModule}/fluidpage/${currentRoute.params['module']}/${handlerState.currentSelection[0]["key"]}`
+        return `/db/${state.contentModule}/fluidpage/${currentRoute.params["module"]}/${handlerState.currentSelection[0]["key"]}`
       }),
       canEdit: computed(() => {
-       if(userStore.state.user.access.indexOf("root") !== -1 )
-       {
-         return true;
-       }
-       return userStore.state.user.access.indexOf(`${handlerState.module}-edit`)>-1;
+        if (userStore.state.user.access.indexOf("root") !== -1) {
+          return true
+        }
+        return userStore.state.user.access.indexOf(`${handlerState.module}-edit`) > -1
       })
     })
 
@@ -62,6 +72,4 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

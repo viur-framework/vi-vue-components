@@ -2,27 +2,48 @@
   <div class="main-wrapper">
     <handler-bar :module="module"></handler-bar>
 
-    <sl-details open summary="Modul Info"
-      v-if="modulesStore.state.loaded && modulesStore.state.modules[module]['help_text']">
-        <div v-html="modulesStore.state.modules[module]['help_text']"></div>
+    <sl-details
+      open
+      summary="Modul Info"
+      v-if="modulesStore.state.loaded && modulesStore.state.modules[module]['help_text']"
+    >
+      <div v-html="modulesStore.state.modules[module]['help_text']"></div>
     </sl-details>
-    <div class="table-wrapper" @scroll="stickyHeader" v-if="Object.keys(state.selectedPath).length > 0" >
-      <loader size="3" v-if="!state.ready"></loader>
+    <div
+      class="table-wrapper"
+      @scroll="stickyHeader"
+      v-if="Object.keys(state.selectedPath).length > 0"
+    >
+      <loader
+        size="3"
+        v-if="!state.ready"
+      ></loader>
       <table>
         <thead>
           <tr>
-            <th style="width: 75px" class="open-column"></th>
-            <th style="width: 30px" class="drag-column"></th>
-            <th style="width: 150px"
-                v-for="(name) in state.selectedBones"
-                :class="{'stick-header':state.sticky}"
+            <th
+              style="width: 75px"
+              class="open-column"
+            ></th>
+            <th
+              style="width: 30px"
+              class="drag-column"
+            ></th>
+            <th
+              style="width: 150px"
+              v-for="name in state.selectedBones"
+              :class="{ 'stick-header': state.sticky }"
             >
               {{ state.structure?.[name]["descr"] }}
             </th>
           </tr>
         </thead>
         <tbody>
-          <table-node-item :module="module" :path="state.currentRootNode?[0]:[]" @loaded="setSelectedBones"></table-node-item>
+          <table-node-item
+            :module="module"
+            :path="state.currentRootNode ? [0] : []"
+            @loaded="setSelectedBones"
+          ></table-node-item>
         </tbody>
       </table>
     </div>
@@ -42,18 +63,17 @@ import {
   toRaw,
   onActivated,
   onDeactivated
-} from 'vue'
-import HandlerBar from "../bars/HandlerBar.vue";
-import {Request} from '@viur/vue-utils'
-import {useDBStore} from '../stores/db'
-import { useModulesStore } from '../stores/modules';
-import {useRoute} from "vue-router";
-import {useUserStore} from "../stores/user";
-import TableNodeItem from "../tree/TableNodeItem.vue";
-import FloatingBar from "../bars/FloatingBar.vue";
-import useTree from '../tree/tree';
-import Loader from "@viur/vue-utils/generic/Loader.vue";
-
+} from "vue"
+import HandlerBar from "../bars/HandlerBar.vue"
+import { Request } from "@viur/vue-utils"
+import { useDBStore } from "../stores/db"
+import { useModulesStore } from "../stores/modules"
+import { useRoute } from "vue-router"
+import { useUserStore } from "../stores/user"
+import TableNodeItem from "../tree/TableNodeItem.vue"
+import FloatingBar from "../bars/FloatingBar.vue"
+import useTree from "../tree/tree"
+import Loader from "@viur/vue-utils/generic/Loader.vue"
 
 export default defineComponent({
   props: {
@@ -62,18 +82,18 @@ export default defineComponent({
       required: true
     },
     view: null,
-    selector:false
+    selector: false
   },
-  emits:['currentSelection','closeSelector'],
-  components: {HandlerBar, TableNodeItem, FloatingBar, Loader},
+  emits: ["currentSelection", "closeSelector"],
+  components: { HandlerBar, TableNodeItem, FloatingBar, Loader },
   setup(props, context) {
-    const dbStore = useDBStore();
-    const userStore = useUserStore();
-    const modulesStore = useModulesStore();
-    const route = useRoute();
+    const dbStore = useDBStore()
+    const userStore = useUserStore()
+    const modulesStore = useModulesStore()
+    const route = useRoute()
 
     const state = reactive({
-      type:"hierarchyhandler",
+      type: "hierarchyhandler",
       storeName: computed(() => {
         let name: string = `module___${props.module}`
         if (props.view) {
@@ -89,12 +109,12 @@ export default defineComponent({
       group: null,
       view: computed(() => props.view),
       structure: {},
-      active:false,
-      selectedBones:[],
-      selectedRows:[],
-      sticky:false,
+      active: false,
+      selectedBones: [],
+      selectedRows: [],
+      sticky: false,
 
-      dragging:true,
+      dragging: true,
       selectedPath: [],
       draggedEntry: null,
       refreshList: false,
@@ -106,7 +126,7 @@ export default defineComponent({
         for (let i of state.selectedPath) {
           if (Array.isArray(entry)) {
             entry = entry[i]
-            if (!entry) break;
+            if (!entry) break
             entry["_expanded"] = true
             retVal.push(entry)
           }
@@ -117,25 +137,24 @@ export default defineComponent({
         }
         return retVal
       }),
-      currentEntry:computed(()=>{
+      currentEntry: computed(() => {
         return tree.EntryFromPath(state.selectedPath)
       }),
-      currentSelection:[],
-      selector:computed(()=>props.selector),
-      ready:false
+      currentSelection: [],
+      selector: computed(() => props.selector),
+      ready: false
     })
     provide("handlerState", state) // expose to components
-    const tree = useTree(props.module,state,state)
+    const tree = useTree(props.module, state, state)
 
     function reloadAction() {
       state.selectedPath = []
-      return fetchRoots().then(()=>{
+      return fetchRoots().then(() => {
         state.tree = [state.currentRootNode]
         state.selectedPath = [0]
       })
     }
     provide("reloadAction", reloadAction)
-
 
     function entrySelected(e) {
       console.log(state.selectedEntries)
@@ -143,50 +162,50 @@ export default defineComponent({
       return 0
     }
 
-    onActivated(()=>{
+    onActivated(() => {
       state.active = true
 
       let tabData = dbStore.getTabById(route.query["_"])
 
-      if (tabData?.["update"]){
+      if (tabData?.["update"]) {
         reloadAction()
-        tabData["update"]=false
+        tabData["update"] = false
       }
-
     })
 
-    onDeactivated(()=>{
+    onDeactivated(() => {
       state.active = false
     })
 
     function fetchRoots() {
       return Request.get(`/vi/${props.module}/listRootNodes`).then(async (resp) => {
         let data = await resp.json()
-        state.currentRootNodes = data;
-        if (!state.currentRootNode){
+        state.currentRootNodes = data
+        if (!state.currentRootNode) {
           state.currentRootNode = data[0]
         }
-
       })
     }
 
-    onBeforeMount(()=>{
-      fetchRoots().then(()=>{
+    onBeforeMount(() => {
+      fetchRoots().then(() => {
         state.tree = [state.currentRootNode]
         state.selectedPath = [0]
-
       })
     })
 
-    watch(() => state.selectedEntries, (newVal, oldVal) => {
-      state.currentSelection = [state.currentEntry]
-    })
+    watch(
+      () => state.selectedEntries,
+      (newVal, oldVal) => {
+        state.currentSelection = [state.currentEntry]
+      }
+    )
 
-    function setSelectedBones(){
-      state.ready= true
+    function setSelectedBones() {
+      state.ready = true
       let bones = []
-      for(const [k,v] of Object.entries(state.structure)){
-        if(v["visible"]) bones.push(k)
+      for (const [k, v] of Object.entries(state.structure)) {
+        if (v["visible"]) bones.push(k)
       }
 
       console.log(bones)
@@ -194,15 +213,15 @@ export default defineComponent({
     }
 
     function changerootNode(key: string) {
-      state.currentRootNode = state.currentRootNodes.filter(i=>i["key"]===key)[0]
+      state.currentRootNode = state.currentRootNodes.filter((i) => i["key"] === key)[0]
       reloadAction()
     }
     provide("changerootNode", changerootNode)
 
-    function closeSelector(){
+    function closeSelector() {
       context.emit("closeSelector")
     }
-    provide("closeSelector",closeSelector)
+    provide("closeSelector", closeSelector)
 
     return {
       state,
@@ -215,66 +234,68 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
-.table-wrapper{
-  overflow:scroll;
+.table-wrapper {
+  overflow: scroll;
   flex: 1;
 }
 
-table{
+table {
   width: 100%;
   table-layout: fixed;
 
-  & tbody{
-    & tr{
+  & tbody {
+    & tr {
       cursor: pointer;
-      transition: all ease .3s;
+      transition: all ease 0.3s;
 
-      & td{
-        padding: .4em .6em;
+      & td {
+        padding: 0.4em 0.6em;
         overflow: hidden;
         word-wrap: break-word;
         border-right: 1px solid var(--sl-color-neutral-300);
         border-bottom: 1px solid var(--sl-color-neutral-300);
 
-        &:last-child{
+        &:last-child {
           border-right: 0;
         }
       }
 
-      &:nth-child(even){
+      &:nth-child(even) {
         background-color: var(--sl-color-neutral-100);
       }
 
-      &:hover{
+      &:hover {
         background-color: var(--sl-color-neutral-200);
       }
     }
 
-    & tr.selected{
+    & tr.selected {
       background-color: var(--sl-color-primary-50);
 
-      td{
+      td {
         font-weight: 700;
       }
     }
   }
 
-  & thead{
+  & thead {
     & th {
       position: relative;
-      padding: .4em .6em;
+      padding: 0.4em 0.6em;
       resize: horizontal;
       overflow: hidden;
-      background: linear-gradient( var(--vi-background-color) 0%, var(--vi-background-color) calc(100% - 2px), var(--sl-color-neutral-700) 100% );
+      background: linear-gradient(
+        var(--vi-background-color) 0%,
+        var(--vi-background-color) calc(100% - 2px),
+        var(--sl-color-neutral-700) 100%
+      );
       font-weight: 700;
       border-right: 1px solid var(--sl-color-neutral-300);
       text-overflow: ellipsis;
 
-        &:last-child{
-          border-right: 0;
-        }
-
+      &:last-child {
+        border-right: 0;
+      }
 
       &::-webkit-resizer {
         border-color: transparent;
@@ -282,7 +303,7 @@ table{
       }
 
       &:after {
-        content:"";
+        content: "";
         border-style: solid;
         border-width: 0 0 12px 12px;
         border-color: transparent transparent var(--sl-color-neutral-200) transparent;
@@ -291,7 +312,7 @@ table{
         right: 0;
         bottom: 2px;
         pointer-events: none;
-    }
+      }
 
       &:hover {
         &:after {
@@ -302,7 +323,7 @@ table{
   }
 }
 
-.main-wrapper{
+.main-wrapper {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -310,7 +331,7 @@ table{
   position: relative;
 }
 
-.more-entries{
+.more-entries {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -325,23 +346,21 @@ table{
   transform: translateX(-50%);
 }
 
-sl-select{
-  &::part(form-control){
+sl-select {
+  &::part(form-control) {
     flex-direction: row;
     align-items: center;
   }
 
-  &::part(form-control-label){
+  &::part(form-control-label) {
     margin-right: 10px;
-    font-size: .8em;
+    font-size: 0.8em;
   }
 
-  &::part(form-control-input){
+  &::part(form-control-input) {
     width: 80px;
   }
-
 }
-
 
 sl-split-panel {
   --min: 300px;
@@ -366,24 +385,21 @@ sl-table {
   }
 }
 
-.drag-column{
+.drag-column {
   resize: none;
   border-right: none;
 
-  &:after{
+  &:after {
     content: none;
   }
-
 }
 
-.open-column{
+.open-column {
   resize: none;
   border-right: none;
 
-  &:after{
+  &:after {
     content: none;
   }
-
 }
-
 </style>

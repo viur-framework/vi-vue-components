@@ -1,8 +1,14 @@
 <template>
   <header>
-    <router-link to="/" class="head">
+    <router-link
+      to="/"
+      class="head"
+    >
       <div class="logo">
-        <sl-icon :src="appStore.state['admin.logo']" v-once></sl-icon>
+        <sl-icon
+          :src="appStore.state['admin.logo']"
+          v-once
+        ></sl-icon>
       </div>
       <h1 class="main-headline">
         {{ appStore.state["admin.name"] }}
@@ -10,32 +16,34 @@
     </router-link>
 
     <div class="main-group">
-      <component v-for="action in dbStore.state['topbar.actions']" :is="action">
+      <component
+        v-for="action in dbStore.state['topbar.actions']"
+        :is="action"
+      >
       </component>
     </div>
   </header>
 </template>
 
 <script lang="ts">
-import { useAppStore } from "../stores/app";
-import { useDBStore } from "../stores/db";
-import { defineComponent, reactive, computed } from "vue";
-import router from "../routes";
+import { useAppStore } from "../stores/app"
+import { useDBStore } from "../stores/db"
+import { defineComponent, reactive, computed } from "vue"
+import router from "../routes"
 
 export default defineComponent({
   setup(props, context) {
-    const appStore = useAppStore();
-    const dbStore = useDBStore();
-    const state = reactive({
-    });
+    const appStore = useAppStore()
+    const dbStore = useDBStore()
+    const state = reactive({})
 
     return {
       appStore,
       dbStore,
       state
-    };
-  },
-});
+    }
+  }
+})
 </script>
 
 <style scoped>
@@ -89,6 +97,4 @@ header {
   gap: 10px;
   align-items: center;
 }
-
-
 </style>

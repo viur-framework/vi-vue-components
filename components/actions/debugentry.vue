@@ -1,12 +1,27 @@
 <template>
-    <sl-button size="small" variant="danger" outline @click="debugClicked"
-               :title="$t('actions.debug')">
-      <sl-icon slot="prefix" name="bug"></sl-icon>
-      {{ $t("actions.debug") }}
-    </sl-button>
+  <sl-button
+    size="small"
+    variant="danger"
+    outline
+    @click="debugClicked"
+    :title="$t('actions.debug')"
+  >
+    <sl-icon
+      slot="prefix"
+      name="bug"
+    ></sl-icon>
+    {{ $t("actions.debug") }}
+  </sl-button>
 
-  <teleport v-if="state.opened" to="#dialogs" :disabled="!state.opened">
-    <sl-drawer open @sl-after-hide="crossClicked">
+  <teleport
+    v-if="state.opened"
+    to="#dialogs"
+    :disabled="!state.opened"
+  >
+    <sl-drawer
+      open
+      @sl-after-hide="crossClicked"
+    >
       <vue-json-pretty :data="handlerState.skel"></vue-json-pretty>
     </sl-drawer>
   </teleport>
@@ -14,30 +29,30 @@
 
 <script lang="ts">
 // @ts-nocheck
-import {reactive, defineComponent, inject, computed} from 'vue'
-import {useRoute} from "vue-router";
-import {useDBStore} from "../stores/db";
-import {useUserStore} from "../stores/user";
-import VueJsonPretty from 'vue-json-pretty';
-import 'vue-json-pretty/lib/styles.css';
+import { reactive, defineComponent, inject, computed } from "vue"
+import { useRoute } from "vue-router"
+import { useDBStore } from "../stores/db"
+import { useUserStore } from "../stores/user"
+import VueJsonPretty from "vue-json-pretty"
+import "vue-json-pretty/lib/styles.css"
 
 export default defineComponent({
   props: {},
-  components: {VueJsonPretty},
+  components: { VueJsonPretty },
   setup(props, context) {
     const handlerState: any = inject("handlerState")
-    const dbStore = useDBStore();
-    const userStore = useUserStore();
+    const dbStore = useDBStore()
+    const userStore = useUserStore()
     const route = useRoute()
     const state = reactive({
-      opened:false
+      opened: false
     })
 
-    function debugClicked(){
+    function debugClicked() {
       state.opened = !state.opened
     }
 
-    function crossClicked(){
+    function crossClicked() {
       state.opened = !state.opened
     }
     return {
@@ -51,7 +66,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
-  sl-button{
-    margin-left: 5px;
-  }
+sl-button {
+  margin-left: 5px;
+}
 </style>

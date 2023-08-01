@@ -1,57 +1,76 @@
 <template>
-  <li v-for="(child,idx) in state.currentEntry['_nodes']"
-      :key="child['key']"
-      :style="{marginLeft:((path.concat([idx]).length-2)*10)+'px'}"
+  <li
+    v-for="(child, idx) in state.currentEntry['_nodes']"
+    :key="child['key']"
+    :style="{ marginLeft: (path.concat([idx]).length - 2) * 10 + 'px' }"
   >
-    <div class="entry"
-         :draggable="child['_dragging'] && treeState.dragging"
-         @dragstart="tree.onDragStart($event, idx)"
-         @dragenter.prevent="tree.onDragEnter($event, idx)"
-         @dragover.prevent="tree.onDragOver($event, idx)"
-         @dragleave="tree.onDragLeave($event, idx)"
-         @drop.stop="tree.onDrop($event, idx)"
-         :class="{'dropin':child['_isover'] && child['_drop']==='in',
-               'dropafter':child['_isover'] && child['_drop']==='after',
-               'dropbefore':child['_isover'] && child['_drop']==='before'
+    <div
+      class="entry"
+      :draggable="child['_dragging'] && treeState.dragging"
+      @dragstart="tree.onDragStart($event, idx)"
+      @dragenter.prevent="tree.onDragEnter($event, idx)"
+      @dragover.prevent="tree.onDragOver($event, idx)"
+      @dragleave="tree.onDragLeave($event, idx)"
+      @drop.stop="tree.onDrop($event, idx)"
+      :class="{
+        dropin: child['_isover'] && child['_drop'] === 'in',
+        dropafter: child['_isover'] && child['_drop'] === 'after',
+        dropbefore: child['_isover'] && child['_drop'] === 'before'
       }"
-
     >
-      <div class="dragger" v-if="treeState.dragging"
-               @mouseup="tree.mouseUpHandle($event, idx)"
-               @mousedown="tree.mouseDownHandle($event, idx)">
-      <sl-icon name="menu"></sl-icon>
+      <div
+        class="dragger"
+        v-if="treeState.dragging"
+        @mouseup="tree.mouseUpHandle($event, idx)"
+        @mousedown="tree.mouseDownHandle($event, idx)"
+      >
+        <sl-icon name="menu"></sl-icon>
       </div>
 
-      <div class="chevron"
-           @click="clickToExpand(idx)">
-        <sl-icon name="play"
-             :class="{disabled:child['_disabled'], expanded:child['_expanded']}"
+      <div
+        class="chevron"
+        @click="clickToExpand(idx)"
+      >
+        <sl-icon
+          name="play"
+          :class="{ disabled: child['_disabled'], expanded: child['_expanded'] }"
         ></sl-icon>
       </div>
 
-      <div class="loading" v-if="child['_status']==='loading'">
+      <div
+        class="loading"
+        v-if="child['_status'] === 'loading'"
+      >
         <sl-spinner></sl-spinner>
       </div>
 
-      <div class="item"
-           @click="selectChild(idx)"
-           :class="{active:isactive(idx)}"
+      <div
+        class="item"
+        @click="selectChild(idx)"
+        :class="{ active: isactive(idx) }"
       >
-        <sl-icon name="folder"  class="item-icon"></sl-icon>
+        <sl-icon
+          name="folder"
+          class="item-icon"
+        ></sl-icon>
 
         <div class="title">
-          {{ child['name'] }}
+          {{ child["name"] }}
         </div>
       </div>
     </div>
-    <tree-folder-item :module="module" :path="path.concat([idx])" v-if="child['_expanded']"></tree-folder-item>
+    <tree-folder-item
+      :module="module"
+      :path="path.concat([idx])"
+      v-if="child['_expanded']"
+    ></tree-folder-item>
   </li>
 </template>
 
 <script lang="js">
-import {reactive, defineComponent, inject, onBeforeMount, watch, computed, onMounted, unref, toRaw} from 'vue'
-import {Request} from "@viur/vue-utils";
-import useTree from "./tree.js";
+import { reactive, defineComponent, inject, onBeforeMount, watch, computed, onMounted, unref, toRaw } from "vue"
+import { Request } from "@viur/vue-utils"
+import useTree from "./tree.js"
 
 export default defineComponent({
   components: {},
@@ -68,28 +87,29 @@ export default defineComponent({
   setup(props, context) {
     const treeState = inject("handlerState")
     const state = reactive({
-      currentEntry: {},
+      currentEntry: {}
     })
-    const tree = useTree(props.module,treeState,state)
+    const tree = useTree(props.module, treeState, state)
 
     onMounted(() => {
       state.currentEntry = tree.EntryFromPath(props.path)
-      if (props.path && props.path.length === 1 && props.path[0] === 0) { // prefetch rootnode childs
-        state.currentEntry['_status'] = 'loading'
+      if (props.path && props.path.length === 1 && props.path[0] === 0) {
+        // prefetch rootnode childs
+        state.currentEntry["_status"] = "loading"
         Request.get(`/vi/${props.module}/list`, {
           dataObj: {
-            "skelType": "node",
-            "orderby": "sortindex",
-            "parententry": state.currentEntry["key"]
+            skelType: "node",
+            orderby: "sortindex",
+            parententry: state.currentEntry["key"]
           }
         }).then(async (resp) => {
           let data = await resp.json()
-          state.currentEntry['_nodes'] = data["skellist"]
-          state.currentEntry['_disabled'] = false
-          state.currentEntry['_status'] = 'loaded' //loading, loaded
-          state.currentEntry['_dragging'] = false
-          state.currentEntry['_isover'] = false
-          state.currentEntry['_drop'] = null
+          state.currentEntry["_nodes"] = data["skellist"]
+          state.currentEntry["_disabled"] = false
+          state.currentEntry["_status"] = "loaded" //loading, loaded
+          state.currentEntry["_dragging"] = false
+          state.currentEntry["_isover"] = false
+          state.currentEntry["_drop"] = null
         })
       }
     })
@@ -103,9 +123,9 @@ export default defineComponent({
     }
 
     function clickToExpand(idx) {
-      if (state.currentEntry['_nodes'][idx]['_loading'] === true) return 0 //wait
+      if (state.currentEntry["_nodes"][idx]["_loading"] === true) return 0 //wait
 
-      if (!Object.keys(state.currentEntry['_nodes'][idx]).includes('_nodes')) {
+      if (!Object.keys(state.currentEntry["_nodes"][idx]).includes("_nodes")) {
         tree.requestChildren(idx).then(() => expandChildren(idx))
       } else {
         expandChildren(idx)
@@ -113,7 +133,7 @@ export default defineComponent({
     }
 
     function expandChildren(idx) {
-      let clickedEntry = state.currentEntry['_nodes'][idx]
+      let clickedEntry = state.currentEntry["_nodes"][idx]
       if (Object.keys(clickedEntry).includes("_expanded")) {
         clickedEntry["_expanded"] = !clickedEntry["_expanded"]
       } else {
@@ -122,7 +142,8 @@ export default defineComponent({
     }
 
     return {
-      state, treeState,
+      state,
+      treeState,
       clickToExpand,
       isactive,
       selectChild,
@@ -145,19 +166,19 @@ export default defineComponent({
   border-top: 4px solid var(--sl-color-neutral-400) !important;
 }
 
-.dragger{
+.dragger {
   display: flex;
   justify-content: center;
   align-items: center;
   padding-right: var(--sl-spacing-x-small);
   height: 100%;
   cursor: move;
-  opacity: .2;
-  transition: opacity ease .3s;
+  opacity: 0.2;
+  transition: opacity ease 0.3s;
   color: var(--vi-foreground-color);
 
-  & sl-icon{
-    font-size: .7em;
+  & sl-icon {
+    font-size: 0.7em;
   }
 }
 
@@ -165,7 +186,6 @@ export default defineComponent({
   color: var(--sl-color-primary-500);
   font-weight: 600;
 }
-
 
 .entry {
   display: flex;
@@ -177,14 +197,14 @@ export default defineComponent({
   border-top: 4px solid transparent;
   border-bottom: 4px solid transparent;
 
-  &:hover{
-    & .dragger{
+  &:hover {
+    & .dragger {
       opacity: 1;
     }
   }
 }
 
-.loading{
+.loading {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -209,7 +229,7 @@ export default defineComponent({
   color: var(--vi-foreground-color);
 }
 
-.chevron{
+.chevron {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -218,21 +238,21 @@ export default defineComponent({
   height: 1em;
   margin-right: var(--sl-spacing-x-small);
 
-  & sl-icon{
-	font-size: .4em;
-  color: var(--vi-foreground-color);
+  & sl-icon {
+    font-size: 0.4em;
+    color: var(--vi-foreground-color);
 
-	&.expanded{
-	  transform: rotate(90deg);
-	}
+    &.expanded {
+      transform: rotate(90deg);
+    }
 
-	&.disabled{
-	  opacity: .4;
-	}
+    &.disabled {
+      opacity: 0.4;
+    }
   }
 }
 
-.title{
+.title {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -240,7 +260,6 @@ export default defineComponent({
 }
 
 .disabled {
-  opacity: .4;
+  opacity: 0.4;
 }
-
 </style>

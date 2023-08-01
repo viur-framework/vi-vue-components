@@ -1,9 +1,11 @@
 <template>
   <div class="more-entries">
-
     <template v-if="['listhandler'].includes(handerState['type'])">
-      <component v-for="action in dbStore.state['floatingbar.actions']" :is="action">
-    </component>
+      <component
+        v-for="action in dbStore.state['floatingbar.actions']"
+        :is="action"
+      >
+      </component>
     </template>
 
     <next-page v-if="['listhandler'].includes(handerState['type'])"></next-page>
@@ -14,28 +16,26 @@
 
 <script lang="ts">
 //@ts-nocheck
-import {reactive, defineComponent, inject} from 'vue'
-import Reload from "../actions/reload.vue";
-import SetAmount from "../actions/setamount.vue";
-import NextPage from "../actions/nextpage.vue";;
-import { useDBStore } from '../stores/db';
-
+import { reactive, defineComponent, inject } from "vue"
+import Reload from "../actions/reload.vue"
+import SetAmount from "../actions/setamount.vue"
+import NextPage from "../actions/nextpage.vue"
+import { useDBStore } from "../stores/db"
 
 export default defineComponent({
   props: {},
-  components: {SetAmount, Reload, NextPage},
+  components: { SetAmount, Reload, NextPage },
   setup(props, context) {
     const state = reactive({})
     const dbStore = useDBStore()
-    const handerState = inject('handlerState')
-    return {state,dbStore, handerState}
+    const handerState = inject("handlerState")
+    return { state, dbStore, handerState }
   }
 })
 </script>
 
 <style scoped>
-
-.more-entries{
+.more-entries {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -50,20 +50,19 @@ export default defineComponent({
   transform: translateX(-50%);
 }
 
-sl-select{
-  &::part(form-control){
+sl-select {
+  &::part(form-control) {
     flex-direction: row;
     align-items: center;
   }
 
-  &::part(form-control-label){
+  &::part(form-control-label) {
     margin-right: 10px;
-    font-size: .8em;
+    font-size: 0.8em;
   }
 
-  &::part(form-control-input){
+  &::part(form-control-input) {
     width: 80px;
   }
 }
-
 </style>

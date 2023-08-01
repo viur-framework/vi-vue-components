@@ -1,87 +1,132 @@
 <template>
   <div class="wrapper">
     <sl-card>
-      <img class="logo" :src="state.logo">
-      <sl-alert v-if="userStore.state['user.loggedin']==='error'" open variant="danger">
+      <img
+        class="logo"
+        :src="state.logo"
+      />
+      <sl-alert
+        v-if="userStore.state['user.loggedin'] === 'error'"
+        open
+        variant="danger"
+      >
         Fehler beim Anmelden
       </sl-alert>
 
-      <div class="init-spinner"  style="position: relative;height:40px"  v-if="state.waitForInit">
+      <div
+        class="init-spinner"
+        style="position: relative; height: 40px"
+        v-if="state.waitForInit"
+      >
         <loader></loader>
       </div>
 
       <sl-tab-group v-else>
-        <sl-tab slot="nav" panel="userpassword"
-                :disabled="userStore.state['user.login.type']!=='user' && userStore.state['user.login.type']!=='no'"
+        <sl-tab
+          slot="nav"
+          panel="userpassword"
+          :disabled="userStore.state['user.login.type'] !== 'user' && userStore.state['user.login.type'] !== 'no'"
         >
           Nutzer
         </sl-tab>
 
-        <sl-tab slot="nav" panel="google"
-                :disabled="userStore.state['user.login.type']!=='google' && userStore.state['user.login.type']!=='no'"
+        <sl-tab
+          slot="nav"
+          panel="google"
+          :disabled="userStore.state['user.login.type'] !== 'google' && userStore.state['user.login.type'] !== 'no'"
         >
           Google
         </sl-tab>
         <!--<sl-tab slot="nav" panel="sso">Mausbrand-SSO</sl-tab>-->
 
         <sl-tab-panel name="userpassword">
-          <div v-show="userStore.state['user.loggedin']==='no'">
-
-            <sl-input type="text" name="name" v-model="state.name" placeholder="E-Mail" clearable autocomplete="on"
-                      @sl-clear="state.name=''"></sl-input>
-            <sl-input @keydown.enter="userLogin" type="password" name="password" v-model="state.password" autocomplete="on"
-                      placeholder="Passwort" @sl-clear="state.password=''" toggle-password></sl-input>
-            <sl-button @click="userLogin" variant="primary"
-                       v-if="['no', 'loading', 'error'].includes(userStore.state['user.loggedin'])"
-                       :disabled="!state.userDataFilled"
-                       :loading="userStore.state['user.loggedin']==='loading'"
+          <div v-show="userStore.state['user.loggedin'] === 'no'">
+            <sl-input
+              type="text"
+              name="name"
+              v-model="state.name"
+              placeholder="E-Mail"
+              clearable
+              autocomplete="on"
+              @sl-clear="state.name = ''"
+            ></sl-input>
+            <sl-input
+              @keydown.enter="userLogin"
+              type="password"
+              name="password"
+              v-model="state.password"
+              autocomplete="on"
+              placeholder="Passwort"
+              @sl-clear="state.password = ''"
+              toggle-password
+            ></sl-input>
+            <sl-button
+              @click="userLogin"
+              variant="primary"
+              v-if="['no', 'loading', 'error'].includes(userStore.state['user.loggedin'])"
+              :disabled="!state.userDataFilled"
+              :loading="userStore.state['user.loggedin'] === 'loading'"
             >
               Login
-
             </sl-button>
-            <sl-button @click="logout" v-else>Logout</sl-button>
+            <sl-button
+              @click="logout"
+              v-else
+              >Logout</sl-button
+            >
           </div>
-           <div v-show="userStore.state['user.loggedin']==='secound_factor_authenticator_otp'">
+          <div v-show="userStore.state['user.loggedin'] === 'secound_factor_authenticator_otp'">
+            <sl-input
+              type="text"
+              name="otp"
+              v-model="state.otp"
+              placeholder="OTP"
+              clearable
+            ></sl-input>
 
-            <sl-input type="text" name="otp" v-model="state.otp" placeholder="OTP" clearable></sl-input>
-
-            <sl-button @click="userSecondFactor" variant="primary"
-                       :loading="userStore.state['user.loggedin']==='loading'">
+            <sl-button
+              @click="userSecondFactor"
+              variant="primary"
+              :loading="userStore.state['user.loggedin'] === 'loading'"
+            >
               Login
             </sl-button>
-
           </div>
-
-
         </sl-tab-panel>
         <sl-tab-panel name="google">
           <div id="google_oauth"></div>
-          <sl-button @click="googleLogin" variant="primary"
-                     v-if="['no', 'loading', 'error'].includes(userStore.state['user.loggedin'])"
-                     :loading="userStore.state['user.loggedin']==='loading'"
+          <sl-button
+            @click="googleLogin"
+            variant="primary"
+            v-if="['no', 'loading', 'error'].includes(userStore.state['user.loggedin'])"
+            :loading="userStore.state['user.loggedin'] === 'loading'"
           >
             Mit Google anmelden
           </sl-button>
-          <sl-button @click="logout" variant="primary" v-else :loading="state.waitForLogout">Logout</sl-button>
+          <sl-button
+            @click="logout"
+            variant="primary"
+            v-else
+            :loading="state.waitForLogout"
+            >Logout</sl-button
+          >
         </sl-tab-panel>
         <!--<sl-tab-panel name="sso">Login with Mausbrand SSO</sl-tab-panel>-->
       </sl-tab-group>
     </sl-card>
   </div>
-
 </template>
 
 <script lang="ts">
-import {useUserStore} from "../stores/user"
-import {reactive, computed, onBeforeMount, defineComponent, ref} from 'vue'
-import {Request} from "@viur/vue-utils";
-import {useAppStore} from "../stores/app";
+import { useUserStore } from "../stores/user"
+import { reactive, computed, onBeforeMount, defineComponent, ref } from "vue"
+import { Request } from "@viur/vue-utils"
+import { useAppStore } from "../stores/app"
 import Loader from "@viur/vue-utils/generic/Loader.vue"
 
 export default defineComponent({
-  components: {Loader},
+  components: { Loader },
   setup() {
-
     //We must load the Vi settings
 
     const userStore = useUserStore()
@@ -94,9 +139,9 @@ export default defineComponent({
       userDataFilled: computed(() => state.name && state.password),
       waitForLogout: false,
       waitForInit: true,
-      backgroundImage:computed(() => `url('${appStore.state["admin.login.background"]}'`),
-      logo:computed(() => appStore.state["admin.login.logo"]),
-      otp:"",
+      backgroundImage: computed(() => `url('${appStore.state["admin.login.background"]}'`),
+      logo: computed(() => appStore.state["admin.login.logo"]),
+      otp: ""
     })
 
     function googleLogin() {
@@ -118,13 +163,15 @@ export default defineComponent({
       userStore.userSecondFactor(state.otp)
     }
 
-
     onBeforeMount(() => {
-      userStore.updateUser().then(() => {
-        state.waitForInit = false
-      }).catch((error) => {
-        state.waitForInit = false
-      })
+      userStore
+        .updateUser()
+        .then(() => {
+          state.waitForInit = false
+        })
+        .catch((error) => {
+          state.waitForInit = false
+        })
     })
 
     return {
@@ -135,14 +182,11 @@ export default defineComponent({
       state,
       userSecondFactor
     }
-  },
-
-
+  }
 })
 </script>
 
 <style scoped>
-
 #google_oauth {
   display: flex;
   justify-content: center;
@@ -160,7 +204,7 @@ export default defineComponent({
 }
 
 .wrapper::before {
-  content: '';
+  content: "";
   opacity: 0.7;
   position: absolute;
   top: 0;
@@ -177,7 +221,7 @@ export default defineComponent({
 }
 
 sl-button {
-  width: 100%
+  width: 100%;
 }
 
 sl-card {
@@ -197,7 +241,6 @@ sl-card {
     justify-content: center;
     align-items: stretch;
   }
-
 }
 
 .init-spinner {
@@ -215,7 +258,7 @@ sl-tab {
     padding: 10px 20px;
   }
 
-  &[aria-selected="true"]{
+  &[aria-selected="true"] {
     &::part(base) {
       color: var(--vi-foreground-color);
     }
