@@ -10,9 +10,9 @@
   "author": "Andreas H. Kelch",
   "dependencies": {
     "@ckeditor/ckeditor5-vue": "^5.1.0",
-    "@viur/vi-components": "file:../components",
     "@viur/viur-shoelace": "^2.4.0-viur-0.5.17",
-    "@viur/vue-utils": "file:../../../../viur-vue-utils/packages/viur-vue-utils",
+    "@viur/vue-components": "file:../components",
+    "@viur/vue-utils": "^1.0.0-rc.1",
     "pinia": "^2.1.4",
     "pinia-plugin-persistedstate": "^3.1.0",
     "vue": "^3.3.4",
