@@ -9,11 +9,11 @@ import Utils from "./utils"
 import { userRequestStore } from "@viur/vue-utils/"
 // custom Bones
 
-import { addBoneWidget, addBoneActionbar } from "@viur/vue-utils"
+import { addBoneWidget, addBoneActionbar } from "@viur/vue-utils/bones/edit/index"
+
 import selectaccessBone from "./bones/selectaccessBone.vue"
 import relationalBone from "./bones/relationalBone.vue"
 import fileBone from "./bones/fileBone.vue"
-
 import fileBar from "./bones/actionbar/fileBar.vue"
 import relationalBar from "./bones/actionbar/relationalBar.vue"
 
