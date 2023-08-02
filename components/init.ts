@@ -36,7 +36,7 @@ export function useInitConnection() {
                 appStore.state[key] = Utils.publicAsset(data[key])
                 continue
               }
-              appStore.state[key] = Utils.publicAsset(data[key])
+              appStore.state[key] = data[key]
             }
             if (key === "admin.color.primary") {
               colorStore.state.primaryColor = appStore.state[key]

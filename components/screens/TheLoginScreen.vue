@@ -139,7 +139,7 @@ export default defineComponent({
       userDataFilled: computed(() => state.name && state.password),
       waitForLogout: false,
       waitForInit: true,
-      backgroundImage: computed(() => `url('${appStore.state["admin.login.background"]}'`),
+      backgroundImage: computed(() => `url('${appStore.state["admin.login.background"]}')`),
       logo: computed(() => appStore.state["admin.login.logo"]),
       otp: ""
     })
