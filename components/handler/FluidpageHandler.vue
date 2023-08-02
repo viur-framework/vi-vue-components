@@ -310,6 +310,7 @@ export default defineComponent({
   overflow-x: auto;
   height: 0;
   flex: 1;
+  align-content: baseline;
 }
 
 .fluid-grid {

@@ -137,4 +137,9 @@ export default defineComponent({
     }
   }
 }
+
+.footer{
+  display: flex;
+  justify-content: space-between;
+}
 </style>

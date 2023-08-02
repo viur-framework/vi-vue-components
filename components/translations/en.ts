@@ -21,7 +21,9 @@ export default {
       nofilter: "There are no filter for this module"
     },
     reset: "Reset",
-    open: "Open"
+    open: "Open",
+    sortasc: "Sort Ascending",
+    sortdesc: "Sort Descending",
   },
   sidebar: {
     workspace: "Workspace",

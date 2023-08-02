@@ -29,7 +29,9 @@ export default {
     fluidpage: {
       edit: "Inhalt bearbeiten"
     },
-    open: "Öffnen"
+    open: "Öffnen",
+    sortasc: "Aufsteigend Sortieren",
+    sortdesc: "Absteigend Sortieren",
   },
   sidebar: {
     workspace: "Arbeitsbereich",

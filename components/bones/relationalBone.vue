@@ -15,7 +15,10 @@
       >
       </sl-combobox>
 
-      <sl-button @click="openRelationalSelection">
+      <sl-button
+        class="square-btn"
+        @click="openRelationalSelection"
+      >
         <sl-icon name="list-ul"></sl-icon>
       </sl-button>
 
@@ -24,6 +27,7 @@
         variant="info"
         outline
         @click="editSelection"
+        class="square-btn"
       >
         <sl-icon name="pencil"></sl-icon>
       </sl-button>
@@ -33,7 +37,7 @@
         variant="danger"
         outline
         :title="$t('bone.del')"
-        class="delete-btn"
+        class="delete-btn square-btn"
         @click="
           () => {
             $emit('change', name, '', lang, index)
@@ -224,10 +228,13 @@ sl-combobox {
   &::part(input) {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
-
-    & :deep(&::part(base)) {
-      border: 1px solid red;
-    }
   }
 }
+
+.square-btn{
+  &::part(base){
+    aspect-ratio: 1;
+  }
+}
+
 </style>

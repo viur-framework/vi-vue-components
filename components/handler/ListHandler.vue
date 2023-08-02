@@ -29,21 +29,23 @@
               {{ currentlist.structure?.[bone]?.["descr"] }}
               <div
                 v-if="currentlist.state.state === 2"
-                style="display: inline"
+                class="sort-arrow-wrap"
               >
                 <sl-icon
                   v-if="state.sorting === '' || state.sorting !== bone + '$asc'"
-                  name="chevron-up"
-                  class="sort-arrow"
+                  name="play"
+                  class="sort-arrow sort-up"
                   :class="{ 'sort-active': state.sorting === bone + '$desc' }"
                   @click="sorting(bone, 'asc')"
+                  :title="$t('actions.sortasc')"
                 ></sl-icon>
                 <sl-icon
                   v-if="state.sorting === bone + '$asc'"
-                  name="chevron-down"
-                  class="sort-arrow"
+                  name="play"
+                  class="sort-arrow sort-down"
                   :class="{ 'sort-active': state.sorting === bone + '$asc' }"
                   @click="sorting(bone, 'desc')"
+                  :title="$t('actions.sortdesc')"
                 ></sl-icon>
               </div>
             </th>
@@ -115,6 +117,7 @@ import Loader from "@viur/vue-utils/generic/Loader.vue"
 import FloatingBar from "../bars/FloatingBar.vue"
 import { useContextStore } from "../stores/context"
 import { useLocalStore } from "../stores/local"
+import WidgetSmall from "../dashboard/WidgetSmall.vue";
 
 export default defineComponent({
   props: {
@@ -130,7 +133,7 @@ export default defineComponent({
     selector: false
   },
   emits: ["currentSelection", "closeSelector"],
-  components: { FloatingBar, Loader, HandlerBar },
+  components: {WidgetSmall, FloatingBar, Loader, HandlerBar },
   setup(props, context) {
     const dbStore = useDBStore()
     const route = useRoute()
@@ -453,11 +456,37 @@ export default defineComponent({
 }
 
 .sort-active {
-  color: var(--sl-color-primary-500);
+  opacity: 1 !important;
 }
 
 .sort-arrow {
   cursor: pointer;
+  width: 100%;
+  height: 100%;
+  padding: 33%;
+  opacity: 0;
+
+  &.sort-down{
+    transform: rotate(90deg);
+  }
+
+  &.sort-up{
+    transform: rotate(-90deg);
+  }
+}
+
+.sort-arrow-wrap{
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 1.5em;
+  height: 1.5em;
+  position: absolute;
+  right: 0.6em;
+
+  &:hover .sort-arrow{
+    opacity: 1 !important;
+  }
 }
 
 table {
@@ -502,7 +531,7 @@ table {
   & thead {
     & th {
       position: relative;
-      padding: 0.4em 0.6em;
+      padding: 0.4em 2.4em 0.4em 0.6em;
       resize: horizontal;
       overflow: hidden;
       background: linear-gradient(
@@ -536,6 +565,11 @@ table {
       }
 
       &:hover {
+
+       .sort-arrow-wrap .sort-arrow{
+         opacity: .4;
+       }
+
         &:after {
           border-color: transparent transparent var(--sl-color-neutral-700) transparent;
         }
