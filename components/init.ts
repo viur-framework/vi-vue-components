@@ -5,6 +5,7 @@ import { useUserStore } from "./stores/user"
 import { useAppStore } from "./stores/app"
 import { useColorStore } from "./stores/color"
 import { useModulesStore } from "./stores/modules"
+import Utils from "./utils"
 import { userRequestStore } from "@viur/vue-utils/"
 // custom Bones
 
@@ -31,7 +32,11 @@ export function useInitConnection() {
         for (const key in data) {
           if (data[key] !== undefined || data[key] !== null) {
             if (data[key].length > 0) {
-              appStore.state[key] = data[key]
+              if ((key.endsWith(".logo") || key.endsWith(".background")) && !key.startsWith("/")) {
+                appStore.state[key] = Utils.publicAsset(data[key])
+                continue
+              }
+              appStore.state[key] = Utils.publicAsset(data[key])
             }
             if (key === "admin.color.primary") {
               colorStore.state.primaryColor = appStore.state[key]

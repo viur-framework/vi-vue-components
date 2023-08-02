@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { reactive } from "vue"
 import { defineStore } from "pinia"
+import Utils from "../utils"
 
 export const useAppStore = defineStore("appStore", () => {
   const state = reactive({
@@ -15,11 +16,11 @@ export const useAppStore = defineStore("appStore", () => {
     //settings
     init: false,
     "admin.name": " Administration",
-    "admin.logo": "s/logo-cube.svg",
+    "admin.logo": Utils.publicAsset("logo-cube.svg"),
     "admin.loader.logo": undefined,
     "admin.loader.color": undefined,
-    "admin.login.background": "/vi/s/login-background.jpg",
-    "admin.login.logo": "/vi/s/logo.svg",
+    "admin.login.background": Utils.publicAsset("login-background.jpg"),
+    "admin.login.logo": Utils.publicAsset("logo.svg"),
     "admin.color.primary": "",
     "admin.color.secondary": ""
   })

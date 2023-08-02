@@ -92,4 +92,11 @@ export default class Utils {
 
     return finalStrList.join(", ")
   }
+
+  static publicAsset(path, prefix = "s") {
+    if (import.meta.env.DEV) {
+      return `${prefix}/${path}`
+    }
+    return path
+  }
 }
