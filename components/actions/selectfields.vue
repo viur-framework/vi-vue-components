@@ -17,7 +17,8 @@
   >
     <sl-checkbox
       v-for="(bone, boneName) in state.structure"
-      :checked="setChecked(boneName)"
+      :key="boneName"
+      :checked="state.active.includes(boneName)"
       class="selectfieldswitch"
       @sl-change="visibleChange(boneName)"
     >
@@ -46,7 +47,7 @@
 
 <script lang="ts">
 //@ts-nocheck
-import { reactive, defineComponent, inject } from "vue"
+import { reactive, defineComponent, inject, onMounted } from "vue"
 import { useDBStore } from "../stores/db"
 import { useRoute } from "vue-router"
 
@@ -56,7 +57,10 @@ export default defineComponent({
   setup(props, context) {
     const handlerState: any = inject("handlerState")
     const currentlist: any = inject("currentlist")
-    const state = reactive({ structure: {} })
+    const state = reactive({
+      structure: {},
+      active: []
+    })
     const dbStore = useDBStore()
     const route = useRoute()
 
@@ -66,6 +70,14 @@ export default defineComponent({
       } else if (currentlist) {
         state.structure = currentlist.structure
       }
+
+      let conf = dbStore.getConf(handlerState.module)
+      if (conf && conf?.["columns"]) {
+        state.active = conf["columns"]
+      } else {
+        state.active = Object.keys(Object.fromEntries(Object.entries(state.structure).filter(([, v]) => v["visible"])))
+      }
+      handlerState.selectedBones = state.active
       const dialog = document.getElementById("dialog-selectfields")
       dialog.show()
     }
@@ -80,33 +92,21 @@ export default defineComponent({
     }
 
     function selectall() {
-      document.querySelectorAll(".selectfieldswitch").forEach((switchElement) => (switchElement.checked = true))
+      handlerState.selectedBones = Object.keys(state.structure)
+      state.active = Object.keys(state.structure)
     }
 
     function unselectall() {
-      document.querySelectorAll(".selectfieldswitch").forEach((switchElement) => (switchElement.checked = false))
+      handlerState.selectedBones = []
+      state.active = []
     }
 
     function invertselect() {
-      document
-        .querySelectorAll(".selectfieldswitch")
-        .forEach((switchElement) => (switchElement.checked = !switchElement.checked))
+      state.active = Object.keys(state.structure).filter((i) => !state.active.includes(i))
+      handlerState.selectedBones = state.active
     }
 
-    function setChecked(boneName) {
-      let conf = dbStore.getConf(handlerState.module)
-      if (conf && conf?.["columns"]) {
-        if (conf["columns"].includes(boneName)) {
-          return true
-        } else {
-          return false
-        }
-      } else {
-        return state.structure[boneName]["visible"]
-      }
-    }
-
-    return { state, openSelectDialog, visibleChange, selectall, unselectall, invertselect, setChecked }
+    return { state, openSelectDialog, visibleChange, selectall, unselectall, invertselect }
   }
 })
 </script>
