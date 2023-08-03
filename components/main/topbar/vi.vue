@@ -49,7 +49,10 @@
         <div class="group-headline">
           {{ $t("sidebar.section_system_name") }}
         </div>
-        <template v-for="item in dbStore.state['tasks']">
+        <template
+          v-for="item in dbStore.state['tasks']"
+          :key="item['key']"
+        >
           <sl-button
             size="medium"
             @click="state.openedTask = item['key']"
@@ -65,14 +68,25 @@
           >
             <sl-dialog
               :label="item['name']"
+              style="--width: 50%"
               open
               @sl-after-hide="state.openedTask = null"
             >
-              TASK
+              <div style="height: 400px">
+                <form-handler
+                  :no-topbar="true"
+                  module="_tasks"
+                  action="execute"
+                  :group="item['key']"
+                  @change="setValues"
+                >
+                </form-handler>
+              </div>
               <sl-button
                 slot="footer"
+                :disabled="!state.formValues"
                 variant="success"
-                @click=""
+                @click="executeTask(item['key'])"
               >
                 {{ $t("confirm") }}
               </sl-button>
@@ -113,11 +127,12 @@ import { reactive, defineComponent, computed, onMounted } from "vue"
 import { useUserStore } from "../../stores/user"
 import { useAppStore } from "../../stores/app"
 import { useDBStore } from "../../stores/db"
+import FormHandler from "../../handler/FormHandler.vue"
 import { Request } from "@viur/vue-utils"
 
 export default defineComponent({
   props: {},
-  components: {},
+  components: { FormHandler },
   setup(props, context) {
     const userStore = useUserStore()
     const appStore = useAppStore()
@@ -177,7 +192,8 @@ export default defineComponent({
         }
         return core
       }),
-      openedTask: null
+      openedTask: null,
+      formValues: null
     })
 
     function logout() {
@@ -190,17 +206,41 @@ export default defineComponent({
         dbStore.state["tasks"] = data["skellist"]
       })
     })
+    function executeTask(key) {
+      const formData: FormData = new FormData()
+      for (const [boneName, boneValue] of Object.entries(state.formValues)) {
+        for (const value of boneValue) {
+          for (const [k, v] of Object.entries(value)) {
+            formData.append(k, v)
+          }
+        }
+      }
+      const obj = {}
+      for (const key: string of formData.keys()) {
+        obj[[key]] = formData.getAll(key)
+      }
 
+      Request.securePost("/vi/_tasks/execute/dt_RebuildSearchIndex", {
+        dataObj: obj
+      }).then(async (resp) => {
+        state.openedTask = null
+      })
+    }
     function openTask(key) {
-      console.log(key)
       state.openedTask = key
     }
+    function setValues(formValues) {
+      state.formValues = formValues
+    }
+
     return {
       state,
       userStore,
       dbStore,
       logout,
-      openTask
+      openTask,
+      executeTask,
+      setValues
     }
   }
 })

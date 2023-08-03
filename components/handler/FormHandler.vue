@@ -1,6 +1,9 @@
 <template>
   <div class="wrap-for-popup">
-    <div class="topbar">
+    <div
+      v-if="!noTopbar"
+      class="topbar"
+    >
       <div class="top-headline">
         <span v-if="['clone', 'add'].includes(action)">Neuer</span>
         <span v-else-if="['edit'].includes(action)">Bearbeite</span>
@@ -19,7 +22,7 @@
       size="3"
     ></loader>
     <sl-details
-      v-if="modulesStore.state.loaded && modulesStore.state.modules[module][`help_text_${action}`]"
+      v-if="modulesStore.state.loaded && modulesStore.state.modules[module]?.[`help_text_${action}`]"
       open
       summary="Info"
     >
@@ -130,9 +133,11 @@ export default defineComponent({
     action: null,
     group: null,
     skelkey: null,
-    skeltype: null
+    skeltype: null,
+    noTopbar: false
   },
   components: { EntryBar, bone, ...handlers, VueJsonPretty, Loader },
+  emit: ["change"],
   setup(props, context) {
     const dbStore = useDBStore()
     const appStore = useAppStore()
@@ -280,6 +285,7 @@ export default defineComponent({
       }
 
       visibleIf(data)
+      context.emit("change", state.formValues)
     }
 
     function relationSelection(event, bone) {
@@ -435,7 +441,6 @@ sl-details {
   display: flex;
   flex-direction: column;
   flex: 1;
-  height: 1px;
   position: relative;
 }
 </style>
