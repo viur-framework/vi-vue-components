@@ -102,6 +102,7 @@
       <sl-button
         slot="footer"
         variant="success"
+        size="small"
         :disabled="!state.addEnabled"
         @click="addToFilter"
       >

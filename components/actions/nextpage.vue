@@ -100,5 +100,6 @@ sl-select {
 sl-select::part(combobox) {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
+  border-left: none;
 }
 </style>

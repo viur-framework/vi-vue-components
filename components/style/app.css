@@ -601,12 +601,12 @@ sl-checkbox::part(control) {
   border: 1px solid var(--vi-border-color);
 }
 sl-checkbox::part(control--checked) {
-  background-color: var(--vi-active-color);
-  border: 1px solid var(--vi-active-color);
+  background-color: var(--sl-color-primary-500);
+  border: 1px solid var(--sl-color-primary-500);
 }
 sl-checkbox::part(control--indeterminate) {
-  background-color: var(--vi-active-color);
-  border: 1px solid var(--vi-active-color);
+  background-color: var(--sl-color-primary-500);
+  border: 1px solid var(--sl-color-primary-500);
 }
 sl-checkbox::part(checked-icon) {
   width: 0px;
@@ -616,13 +616,13 @@ sl-checkbox::part(checked-icon)::after {
   content: '';
   position: absolute;
   display: inline-block;
-  transform: rotate(45deg);
+  transform: rotate(45deg) scale(.85);
   height: calc((var(--toggle-size) / 6) * 3);
   width: calc((var(--toggle-size) / 12) * 3);
-  margin-left: calc(-0.19 * var(--toggle-size));
-  margin-top: calc(0.08 * var(--toggle-size));
-  border-bottom: 2px solid var(--vi-foreground-color);
-  border-right: 2px solid var(--vi-foreground-color);
+  margin-left: calc(-0.15 * var(--toggle-size));
+  margin-top: calc(0.1 * var(--toggle-size));
+  border-bottom: 2px solid #fff;
+  border-right: 2px solid #fff;
 }
 sl-button[variant="default"]::part(base) {
   border: 1px solid var(--vi-foreground-color);

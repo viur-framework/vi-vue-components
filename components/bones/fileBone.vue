@@ -79,6 +79,7 @@
       variant="info"
       outline
       @click="editSelection"
+      class="info-btn"
     >
       <sl-icon name="pencil"></sl-icon>
     </sl-button>
@@ -337,6 +338,12 @@ export default defineComponent({
 }
 
 .delete-btn {
+  &::part(base) {
+    aspect-ratio: 1;
+  }
+}
+
+.info-btn{
   &::part(base) {
     aspect-ratio: 1;
   }

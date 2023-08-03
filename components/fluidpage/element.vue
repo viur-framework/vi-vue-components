@@ -70,7 +70,11 @@
           <component v-if="skel['headline']">: {{ skel["headline"] }}</component>
           <component v-else-if="skel['subline']">: {{ skel["subline"] }}</component>
         </h2>
-
+        <span
+          class="text-desc"
+          v-html="skel['descr']"
+          v-if="skel['descr']"
+        ></span>
         <span v-if="skel['downloaditems']">Dateien: {{ skel["downloaditems"].length }}</span>
         <span v-if="skel['url']">Navigation: {{ skel["url"] }}</span>
         <span class="sortindex">sortindex: {{ skel["sortindex"] }}</span>
@@ -218,6 +222,11 @@ export default {
     & .element-headline {
       color: var(--sl-color-primary-500);
     }
+
+    & .actions_after,
+    & .actions_before  {
+      opacity: 1;
+    }
   }
 }
 
@@ -259,17 +268,36 @@ sl-button {
 
 .element-headline {
   font-weight: bold;
+  line-height: 1.3;
+  margin-bottom: 10px;
 }
 
 .content {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
+  width: 100%;
+  align-items: flex-start;
+  height: calc(100% - 56px);
+
+  sl-avatar{
+    flex: 1 0 45%;
+    aspect-ratio: 1;
+
+    &::part(base){
+      width: 100%;
+      height: 100%;
+    }
+  }
 }
 
 .column {
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 100%;
+  height: 100%;
 }
 
 .image {
@@ -302,6 +330,13 @@ sl-button-group {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  opacity: 0;
+  transition: all ease .3s;
+  z-index: 1;
+
+  :deep(sl-button){
+     transform: translateX(50%);
+  }
 }
 .actions_before {
   position: absolute;
@@ -311,11 +346,29 @@ sl-button-group {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  opacity: 0;
+  transition: all ease .3s;
+  z-index: 1;
+
+  :deep(sl-button){
+     transform: translateX(-50%);
+  }
 }
 
 .sortindex {
   color: var(--sl-color-neutral-500);
   font-style: italic;
   font-size: var(--sl-font-size-small);
+  margin-top: 10px;
 }
+
+.text-desc {
+  width: 100%;
+  overflow-wrap: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 </style>
