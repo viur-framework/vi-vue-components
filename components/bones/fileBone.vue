@@ -27,6 +27,7 @@
     <sl-button
       v-if="!boneState.readonly && (!value || state.loading)"
       @click="openRelationalSelection"
+      class="relation-btn"
     >
       <sl-icon name="menu"></sl-icon>
     </sl-button>
@@ -70,7 +71,7 @@
           name="file-earmark"
         ></sl-icon>
       </div>
-      <div v-if="value?.['dest']?.['name']">
+      <div v-if="value?.['dest']?.['name']" class="ellipsis">
         {{ decodeURIComponent(value?.["dest"]?.["name"]) }}
       </div>
     </div>
@@ -355,7 +356,18 @@ export default defineComponent({
   }
 }
 
+.relation-btn{
+  &::part(base) {
+    aspect-ratio: 1;
+  }
+}
+
 .nested_wrapper {
-  padding-top: 5px;
+  padding-top: var(--sl-spacing-x-small);
+}
+
+.ellipsis{
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>
