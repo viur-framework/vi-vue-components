@@ -301,19 +301,22 @@ tr {
   }
 }
 
-.active {
-  color: var(--sl-color-primary-500);
-  font-weight: 600;
-}
-
 .entry {
   padding: 0 10px;
   cursor: pointer;
   border-top: 4px solid transparent;
   border-bottom: 4px solid transparent;
 
+  &.active{
+    background-color: var(--sl-color-neutral-300);
+
+    td{
+      font-weight: 700;
+    }
+  }
+
   &:hover {
-    & .dragger {
+    .drag-cell {
       opacity: 1;
     }
   }

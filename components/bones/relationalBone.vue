@@ -237,4 +237,9 @@ sl-combobox {
   }
 }
 
+.record{
+  :deep(.form){
+    margin-top: var(--sl-spacing-x-small);
+  }
+}
 </style>
