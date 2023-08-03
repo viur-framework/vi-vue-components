@@ -94,10 +94,12 @@ export default defineComponent({
     }
 
     function setChecked(boneName) {
-      let conf = dbStore.getConf(props.module)
+      let conf = dbStore.getConf(handlerState.module)
       if (conf && conf?.["columns"]) {
         if (conf["columns"].includes(boneName)) {
           return true
+        } else {
+          return false
         }
       } else {
         return state.structure[boneName]["visible"]

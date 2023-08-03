@@ -12,7 +12,7 @@
     <router-link
       class="link-wrap"
       :to="to"
-      :title="name"
+      :title="title ? title : name"
     >
       <sl-avatar label="Rounded avatar">
         <sl-icon
@@ -76,6 +76,10 @@ export default defineComponent({
     active: {
       type: Boolean,
       default: false
+    },
+    title: {
+      type: String,
+      default: ""
     }
   },
   components: {},

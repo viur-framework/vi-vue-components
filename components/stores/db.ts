@@ -319,9 +319,6 @@ export const useDBStore = defineStore("db", () => {
   function removeOpened(route) {
     let url = route.fullPath
     let idx = state["handlers.opened"].findIndex((e) => e["url"] === url)
-    console.log(state["handlers.opened"])
-    console.log(idx)
-    console.log(url)
     if (idx === state["handlers.active"]) {
       router.push(state["handlers.opened"][idx - 1]["to"]).then(() => {
         state["handlers.opened"].splice(idx, 1)
@@ -390,7 +387,7 @@ export const useDBStore = defineStore("db", () => {
 
   function updateActiveTabName(detail) {
     let tabinfo = getActiveTab()
-    tabinfo["name"] = `${tabinfo["_name"]} : ${detail}`
+    tabinfo["name"] = `${detail}`
   }
 
   function markHandlersToUpdate(module, group = null) {

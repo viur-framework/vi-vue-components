@@ -6,6 +6,7 @@
   >
     <the-main-screen-tabbar-item
       v-for="(entry, idx) in dbStore.state['handlers.opened']"
+      :key="entry['id']"
       :to="entry['to']"
       :icon="entry['icon']"
       :library="entry['library']"
@@ -14,6 +15,7 @@
       :position="idx"
       :mode="entry['mode']"
       :name="entry['name']"
+      :title="entry['_name']"
     >
       {{ entry["name"] }}
     </the-main-screen-tabbar-item>

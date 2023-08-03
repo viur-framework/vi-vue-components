@@ -202,13 +202,16 @@ export default defineComponent({
     )
 
     function setSelectedBones() {
+      let conf = dbStore.getConf(state.module)
       state.ready = true
       let bones = []
       for (const [k, v] of Object.entries(state.structure)) {
-        if (v["visible"]) bones.push(k)
+        if (conf?.["columns"]) {
+          if (conf["columns"].includes(k)) bones.push(k)
+        } else {
+          if (v["visible"]) bones.push(k)
+        }
       }
-
-      console.log(bones)
       state.selectedBones = bones
     }
 
