@@ -44,10 +44,10 @@ jobs:
       - uses: actions/download-artifact@master
         with:
           name: buildfiles
-          path: /build
+          path: ./build
 
       - name: archive
-        run: cd /build && zip viur-vi.zip -r ./*
+        run: cd ./build && zip viur-vi.zip -r ./*
 
       - name: Get version from tag
         id: tag_name
@@ -57,7 +57,7 @@ jobs:
       - name: create release
         uses: softprops/action-gh-release@v1
         with:
-          files: /build/viur-vi.zip
+          files: ./build/viur-vi.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
