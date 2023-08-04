@@ -7,12 +7,6 @@
 
 `cd vi`
 
-`npm install`
-
-
-admin@akviur3test.appspot.com
-lR0EiVZmwHtyN1
-
 ## run
 Switch to vi or vi-base folder and run `npm run dev`
 
