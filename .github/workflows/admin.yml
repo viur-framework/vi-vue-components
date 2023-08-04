@@ -3,7 +3,7 @@ name: Build Admin
 on:
   push:
     tags:
-      - "v4.*"
+      - "admin-v4.*"
 
 jobs:
   build:
@@ -18,12 +18,12 @@ jobs:
       with:
         submodules: true
         path: "app/sources"
+    - run: cd "app/sources"
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: cd "app/sources/admin"
     - run: npm install
     - run: npm run build
     - uses: actions/upload-artifact@master
@@ -43,7 +43,7 @@ jobs:
       - uses: actions/download-artifact@master
         with:
           name: buildfiles
-          path: /app/deploy/vi
+          path: /build
 
       - name: archive
         run: cd /build && zip viur-vi.zip -r ./*
