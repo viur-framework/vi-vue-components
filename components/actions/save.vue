@@ -66,9 +66,10 @@ export default defineComponent({
       let url = `/vi/${handlerState.module}/${handlerState.action === "clone" ? "add" : handlerState.action}`
 
       if (handlerState.skeltype === "node" || handlerState.skeltype === "leaf") {
-        obj["skelType"] = handlerState.skeltype
+        url += `/${handlerState.skeltype}`
         obj["node"] = handlerState.skelkey
       }
+
       if (handlerState.action === "edit") {
         url += `/${handlerState.skelkey}`
       }

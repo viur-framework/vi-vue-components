@@ -94,6 +94,7 @@ export default defineComponent({
 
     const state = reactive({
       type: "hierarchyhandler",
+      skeltype: "node",
       storeName: computed(() => {
         let name: string = `module___${props.module}`
         if (props.view) {

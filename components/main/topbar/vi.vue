@@ -125,6 +125,7 @@
 <script lang="ts">
 import { reactive, defineComponent, computed, onMounted } from "vue"
 import { useUserStore } from "../../stores/user"
+import { useMessageStore } from "../../stores/message"
 import { useAppStore } from "../../stores/app"
 import { useDBStore } from "../../stores/db"
 import FormHandler from "../../handler/FormHandler.vue"
@@ -137,6 +138,7 @@ export default defineComponent({
     const userStore = useUserStore()
     const appStore = useAppStore()
     const dbStore = useDBStore()
+    const messageStore = useMessageStore()
     const state = reactive({
       sidebarOpen: false,
       nameInitials: computed(() => {
@@ -222,9 +224,14 @@ export default defineComponent({
 
       Request.securePost("/vi/_tasks/execute/dt_RebuildSearchIndex", {
         dataObj: obj
-      }).then(async (resp) => {
-        state.openedTask = null
       })
+        .then(async (resp) => {
+          state.openedTask = nulls
+        })
+        .catch((error) => {
+          state.openedTask = null
+          messageStore.addMessage("error", `${error.message}`, error.response?.url)
+        })
     }
     function openTask(key) {
       state.openedTask = key
