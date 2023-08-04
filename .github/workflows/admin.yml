@@ -17,17 +17,19 @@ jobs:
     - uses: actions/checkout@v2
       with:
         submodules: true
+        path: "app/sources"
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm install --prefix=admin
-    - run: npm run build --prefix=admin
+    - run: cd "app/sources/admin"
+    - run: npm install
+    - run: npm run build
     - uses: actions/upload-artifact@master
       with:
         name: buildfiles
-        path: /build
+        path: /app/deploy/vi
 
 
   release:
@@ -41,7 +43,7 @@ jobs:
       - uses: actions/download-artifact@master
         with:
           name: buildfiles
-          path: /build
+          path: /app/deploy/vi
 
       - name: archive
         run: cd /build && zip viur-vi.zip -r ./*
