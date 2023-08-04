@@ -25,9 +25,8 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
         cache-dependency-path: 'app/sources/admin/package-lock.json'
-    - run: cd "app/sources"
-    - run: npm install
-    - run: npm run build
+    - run: npm install --prefix=app/sources/admin
+    - run: npm run build --prefix=app/sources/admin
     - uses: actions/upload-artifact@master
       with:
         name: buildfiles
