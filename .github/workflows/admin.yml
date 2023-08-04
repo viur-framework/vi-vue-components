@@ -27,6 +27,8 @@ jobs:
         cache-dependency-path: 'app/sources/admin/package-lock.json'
     - run: npm install --prefix=app/sources/admin
     - run: npm run build --prefix=app/sources/admin
+    - run : ls .
+    - run : ls ./app
     - uses: actions/upload-artifact@master
       with:
         name: buildfiles
