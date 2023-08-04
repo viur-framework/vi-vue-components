@@ -24,8 +24,12 @@ app.use(router)
 // @ts-ignore
 import bone from "@viur/vue-utils/bones/edit/bone.vue"
 // @ts-ignore
-import { de_translations, en_translations } from "@viur/vue-components/translations/translations"
+import Wrapper_nested from "@viur/vue-utils/bones/edit/wrapper_nested.vue"
+// eslint-disable-next-line vue/multi-word-component-names
 app.component("Bone", bone)
+app.component("WrapperNested", Wrapper_nested)
+// @ts-ignore
+import { de_translations, en_translations } from "@viur/vue-components/translations/translations"
 
 const i18n = createI18n({
   locale: "de",
