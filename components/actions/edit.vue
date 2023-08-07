@@ -38,12 +38,12 @@ export default defineComponent({
         if (!state.active) return urls
 
         for (let selection of handlerState.currentSelection) {
-          if (handlerState.type == "hierarchyhandler") {
+          if (handlerState.type === "hierarchyhandler") {
             urls.push(`/db/${handlerState.module}/edit/node/${selection["key"]}`)
             continue
           }
 
-          if (handlerState.type == "treehandler") {
+          if (handlerState.type === "treehandler") {
             urls.push(`/db/${handlerState.module}/edit/${handlerState?.currentSelectionType}/${selection["key"]}`)
             continue
           }

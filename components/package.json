@@ -1,6 +1,6 @@
 {
   "name": "@viur/vue-components",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "a collection of complex components to build uis",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -8,7 +8,7 @@
   "author": "Andreas H. Kelch",
   "license": "MIT",
   "dependencies": {
-    "@viur/vue-utils": "^1.0.0",
+    "@viur/vue-utils": "^1.0.1",
     "logics-js": "^0.3.5",
     "pinia-plugin-persistedstate": "^3.1.0",
     "vue-json-pretty": "^2.2.4",

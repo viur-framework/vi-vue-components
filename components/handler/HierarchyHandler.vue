@@ -103,6 +103,7 @@ export default defineComponent({
         return name
       }),
       currentRootNodes: [],
+      currentSelectionType: "node",
       currentRootNode: null,
       currentNode: null,
       nodes: [],

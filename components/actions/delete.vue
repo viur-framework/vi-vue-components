@@ -78,7 +78,12 @@ export default defineComponent({
 
       for (const entry of handlerState.currentSelection) {
         let url = `/vi/${handlerState.module}/delete`
-        await Request.securePost(url, { dataObj: { key: entry.key } })
+        let dataObj = { key: entry.key }
+        if (handlerState.type === "hierarchyhandler" || handlerState.type === "treehandler") {
+          dataObj["skelType"] = handlerState?.currentSelectionType
+        }
+
+        await Request.securePost(url, { dataObj: dataObj })
       }
       messageStore.addMessage("success", `Delete`, "Entry deleted successfully")
       tableReload()
