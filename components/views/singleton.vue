@@ -2,7 +2,7 @@
   <form-handler
     :module="module"
     :group="!['node', 'leaf'].includes(skeltype) ? skeltype : ''"
-    :action="route.meta['action']"
+    :action="'edit'"
     :skelkey="skelkey"
     :skeltype="['node', 'leaf'].includes(skeltype) ? skeltype : ''"
   >
