@@ -233,12 +233,12 @@ export default defineComponent({
       }
       const dataObj = {}
       if (state.skeltype === "node" && props.action === "add") {
-        dataObj["skelType"] = "node"
+        url += `/node`
         dataObj["node"] = props.skelkey
       }
 
       if (state.skeltype === "leaf" && props.action === "add") {
-        dataObj["skelType"] = "leaf"
+        url += `/node`
         dataObj["node"] = props.skelkey
       }
 
