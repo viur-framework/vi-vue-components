@@ -23,7 +23,7 @@
       </sl-button>
 
       <sl-button
-        v-if="value"
+        v-if="!boneState.isEmpty"
         variant="info"
         outline
         @click="editSelection"
@@ -136,13 +136,13 @@ export default defineComponent({
     }
 
     function changeEventNested(val) {
-      if (!state.selection) state.selection = []
+      if (!state.selection ) state.selection = {}
       if (Object.keys(state.selection).includes("rel")) {
         state.selection["rel"][val.name] = val.value
       } else {
         state.selection["rel"] = { [val.name]: val.value }
       }
-
+      if(!Object.keys(state.selection).includes("dest")) return
       context.emit("change", props.name, state.selection, props.lang, props.index)
     }
 
