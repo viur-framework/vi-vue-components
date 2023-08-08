@@ -1,6 +1,6 @@
 {
   "name": "admin",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "private": true,
   "description": "A ViUR Admin Interface",
   "scripts": {
@@ -11,7 +11,7 @@
   "dependencies": {
     "@ckeditor/ckeditor5-vue": "^5.1.0",
     "@viur/viur-shoelace": "^2.4.0-viur-0.5.17",
-    "@viur/vue-components": "^1.0.2",
+    "@viur/vue-components": "^1.0.6",
     "@viur/vue-utils": "^1.0.1",
     "pinia": "^2.1.4",
     "pinia-plugin-persistedstate": "^3.1.0",
