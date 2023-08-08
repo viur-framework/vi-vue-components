@@ -71,9 +71,9 @@
           <component v-else-if="skel['subline']">: {{ skel["subline"] }}</component>
         </h2>
         <span
+          v-if="skel['descr']"
           class="text-desc"
           v-html="skel['descr']"
-          v-if="skel['descr']"
         ></span>
         <span v-if="skel['downloaditems']">Dateien: {{ skel["downloaditems"].length }}</span>
         <span v-if="skel['url']">Navigation: {{ skel["url"] }}</span>
@@ -137,7 +137,7 @@ export default {
     function startDragging(e) {
       let target = e.target
       if (!target.classList.contains("fluid-element")) {
-        target = target.closest(".fluidpage-element")
+        target = target.closest(".fluid-element")
       }
       handlerState.dragCurrentElement = {
         element: target,
@@ -151,7 +151,7 @@ export default {
       e.dataTransfer.dropEffect = "move"
       let target = e.target
       if (!target.classList.contains("fluid-element")) {
-        target = target.closest(".fluidpage-element")
+        target = target.closest(".fluid-element")
       }
 
       if (target && target !== handlerState.dragCurrentElement["element"]) {
@@ -224,7 +224,7 @@ export default {
     }
 
     & .actions_after,
-    & .actions_before  {
+    & .actions_before {
       opacity: 1;
     }
   }
@@ -280,11 +280,11 @@ sl-button {
   align-items: flex-start;
   height: calc(100% - 56px);
 
-  sl-avatar{
+  sl-avatar {
     flex: 1 0 45%;
     aspect-ratio: 1;
 
-    &::part(base){
+    &::part(base) {
       width: 100%;
       height: 100%;
     }
@@ -331,11 +331,11 @@ sl-button-group {
   flex-direction: column;
   justify-content: center;
   opacity: 0;
-  transition: all ease .3s;
+  transition: all ease 0.3s;
   z-index: 1;
 
-  :deep(sl-button){
-     transform: translateX(50%);
+  :deep(sl-button) {
+    transform: translateX(50%);
   }
 }
 .actions_before {
@@ -347,11 +347,11 @@ sl-button-group {
   flex-direction: column;
   justify-content: center;
   opacity: 0;
-  transition: all ease .3s;
+  transition: all ease 0.3s;
   z-index: 1;
 
-  :deep(sl-button){
-     transform: translateX(-50%);
+  :deep(sl-button) {
+    transform: translateX(-50%);
   }
 }
 
@@ -370,5 +370,4 @@ sl-button-group {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-
 </style>
