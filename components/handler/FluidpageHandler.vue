@@ -191,9 +191,13 @@ export default defineComponent({
       } else {
         let nextEntry = currentlist.state.skellist[idx + 1]
         let prevEntry = currentlist.state.skellist[idx - 1]
+
         currentEntry["sortindex"] = prevEntry["sortindex"] + (nextEntry["sortindex"] - prevEntry["sortindex"]) / 2
       }
-      currentEntry["sortindex"] += 0.0001
+      if (currentEntry["sortindex"] === 0) {
+        currentEntry["sortindex"] += 0.0001
+      }
+
       Request.edit(props.module, currentEntry["key"], {
         dataObj: {
           sortindex: currentEntry["sortindex"]
