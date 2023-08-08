@@ -15,9 +15,7 @@
         slot="prefix"
         name="plus"
       ></sl-icon>
-      <template v-if="label">
-        {{ $t("actions.add") }}
-      </template>
+      <template v-if="label"> {{ $t("actions.add") }} </template>
     </sl-button>
   </router-link>
 </template>
@@ -65,7 +63,7 @@ export default defineComponent({
     })
 
     function createAndNavigate(route: any) {
-      dbStore.addOpened(route, handlerState["module"], handlerState["view"])
+      dbStore.addOpened(route, handlerState["module"], handlerState["view"], "", "", "", false)
     }
 
     return {
