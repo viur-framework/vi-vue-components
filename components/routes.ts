@@ -108,8 +108,7 @@ function createRouterInstance(routes, replace = false) {
     if (Object.keys(contextStore.state.localContext).includes(handlerId)) {
       localContext = contextStore.state.localContext[handlerId]
     }
-    let newQuery = { ...to.query, ...contextStore.state.globalContext, ...localContext }
-
+    let newQuery = { ...contextStore.state.globalContext, ...localContext, ...to.query }
     if (
       Object.keys(to.query).every(
         (key) => to.query[key] === newQuery[key] && to.query.hasOwnProperty(key) && newQuery.hasOwnProperty(key)

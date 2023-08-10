@@ -63,7 +63,7 @@ export default defineComponent({
     })
 
     function createAndNavigate(route: any) {
-      dbStore.addOpened(route, handlerState["module"], handlerState["view"], "", "", "", false)
+      dbStore.addOpened(route, handlerState["module"], handlerState["view"])
     }
 
     return {
