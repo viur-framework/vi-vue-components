@@ -92,28 +92,16 @@ export default defineComponent({
     const tree = useTree(props.module, treeState, state)
 
     onMounted(() => {
-      state.currentEntry = tree.EntryFromPath(props.path)
-      if (props.path && props.path.length === 1 && props.path[0] === 0) {
-        // prefetch rootnode childs
-        state.currentEntry["_status"] = "loading"
-        Request.get(`/vi/${props.module}/list`, {
-          dataObj: {
-            skelType: "node",
-            orderby: "sortindex",
-            parententry: state.currentEntry["key"]
-          }
-        }).then(async (resp) => {
-          let data = await resp.json()
-          state.currentEntry["_nodes"] = data["skellist"]
-          state.currentEntry["_disabled"] = false
-          state.currentEntry["_status"] = "loaded" //loading, loaded
-          state.currentEntry["_dragging"] = false
-          state.currentEntry["_isover"] = false
-          state.currentEntry["_drop"] = null
-        })
-      }
+      buildCurrentEntry()
     })
-
+    watch(
+      () => props.path,
+      (newVal, oldVal) => {
+        if (!newVal.every((x) => oldVal.includes(x))) {
+          buildCurrentEntry()
+        }
+      }
+    )
     function selectChild(idx) {
       treeState.selectedPath = props.path.concat([idx])
     }
@@ -138,6 +126,28 @@ export default defineComponent({
         clickedEntry["_expanded"] = !clickedEntry["_expanded"]
       } else {
         clickedEntry["_expanded"] = true
+      }
+    }
+    function buildCurrentEntry() {
+      state.currentEntry = tree.EntryFromPath(props.path)
+      if (props.path && props.path.length === 1 && props.path[0] === 0) {
+        // prefetch rootnode childs
+        state.currentEntry["_status"] = "loading"
+        Request.get(`/vi/${props.module}/list`, {
+          dataObj: {
+            skelType: "node",
+            orderby: "sortindex",
+            parententry: state.currentEntry["key"]
+          }
+        }).then(async (resp) => {
+          let data = await resp.json()
+          state.currentEntry["_nodes"] = data["skellist"]
+          state.currentEntry["_disabled"] = false
+          state.currentEntry["_status"] = "loaded" //loading, loaded
+          state.currentEntry["_dragging"] = false
+          state.currentEntry["_isover"] = false
+          state.currentEntry["_drop"] = null
+        })
       }
     }
 

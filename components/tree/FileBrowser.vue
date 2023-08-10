@@ -272,6 +272,12 @@ export default defineComponent({
       state.tree = [props.rootnode]
       state.selectedPath = [0]
     })
+    watch(
+      () => props.rootnode,
+      (newVal, oldVal) => {
+        state.tree = [newVal]
+      }
+    )
 
     //breadcrumb navigation
     function changePath(idx) {
@@ -283,11 +289,13 @@ export default defineComponent({
       state.selected_leaf = null
       state.loading = true
       context.emit("changed", null, null)
-      fetch("node").then((resp) => {
-        state.selectedNode = state.selectedEntries.at(-1)
-        context.emit("changed", state.selectedNode, "node")
-        state.leafView = 100
-      })
+      try {
+        fetch("node").then((resp) => {
+          state.selectedNode = state.selectedEntries.at(-1)
+          context.emit("changed", state.selectedNode, "node")
+          state.leafView = 100
+        })
+      } catch (e) {}
       fetch("leaf")
       state.loading = false
     }
