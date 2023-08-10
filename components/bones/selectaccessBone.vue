@@ -12,9 +12,7 @@
 
   <template v-for="(mod, modname) in state.moduleActions['flags']">
     <sl-button-group v-if="modname.includes(state.filter)">
-      <div class="access-name">
-        {{ modname }}
-      </div>
+      <div class="access-name">{{ modname }}</div>
       <sl-button
         v-for="right in mod"
         :title="right['name']"
@@ -32,8 +30,14 @@
 
   <template v-for="(mod, modname) in state.moduleActions['modules']">
     <sl-button-group v-if="modname.includes(state.filter)">
-      <div class="access-name">
-        {{ dbStore.getConf(modname)?.name }}
+      <div
+        class="access-name"
+        :title="modname"
+      >
+        {{ dbStore.getConf(modname.split("-")[0])?.name }}
+        <template v-if="modname.split('-')?.[1]">
+          / {{ dbStore.getConf(modname.split("-")[0], modname.split("-")?.[1])?.name }}
+        </template>
       </div>
       <sl-button
         v-for="right in mod"
@@ -88,16 +92,17 @@ export default defineComponent({
 
           //if (parts[0].startsWith("_")) continue
 
-          let element = { key: k, icon: icon, name: name, module: parts[0] }
-          if (Object.keys(mods["modules"]).includes(parts[0])) {
-            mods["modules"][parts[0]] = { ...mods["modules"][parts[0]], ...{ [actionmap[name]]: element } }
+          let element = { key: k, icon: icon, name: name, module: parts[0], view: parts?.[1] }
+          let namegroup = parts.slice(0, -1).join("-")
+          if (Object.keys(mods["modules"]).includes(namegroup)) {
+            mods["modules"][namegroup] = { ...mods["modules"][namegroup], ...{ [actionmap[name]]: element } }
           } else {
-            if (!actionmap[name]) {
+            if (!actionmap[name] && actionmap[name] !== 0) {
               //flags
               element["icon"] = "check"
-              mods["flags"][parts[0]] = { [k]: element }
+              mods["flags"][namegroup] = { [k]: element }
             } else {
-              mods["modules"][parts[0]] = { [actionmap[name]]: element }
+              mods["modules"][namegroup] = { [actionmap[name]]: element }
             }
           }
         }

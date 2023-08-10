@@ -213,6 +213,9 @@ export const useDBStore = defineStore("db", () => {
   function getConf(module: string, view = null) {
     let conf = null
     let name = module
+    if (typeof view === "string") {
+      view = modulesList.value?.[module]?.["views"].findIndex((x) => x["group"] === view)
+    }
     if (view) name += "_" + view
     conf = modulesList.value?.[name]
     return conf
