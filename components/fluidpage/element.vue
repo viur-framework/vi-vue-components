@@ -16,7 +16,7 @@
     <div class="actions_before">
       <add
         :label="false"
-        :params="{ sortindex: calculateIndex(state.prevIdx) }"
+        :params="{ sortindex: calculateIndex(state.prevIdx), 'fluidpage.dest.key': route.params['key'] }"
       ></add>
     </div>
 

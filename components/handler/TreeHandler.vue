@@ -4,15 +4,13 @@
     v-if="!state.currentRootNode"
     size="3"
   ></loader>
-  <template v-if="state.currentRootNode">
-    <file-browser
-      :rootnode="state.currentRootNode"
-      :module="module"
-      :dragging="true"
-      @changed="onSelectionChanged"
-    >
-    </file-browser>
-  </template>
+  <file-browser
+    :rootnode="state.currentRootNode"
+    :module="module"
+    :dragging="true"
+    @changed="onSelectionChanged"
+  >
+  </file-browser>
 </template>
 
 <script lang="ts">
