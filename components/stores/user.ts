@@ -155,7 +155,8 @@ export const useUserStore = defineStore("user", () => {
         dataObj: {
           name: name,
           password: password
-        }
+        },
+        amount: 1
       })
         .then(async (respLogin: Response) => {
           if (respLogin.statusText === "OK") {
