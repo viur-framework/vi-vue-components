@@ -213,7 +213,7 @@ export const useDBStore = defineStore("db", () => {
   function getConf(module: string, view = null) {
     let conf = null
     let name = module
-    if (typeof view === "string") {
+    if (typeof view === "string" && isNaN(parseFloat(view))) {
       view = modulesList.value?.[module]?.["views"].findIndex((x) => x["group"] === view)
     }
     if (view) name += "_" + view
