@@ -90,6 +90,11 @@ export default defineComponent({
 
     provide("reloadAction", reloadAction)
 
+    function changerootNode(key: string) {
+      state.currentRootNode = state.currentRootNodes.filter((i) => i["key"] === key)[0]
+    }
+    provide("changerootNode", changerootNode)
+
     onBeforeMount(() => {
       fetchInitData()
     })
