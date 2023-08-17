@@ -52,7 +52,8 @@ export default defineComponent({
     actions: {
       type: Array,
       default: []
-    }
+    },
+    handler: null
   },
   components: { ...actions },
   setup(props, context) {
@@ -102,16 +103,23 @@ export default defineComponent({
         if (props.actions?.length > 0) return props.actions
 
         // find matching conf
-        let conf = dbStore.getConf(handlerState.module, handlerState.view)
         let actions = { ...listActions }
+        let conf = dbStore.getConf(handlerState.module, handlerState.view)
+        let handler = ""
+        if (props.handler) {
+          handler = props.handler
+        } else {
+          handler = conf["handler"]
+        }
+
         if (!conf) return actions
-        if (conf["handler"].startsWith("tree.node")) {
+        if (handler.startsWith("tree.node")) {
           actions = { ...hierarchyActions }
-        } else if (conf["handler"].startsWith("tree")) {
+        } else if (handler.startsWith("tree")) {
           actions = { ...treeActions }
-        } else if (conf["handler"].startsWith("list.fluidpage") && conf["handler"] !== "list.fluidpage.content") {
+        } else if (handler.startsWith("list.fluidpage") && handler !== "list.fluidpage.content") {
           actions = { ...fluidpageActions }
-        } else if (conf["handler"].startsWith("list.fluidpage.content")) {
+        } else if (handler.startsWith("list.fluidpage.content")) {
           actions = { ...fluidpagecontentActions }
         }
 

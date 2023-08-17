@@ -53,6 +53,24 @@
           </template>
         </sl-details>
       </template>
+
+      <template v-for="handler in state.conf?.['editViews']">
+        <sl-details
+          v-if="skelkey"
+          :summary="handler['name'] || dbStore.getConf(handler['module'])?.['name'] || handler['module']"
+          :open="false"
+        >
+          <div style="position: relative">
+            <component
+              :is="'listhandler'"
+              :module="handler['module']"
+              :filter="{ [handler['context']]: skelkey }"
+            >
+            </component>
+          </div>
+        </sl-details>
+      </template>
+
       <template v-if="appStore.state.debug">
         <sl-details summary="DEBUG: Formdata">
           <VueJsonPretty
@@ -344,6 +362,7 @@ export default defineComponent({
       updateValue,
       modulesStore,
       appStore,
+      dbStore,
       relationSelection,
       toRaw,
       relationCloseAction,

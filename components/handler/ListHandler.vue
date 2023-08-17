@@ -1,6 +1,9 @@
 <template>
   <div class="main-wrapper">
-    <handler-bar :module="module"></handler-bar>
+    <handler-bar
+      :module="module"
+      handler="listhandler"
+    ></handler-bar>
 
     <sl-details
       v-if="modulesStore.state.loaded && modulesStore.state.modules[module]['help_text']"
@@ -36,16 +39,16 @@
                   name="play"
                   class="sort-arrow sort-up"
                   :class="{ 'sort-active': state.sorting === bone + '$desc' }"
-                  @click="sorting(bone, 'asc')"
                   :title="$t('actions.sortasc')"
+                  @click="sorting(bone, 'asc')"
                 ></sl-icon>
                 <sl-icon
                   v-if="state.sorting === bone + '$asc'"
                   name="play"
                   class="sort-arrow sort-down"
                   :class="{ 'sort-active': state.sorting === bone + '$asc' }"
-                  @click="sorting(bone, 'desc')"
                   :title="$t('actions.sortdesc')"
+                  @click="sorting(bone, 'desc')"
                 ></sl-icon>
               </div>
             </th>
@@ -117,7 +120,7 @@ import Loader from "@viur/vue-utils/generic/Loader.vue"
 import FloatingBar from "../bars/FloatingBar.vue"
 import { useContextStore } from "../stores/context"
 import { useLocalStore } from "../stores/local"
-import WidgetSmall from "../dashboard/WidgetSmall.vue";
+import WidgetSmall from "../dashboard/WidgetSmall.vue"
 
 export default defineComponent({
   props: {
@@ -130,10 +133,11 @@ export default defineComponent({
     rowselect: {
       default: 2 //0 == disabled, 1==select One, 2: select multiple
     },
-    selector: false
+    selector: false,
+    filter: {}
   },
   emits: ["currentSelection", "closeSelector"],
-  components: {WidgetSmall, FloatingBar, Loader, HandlerBar },
+  components: { WidgetSmall, FloatingBar, Loader, HandlerBar },
   setup(props, context) {
     const dbStore = useDBStore()
     const route = useRoute()
@@ -223,7 +227,8 @@ export default defineComponent({
           }
         }
       }
-      currentlist.state.params = { ...currentlist.state.params, ...contextStore.getContext() }
+
+      currentlist.state.params = { ...currentlist.state.params, ...contextStore.getContext(), ...props.filter }
       currentlist.state.params["limit"] = localStore.state.listamount
 
       currentlist
@@ -439,6 +444,7 @@ export default defineComponent({
   height: 0;
   position: relative;
   width: 100%;
+  height: 100%;
 }
 
 .loader {
@@ -466,16 +472,16 @@ export default defineComponent({
   padding: 33%;
   opacity: 0;
 
-  &.sort-down{
+  &.sort-down {
     transform: rotate(90deg);
   }
 
-  &.sort-up{
+  &.sort-up {
     transform: rotate(-90deg);
   }
 }
 
-.sort-arrow-wrap{
+.sort-arrow-wrap {
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -484,7 +490,7 @@ export default defineComponent({
   position: absolute;
   right: 0.6em;
 
-  &:hover .sort-arrow{
+  &:hover .sort-arrow {
     opacity: 1 !important;
   }
 }
@@ -565,10 +571,9 @@ table {
       }
 
       &:hover {
-
-       .sort-arrow-wrap .sort-arrow{
-         opacity: .4;
-       }
+        .sort-arrow-wrap .sort-arrow {
+          opacity: 0.4;
+        }
 
         &:after {
           border-color: transparent transparent var(--sl-color-neutral-700) transparent;
