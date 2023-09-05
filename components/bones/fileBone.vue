@@ -26,8 +26,8 @@
     </sl-button>
     <sl-button
       v-if="!boneState.readonly && (!value || state.loading)"
-      @click="openRelationalSelection"
       class="relation-btn"
+      @click="openRelationalSelection"
     >
       <sl-icon name="menu"></sl-icon>
     </sl-button>
@@ -71,7 +71,10 @@
           name="file-earmark"
         ></sl-icon>
       </div>
-      <div v-if="value?.['dest']?.['name']" class="ellipsis">
+      <div
+        v-if="value?.['dest']?.['name']"
+        class="ellipsis"
+      >
         {{ decodeURIComponent(value?.["dest"]?.["name"]) }}
       </div>
     </div>
@@ -79,8 +82,8 @@
       v-if="value"
       variant="info"
       outline
-      @click="editSelection"
       class="info-btn"
+      @click="editSelection"
     >
       <sl-icon name="pencil"></sl-icon>
     </sl-button>
@@ -250,6 +253,7 @@ export default defineComponent({
     }
 
     function changeEventNested(val) {
+      if (!state.selection) state.selection = {}
       if (Object.keys(state.selection).includes("rel")) {
         state.selection["rel"][val.name] = val.value
       } else {
@@ -344,7 +348,7 @@ export default defineComponent({
   }
 }
 
-.info-btn{
+.info-btn {
   &::part(base) {
     aspect-ratio: 1;
   }
@@ -356,7 +360,7 @@ export default defineComponent({
   }
 }
 
-.relation-btn{
+.relation-btn {
   &::part(base) {
     aspect-ratio: 1;
   }
@@ -366,7 +370,7 @@ export default defineComponent({
   padding-top: var(--sl-spacing-x-small);
 }
 
-.ellipsis{
+.ellipsis {
   overflow: hidden;
   text-overflow: ellipsis;
 }

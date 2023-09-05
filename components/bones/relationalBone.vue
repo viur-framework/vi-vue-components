@@ -26,8 +26,8 @@
         v-if="!boneState.isEmpty"
         variant="info"
         outline
-        @click="editSelection"
         class="square-btn"
+        @click="editSelection"
       >
         <sl-icon name="pencil"></sl-icon>
       </sl-button>
@@ -136,13 +136,13 @@ export default defineComponent({
     }
 
     function changeEventNested(val) {
-      if (!state.selection ) state.selection = {}
+      if (!state.selection) state.selection = {}
       if (Object.keys(state.selection).includes("rel")) {
         state.selection["rel"][val.name] = val.value
       } else {
         state.selection["rel"] = { [val.name]: val.value }
       }
-      if(!Object.keys(state.selection).includes("dest")) return
+      if (!Object.keys(state.selection).includes("dest")) return
       context.emit("change", props.name, state.selection, props.lang, props.index)
     }
 
@@ -231,14 +231,14 @@ sl-combobox {
   }
 }
 
-.square-btn{
-  &::part(base){
+.square-btn {
+  &::part(base) {
     aspect-ratio: 1;
   }
 }
 
-.record{
-  :deep(.form){
+.record {
+  :deep(.form) {
     margin-top: var(--sl-spacing-x-small);
   }
 }
