@@ -39,7 +39,15 @@ export default defineComponent({
 
       let conf = dbStore.state["vi.modules"][module]
       if (Object.keys(conf).includes("previewurls")) {
+        //previewurls will be removed on stable release
         for (const [k, v] of Object.entries(conf["previewurls"])) {
+          for (let selection of handlerState.currentSelection) {
+            window.open(import.meta.env.VITE_API_URL + v.replace("{{key}}", selection["key"]), "_blank").focus()
+          }
+        }
+      }
+      if (Object.keys(conf).includes("preview")) {
+        for (const [k, v] of Object.entries(conf["preview"])) {
           for (let selection of handlerState.currentSelection) {
             window.open(import.meta.env.VITE_API_URL + v.replace("{{key}}", selection["key"]), "_blank").focus()
           }
