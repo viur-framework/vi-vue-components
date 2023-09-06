@@ -124,7 +124,8 @@ export default defineComponent({
             skelType: "node",
             orderby: "sortindex",
             parententry: state.currentEntry["key"],
-            limit: 99
+            limit: 99,
+            ...treeState.params
           }
         }).then(async (resp) => {
           let data = await resp.json()
@@ -307,10 +308,10 @@ tr {
   border-top: 4px solid transparent;
   border-bottom: 4px solid transparent;
 
-  &.active{
+  &.active {
     background-color: var(--sl-color-neutral-300);
 
-    td{
+    td {
       font-weight: 700;
     }
   }

@@ -36,7 +36,7 @@ export const useContextStore = defineStore("contextStore", () => {
 
   function getCurrentContext() {
     let route = useRoute()
-    let handlerId = route.query?.["_"]
+    let handlerId = route?.query?.["_"]
     return getContext(handlerId)
   }
 

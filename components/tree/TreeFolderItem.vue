@@ -87,7 +87,8 @@ export default defineComponent({
   setup(props, context) {
     const treeState = inject("handlerState")
     const state = reactive({
-      currentEntry: {}
+      currentEntry: {},
+      currentRootNode: null
     })
     const tree = useTree(props.module, treeState, state)
 
@@ -98,6 +99,8 @@ export default defineComponent({
       () => props.path,
       (newVal, oldVal) => {
         if (!newVal.every((x) => oldVal.includes(x))) {
+          buildCurrentEntry()
+        } else if (props.path.length === 1 && state.currentRootNode != treeState.tree?.[0]?.["key"]) {
           buildCurrentEntry()
         }
       }
@@ -132,12 +135,14 @@ export default defineComponent({
       state.currentEntry = tree.EntryFromPath(props.path)
       if (props.path && props.path.length === 1 && props.path[0] === 0) {
         // prefetch rootnode childs
+        state.currentRootNode = state.currentEntry["key"]
         state.currentEntry["_status"] = "loading"
         Request.get(`/vi/${props.module}/list`, {
           dataObj: {
             skelType: "node",
             orderby: "sortindex",
-            parententry: state.currentEntry["key"]
+            parententry: state.currentEntry["key"],
+            ...treeState.params
           }
         }).then(async (resp) => {
           let data = await resp.json()

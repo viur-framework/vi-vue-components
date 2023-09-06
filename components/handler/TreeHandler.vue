@@ -1,13 +1,18 @@
 <template>
-  <handler-bar :module="module"></handler-bar>
+  <handler-bar
+    :module="module"
+    handler="treehandler"
+  ></handler-bar>
   <loader
     v-if="!state.currentRootNode"
     size="3"
   ></loader>
   <file-browser
+    v-if="state.currentRootNode"
     :rootnode="state.currentRootNode"
     :module="module"
     :dragging="true"
+    :params="contextStore.state.globalContext"
     @changed="onSelectionChanged"
   >
   </file-browser>
@@ -136,7 +141,8 @@ export default defineComponent({
 
     return {
       state,
-      onSelectionChanged
+      onSelectionChanged,
+      contextStore
     }
   }
 })

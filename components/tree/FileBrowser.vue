@@ -195,7 +195,8 @@ export default defineComponent({
       required: true
     },
     view: null,
-    dragging: false
+    dragging: false,
+    params: {}
   },
   emits: ["changed"],
   components: { FileItem, FolderItem, ViImage, TreeFolderItem },
@@ -233,7 +234,8 @@ export default defineComponent({
       dragging: computed(() => props.dragging),
       loading: false,
       selectedNode: null,
-      selectedType: null
+      selectedType: null,
+      params: computed(() => props.params)
     })
     provide("handlerState", state) // expose to components
 
@@ -314,7 +316,8 @@ export default defineComponent({
           parententry: parent_entry_key,
           skelType: skelType,
           orderby: "sortindex",
-          amount: 99
+          amount: 99,
+          ...state.params
         }
       })
         .then(async (resp) => {

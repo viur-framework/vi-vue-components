@@ -111,7 +111,8 @@ export default defineComponent({
           dataObj: {
             skelType: "node",
             orderby: "sortindex",
-            parententry: state.currentEntry["key"]
+            parententry: state.currentEntry["key"],
+            ...treeState.params
           }
         }).then(async (resp) => {
           let data = await resp.json()
