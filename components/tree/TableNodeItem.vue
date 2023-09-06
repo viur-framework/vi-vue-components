@@ -37,7 +37,7 @@
           v-if="child['_status'] === 'loading'"
           class="loading"
         >
-          <sl-spinner></sl-spinner>
+          <sl-spinner-viur></sl-spinner-viur>
         </div>
       </td>
 

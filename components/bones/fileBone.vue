@@ -19,10 +19,10 @@
       @click="uploadinput.click()"
     >
       <sl-icon name="upload"></sl-icon>
-      <sl-spinner
+      <sl-spinner-viur
         v-if="state.loading"
         slot="suffix"
-      ></sl-spinner>
+      ></sl-spinner-viur>
     </sl-button>
     <sl-button
       v-if="!boneState.readonly && (!value || state.loading)"

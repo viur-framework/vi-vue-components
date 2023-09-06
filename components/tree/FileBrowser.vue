@@ -91,7 +91,7 @@
                 </template>
 
                 <tr v-if="state.loading">
-                  <td colspan="3"><sl-spinner></sl-spinner></td>
+                  <td colspan="3"><sl-spinner-viur></sl-spinner-viur></td>
                 </tr>
 
                 <tr

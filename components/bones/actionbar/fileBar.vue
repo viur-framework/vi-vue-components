@@ -51,10 +51,10 @@
     >
       <sl-icon name="upload"></sl-icon>
       {{ $t("bone.upload") }}
-      <sl-spinner
+      <sl-spinner-viur
         v-if="state.loading"
         slot="suffix"
-      ></sl-spinner>
+      ></sl-spinner-viur>
     </sl-button>
   </div>
 

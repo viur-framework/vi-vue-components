@@ -9,10 +9,10 @@
       slot="prefix"
       :name="icon"
     ></sl-icon>
-    <sl-spinner
+    <sl-spinner-viur
       v-if="handlerState.loading"
       slot="suffix"
-    ></sl-spinner>
+    ></sl-spinner-viur>
     {{ $t(name) }}
   </sl-button>
 </template>

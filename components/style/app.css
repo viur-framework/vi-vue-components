@@ -549,6 +549,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--vi-background-color);
+  box-sizing: border-box;
 }
 
 #app {
@@ -633,7 +634,7 @@ sl-button[variant="default"]::part(base) {
 sl-button[variant="default"]:hover::part(base) {
   border-color: var(--vi-foreground-color) !important;
 }
-sl-button sl-spinner {
+sl-button sl-spinner-viur {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -645,7 +646,7 @@ sl-button sl-spinner {
   border-radius: var(--sl-border-radius-medium);
   overflow: hidden;
 }
-sl-button sl-spinner:before {
+sl-button sl-spinner-viur:before {
   content: '';
   display: inline-block;
   position: absolute;
@@ -1286,4 +1287,15 @@ sl-drawer::part(panel) {
   --sl-z-index-dropdown: 300;
   --sl-z-index-tooltip: 600;
   --sl-z-index-toast: 700;
+}
+
+sl-button[size=small]::part(base){
+  height:var(--sl-input-height-small);
+}
+
+sl-button[size=medium]::part(base){
+  height:var(--sl-input-height-medium);
+}
+sl-button[size=large]::part(base){
+  height:var(--sl-input-height-large);
 }
