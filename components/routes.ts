@@ -69,7 +69,7 @@ const default_routes = [
     component: () => import("./views/edit.vue")
   },
   {
-    path: "/db/:module/clone/:group?/:skelkey",
+    path: "/db/:module/clone/:skeltype?/:skelkey",
     name: "clone",
     meta: { action: "clone" },
     props: true,
