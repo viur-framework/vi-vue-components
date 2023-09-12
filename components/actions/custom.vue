@@ -95,7 +95,9 @@ export default defineComponent({
           return false
         }
 
-        if (state.info["enabled"] && handlerState.currentSelection?.length > 0) {
+        if (handlerState.currentSelection?.length > 0) {
+          if(!state.info["enabled"]) return false
+
           let ex = new Logics(state.info["enabled"])
           let disabled = true
 
