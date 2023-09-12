@@ -325,7 +325,7 @@ export const useUserStore = defineStore("user", () => {
     }
   }
 
-  setInterval(synclastActions, 1000 * 30) //30 sec
+  //setInterval(synclastActions, 1000 * 30) //30 sec
   //TODO SYNC when close
 
   const getUser = computed(() => {

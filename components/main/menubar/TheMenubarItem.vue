@@ -61,14 +61,14 @@
         >
         </sl-icon-button>
         <sl-menu>
-          <sl-menu-item @click="toogleFavItem()">
+          <!--<sl-menu-item @click="toogleFavItem()">
             <sl-icon
               slot="prefix"
               name="heart"
               sprite
             ></sl-icon>
             Favorisieren
-          </sl-menu-item>
+          </sl-menu-item>-->
           <sl-menu-item @click="openConfig()">
             <sl-icon
               slot="prefix"

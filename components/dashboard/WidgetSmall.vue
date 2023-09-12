@@ -4,7 +4,7 @@
     @click="openTab"
   >
     <div class="icon-wrap">
-      <sl-icon name="trash"></sl-icon>
+      <sl-icon :name="icon" :library="library"></sl-icon>
     </div>
     <div class="home-name">
       <slot></slot>
@@ -23,6 +23,7 @@ export default defineComponent({
       type: String,
       default: "default"
     },
+    name:String,
     to: Object
   },
   components: {},
@@ -32,7 +33,7 @@ export default defineComponent({
     const route = useRoute()
 
     function openTab() {
-      dbStore.addOpened(props.to, props.to.params["module"], props.to.query["view"])
+      dbStore.addOpened(props.to, props.to.params["module"], props.to.query["view"],props.name)
     }
 
     return {

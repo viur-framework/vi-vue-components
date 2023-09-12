@@ -2,7 +2,7 @@
   <div class="home">
     <h1 class="main-headline">Hallo {{ state.name }}</h1>
 
-    <template v-if="userStore.favoriteModules?.length > 0">
+    <template v-if="false && userStore.favoriteModules?.length > 0">
       <h2 class="headline">Deine Favoriten</h2>
       <div class="home-grid">
         <widget-small
@@ -15,17 +15,16 @@
         </widget-small>
       </div>
     </template>
-    <br />
-    <br />
-    <template v-if="false && userStore.state.lastActions.length > 0">
-      <h2 class="headline">Zuletzt geöffnet</h2>
+    <template v-if="localStore.state.lastEntries.length > 0">
+      <h2 class="headline">Zuletzt bearbeitet <sl-icon name="x" style="font-size:.7rem;color:var(--sl-color-danger-500);cursor: pointer" @click="localStore.removeAllEntries()"></sl-icon></h2>
 
       <div class="home-grid">
         <widget-small
-          v-for="i in userStore.state.lastActions"
-          :icon="i['icon']?.split('___')[1]"
-          :library="i['library']?.split('___')[0]"
-          :to="i['url']"
+          v-for="i in localStore.state.lastEntries"
+          :icon="i['icon']"
+          :name="i['name']"
+          :library="i['library']"
+          :to="i['to']"
         >
           {{ i["name"] }}
         </widget-small>
@@ -39,6 +38,7 @@
 import { defineComponent, reactive, computed } from "vue"
 import { useRoute } from "vue-router"
 import { useUserStore } from "../stores/user"
+import { useLocalStore} from "../stores/local"
 import Utils from "../utils"
 import WidgetSmall from "../dashboard/WidgetSmall.vue"
 
@@ -48,6 +48,7 @@ export default defineComponent({
   setup(props, context) {
     const route = useRoute()
     const userStore = useUserStore()
+    const localStore = useLocalStore()
     const state = reactive({
       name: computed(() => {
         let name = ""
@@ -70,6 +71,7 @@ export default defineComponent({
       state,
       route,
       userStore,
+      localStore,
       createInitials
     }
   }

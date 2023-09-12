@@ -4,6 +4,7 @@ import { reactive, computed, Component, getCurrentInstance } from "vue"
 import { defineStore, StoreDefinition } from "pinia"
 import { useRoute, useRouter } from "vue-router"
 import { useViewStore } from "./views"
+import { useLocalStore} from "./local";
 import { useUserStore } from "./user"
 import { useContextStore } from "./context"
 import { destroyStore } from "@viur/vue-utils/utils/handlers"
@@ -133,6 +134,7 @@ function flattenTree(tree) {
 export const useDBStore = defineStore("db", () => {
   const viewStore = useViewStore()
   const router = useRouter()
+  const localStore = useLocalStore()
   const currentRoute = useRoute()
   const contextStore = useContextStore()
   const state = reactive({
@@ -299,6 +301,10 @@ export const useDBStore = defineStore("db", () => {
       moduleDescr: currentConf["name"],
       closeable: true,
       update: false
+    }
+
+    if(route['meta']?.["action"] && route['meta']?.["action"]==="edit"){
+      localStore.addEntries(entry)
     }
 
     let tabNames = state["handlers.opened"].map((e) => e["url"]).filter((name) => name.startsWith(url))

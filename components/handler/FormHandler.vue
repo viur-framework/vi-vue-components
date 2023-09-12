@@ -204,7 +204,7 @@ export default defineComponent({
           }
         }
         let sortedGroups = {}
-        console.log(groups)
+
         Object.keys(groups)
           .sort()
           .forEach(function (key) {
