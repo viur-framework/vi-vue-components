@@ -37,14 +37,12 @@ export default defineComponent({
 
         for (let selection of handlerState.currentSelection) {
           if (handlerState.type === "hierarchyhandler") {
-            urls.push(`/db/${handlerState.module}/clone/node/${selection["parententry"]}`)
+            urls.push(`/db/${handlerState.module}/clone/node/${selection["key"]}`)
             continue
           }
 
           if (handlerState.type === "treehandler") {
-            urls.push(
-              `/db/${handlerState.module}/clone/${handlerState?.currentSelectionType}/${selection["parententry"]}`
-            )
+            urls.push(`/db/${handlerState.module}/clone/${handlerState?.currentSelectionType}/${selection["key"]}`)
             continue
           }
           if (handlerState.group) {
