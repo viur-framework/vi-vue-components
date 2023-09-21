@@ -77,6 +77,7 @@
                   :no-topbar="true"
                   module="_tasks"
                   action="execute"
+                  :secure="true"
                   :group="item['key']"
                   @change="setValues"
                 >
