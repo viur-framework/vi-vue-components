@@ -113,7 +113,7 @@ export default defineComponent({
         // find matching conf
         let actions = { ...listActions }
         let conf = dbStore.getConf(handlerState.module, handlerState.view)
-        let handler = conf["handler"]
+        let handler = conf?.["handler"]
 
         if (!handler && props.handler) {
           handler = props.handler
