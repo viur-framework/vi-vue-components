@@ -256,7 +256,7 @@ export default defineComponent({
       }
 
       if (state.skeltype === "leaf" && props.action === "add") {
-        url += `/node`
+        url += `/leaf`
         dataObj["node"] = props.skelkey
       }
 
@@ -341,9 +341,9 @@ export default defineComponent({
     function visibleIf(changeddata) {
       try {
         // we need more stable skel updates for logics
-        if (state.structure?.[changeddata["name"]]["multiple"]){
-          state.skel[changeddata["name"]] = changeddata["value"].map(x=>x[changeddata["name"]])
-        }else{
+        if (state.structure?.[changeddata["name"]]["multiple"]) {
+          state.skel[changeddata["name"]] = changeddata["value"].map((x) => x[changeddata["name"]])
+        } else {
           state.skel[changeddata["name"]] = [changeddata["value"][0][changeddata["name"]]]
         }
       } catch (e) {}
@@ -356,18 +356,17 @@ export default defineComponent({
       }
     }
 
-    function readonlyIf(changeddata){
+    function readonlyIf(changeddata) {
       try {
         // we need more stable skel updates for logics
-        if (state.structure?.[changeddata["name"]]["multiple"]){
-          state.skel[changeddata["name"]] = changeddata["value"].map(x=>x[changeddata["name"]])
-        }else{
+        if (state.structure?.[changeddata["name"]]["multiple"]) {
+          state.skel[changeddata["name"]] = changeddata["value"].map((x) => x[changeddata["name"]])
+        } else {
           state.skel[changeddata["name"]] = [changeddata["value"][0][changeddata["name"]]]
         }
       } catch (e) {}
 
-      for (const [boneName, bone] of Object.entries(state.structure)){
-
+      for (const [boneName, bone] of Object.entries(state.structure)) {
         if (bone?.["params"]?.["readonlyIf"]) {
           let ex = new Logics(bone?.["params"]?.["readonlyIf"])
           bone["readonly"] = ex.run(state.skel).toBool()

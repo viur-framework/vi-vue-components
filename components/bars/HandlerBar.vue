@@ -81,11 +81,19 @@ export default defineComponent({
           ]
         }
 
-        const treeActions = {
+        const fileActions = {
           ":options": [["selectfields", "overlay"]],
           default: [
             ["selectfields", "rootnodelist", "reload"],
             ["delete", "clone", "preview", "edit", "addfolder", "addfile"]
+          ]
+        }
+
+        const treeActions = {
+          ":options": [["selectfields", "overlay"]],
+          default: [
+            ["selectfields", "rootnodelist", "reload"],
+            ["delete", "clone", "preview", "edit", "addnode", "addleaf"]
           ]
         }
 
@@ -114,6 +122,8 @@ export default defineComponent({
         if (!conf) return actions
         if (handler.startsWith("tree.node")) {
           actions = { ...hierarchyActions }
+        } else if (handler.startsWith("tree.file") || handler === "tree.simple.file") {
+          actions = { ...fileActions }
         } else if (handler.startsWith("tree")) {
           actions = { ...treeActions }
         } else if (handler.startsWith("list.fluidpage") && handler !== "list.fluidpage.content") {

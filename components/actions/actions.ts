@@ -1,6 +1,7 @@
 //@ts-nocheck
 import add_action from "./add.vue"
 import addnode_action from "./addnode.vue"
+import addleaf_action from "./addleaf.vue"
 import clone_action from "./clone.vue"
 import delete_action from "./delete.vue"
 import edit_action from "./edit.vue"
@@ -25,6 +26,7 @@ import search_action from "./search.vue"
 export default {
   add_action,
   addnode_action,
+  addleaf_action,
   clone_action,
   delete_action,
   edit_action,
