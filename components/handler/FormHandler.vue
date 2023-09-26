@@ -257,7 +257,7 @@ export default defineComponent({
       }
 
       if (state.skeltype === "leaf" && props.action === "add") {
-        url += `/node`
+        url += `/leaf`
         dataObj["node"] = props.skelkey
       }
       let requestHandler = Request.post

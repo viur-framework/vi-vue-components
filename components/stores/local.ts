@@ -8,24 +8,28 @@ export const useLocalStore = defineStore(
   () => {
     const state = reactive({
       listamount: "30",
-      lastEntries: []
+      lastEntries:[]
     })
-    function addEntries(handler) {
-      let skelkey = handler?.["to"]?.["params"]?.["skelkey"]
-      let exists = state.lastEntries.filter((x) => x?.["to"]?.["params"]?.["skelkey"] === skelkey)
-      if (exists.length === 0) {
-        state.lastEntries.push(handler)
-      }
+    function addEntries(handler){
+        let skelkey = handler?.["to"]?.["params"]?.["skelkey"]
+        let exists = state.lastEntries.filter(x => x?.["to"]?.["params"]?.["skelkey"]===skelkey)
+        if (exists.length===0){
+            state.lastEntries.unshift(handler)
+            if (state.lastEntries.length>12){
+                state.lastEntries = state.lastEntries.slice(0,12)
+            }
+        }
     }
 
-    function removeAllEntries() {
-      state.lastEntries = []
+    function removeAllEntries(){
+        state.lastEntries = []
     }
+
 
     return {
       state,
-      addEntries,
-      removeAllEntries
+        addEntries,
+        removeAllEntries
     }
   },
   { persist: true }

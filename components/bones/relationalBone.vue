@@ -137,11 +137,36 @@ export default defineComponent({
 
     function changeEventNested(val) {
       if (!state.selection) state.selection = {}
-      if (Object.keys(state.selection).includes("rel")) {
-        state.selection["rel"][val.name] = val.value
-      } else {
-        state.selection["rel"] = { [val.name]: val.value }
+
+      if (!state.selection["rel"]?.[val.name]) {
+        if (!state.selection["rel"]) {
+          state.selection["rel"] = { [val.name]: null }
+        } else {
+          state.selection["rel"][val.name] = null
+        }
       }
+
+      let currentBone = state.selection["rel"][val.name]
+      if (val.lang) {
+        if (currentBone === null) currentBone = {}
+        if (Object.keys(currentBone).includes(val.lang) && val.index !== null) {
+          currentBone[val.lang][val.index] = val.value
+        } else {
+          currentBone[val.lang] = val.value
+        }
+      } else if (val.index !== null) {
+        if (currentBone === null) currentBone = []
+        currentBone[val.index] = val.value
+      } else {
+        currentBone = val.value
+      }
+
+      if (Object.keys(state.selection).includes("rel") && state.selection["rel"]) {
+        state.selection["rel"][val.name] = currentBone
+      } else {
+        state.selection["rel"] = { [val.name]: currentBone }
+      }
+
       if (!Object.keys(state.selection).includes("dest")) return
       context.emit("change", props.name, state.selection, props.lang, props.index)
     }

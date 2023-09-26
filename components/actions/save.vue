@@ -67,7 +67,12 @@ export default defineComponent({
 
       if (handlerState.skeltype === "node" || handlerState.skeltype === "leaf") {
         url += `/${handlerState.skeltype}`
-        obj["node"] = handlerState.skelkey
+
+        if (handlerState.action === "clone") {
+          obj["node"] = handlerState.skel["parententry"]
+        } else {
+          obj["node"] = handlerState.skelkey
+        }
       }
 
       if (handlerState.action === "edit") {

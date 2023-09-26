@@ -96,7 +96,7 @@ export default defineComponent({
         }
 
         if (handlerState.currentSelection?.length > 0) {
-          if(!state.info["enabled"]) return false
+          if (!state.info["enabled"]) return false
 
           let ex = new Logics(state.info["enabled"])
           let disabled = true
@@ -173,10 +173,7 @@ export default defineComponent({
         })
       }
 
-      if (selection === null) {
-        triggerServersideAction(state.info["url"])
-        return
-      }
+      triggerServersideAction(state.info["url"])
     }
 
     function handleView(selection) {
@@ -203,10 +200,7 @@ export default defineComponent({
     }
 
     function handleOpen(selection) {
-      if (selection === null) {
-        window.open(state.info["url"], "_blank").focus()
-        return
-      }
+      window.open(state.info["url"], "_blank").focus()
     }
 
     return {
