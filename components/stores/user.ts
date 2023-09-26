@@ -223,7 +223,7 @@ export const useUserStore = defineStore("user", () => {
       //window.google.accounts.id.disableAutoSelect();
       window.google.accounts.id.revoke()
     }
-    Request.securePost("/vi/user/logout")
+    return Request.securePost("/vi/user/logout")
       .then((resp: Response) => {
         resetLoginInformation()
       })

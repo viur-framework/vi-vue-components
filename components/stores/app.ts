@@ -6,7 +6,7 @@ import Utils from "../utils"
 export const useAppStore = defineStore("appStore", () => {
   const state = reactive({
     debug: false,
-    "vi.version": [4, 0, 0],
+    "vi.version": [4, 0, 7],
 
     //core section
     "core.version": null,

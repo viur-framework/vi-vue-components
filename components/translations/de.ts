@@ -31,7 +31,7 @@ export default {
     },
     open: "Öffnen",
     sortasc: "Aufsteigend Sortieren",
-    sortdesc: "Absteigend Sortieren",
+    sortdesc: "Absteigend Sortieren"
   },
   sidebar: {
     workspace: "Arbeitsbereich",
@@ -39,6 +39,7 @@ export default {
     favorites: "Favorites",
     name: "Benutzereinstellungen",
     logout: "Ausloggen",
+    logout_text: "Wenn Sie sich ausloggen, gehen alle nicht gespeicherten Daten verloren. Möchten sie fortfahren?",
     section_general_name: "Allgemein",
     section_system_name: "Servertasks"
   },

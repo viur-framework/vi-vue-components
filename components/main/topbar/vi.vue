@@ -25,12 +25,13 @@
       <sl-button
         variant="primary"
         size="small"
-        @click="userStore.logout"
+        @click="state.openLogout = !state.openLogout"
         >{{ $t("sidebar.logout") }}
       </sl-button>
     </div>
 
     <div class="drawer-scroller">
+      <!--
       <div class="group">
         <div class="group-headline">
           {{ $t("sidebar.section_general_name") }}
@@ -39,11 +40,11 @@
           <sl-icon name="gear"></sl-icon>
           Aktuelles Log
         </sl-button>
-        <!--<sl-button size="medium">
+        <sl-button size="medium">
           <sl-icon name="gear"></sl-icon>
           {{ $t("sidebar.section_general_cache") }}
-        </sl-button>      -->
-      </div>
+        </sl-button>
+      </div> -->
 
       <div class="group">
         <div class="group-headline">
@@ -100,15 +101,6 @@
             </sl-dialog>
           </teleport>
         </template>
-
-        <!--<sl-button size="medium">
-          <sl-icon name="gear"></sl-icon>
-          {{ $t("sidebar.section_system_vacuum") }}
-        </sl-button>
-        <sl-button size="medium">
-          <sl-icon name="gear"></sl-icon>
-          {{ $t("sidebar.section_system_entities") }}
-        </sl-button>-->
       </div>
     </div>
 
@@ -116,10 +108,40 @@
       slot="footer"
       class="drawer-footer"
     >
-      <div class="footer-item">Vi: {{ state.viVersion }}</div>
+      <div class="footer-item">Admin: {{ state.viVersion }}</div>
       <div class="footer-item">Core: {{ state.coreVersion }}</div>
     </div>
   </sl-drawer>
+
+  <teleport
+    v-if="state.openLogout"
+    to="#dialogs"
+    :disabled="!state.openLogout"
+  >
+    <sl-dialog
+      :label="$t('sidebar.logout')"
+      style="--width: 50%"
+      open
+      @sl-after-hide="state.openLogout = false"
+    >
+      {{ $t("sidebar.logout_text") }}
+      <sl-button
+        slot="footer"
+        variant="success"
+        :loading="userStore.state['user.loggedin'] !== 'yes'"
+        @click="userStore.logout()"
+      >
+        {{ $t("confirm") }}
+      </sl-button>
+      <sl-button
+        slot="footer"
+        variant="danger"
+        @click="state.openedTask = null"
+      >
+        {{ $t("abort") }}
+      </sl-button>
+    </sl-dialog>
+  </teleport>
 </template>
 
 <script lang="ts">
@@ -186,15 +208,11 @@ export default defineComponent({
       coreVersion: computed(() => {
         let core = ""
         if (!appStore.state["core.version"]) return core
-        for (let i = 0; i < appStore.state["core.version"].length; i++) {
-          core += appStore.state["core.version"][i]
-          if (i < appStore.state["core.version"].length - 1) {
-            core += "."
-          }
-        }
-        return core
+        appStore.state["core.version"] = appStore.state["core.version"].filter((e) => e !== null)
+        return appStore.state["core.version"].join(".")
       }),
       openedTask: null,
+      openLogout: null,
       formValues: null
     })
 
