@@ -152,7 +152,8 @@ export default defineComponent({
     group: null,
     skelkey: null,
     skeltype: null,
-    noTopbar: false
+    noTopbar: false,
+    secure: false
   },
   components: { EntryBar, bone, ...handlers, VueJsonPretty, Loader },
   emit: ["change"],
@@ -259,8 +260,11 @@ export default defineComponent({
         url += `/node`
         dataObj["node"] = props.skelkey
       }
-
-      Request.post(url, { dataObj: dataObj }).then(async (resp) => {
+      let requestHandler = Request.post
+      if (props.secure) {
+        requestHandler = Request.securePost
+      }
+      requestHandler(url, { dataObj: dataObj }).then(async (resp) => {
         let data = await resp.json()
 
         for (const [key, val] of Object.entries(route.query)) {
@@ -341,9 +345,9 @@ export default defineComponent({
     function visibleIf(changeddata) {
       try {
         // we need more stable skel updates for logics
-        if (state.structure?.[changeddata["name"]]["multiple"]){
-          state.skel[changeddata["name"]] = changeddata["value"].map(x=>x[changeddata["name"]])
-        }else{
+        if (state.structure?.[changeddata["name"]]["multiple"]) {
+          state.skel[changeddata["name"]] = changeddata["value"].map((x) => x[changeddata["name"]])
+        } else {
           state.skel[changeddata["name"]] = [changeddata["value"][0][changeddata["name"]]]
         }
       } catch (e) {}
@@ -356,18 +360,17 @@ export default defineComponent({
       }
     }
 
-    function readonlyIf(changeddata){
+    function readonlyIf(changeddata) {
       try {
         // we need more stable skel updates for logics
-        if (state.structure?.[changeddata["name"]]["multiple"]){
-          state.skel[changeddata["name"]] = changeddata["value"].map(x=>x[changeddata["name"]])
-        }else{
+        if (state.structure?.[changeddata["name"]]["multiple"]) {
+          state.skel[changeddata["name"]] = changeddata["value"].map((x) => x[changeddata["name"]])
+        } else {
           state.skel[changeddata["name"]] = [changeddata["value"][0][changeddata["name"]]]
         }
       } catch (e) {}
 
-      for (const [boneName, bone] of Object.entries(state.structure)){
-
+      for (const [boneName, bone] of Object.entries(state.structure)) {
         if (bone?.["params"]?.["readonlyIf"]) {
           let ex = new Logics(bone?.["params"]?.["readonlyIf"])
           bone["readonly"] = ex.run(state.skel).toBool()
