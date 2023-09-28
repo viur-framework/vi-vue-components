@@ -68,20 +68,20 @@ function adminTreeLayer(itemList: Array<ModuleInfo>, parent: ModuleInfo): Array<
     } else if (conf["handler"] == "list.fluidpage.content") {
       conf["url"] = { path: `/db/${conf["module"]}/fluidpage` }
       conf["handlerComponent"] = "fluidpagehandler"
-    } else if (conf["handler"] === "list.grouped") {
+    } else if (conf["handler"] === "list.grouped" || conf["handler"].startsWith("list.grouped.")) {
       let group = Object.keys(conf).includes("group") ? conf["group"] : "all"
       conf["url"] = { path: `/db/${conf["module"]}/list/${group}` }
       conf["handlerComponent"] = "listhandler"
     } else if (conf["handler"] === "list" || conf["handler"].startsWith("list.")) {
       conf["url"] = { path: `/db/${conf["module"]}/list` }
       conf["handlerComponent"] = "listhandler"
-    } else if (conf["handler"] === "tree") {
+    } else if (conf["handler"] === "tree.simple.file") {
       conf["url"] = { path: `/db/${conf["module"]}/tree` }
       conf["handlerComponent"] = "treehandler"
-    } else if (conf["handler"] === "tree.node") {
+    } else if (conf["handler"] === "tree.node" || conf["handler"].startsWith("tree.node.")) {
       conf["url"] = { path: `/db/${conf["module"]}/tree.node` }
       conf["handlerComponent"] = "hierarchyhandler"
-    } else if (conf["handler"] === "tree.simple.file") {
+    }else if (conf["handler"] === "tree" || conf["handler"].startsWith("tree.")) {
       conf["url"] = { path: `/db/${conf["module"]}/tree` }
       conf["handlerComponent"] = "treehandler"
     } else if (conf["handler"] === "singleton" || conf["handler"].startsWith("singleton.")) {
