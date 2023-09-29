@@ -58,7 +58,13 @@ export const useUserStore = defineStore("user", () => {
     //google stuff
     "google.api.loaded": false,
     "google.api.clientid": "",
-    "google.api.renderButton": true
+    "google.api.renderButton": true,
+
+    //auth methos
+    primaryAuthMethods: new Set(),
+    secondFactors: new Set(),
+    "user.login.secound_factor_choice":[],
+
   })
 
   function resetLoginInformation() {
@@ -159,7 +165,9 @@ export const useUserStore = defineStore("user", () => {
         amount: 1
       })
         .then(async (respLogin: Response) => {
-          if (respLogin.statusText === "OK") {
+          const loginResponse = await respLogin.json();
+
+          if (loginResponse === "OKAY") {
             Request.get("/vi/user/view/self")
               .then(async (resp: Response) => {
                 let data = await resp.json()
@@ -172,10 +180,11 @@ export const useUserStore = defineStore("user", () => {
                 state["user.loggedin"] = "error"
                 reject(respLogin)
               })
-          } else if (logindata["action"] === "authenticatorOTP") {
+          } else if (Array.isArray(loginResponse)) {//We can choose a secondfactor
             //We have a second factor
-            state["user.loggedin"] = "secound_factor_authenticator_otp"
-            state["user.login.type"] = logindata["action"].toLowerCase()
+            console.log("We have the choice")
+            state["user.loggedin"] = "secound_factor_choice"
+            state["user.login.secound_factor_choice"] = loginResponse
           }
         })
         .catch((error: Error) => {
@@ -325,6 +334,33 @@ export const useUserStore = defineStore("user", () => {
     }
   }
 
+  function getAuthMethods()
+  {
+    return new Promise((resolve, reject) => {
+      Request.get(`/vi/user/getAuthMethods`).then(
+        async (resp) => {
+          const authMethods = await resp.json()
+          for(const method of authMethods)
+          {
+            state.primaryAuthMethods.add(method[0]);
+            state.secondFactors.add(method[1]);
+          }
+          resolve();
+        }
+      )
+    })
+  
+  }
+  function userSecondFactorStart(choice){
+    return new Promise((resolve, reject) => {
+      Request.get(choice["start_url"]).then(
+        async (resp) => {
+          console.log(await resp.json())
+          resolve();
+        }
+      )
+    })
+  }
   //setInterval(synclastActions, 1000 * 30) //30 sec
   //TODO SYNC when close
 
@@ -393,6 +429,8 @@ export const useUserStore = defineStore("user", () => {
     logout,
     favoriteModules,
     favoriteModules_keys,
-    addAction
+    addAction,
+    getAuthMethods,
+    userSecondFactorStart
   }
 })

@@ -25,7 +25,7 @@
         <sl-tab
           slot="nav"
           panel="userpassword"
-          :disabled="userStore.state['user.login.type'] !== 'user' && userStore.state['user.login.type'] !== 'no'"
+          :disabled="state.userPasswordLoginActivated"
         >
           Nutzer
         </sl-tab>
@@ -33,7 +33,7 @@
         <sl-tab
           slot="nav"
           panel="google"
-          :disabled="userStore.state['user.login.type'] !== 'google' && userStore.state['user.login.type'] !== 'no'"
+          :disabled="state.userGoogleLoginActivated"
         >
           Google
         </sl-tab>
@@ -75,22 +75,12 @@
               >Logout</sl-button
             >
           </div>
-          <div v-show="userStore.state['user.loggedin'] === 'secound_factor_authenticator_otp'">
-            <sl-input
-              v-model="state.otp"
-              type="text"
-              name="otp"
-              placeholder="OTP"
-              clearable
-            ></sl-input>
-
-            <sl-button
-              variant="primary"
-              :loading="userStore.state['user.loggedin'] === 'loading'"
-              @click="userSecondFactor"
-            >
-              Login
+          <div v-show="userStore.state['user.loggedin'] === 'secound_factor_choice'">
+            <div v-for="choice in userStore.state['user.login.secound_factor_choice']">
+            <sl-button @click="userSecondFactorStart(choice)">
+              {{choice["name"] }}
             </sl-button>
+          </div>
           </div>
         </sl-tab-panel>
         <sl-tab-panel name="google">
@@ -119,8 +109,7 @@
 
 <script lang="ts">
 import { useUserStore } from "../stores/user"
-import { reactive, computed, onBeforeMount, defineComponent, ref } from "vue"
-import { Request } from "@viur/vue-utils"
+import { reactive, computed, onBeforeMount, defineComponent } from "vue"
 import { useAppStore } from "../stores/app"
 import Loader from "@viur/vue-utils/generic/Loader.vue"
 
@@ -141,8 +130,12 @@ export default defineComponent({
       waitForInit: true,
       backgroundImage: computed(() => `url('${appStore.state["admin.login.background"]}')`),
       logo: computed(() => appStore.state["admin.login.logo"]),
-      otp: ""
+      otp: "",
+      userPasswordLoginActivated: computed(()=>{return userStore.state['user.login.type'] !== 'user' && userStore.state['user.login.type'] !== 'no'|| !userStore.state.primaryAuthMethods.has('X-VIUR-AUTH-User-Password')}),
+      userGoogleLoginActivated: computed(()=>{return userStore.state['user.login.type'] !== 'google' && userStore.state['user.login.type'] !== 'no'|| !userStore.state.primaryAuthMethods.has('X-VIUR-AUTH-Google-Account')}),
     })
+    console.log(state.userPasswordLoginActivated)
+    console.log(state.userGoogleLoginActivated)
 
     function googleLogin() {
       state.waitForLogout = false
@@ -162,8 +155,16 @@ export default defineComponent({
       state.waitForLogout = false
       userStore.userSecondFactor(state.otp)
     }
+    function userSecondFactorStart(choice)
+    {
+      userStore.userSecondFactorStart(choice)
+      console.log(choice)
+    }
 
     onBeforeMount(() => {
+      userStore.getAuthMethods()
+      
+
       userStore
         .updateUser()
         .then(() => {
@@ -180,7 +181,8 @@ export default defineComponent({
       userStore,
       userLogin,
       state,
-      userSecondFactor
+      userSecondFactor,
+      userSecondFactorStart
     }
   }
 })
