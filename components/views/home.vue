@@ -2,7 +2,7 @@
   <div class="home">
     <h1 class="main-headline">Hallo {{ state.name }}</h1>
 
-    <template v-if="false && userStore.favoriteModules?.length > 0">
+    <div class="main-box" v-if="false && userStore.favoriteModules?.length > 0">
       <h2 class="headline">Deine Favoriten</h2>
       <div class="home-grid">
         <widget-small
@@ -14,9 +14,12 @@
           {{ i["name"] }}
         </widget-small>
       </div>
-    </template>
-    <template v-if="localStore.state.lastEntries.length > 0">
-      <h2 class="headline">Zuletzt bearbeitet <sl-icon name="x" style="font-size:.7rem;color:var(--sl-color-danger-500);cursor: pointer" @click="localStore.removeAllEntries()"></sl-icon></h2>
+    </div>
+
+    <div class="main-box" v-if="localStore.state.lastEntries.length > 0">
+      <h2 class="headline">Zuletzt bearbeitet
+        <sl-icon name="x" @click="localStore.removeAllEntries()"></sl-icon>
+      </h2>
 
       <div class="home-grid">
         <widget-small
@@ -29,7 +32,7 @@
           {{ i["name"] }}
         </widget-small>
       </div>
-    </template>
+    </div>
   </div>
 </template>
 
@@ -96,14 +99,44 @@ export default defineComponent({
 }
 
 .headline {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
   font-size: 1.3em;
   margin-bottom: 15px;
   font-weight: 600;
+
+  &:hover{
+     & sl-icon{
+        opacity: 1;
+      }
+  }
+
+  & sl-icon{
+    font-size: .52em;
+    margin-top: .35em;
+    margin-left: auto;
+    opacity: .3;
+    transition: all ease .3s;
+    cursor: pointer;
+
+    &:hover{
+        color: var(--sl-color-primary-500);
+     }
+  }
+}
+
+.main-box{
+  padding: var(--sl-spacing-medium) var(--sl-spacing-large);
+  background-color: var(--sl-color-neutral-0);
+  border-radius: var(--sl-border-radius-medium);
+  border: 1px solid var(--sl-color-neutral-300);
 }
 
 .home-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: 1fr;
   grid-gap: 15px;
 }
 </style>

@@ -122,10 +122,19 @@
     <sl-dialog
       :label="$t('sidebar.logout')"
       style="--width: 50%"
+      class="logout-confirm"
       open
       @sl-after-hide="state.openLogout = false"
     >
       {{ $t("sidebar.logout_text") }}
+
+      <sl-button
+        slot="footer"
+        variant="danger"
+        @click="state.openedTask = null"
+      >
+        {{ $t("abort") }}
+      </sl-button>
       <sl-button
         slot="footer"
         variant="success"
@@ -133,13 +142,6 @@
         @click="userStore.logout()"
       >
         {{ $t("confirm") }}
-      </sl-button>
-      <sl-button
-        slot="footer"
-        variant="danger"
-        @click="state.openedTask = null"
-      >
-        {{ $t("abort") }}
       </sl-button>
     </sl-dialog>
   </teleport>
@@ -384,4 +386,13 @@ sl-drawer {
 .user {
   cursor: pointer;
 }
+
+.logout-confirm{
+  &::part(footer){
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
 </style>

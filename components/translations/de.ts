@@ -25,7 +25,7 @@ export default {
     },
     reset: "Zurücksetzen",
     nextpage: "weitere Einträge ({amount})",
-    nextpage_finish: "alle Einträge geladen ({amount})",
+    nextpage_finish: "Einträge: {amount}",
     fluidpage: {
       edit: "Inhalt bearbeiten"
     },

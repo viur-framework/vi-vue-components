@@ -12,6 +12,7 @@
     @dragover.prevent="tree.onDragOver($event, idx)"
     @dragleave="tree.onDragLeave($event, idx)"
     @drop.stop="tree.onDrop($event, idx)"
+    @click="changeParentEntry(idx)"
   >
     <td>
       <div
@@ -44,16 +45,14 @@
         <sl-icon
           name="folder"
           sprite
-          @click="changeParentEntry(idx)"
         ></sl-icon>
         <span
           class="filename"
-          @click="changeParentEntry(idx)"
           v-html="skel['name']"
         ></span>
       </div>
     </td>
-    <td @click="changeParentEntry(idx)">
+    <td>
       <sl-format-date
         year="numeric"
         month="numeric"
@@ -61,8 +60,8 @@
         :date="skel['changedate']"
       ></sl-format-date>
     </td>
-    <td @click="changeParentEntry(idx)">Ordner</td>
-    <td @click="changeParentEntry(idx)">-</td>
+    <td>Ordner</td>
+    <td>-</td>
   </tr>
 </template>
 
