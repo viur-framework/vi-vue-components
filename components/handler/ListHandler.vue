@@ -585,8 +585,9 @@ table {
 
 .table-wrapper {
   color: var(--vi-foreground-color);
-  overflow: scroll;
+  overflow: auto;
   flex: 1;
+  padding-bottom: 80px;
 }
 .stick-header {
   position: sticky;
@@ -622,5 +623,6 @@ sl-details {
   align-items: center;
   overflow: hidden;
   justify-content: center;
+  padding: 20px 20px 15px 20px;
 }
 </style>
