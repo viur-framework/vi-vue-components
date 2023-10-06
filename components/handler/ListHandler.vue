@@ -1,6 +1,7 @@
 <template>
   <div class="main-wrapper">
     <handler-bar
+      v-if="!noTopbar"
       :module="module"
       handler="listhandler"
     ></handler-bar>
@@ -134,7 +135,9 @@ export default defineComponent({
       default: 2 //0 == disabled, 1==select One, 2: select multiple
     },
     selector: false,
-    filter: {}
+    filter: {},
+    noTopbar: false,
+    columns: []
   },
   emits: ["currentSelection", "closeSelector"],
   components: { WidgetSmall, FloatingBar, Loader, HandlerBar },
@@ -219,6 +222,9 @@ export default defineComponent({
     provide("setLimit", setLimit)
 
     onMounted(() => {
+      if (props.columns) {
+        state.selectedBones = props.columns
+      }
       state.conf = dbStore.getConf(props.module, props.view)
       if (state.conf) {
         if (Object.keys(state.conf).indexOf("filter") > -1) {
@@ -297,8 +303,7 @@ export default defineComponent({
     function openEditor(e: Event) {
       console.log(props.selector)
       if (props.selector) {
-        console.log("FFF")
-        context.emit("closeSelector")
+        context.emit("closeSelector", state.currentSelection)
         return 0
       }
       const url = `/db/${state.module}/edit/${state.currentSelection[0]["key"]}`
@@ -327,6 +332,10 @@ export default defineComponent({
     }
 
     function setSelectedBones() {
+      if (props.columns) {
+        state.selectedBones = props.columns
+        return 0
+      }
       state.conf = dbStore.getConf(props.module, props.view)
       if (state.conf && state.conf?.["columns"]) {
         state.selectedBones = state.conf["columns"]
