@@ -4,8 +4,19 @@
     @click="openTab"
   >
     <div class="icon-wrap">
-      <sl-icon :name="icon" :library="library"></sl-icon>
+      <sl-icon
+            v-if="icon"
+            slot="icon"
+            :name="icon"
+            :library="library"
+            sprite
+          ></sl-icon>
+      <span v-else>
+        {{ name[0] }}
+      </span>
     </div>
+
+
     <div class="home-name">
       <slot></slot>
     </div>
@@ -50,12 +61,18 @@ export default defineComponent({
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
+  height: 50px;
   aspect-ratio: 1;
+  padding: 10px;
 
   & sl-icon {
     color: #fff;
     font-size: 1.3em;
+  }
+
+  span{
+    font-size: 1.3em;
+    color: #fff;
   }
 }
 
@@ -64,22 +81,25 @@ export default defineComponent({
   flex-direction: row;
   overflow: hidden;
   border-radius: var(--sl-border-radius-medium);
-  border: 1px solid var(--sl-color-neutral-200);
+  border: 1px solid var(--vi-border-color);
   cursor: pointer;
   background-color: #fff;
   transition: all ease 0.3s;
 
   &:hover {
     background-color: var(--sl-color-neutral-50);
-    border: 1px solid var(--sl-color-neutral-300);
     color: var(--sl-color-primary-500);
+    font-weight: 600;
   }
 }
 
 .home-name {
+  display: flex;
+  align-items: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding: 15px;
+  height: 100%;
+  padding-left: 15px;
 }
 </style>

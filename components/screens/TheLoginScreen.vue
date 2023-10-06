@@ -1,9 +1,15 @@
 <template>
   <div class="wrapper">
+    <div class="background-img">
+      <img :src="state.backgroundImage"
+            @error="$event.target.src = 's/login-background.jpg'"
+      />
+    </div>
     <sl-card>
       <img
         class="logo"
         :src="state.logo"
+        @error="$event.target.src = 's/logo.svg'"
       />
       <sl-alert
         v-if="userStore.state['user.loggedin'] === 'error'"
@@ -139,7 +145,7 @@ export default defineComponent({
       userDataFilled: computed(() => state.name && state.password),
       waitForLogout: false,
       waitForInit: true,
-      backgroundImage: computed(() => `url('${appStore.state["admin.login.background"]}')`),
+      backgroundImage: computed(() => `${appStore.state["admin.login.background"]}`),
       logo: computed(() => appStore.state["admin.login.logo"]),
       otp: ""
     })
@@ -198,7 +204,6 @@ export default defineComponent({
   display: flex;
   justify-content: center;
   align-items: center;
-  background-image: v-bind("state.backgroundImage");
   background-position: center center;
   background-size: cover;
 }
@@ -226,7 +231,7 @@ sl-button {
 
 sl-card {
   z-index: 10;
-  min-width: 300px;
+  min-width: 483px;
   max-width: 500px;
   width: 30vw;
 
@@ -274,5 +279,20 @@ sl-tab-panel {
 
 sl-input {
   margin-bottom: 10px;
+}
+
+.background-img{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
+
+  img{
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
 }
 </style>

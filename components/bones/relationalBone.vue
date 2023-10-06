@@ -232,6 +232,13 @@ export default defineComponent({
 .single-entry {
   display: flex;
   gap: 10px;
+
+  :deep(sl-combobox){
+    &::part(input__base){
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+     }
+  }
 }
 
 sl-input {

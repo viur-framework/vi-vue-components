@@ -1,5 +1,6 @@
 <template>
-  <sl-button-group>
+  <sl-button-group
+      v-if="!state.disable">
     <sl-button
       :loading="state.loading"
       :disabled="state.disable"
@@ -11,15 +12,9 @@
         slot="prefix"
         name="menu"
       ></sl-icon>
-      <template v-if="state.disable">
-        {{ $t("actions.nextpage_finish", { amount: currentlist?.state.skellist.length }) }}
-      </template>
-      <template v-else>
         {{ $t("actions.nextpage", { amount: currentlist?.state.skellist.length }) }}
-      </template>
     </sl-button>
     <sl-select
-      :disabled="state.disable"
       value="1"
       size="small"
       class="sl-button-group__button--last"
@@ -31,6 +26,9 @@
       <sl-option value="10">10</sl-option>
     </sl-select>
   </sl-button-group>
+  <sl-button size="small" disabled class="" v-else>
+    {{ $t("actions.nextpage_finish", { amount: currentlist?.state.skellist.length }) }}
+  </sl-button>
 </template>
 
 <script lang="ts">
