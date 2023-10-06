@@ -70,6 +70,7 @@ import router from "../routes"
 import { useModulesStore } from "../stores/modules"
 import { useRoute } from "vue-router"
 import Loader from "@viur/vue-utils/generic/Loader.vue"
+import Element from "../fluidpage/element.vue"
 
 export default defineComponent({
   props: {
@@ -84,7 +85,7 @@ export default defineComponent({
     }
   },
   emits: ["currentSelection"],
-  components: { Loader, HandlerBar },
+  components: { Loader, HandlerBar, Element },
   setup(props, context) {
     const dbStore = useDBStore()
     const route = useRoute()
