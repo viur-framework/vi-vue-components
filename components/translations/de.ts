@@ -27,7 +27,9 @@ export default {
     nextpage: "weitere Einträge ({amount})",
     nextpage_finish: "Einträge: {amount}",
     fluidpage: {
-      edit: "Inhalt bearbeiten"
+      edit: "Inhalt bearbeiten",
+      emptyheadline: "Diese Fluidpage ist noch leer",
+      emptytext: "Mit dem \"Hinzufügen\"-Button können Inhalte auf dieser Fluidpage hinzugefügt werden.",
     },
     open: "Öffnen",
     sortasc: "Aufsteigend Sortieren",
