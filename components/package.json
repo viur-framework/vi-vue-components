@@ -8,7 +8,7 @@
   "author": "Andreas H. Kelch",
   "license": "MIT",
   "dependencies": {
-    "@viur/vue-utils": "^1.0.4",
+    "@viur/vue-utils": "^1.0.5",
     "logics-js": "^0.3.7",
     "pinia-plugin-persistedstate": "^3.1.0",
     "vue-json-pretty": "^2.2.4",

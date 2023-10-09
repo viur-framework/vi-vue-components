@@ -10,6 +10,7 @@
     }"
     @dragstart="tree.onDragStart($event, idx, 'leaf')"
     @drop.stop="tree.onDrop($event, idx)"
+     @click="entrySelected(skel)"
   >
     <td>
       <div class="file">
@@ -28,7 +29,6 @@
         ></sl-icon>
         <span
           class="filename"
-          @click="entrySelected(skel)"
           v-html="skel.name"
         ></span>
       </div>
