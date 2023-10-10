@@ -153,7 +153,20 @@ export default defineComponent({
     skelkey: null,
     skeltype: null,
     noTopbar: false,
-    secure: false
+    secure: false,
+    bones:{
+      type:Array,
+      default:[]
+    },
+    values:{
+      type:Object,
+      default:null
+    },
+    renderer:{
+      type:String,
+      default: import.meta.env.VITE_DEFAULT_RENDERER || "vi"
+    }
+
   },
   components: { EntryBar, bone, ...handlers, VueJsonPretty, Loader },
   emit: ["change"],
@@ -175,6 +188,12 @@ export default defineComponent({
       formGroups: computed(() => {
         let groups = { default: { name: "Allgemein", bones: [], groupVisible: false } }
         for (const [boneName, bone] of Object.entries(state.structure)) {
+          if (props.bones.length>0){
+            if (!props.bones.includes(boneName)){
+              continue
+            }
+          }
+
           let category = "default"
           let boneStructure = state.structure[boneName]
           let boneValue = state.skel[boneName]
@@ -239,7 +258,7 @@ export default defineComponent({
 
     function fetchData() {
       state.loading = true
-      let url = `/vi/${props.module}/${props.action === "clone" ? "edit" : props.action}`
+      let url = `/${props.renderer}/${props.module}/${props.action === "clone" ? "edit" : props.action}`
       if (props.group) url += `/${props.group}`
 
       if (props.action === "edit" || props.action === "clone") {
@@ -267,6 +286,12 @@ export default defineComponent({
       requestHandler(url, { dataObj: dataObj }).then(async (resp) => {
         let data = await resp.json()
 
+        if(props.values){
+          for (const [key, val] of Object.entries(props.values)) {
+            data["values"][key] = val
+          }
+        }
+
         for (const [key, val] of Object.entries(route.query)) {
           if (Object.keys(data["values"]).includes(key)) {
             data["values"][key] = val
@@ -281,6 +306,9 @@ export default defineComponent({
             data["values"][bonename] = newVal
           }
         }
+
+
+
         state.skel = data["values"]
         state.structure = structureToDict(data["structure"])
         state.errors = data["errors"]
