@@ -127,7 +127,7 @@
 
 <script lang="ts">
 //@ts-nocheck
-import { reactive, defineComponent, onBeforeMount, computed, provide, toRaw, unref } from "vue"
+import { reactive, defineComponent, onBeforeMount, computed, provide, toRaw, unref,watch } from "vue"
 import { Request } from "@viur/vue-utils"
 import { useDBStore } from "../stores/db"
 import { useRoute } from "vue-router"
@@ -165,7 +165,8 @@ export default defineComponent({
     renderer:{
       type:String,
       default: import.meta.env.VITE_DEFAULT_RENDERER || "vi"
-    }
+    },
+    errors:[]
 
   },
   components: { EntryBar, bone, ...handlers, VueJsonPretty, Loader },
@@ -307,8 +308,6 @@ export default defineComponent({
           }
         }
 
-
-
         state.skel = data["values"]
         state.structure = structureToDict(data["structure"])
         state.errors = data["errors"]
@@ -408,6 +407,10 @@ export default defineComponent({
 
     onBeforeMount(() => {
       fetchData()
+    })
+
+    watch(()=>props.errors, (newVal, oldVal)=>{
+      state.errors=props.errors
     })
 
     return {
