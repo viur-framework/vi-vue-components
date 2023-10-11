@@ -18,14 +18,14 @@ interface CredentialPopupResponse {
   credential: string
   /** This field shows how the credential is selected */
   select_by:
-    | "auto"
-    | "user"
-    | "user_1tap"
-    | "user_2tap"
-    | "btn"
-    | "btn_confirm"
-    | "brn_add_session"
-    | "btn_confirm_add_session"
+  | "auto"
+  | "user"
+  | "user_1tap"
+  | "user_2tap"
+  | "btn"
+  | "btn_confirm"
+  | "brn_add_session"
+  | "btn_confirm_add_session"
 }
 
 interface TokenPopupResponse {
@@ -63,8 +63,9 @@ export const useUserStore = defineStore("user", () => {
     //auth methos
     primaryAuthMethods: new Set(),
     secondFactors: new Set(),
-    "user.login.secound_factor_choice":[],
-
+    "user.login.secound_factor_choice": [],
+    "user.login.secound_factor": {},
+    "user.login.secound_factor_errors": [],
   })
 
   function resetLoginInformation() {
@@ -165,9 +166,31 @@ export const useUserStore = defineStore("user", () => {
         amount: 1
       })
         .then(async (respLogin: Response) => {
-          const loginResponse = await respLogin.json();
+          try {
 
-          if (loginResponse === "OKAY") {
+
+            const loginResponse = await respLogin.json();
+
+            if (loginResponse === "OKAY") {
+              Request.get("/vi/user/view/self")
+                .then(async (resp: Response) => {
+                  let data = await resp.json()
+                  state["user.loggedin"] = "yes"
+                  state["user"] = data.values
+                  state["user.login.type"] = "user"
+                })
+                .catch((error: Error) => {
+                  resetLoginInformation()
+                  state["user.loggedin"] = "error"
+                  reject(respLogin)
+                })
+            } else if (Array.isArray(loginResponse)) {//We can choose a secondfactor
+              //We have a second factor
+              state["user.loggedin"] = "secound_factor_choice"
+              state["user.login.secound_factor_choice"] = loginResponse
+            }
+          }
+          catch (error: Error) {
             Request.get("/vi/user/view/self")
               .then(async (resp: Response) => {
                 let data = await resp.json()
@@ -180,11 +203,6 @@ export const useUserStore = defineStore("user", () => {
                 state["user.loggedin"] = "error"
                 reject(respLogin)
               })
-          } else if (Array.isArray(loginResponse)) {//We can choose a secondfactor
-            //We have a second factor
-            console.log("We have the choice")
-            state["user.loggedin"] = "secound_factor_choice"
-            state["user.login.secound_factor_choice"] = loginResponse
           }
         })
         .catch((error: Error) => {
@@ -226,6 +244,7 @@ export const useUserStore = defineStore("user", () => {
   }
 
   function logout() {
+
     state["user.loggedin"] = "loading"
     if (state["user.login.type"] === "google") {
       //@ts-ignore
@@ -234,9 +253,11 @@ export const useUserStore = defineStore("user", () => {
     }
     return Request.securePost("/vi/user/logout")
       .then((resp: Response) => {
+        Request.resetState()
         resetLoginInformation()
       })
       .catch((error: Error) => {
+        Request.resetState()
         resetLoginInformation()
         state["user.loggedin"] = "error"
       })
@@ -334,32 +355,75 @@ export const useUserStore = defineStore("user", () => {
     }
   }
 
-  function getAuthMethods()
-  {
+  function getAuthMethods() {
     return new Promise((resolve, reject) => {
-      Request.get(`/vi/user/getAuthMethods`).then(
-        async (resp) => {
-          const authMethods = await resp.json()
-          for(const method of authMethods)
-          {
-            state.primaryAuthMethods.add(method[0]);
-            state.secondFactors.add(method[1]);
-          }
-          resolve();
+      Request.get(`/vi/user/getAuthMethods`).then(async (resp) => {
+        const authMethods = await resp.json()
+        for (const method of authMethods) {
+          state.primaryAuthMethods.add(method[0])
+          state.secondFactors.add(method[1])
         }
-      )
+        resolve()
+      })
     })
-  
   }
-  function userSecondFactorStart(choice){
+  function userSecondFactorStart(choice) {
     return new Promise((resolve, reject) => {
-      Request.get(choice["start_url"]).then(
-        async (resp) => {
-          console.log(await resp.json())
-          resolve();
-        }
+      Request.get(choice["start_url"]).then(async (resp) => {
+        const answ = await resp.json()
+        answ["structure"] = structureToDict(answ["structure"]);
+        state["user.login.secound_factor"] = answ;
+        console.log(state["user.login.secound_factor"]["structure"])
+        state["user.loggedin"] = "secound_factor_input";
+        resolve()
+      }
       )
     })
+  }
+  function structureToDict(structure: object) {
+    if (Array.isArray(structure)) {
+      let struct = {}
+      for (const idx in structure) {
+        struct[structure[idx][0]] = structure[idx][1]
+      }
+      return struct
+    } else {
+      return structure
+    }
+  }
+  function userSecondFactor() {
+    state["user.loggedin"] = "secound_factor_choice"
+  }
+  function secondFactorSend(data: object) {
+
+    return new Promise((resolve, reject) => {
+      Request.securePost(state["user.login.secound_factor"]["params"]["action_url"], { dataObj: data, amount: 1 }).then(async (resp) => {
+        try { // json resp we have an error
+          const answ = await resp.json()
+          if (answ["errors"]) {
+            state['user.login.secound_factor_errors'] = answ["errors"];
+          }
+        }
+        catch (e) {
+          Request.get("/vi/user/view/self")
+            .then(async (resp: Response) => {
+              let data = await resp.json()
+              state["user.loggedin"] = "yes"
+              state["user"] = data.values
+              state["user.login.type"] = "user"
+            })
+            .catch((error: Error) => {
+              resetLoginInformation()
+              state["user.loggedin"] = "error"
+              reject(respLogin)
+            })
+        }
+
+      });
+    })
+
+
+
   }
   //setInterval(synclastActions, 1000 * 30) //30 sec
   //TODO SYNC when close
@@ -431,6 +495,7 @@ export const useUserStore = defineStore("user", () => {
     favoriteModules_keys,
     addAction,
     getAuthMethods,
-    userSecondFactorStart
+    userSecondFactorStart,
+    secondFactorSend
   }
 })
