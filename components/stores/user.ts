@@ -1,14 +1,13 @@
 // @ts-nocheck
-import { reactive, computed } from "vue"
-import { defineStore } from "pinia"
-import { Request } from "@viur/vue-utils"
-import utils from "../utils"
-import { useDBStore } from "./db"
-import { useRoute } from "vue-router"
+import {computed, reactive} from "vue"
+import {defineStore} from "pinia"
+import {Request} from "@viur/vue-utils"
+import {useDBStore} from "./db"
+import {useRoute} from "vue-router"
 
 const googleConfig = {
   library: "https://accounts.google.com/gsi/client",
-  defaultButtonConfig: { theme: "outline", size: "large" },
+  defaultButtonConfig: {theme: "outline", size: "large"},
   scopes: "email"
 }
 
@@ -18,14 +17,14 @@ interface CredentialPopupResponse {
   credential: string
   /** This field shows how the credential is selected */
   select_by:
-  | "auto"
-  | "user"
-  | "user_1tap"
-  | "user_2tap"
-  | "btn"
-  | "btn_confirm"
-  | "brn_add_session"
-  | "btn_confirm_add_session"
+    | "auto"
+    | "user"
+    | "user_1tap"
+    | "user_2tap"
+    | "btn"
+    | "btn_confirm"
+    | "brn_add_session"
+    | "btn_confirm_add_session"
 }
 
 interface TokenPopupResponse {
@@ -65,7 +64,7 @@ export const useUserStore = defineStore("user", () => {
     secondFactors: new Set(),
     "user.login.secound_factor_choice": [],
     "user.login.secound_factor": {},
-    "user.login.secound_factor_errors": [],
+    "user.login.secound_factor_errors": []
   })
 
   function resetLoginInformation() {
@@ -95,7 +94,7 @@ export const useUserStore = defineStore("user", () => {
             callback: (response: CredentialPopupResponse) => {
               if (response.credential) {
                 Request.securePost("/vi/user/auth_googleaccount/login", {
-                  dataObj: { token: response.credential },
+                  dataObj: {token: response.credential, "@vi-admin": 1},
                   amount: 1
                 })
                   .then((resp: Response) => {
@@ -149,7 +148,7 @@ export const useUserStore = defineStore("user", () => {
         ) {
           console.log("Please delete the g_state cookie")
           let div = document.getElementById("google_oauth")
-          window.google.accounts.id.renderButton(div, { theme: "outline", size: "large" })
+          window.google.accounts.id.renderButton(div, {theme: "outline", size: "large"})
         }
       })
     })
@@ -161,15 +160,14 @@ export const useUserStore = defineStore("user", () => {
       Request.securePost("/vi/user/auth_userpassword/login", {
         dataObj: {
           name: name,
-          password: password
+          password: password,
+          "@vi-admin": 1
         },
         amount: 1
       })
         .then(async (respLogin: Response) => {
           try {
-
-
-            const loginResponse = await respLogin.json();
+            const loginResponse = await respLogin.json()
 
             if (loginResponse === "OKAY") {
               Request.get("/vi/user/view/self")
@@ -184,13 +182,16 @@ export const useUserStore = defineStore("user", () => {
                   state["user.loggedin"] = "error"
                   reject(respLogin)
                 })
-            } else if (Array.isArray(loginResponse)) {//We can choose a secondfactor
+            } else if (Array.isArray(loginResponse)) {
+              //We can choose a secondfactor
               //We have a second factor
               state["user.loggedin"] = "secound_factor_choice"
               state["user.login.secound_factor_choice"] = loginResponse
+            } else if (loginResponse === "FAILURE") {
+              state["user.loggedin"] = "error"
+              reject(respLogin)
             }
-          }
-          catch (error: Error) {
+          } catch (error: Error) {
             Request.get("/vi/user/view/self")
               .then(async (resp: Response) => {
                 let data = await resp.json()
@@ -216,7 +217,7 @@ export const useUserStore = defineStore("user", () => {
   function userSecondFactor(otp: string) {
     return new Promise((resolve, reject) => {
       state["user.loggedin"] = "loading"
-      Request.securePost(`/vi/user/f2_${state["user.login.type"]}/verify`, { dataObj: { otp: otp } }).then(
+      Request.securePost(`/vi/user/f2_${state["user.login.type"]}/verify`, {dataObj: {otp: otp}}).then(
         async (resp) => {
           const opt_data = await resp.json()
           if (opt_data.errors) {
@@ -244,7 +245,6 @@ export const useUserStore = defineStore("user", () => {
   }
 
   function logout() {
-
     state["user.loggedin"] = "loading"
     if (state["user.login.type"] === "google") {
       //@ts-ignore
@@ -322,7 +322,7 @@ export const useUserStore = defineStore("user", () => {
       state.lastActions.unshift(action)
       let configObj = state.user["admin_config"]
       if (configObj === null) {
-        configObj = { lastActions: state.lastActions }
+        configObj = {lastActions: state.lastActions}
       } else {
         configObj["lastActions"] = state.lastActions
       }
@@ -367,19 +367,20 @@ export const useUserStore = defineStore("user", () => {
       })
     })
   }
+
   function userSecondFactorStart(choice) {
     return new Promise((resolve, reject) => {
       Request.get(choice["start_url"]).then(async (resp) => {
         const answ = await resp.json()
-        answ["structure"] = structureToDict(answ["structure"]);
-        state["user.login.secound_factor"] = answ;
+        answ["structure"] = structureToDict(answ["structure"])
+        state["user.login.secound_factor"] = answ
         console.log(state["user.login.secound_factor"]["structure"])
-        state["user.loggedin"] = "secound_factor_input";
+        state["user.loggedin"] = "secound_factor_input"
         resolve()
-      }
-      )
+      })
     })
   }
+
   function structureToDict(structure: object) {
     if (Array.isArray(structure)) {
       let struct = {}
@@ -391,40 +392,40 @@ export const useUserStore = defineStore("user", () => {
       return structure
     }
   }
+
   function userSecondFactor() {
     state["user.loggedin"] = "secound_factor_choice"
   }
-  function secondFactorSend(data: object) {
 
+  function secondFactorSend(data: object) {
     return new Promise((resolve, reject) => {
-      Request.securePost(state["user.login.secound_factor"]["params"]["action_url"], { dataObj: data, amount: 1 }).then(async (resp) => {
-        try { // json resp we have an error
-          const answ = await resp.json()
-          if (answ["errors"]) {
-            state['user.login.secound_factor_errors'] = answ["errors"];
+      Request.securePost(state["user.login.secound_factor"]["params"]["action_url"], {dataObj: data, amount: 1}).then(
+        async (resp) => {
+          try {
+            // json resp we have an error
+            const answ = await resp.json()
+            if (answ["errors"]) {
+              state["user.login.secound_factor_errors"] = answ["errors"]
+            }
+          } catch (e) {
+            Request.get("/vi/user/view/self")
+              .then(async (resp: Response) => {
+                let data = await resp.json()
+                state["user.loggedin"] = "yes"
+                state["user"] = data.values
+                state["user.login.type"] = "user"
+              })
+              .catch((error: Error) => {
+                resetLoginInformation()
+                state["user.loggedin"] = "error"
+                reject(respLogin)
+              })
           }
         }
-        catch (e) {
-          Request.get("/vi/user/view/self")
-            .then(async (resp: Response) => {
-              let data = await resp.json()
-              state["user.loggedin"] = "yes"
-              state["user"] = data.values
-              state["user.login.type"] = "user"
-            })
-            .catch((error: Error) => {
-              resetLoginInformation()
-              state["user.loggedin"] = "error"
-              reject(respLogin)
-            })
-        }
-
-      });
+      )
     })
-
-
-
   }
+
   //setInterval(synclastActions, 1000 * 30) //30 sec
   //TODO SYNC when close
 
@@ -459,7 +460,7 @@ export const useUserStore = defineStore("user", () => {
     if (!state?.user?.["admin_config"]) return
     let configObj = state.user["admin_config"] //maybe we can use the
     if (configObj === null) {
-      configObj = { favoriteModules: [] }
+      configObj = {favoriteModules: []}
     }
     state.favoriteModules = []
 
