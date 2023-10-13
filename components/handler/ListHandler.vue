@@ -59,7 +59,7 @@
           <template v-for="(skel, idx) in state.renderedList">
             <tr
               :class="{ selected: state.selectedRows.includes(idx), 'is-hidden': !filter_update(skel) }"
-              @dblclick="openEditor"
+              @dblclick="primaryAction"
               @click.exact="entrySelected(idx)"
               @click.ctrl="entrySelected(idx, 'append')"
               @click.shift="entrySelected(idx, 'range')"
@@ -301,7 +301,6 @@ export default defineComponent({
     }
 
     function openEditor(e: Event) {
-      console.log(props.selector)
       if (props.selector) {
         context.emit("closeSelector", state.currentSelection)
         return 0
@@ -310,6 +309,20 @@ export default defineComponent({
       let route = router.resolve(unref(url))
       dbStore.addOpened(route, state.module, state.view)
       router.push(url)
+    }
+
+    function primaryAction(e:Event){
+      if(state.conf['handler'].startsWith("list.fluidpage")){
+        let conf = dbStore.getConf(state.module)
+        let module = conf["handler"].split(".").at(-1)
+        let url = `/db/${module}/fluidpage/${state.module}/${state.currentSelection[0]["key"]}`
+        let route = router.resolve(unref(url))
+        contextStore.setContext("fluidpage.dest.key", state.currentSelection[0]["key"], state.tabId)
+        dbStore.addOpened(route, module)
+       return 0
+      }
+
+      openEditor(e)
     }
 
     function nextpage() {
@@ -431,7 +444,7 @@ export default defineComponent({
       state,
       currentlist,
       entrySelected,
-      openEditor,
+      primaryAction,
       modulesStore,
       dbStore,
       nextpage,
