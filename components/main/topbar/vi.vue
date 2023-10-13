@@ -155,6 +155,7 @@ import { useAppStore } from "../../stores/app"
 import { useDBStore } from "../../stores/db"
 import FormHandler from "../../handler/FormHandler.vue"
 import { Request } from "@viur/vue-utils"
+import { useEventListener } from "@vueuse/core"
 
 export default defineComponent({
   props: {},
@@ -223,11 +224,18 @@ export default defineComponent({
       userStore.logout()
     }
 
+    useEventListener(window, "beforeunload", (e) => {
+      e.preventDefault()
+      e.returnValue="Do you really want to reload?"
+    })
+
     onMounted(() => {
       Request.get("/vi/_tasks/list").then(async (resp) => {
         let data = await resp.json()
         dbStore.state["tasks"] = data["skellist"]
       })
+
+
     })
     function executeTask(key) {
       const formData: FormData = new FormData()
@@ -387,12 +395,11 @@ sl-drawer {
   cursor: pointer;
 }
 
-.logout-confirm{
-  &::part(footer){
+.logout-confirm {
+  &::part(footer) {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
   }
 }
-
 </style>
