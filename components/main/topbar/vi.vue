@@ -228,6 +228,7 @@ export default defineComponent({
       })
     })
     function executeTask(key) {
+      console.log(key)
       const formData: FormData = new FormData()
       for (const [boneName, boneValue] of Object.entries(state.formValues)) {
         for (const value of boneValue) {
@@ -241,7 +242,7 @@ export default defineComponent({
         obj[[key]] = formData.getAll(key)
       }
 
-      Request.securePost("/vi/_tasks/execute/dt_RebuildSearchIndex", {
+      Request.securePost(`/vi/_tasks/execute/${key}`, {
         dataObj: obj
       })
         .then(async (resp) => {
