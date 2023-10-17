@@ -17,6 +17,7 @@
       @dragover.prevent="tree.onDragOver($event, idx)"
       @dragleave="tree.onDragLeave($event, idx)"
       @drop.stop="tree.onDrop($event, idx)"
+      @click="selectChild(idx)"
     >
       <div
         v-if="treeState.dragging"
@@ -47,7 +48,6 @@
       <div
         class="item"
         :class="{ active: isactive(idx) }"
-        @click="selectChild(idx)"
       >
         <sl-icon
           name="folder"
@@ -213,6 +213,8 @@ export default defineComponent({
   border-bottom: 4px solid transparent;
 
   &:hover {
+    background-color: var(--sl-color-neutral-100);
+
     & .dragger {
       opacity: 1;
     }

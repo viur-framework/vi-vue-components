@@ -128,9 +128,6 @@ export default defineComponent({
   }
 }
 
-sl-dialog {
-}
-
 sl-button-group {
   width: 100%;
 
@@ -142,4 +139,30 @@ sl-button-group {
     flex: 1;
   }
 }
+
+sl-checkbox{
+  &::part(control){
+   position: relative;
+   }
+
+  &::part(checked-icon){
+    height: 0;
+
+    &:after{
+      content: '\2714';
+      font-family: Segoe UI Symbol;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      line-height: 1;
+      font-size: .8em;
+     }
+  }
+}
+
 </style>

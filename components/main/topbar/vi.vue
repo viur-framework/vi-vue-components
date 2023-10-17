@@ -122,10 +122,19 @@
     <sl-dialog
       :label="$t('sidebar.logout')"
       style="--width: 50%"
+      class="logout-confirm"
       open
       @sl-after-hide="state.openLogout = false"
     >
       {{ $t("sidebar.logout_text") }}
+
+      <sl-button
+        slot="footer"
+        variant="danger"
+        @click="state.openedTask = null"
+      >
+        {{ $t("abort") }}
+      </sl-button>
       <sl-button
         slot="footer"
         variant="success"
@@ -133,13 +142,6 @@
         @click="userStore.logout()"
       >
         {{ $t("confirm") }}
-      </sl-button>
-      <sl-button
-        slot="footer"
-        variant="danger"
-        @click="state.openedTask = null"
-      >
-        {{ $t("abort") }}
       </sl-button>
     </sl-dialog>
   </teleport>
@@ -153,6 +155,7 @@ import { useAppStore } from "../../stores/app"
 import { useDBStore } from "../../stores/db"
 import FormHandler from "../../handler/FormHandler.vue"
 import { Request } from "@viur/vue-utils"
+import { useEventListener } from "@vueuse/core"
 
 export default defineComponent({
   props: {},
@@ -221,11 +224,18 @@ export default defineComponent({
       userStore.logout()
     }
 
+    useEventListener(window, "beforeunload", (e) => {
+      e.preventDefault()
+      e.returnValue="Do you really want to reload?"
+    })
+
     onMounted(() => {
       Request.get("/vi/_tasks/list").then(async (resp) => {
         let data = await resp.json()
         dbStore.state["tasks"] = data["skellist"]
       })
+
+
     })
     function executeTask(key) {
       console.log(key)
@@ -384,5 +394,13 @@ sl-drawer {
 
 .user {
   cursor: pointer;
+}
+
+.logout-confirm {
+  &::part(footer) {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
 }
 </style>
