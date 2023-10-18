@@ -311,15 +311,15 @@ export default defineComponent({
       router.push(url)
     }
 
-    function primaryAction(e:Event){
-      if(state.conf['handler'].startsWith("list.fluidpage")){
+    function primaryAction(e: Event) {
+      if (state.conf["handler"].startsWith("list.fluidpage")) {
         let conf = dbStore.getConf(state.module)
         let module = conf["handler"].split(".").at(-1)
         let url = `/db/${module}/fluidpage/${state.module}/${state.currentSelection[0]["key"]}`
         let route = router.resolve(unref(url))
         contextStore.setContext("fluidpage.dest.key", state.currentSelection[0]["key"], state.tabId)
         dbStore.addOpened(route, module)
-       return 0
+        return 0
       }
 
       openEditor(e)
@@ -466,7 +466,6 @@ export default defineComponent({
   height: 0;
   position: relative;
   width: 100%;
-  height: 100%;
 }
 
 .loader {
