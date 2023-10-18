@@ -1,9 +1,10 @@
 export default {
   actions: {
     add: "Hinzufügen",
-    addnode: "Eintrag hinzufügen",
+    addnode: "Gruppe hinzufügen",
     addfolder: "Ordner hinzufügen",
     addfile: "Datei hinzufügen",
+    addleaf: "Eintrag hinzufügen",
     clone: "Klonen",
     delete: {
       text: "Löschen",

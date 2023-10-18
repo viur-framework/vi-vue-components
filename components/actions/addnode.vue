@@ -7,13 +7,14 @@
     <sl-button
       size="small"
       variant="success"
+      outline
       :disabled="!state.canAdd"
       :title="$t('actions.addnode')"
       @click="createAndNavigate(route)"
     >
       <sl-icon
         slot="prefix"
-        name="folder-plus"
+        name="add-box"
       ></sl-icon>
       {{ $t("actions.addnode") }}
     </sl-button>
