@@ -69,7 +69,8 @@ export default defineComponent({
     const state = reactive({
       skels: {},
       openedSelection: false,
-      moduleInfo: computed(() => dbStore.getConf(boneState?.bonestructure["module"]))
+      moduleInfo: computed(() => dbStore.getConf(boneState?.bonestructure["module"])),
+      hasUsing: computed(() => boneState?.bonestructure["using"])
     })
 
     function getList(search: String) {
@@ -97,7 +98,11 @@ export default defineComponent({
       state.openedSelection = false
       if (selection) {
         for (let entry of selection) {
-          addMultipleEntry(props.lang, { dest: entry, rel: null })
+          let relDefault = null
+          if (state.hasUsing) {
+            relDefault = undefined
+          }
+          addMultipleEntry(props.lang, { dest: entry, rel: relDefault })
         }
       }
     }
