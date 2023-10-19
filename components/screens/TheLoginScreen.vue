@@ -1,9 +1,15 @@
 <template>
   <div class="wrapper">
-    <sl-card>
+    <div class="background-img">
+      <img :src="state.backgroundImage"
+            @error="$event.target.src = 's/login-background.jpg'"
+      />
+    </div>
+    <div class="card">
       <img
         class="logo"
         :src="state.logo"
+        @error="$event.target.src = 's/logo.svg'"
       />
       <sl-alert
         v-if="userStore.state['user.loggedin'] === 'error'"
@@ -21,81 +27,36 @@
         <loader></loader>
       </div>
 
-      <sl-tab-group v-else-if="state.waitFor === 'login'">
-        <sl-tab
-          slot="nav"
-          panel="userpassword"
-          :disabled="state.userPasswordLoginActivated"
-        >
-          Nutzer
-        </sl-tab>
+      <input class="input" :placeholder="$t('login.email')" name="name">
+      <input class="input" :placeholder="$t('login.password')" name="password">
 
-        <sl-tab
-          slot="nav"
-          panel="google"
-          :disabled="state.userGoogleLoginActivated"
-        >
-          Google
-        </sl-tab>
-        <!--<sl-tab slot="nav" panel="sso">Mausbrand-SSO</sl-tab>-->
+      <sl-button
+        v-if="['no', 'loading', 'error'].includes(userStore.state['user.loggedin'])"
+        variant="primary"
+        :disabled="!state.userDataFilled"
+        :loading="userStore.state['user.loggedin'] === 'loading'"
+        @click="userLogin"
+      >
+        {{ $t("login.login") }}
+      </sl-button>
+      <sl-button
+        v-else
+        @click="logout"
+        >{{ $t("login.logout") }}</sl-button
+      >
 
-        <sl-tab-panel name="userpassword">
-          <div v-show="['no', 'error'].includes(userStore.state['user.loggedin'])">
-            <sl-input
-              v-model="state.name"
-              type="text"
-              name="name"
-              placeholder="E-Mail"
-              clearable
-              autocomplete="on"
-              @sl-clear="state.name = ''"
-            ></sl-input>
-            <sl-input
-              v-model="state.password"
-              type="password"
-              name="password"
-              autocomplete="on"
-              placeholder="Passwort"
-              toggle-password
-              @keydown.enter="userLogin"
-              @sl-clear="state.password = ''"
-            ></sl-input>
-            <sl-button
-              v-if="['no', 'loading', 'error'].includes(userStore.state['user.loggedin'])"
-              variant="primary"
-              :disabled="!state.userDataFilled"
-              :loading="userStore.state['user.loggedin'] === 'loading'"
-              @click="userLogin"
-            >
-              Login
-            </sl-button>
-            <sl-button
-              v-else
-              @click="logout"
-              >Logout</sl-button
-            >
-          </div>
-        </sl-tab-panel>
-        <sl-tab-panel name="google">
-          <div id="google_oauth"></div>
-          <sl-button
-            v-if="['no', 'loading', 'error'].includes(userStore.state['user.loggedin'])"
-            variant="primary"
-            :loading="userStore.state['user.loggedin'] === 'loading'"
-            @click="googleLogin"
-          >
-            Mit Google anmelden
-          </sl-button>
-          <sl-button
-            v-else
-            variant="primary"
-            :loading="state.waitForLogout"
-            @click="logout"
-            >Logout</sl-button
-          >
-        </sl-tab-panel>
-        <!--<sl-tab-panel name="sso">Login with Mausbrand SSO</sl-tab-panel>-->
-      </sl-tab-group>
+      <div class="or">{{ $t("login.or") }}</div>
+
+      <sl-button
+      v-if="['no', 'loading', 'error'].includes(userStore.state['user.loggedin'])"
+      :loading="userStore.state['user.loggedin'] === 'loading'"
+      @click="googleLogin"
+      class="more-login-btn"
+      >
+        <sl-icon library="bootstrap" name="google" slot="prefix" class="google-icon"></sl-icon>
+      {{ $t("login.with_google") }}
+      </sl-button>
+
 
       <div v-else-if="userStore.state['user.loggedin'] === 'secound_factor_choice'">
         <div v-for="choice in userStore.state['user.login.secound_factor_choice']">
@@ -123,7 +84,7 @@
           Send
         </sl-button>
       </div>
-    </sl-card>
+    </div>
   </div>
 </template>
 
@@ -263,36 +224,93 @@ export default defineComponent({
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(to left, var(--sl-color-primary-300), var(--sl-color-primary-500));
+  background: linear-gradient(to top left, var(--sl-color-primary-700), var(--sl-color-primary-500));
+}
+
+.background-img{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
+
+  img{
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
 }
 
 .logo {
-  height: 160px;
-  padding: 30px;
+  height: 140px;
+  padding: 20px;
   margin-bottom: 30px;
 }
 
 sl-button {
   width: 100%;
+
+  &[disabled]{
+    &::part(base){
+      opacity: 1;
+    }
+ }
+
+  &.more-login-btn{
+    &::part(base){
+      font-weight: 400;
+    }
+  }
+
 }
 
-sl-card {
+
+.card{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
   z-index: 10;
-  min-width: 300px;
+  min-width: 430px;
   max-width: 500px;
+  background-color: var(--vi-background-color);
   width: 30vw;
+  padding: var(--sl-spacing-large);
+  border-radius: var(--sl-border-radius-medium);
+}
 
-  &::part(base) {
-    background-color: var(--vi-background-color);
-    border: none;
-  }
+.input{
+  flex: 1 1 auto;
+  display: inline-flex;
+  align-items: stretch;
+  justify-content: start;
+  position: relative;
+  width: 100%;
+  font-family: var(--sl-input-font-family);
+  font-weight: var(--sl-input-font-weight);
+  letter-spacing: var(--sl-input-letter-spacing);
+  vertical-align: middle;
+  overflow: hidden;
+  cursor: text;
+  border: solid var(--sl-input-border-width) var(--sl-input-border-color);
+  border-radius: var(--sl-input-border-radius-medium);
+  font-size: var(--sl-input-font-size-medium);
+  box-shadow: none;
+  color: var(--vi-foreground-color);
+  background-color: var(--vi-background-color);
+  border-color: var(--vi-border-color);
+  height: calc(var(--sl-input-height-medium) - var(--sl-input-border-width) * 2);
+  padding: 0 var(--sl-input-spacing-medium);
+  margin: 0 0 var(--sl-spacing-x-small) 0;
+}
 
-  &::part(body) {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: stretch;
-  }
+.or{
+  opacity: .5;
+  padding: var(--sl-spacing-small) 0;
+  margin: 0 auto;
+  text-align: center;
+  font-size: .9em;
 }
 
 .init-spinner {
@@ -303,25 +321,6 @@ sl-card {
 sl-tab-group {
   --indicator-color: var(--vi-foreground-color);
   --track-color: transparent;
-}
-
-sl-tab {
-  &::part(base) {
-    padding: 10px 20px;
-  }
-
-  &[aria-selected="true"] {
-    &::part(base) {
-      color: var(--vi-foreground-color);
-    }
-  }
-}
-
-sl-tab-panel {
-  &::part(base) {
-    padding: 20px 0 0 0;
-    border: none;
-  }
 }
 
 sl-input {
