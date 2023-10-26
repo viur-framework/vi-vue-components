@@ -1,8 +1,7 @@
 <template>
   <div class="wrapper">
     <div class="background-img">
-      <img :src="state.backgroundImage"
-            @error="$event.target.src = 's/login-background.jpg'"
+      <img :src="state.backgroundImage" @error="$event.target.src = 's/login-background.jpg'"
       />
     </div>
     <div class="card">
@@ -26,35 +25,49 @@
       >
         <loader></loader>
       </div>
+      <form autocomplete="on"  v-show="userStore.state['user.loggedin'] === 'no'">
+        <input
+          class="input"
+          :placeholder="$t('login.email')"
+          name="username"
+          v-model="state.name"
+        />
 
-      <input class="input" :placeholder="$t('login.email')" name="name">
-      <input class="input" :placeholder="$t('login.password')" name="password">
+        <input
+          class="input"
+          :placeholder="$t('login.password')"
+          name="password"
+          type="password"
+          v-model="state.password"
+        />
+        <sl-button
+          v-if="['no', 'loading', 'error'].includes(userStore.state['user.loggedin'])"
+          variant="primary"
+          :disabled="!state.userDataFilled"
+          :loading="userStore.state['user.loggedin'] === 'loading'"
+          @click="userLogin"
+        >
+          {{ $t("login.login") }}
+        </sl-button>
+        <sl-button
+          v-else
+          @click="logout"
+        >{{ $t("login.logout") }}
+        </sl-button>
+      </form>
 
-      <sl-button
-        v-if="['no', 'loading', 'error'].includes(userStore.state['user.loggedin'])"
-        variant="primary"
-        :disabled="!state.userDataFilled"
-        :loading="userStore.state['user.loggedin'] === 'loading'"
-        @click="userLogin"
-      >
-        {{ $t("login.login") }}
-      </sl-button>
-      <sl-button
-        v-else
-        @click="logout"
-        >{{ $t("login.logout") }}</sl-button
-      >
+
 
       <div class="or">{{ $t("login.or") }}</div>
 
       <sl-button
-      v-if="['no', 'loading', 'error'].includes(userStore.state['user.loggedin'])"
-      :loading="userStore.state['user.loggedin'] === 'loading'"
-      @click="googleLogin"
-      class="more-login-btn"
+        v-if="['no', 'loading', 'error'].includes(userStore.state['user.loggedin'])"
+        :loading="userStore.state['user.loggedin'] === 'loading'"
+        @click="googleLogin"
+        class="more-login-btn"
       >
         <sl-icon library="bootstrap" name="google" slot="prefix" class="google-icon"></sl-icon>
-      {{ $t("login.with_google") }}
+        {{ $t("login.with_google") }}
       </sl-button>
 
 
@@ -93,7 +106,7 @@ import { useUserStore } from "../stores/user"
 import { reactive, computed, onBeforeMount, defineComponent } from "vue"
 import { useAppStore } from "../stores/app"
 import Loader from "@viur/vue-utils/generic/Loader.vue"
-import bone from "@viur/vue-utils/bones/edit/bone.vue"
+
 import { getBoneWidget } from "@viur/vue-utils/bones/edit/index"
 
 export default defineComponent({
