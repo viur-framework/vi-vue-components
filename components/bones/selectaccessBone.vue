@@ -100,7 +100,7 @@ export default defineComponent({
             if (!actionmap[name] && actionmap[name] !== 0) {
               //flags
               element["icon"] = "check"
-              mods["flags"][namegroup] = { [k]: element }
+              mods["flags"][k] = { [k]: element }
             } else {
               mods["modules"][namegroup] = { [actionmap[name]]: element }
             }
