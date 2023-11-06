@@ -101,7 +101,8 @@ export default defineComponent({
       uploadinput: null,
       loading: false,
       droparea: false,
-      moduleInfo: computed(() => dbStore.getConf(boneState?.bonestructure["module"]))
+      moduleInfo: computed(() => dbStore.getConf(boneState?.bonestructure["module"])),
+      hasUsing: computed(() => boneState?.bonestructure["using"])
     })
 
     function uploadFile(file) {
@@ -152,8 +153,12 @@ export default defineComponent({
       state.loading = true
       for (let file of event.target.files) {
         let fileresult = await uploadFile(file)
-        console.group(fileresult)
-        addMultipleEntry(props.lang, { dest: fileresult, rel: null })
+        let relDefault = null
+        if (state.hasUsing) {
+          relDefault = undefined
+        }
+
+        addMultipleEntry(props.lang, { dest: fileresult, rel: relDefault })
       }
       state.loading = false
     }
@@ -163,8 +168,11 @@ export default defineComponent({
       state.droparea = false
       for (let file of event.dataTransfer.files) {
         let fileresult = await uploadFile(file)
-        console.group(fileresult)
-        addMultipleEntry(props.lang, { dest: fileresult, rel: null })
+        let relDefault = null
+        if (state.hasUsing) {
+          relDefault = undefined
+        }
+        addMultipleEntry(props.lang, { dest: fileresult, rel: relDefault })
       }
       state.loading = false
     }
@@ -177,7 +185,11 @@ export default defineComponent({
       state.openedSelection = false
       if (selection) {
         for (let entry of selection) {
-          addMultipleEntry(props.lang, { dest: entry, rel: null })
+          let relDefault = null
+          if (state.hasUsing) {
+            relDefault = undefined
+          }
+          addMultipleEntry(props.lang, { dest: entry, rel: relDefault })
         }
       }
     }

@@ -124,7 +124,7 @@ export default defineComponent({
       userDataFilled: computed(() => state.name && state.password),
       waitForLogout: false,
       waitFor: "init",
-      backgroundImage: computed(() => `url('${appStore.state["admin.login.background"]}')`),
+      backgroundImage: computed(() => `${appStore.state["admin.login.background"]}`),
       logo: computed(() => appStore.state["admin.login.logo"]),
       otp: "",
       userPasswordLoginActivated: computed(() => {
@@ -224,7 +224,6 @@ export default defineComponent({
   display: flex;
   justify-content: center;
   align-items: center;
-  background-image: v-bind("state.backgroundImage");
   background-position: center center;
   background-size: cover;
 }
@@ -285,7 +284,7 @@ sl-button {
   justify-content: center;
   align-items: stretch;
   z-index: 10;
-  min-width: 430px;
+  min-width: 483px;
   max-width: 500px;
   background-color: var(--vi-background-color);
   width: 30vw;
@@ -338,5 +337,20 @@ sl-tab-group {
 
 sl-input {
   margin-bottom: 10px;
+}
+
+.background-img{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
+
+  img{
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
 }
 </style>

@@ -22,11 +22,11 @@
         <thead>
           <tr>
             <th
-              style="width: 75px"
+              style="width: 50px"
               class="open-column"
             ></th>
             <th
-              style="width: 30px"
+              style="width: 10px"
               class="drag-column"
             ></th>
             <th
@@ -240,7 +240,7 @@ export default defineComponent({
 
 <style scoped>
 .table-wrapper {
-  overflow: scroll;
+  overflow: auto;
   flex: 1;
 }
 
@@ -391,6 +391,7 @@ sl-table {
 }
 
 .drag-column {
+  padding: 0;
   resize: none;
   border-right: none;
 

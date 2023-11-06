@@ -1,6 +1,7 @@
 <template>
   <div class="main-wrapper">
     <handler-bar
+      v-if="!noTopbar"
       :module="module"
       handler="listhandler"
     ></handler-bar>
@@ -58,7 +59,7 @@
           <template v-for="(skel, idx) in state.renderedList">
             <tr
               :class="{ selected: state.selectedRows.includes(idx), 'is-hidden': !filter_update(skel) }"
-              @dblclick="openEditor"
+              @dblclick="primaryAction"
               @click.exact="entrySelected(idx)"
               @click.ctrl="entrySelected(idx, 'append')"
               @click.shift="entrySelected(idx, 'range')"
@@ -134,7 +135,9 @@ export default defineComponent({
       default: 2 //0 == disabled, 1==select One, 2: select multiple
     },
     selector: false,
-    filter: {}
+    filter: {},
+    noTopbar: false,
+    columns: []
   },
   emits: ["currentSelection", "closeSelector"],
   components: { WidgetSmall, FloatingBar, Loader, HandlerBar },
@@ -219,6 +222,9 @@ export default defineComponent({
     provide("setLimit", setLimit)
 
     onMounted(() => {
+      if (props.columns) {
+        state.selectedBones = props.columns
+      }
       state.conf = dbStore.getConf(props.module, props.view)
       if (state.conf) {
         if (Object.keys(state.conf).indexOf("filter") > -1) {
@@ -295,16 +301,28 @@ export default defineComponent({
     }
 
     function openEditor(e: Event) {
-      console.log(props.selector)
       if (props.selector) {
-        console.log("FFF")
-        context.emit("closeSelector")
+        context.emit("closeSelector", state.currentSelection)
         return 0
       }
       const url = `/db/${state.module}/edit/${state.currentSelection[0]["key"]}`
       let route = router.resolve(unref(url))
       dbStore.addOpened(route, state.module, state.view)
       router.push(url)
+    }
+
+    function primaryAction(e: Event) {
+      if (state.conf["handler"].startsWith("list.fluidpage")) {
+        let conf = dbStore.getConf(state.module)
+        let module = conf["handler"].split(".").at(-1)
+        let url = `/db/${module}/fluidpage/${state.module}/${state.currentSelection[0]["key"]}`
+        let route = router.resolve(unref(url))
+        contextStore.setContext("fluidpage.dest.key", state.currentSelection[0]["key"], state.tabId)
+        dbStore.addOpened(route, module)
+        return 0
+      }
+
+      openEditor(e)
     }
 
     function nextpage() {
@@ -327,6 +345,10 @@ export default defineComponent({
     }
 
     function setSelectedBones() {
+      if (props.columns) {
+        state.selectedBones = props.columns
+        return 0
+      }
       state.conf = dbStore.getConf(props.module, props.view)
       if (state.conf && state.conf?.["columns"]) {
         state.selectedBones = state.conf["columns"]
@@ -422,7 +444,7 @@ export default defineComponent({
       state,
       currentlist,
       entrySelected,
-      openEditor,
+      primaryAction,
       modulesStore,
       dbStore,
       nextpage,
@@ -444,7 +466,6 @@ export default defineComponent({
   height: 0;
   position: relative;
   width: 100%;
-  height: 100%;
 }
 
 .loader {
@@ -585,8 +606,9 @@ table {
 
 .table-wrapper {
   color: var(--vi-foreground-color);
-  overflow: scroll;
+  overflow: auto;
   flex: 1;
+  padding-bottom: 80px;
 }
 .stick-header {
   position: sticky;
@@ -622,5 +644,6 @@ sl-details {
   align-items: center;
   overflow: hidden;
   justify-content: center;
+  padding: 20px 20px 15px 20px;
 }
 </style>

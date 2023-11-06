@@ -1,9 +1,10 @@
 export default {
   actions: {
     add: "Hinzufügen",
-    addnode: "Eintrag hinzufügen",
+    addnode: "Gruppe hinzufügen",
     addfolder: "Ordner hinzufügen",
     addfile: "Datei hinzufügen",
+    addleaf: "Eintrag hinzufügen",
     clone: "Klonen",
     delete: {
       text: "Löschen",
@@ -25,9 +26,11 @@ export default {
     },
     reset: "Zurücksetzen",
     nextpage: "weitere Einträge ({amount})",
-    nextpage_finish: "alle Einträge geladen ({amount})",
+    nextpage_finish: "Einträge: {amount}",
     fluidpage: {
-      edit: "Inhalt bearbeiten"
+      edit: "Inhalt bearbeiten",
+      emptyheadline: "Diese Fluidpage ist noch leer",
+      emptytext: "Mit dem \"Hinzufügen\"-Button können Inhalte auf dieser Fluidpage hinzugefügt werden.",
     },
     open: "Öffnen",
     sortasc: "Aufsteigend Sortieren",

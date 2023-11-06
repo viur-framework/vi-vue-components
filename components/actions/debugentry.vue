@@ -22,7 +22,8 @@
       open
       @sl-after-hide="crossClicked"
     >
-      <vue-json-pretty :data="handlerState.skel"></vue-json-pretty>
+      <!--<vue-json-pretty :data="handlerState.skel"></vue-json-pretty>-->
+      {{ handlerState.skel }}
     </sl-drawer>
   </teleport>
 </template>
@@ -33,12 +34,12 @@ import { reactive, defineComponent, inject, computed } from "vue"
 import { useRoute } from "vue-router"
 import { useDBStore } from "../stores/db"
 import { useUserStore } from "../stores/user"
-import VueJsonPretty from "vue-json-pretty"
+//import VueJsonPretty from "vue-json-pretty"
 import "vue-json-pretty/lib/styles.css"
 
 export default defineComponent({
   props: {},
-  components: { VueJsonPretty },
+  //components: { VueJsonPretty },
   setup(props, context) {
     const handlerState: any = inject("handlerState")
     const dbStore = useDBStore()

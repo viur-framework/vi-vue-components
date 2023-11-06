@@ -9,7 +9,7 @@ import { useUserStore } from "./user"
 import { useContextStore } from "./context"
 import { destroyStore } from "@viur/vue-utils/utils/handlers"
 import hierarchyhandler from "../components/handler/HierarchyHandler.vue"
-import Element from "../fluidpage/element.vue"
+//import Element from "../fluidpage/element.vue"
 
 export interface ModuleInfo {
   name: string
@@ -167,7 +167,7 @@ export const useDBStore = defineStore("db", () => {
     "skeldrawer.structure": {},
 
     //fluidpage Element
-    "fluidpage.element": Element,
+    "fluidpage.element": "Element",
 
     //Tasks
     tasks: []

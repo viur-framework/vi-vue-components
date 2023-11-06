@@ -276,13 +276,15 @@ tr {
 }
 
 .drag-cell {
-  padding: 0.4em 0.3em;
+  padding: 0;
   cursor: move;
   opacity: 0.2;
   transition: opacity ease 0.3s;
   color: var(--vi-foreground-color);
   border-right: none;
   position: relative;
+  text-align: center;
+  vertical-align: middle;
 
   &:hover {
     opacity: 1;
@@ -293,9 +295,8 @@ tr {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 1em;
+  width: 100%;
   height: 1em;
-  margin-right: var(--sl-spacing-x-small);
 
   & sl-icon {
     font-size: 0.9em;

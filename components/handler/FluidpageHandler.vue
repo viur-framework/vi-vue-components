@@ -13,7 +13,7 @@
   >
   </loader>
   <div class="fluid-wrap">
-    <template v-for="grid in state.grids">
+    <template v-for="grid in state.grids" v-if="state.grids.length">
       <component
         :is="state.fluidpageElement"
         v-for="contentSkel in grid"
@@ -43,6 +43,14 @@
         </component>
       </div>
     </template>
+    <div class="empty-page" v-else>
+      <sl-alert variant="info" open>
+        <sl-icon slot="icon" name="info-circle"></sl-icon>
+        <strong>{{ $t("actions.fluidpage.emptyheadline") }}</strong><br>
+        {{ $t("actions.fluidpage.emptytext") }}
+      </sl-alert>
+
+    </div>
   </div>
 </template>
 
@@ -70,6 +78,7 @@ import router from "../routes"
 import { useModulesStore } from "../stores/modules"
 import { useRoute } from "vue-router"
 import Loader from "@viur/vue-utils/generic/Loader.vue"
+import Element from "../fluidpage/element.vue"
 
 export default defineComponent({
   props: {
@@ -84,7 +93,7 @@ export default defineComponent({
     }
   },
   emits: ["currentSelection"],
-  components: { Loader, HandlerBar },
+  components: { Loader, HandlerBar, Element },
   setup(props, context) {
     const dbStore = useDBStore()
     const route = useRoute()
@@ -532,5 +541,13 @@ export default defineComponent({
   .fluid-width-1 {
     grid-column: span 12;
   }
+}
+
+.empty-page{
+  display: flex;
+  justify-content: center;
+  padding: 0 var(--sl-spacing-medium) var(--sl-spacing-medium) var(--sl-spacing-medium);
+  grid-column: full;
+  width: 100%;
 }
 </style>

@@ -20,6 +20,13 @@ export default {
       text: "Filter",
       nofilter: "There are no filter for this module"
     },
+    nextpage: "More Entries ({amount})",
+    nextpage_finish: "Entries: {amount}",
+    fluidpage: {
+      edit: "Edit Contents",
+      emptyheadline: "This Fluidpage is empty",
+      emptytext: "Please use the \"Add\"-Button to add content to this page.",
+    },
     reset: "Reset",
     open: "Open",
     sortasc: "Sort Ascending",
