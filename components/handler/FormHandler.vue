@@ -60,7 +60,7 @@
           :summary="handler['name'] || dbStore.getConf(handler['module'])?.['name'] || handler['module']"
           :open="false"
         >
-          <div style="position: relative">
+          <div class="embeded-list">
             <component
               :is="'listhandler'"
               :module="handler['module']"
@@ -519,5 +519,14 @@ sl-details {
   flex-direction: column;
   flex: 1;
   position: relative;
+}
+
+.embeded-list{
+  position: relative;
+
+  :deep(.main-wrapper){
+    height: auto;
+    max-height: calc(100vh - 170px);
+  }
 }
 </style>
