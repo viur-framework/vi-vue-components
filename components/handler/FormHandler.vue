@@ -67,7 +67,7 @@
               :filter="{ [handler['context']]: skelkey }"
             >
             </component>
-          </divclass>
+          </div>
         </sl-details>
       </template>
 
