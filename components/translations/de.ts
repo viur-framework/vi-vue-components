@@ -69,5 +69,13 @@ export default {
   search: {
     local: "Suche wird in der Liste ausgeführt",
     database: "Suche wird online ausgeführt"
-  }
+  },
+  login: {
+    email: "E-Mail",
+    password: "Passwort",
+    login: "Einloggen",
+    logout: "Ausloggen",
+    with_google: "Mit Google einloggen",
+    or: "oder"
+  },
 }
