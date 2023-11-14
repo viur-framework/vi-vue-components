@@ -133,6 +133,18 @@ export default defineComponent({
       })
     })
 
+    function buildUrl(url, selection) {
+      url = url.replace("{{module}}", handlerState.module)
+
+      if (selection) {
+        for (const [k, v] of Object.entries(selection)) {
+          url = url.replace(`{{${k}}}`, v)
+        }
+      }
+
+      return url
+    }
+
     function buttonClicked() {
       if (state.info?.["confirm"]) {
         state.confirm = true
@@ -161,6 +173,7 @@ export default defineComponent({
 
     function handleFetch(selection) {
       function triggerServersideAction(url) {
+        url = buildUrl(url, selection)
         Request.get(url).then((resp) => {
           if (state.info?.["then"] === "reload-module") {
             tableReload()
@@ -200,7 +213,7 @@ export default defineComponent({
     }
 
     function handleOpen(selection) {
-      window.open(state.info["url"], "_blank").focus()
+      window.open(buildUrl(state.info["url"], selection), "_blank").focus()
     }
 
     return {
