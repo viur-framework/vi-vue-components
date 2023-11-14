@@ -1,7 +1,9 @@
 <template>
   <div class="wrapper">
     <div class="background-img">
-      <img :src="state.backgroundImage" @error="$event.target.src = 's/login-background.jpg'"
+      <img
+        :src="state.backgroundImage"
+        @error="$event.target.src = 's/login-background.jpg'"
       />
     </div>
     <div class="card">
@@ -25,20 +27,23 @@
       >
         <loader></loader>
       </div>
-      <form autocomplete="on"  v-show="userStore.state['user.loggedin'] === 'no'">
+      <form
+        v-show="userStore.state['user.loggedin'] === 'no'"
+        autocomplete="on"
+      >
         <input
+          v-model="state.name"
           class="input"
           :placeholder="$t('login.email')"
           name="username"
-          v-model="state.name"
         />
 
         <input
+          v-model="state.password"
           class="input"
           :placeholder="$t('login.password')"
           name="password"
           type="password"
-          v-model="state.password"
         />
         <sl-button
           v-if="['no', 'loading', 'error'].includes(userStore.state['user.loggedin'])"
@@ -52,25 +57,28 @@
         <sl-button
           v-else
           @click="logout"
-        >{{ $t("login.logout") }}
+          >{{ $t("login.logout") }}
         </sl-button>
       </form>
 
-
-
       <div class="or">{{ $t("login.or") }}</div>
 
-      <sl-button
-        v-if="['no', 'loading', 'error'].includes(userStore.state['user.loggedin'])"
-        :loading="userStore.state['user.loggedin'] === 'loading'"
-        @click="googleLogin"
-        class="more-login-btn"
-      >
-        <sl-icon library="bootstrap" name="google" slot="prefix" class="google-icon"></sl-icon>
-        {{ $t("login.with_google") }}
-      </sl-button>
-
-
+      <div v-if="['no', 'loading', 'error'].includes(userStore.state['user.loggedin'])">
+        <sl-button
+          :loading="userStore.state['user.loggedin'] === 'loading'"
+          class="more-login-btn"
+          @click="googleLogin"
+        >
+          <sl-icon
+            slot="prefix"
+            library="bootstrap"
+            name="google"
+            class="google-icon"
+          ></sl-icon>
+          {{ $t("login.with_google") }}
+        </sl-button>
+        <div id="google_oauth"></div>
+      </div>
       <div v-else-if="userStore.state['user.loggedin'] === 'secound_factor_choice'">
         <div v-for="choice in userStore.state['user.login.secound_factor_choice']">
           <sl-button @click="userSecondFactorStart(choice)">
@@ -239,7 +247,7 @@ export default defineComponent({
   background: linear-gradient(to top left, var(--sl-color-primary-700), var(--sl-color-primary-500));
 }
 
-.background-img{
+.background-img {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -247,7 +255,7 @@ export default defineComponent({
   right: 0;
   z-index: -1;
 
-  img{
+  img {
     object-fit: cover;
     width: 100%;
     height: 100%;
@@ -263,22 +271,20 @@ export default defineComponent({
 sl-button {
   width: 100%;
 
-  &[disabled]{
-    &::part(base){
+  &[disabled] {
+    &::part(base) {
       opacity: 1;
-    }
- }
-
-  &.more-login-btn{
-    &::part(base){
-      font-weight: 400;
     }
   }
 
+  &.more-login-btn {
+    &::part(base) {
+      font-weight: 400;
+    }
+  }
 }
 
-
-.card{
+.card {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -292,7 +298,7 @@ sl-button {
   border-radius: var(--sl-border-radius-medium);
 }
 
-.input{
+.input {
   flex: 1 1 auto;
   display: inline-flex;
   align-items: stretch;
@@ -317,12 +323,12 @@ sl-button {
   margin: 0 0 var(--sl-spacing-x-small) 0;
 }
 
-.or{
-  opacity: .5;
+.or {
+  opacity: 0.5;
   padding: var(--sl-spacing-small) 0;
   margin: 0 auto;
   text-align: center;
-  font-size: .9em;
+  font-size: 0.9em;
 }
 
 .init-spinner {
@@ -339,7 +345,7 @@ sl-input {
   margin-bottom: 10px;
 }
 
-.background-img{
+.background-img {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -347,10 +353,14 @@ sl-input {
   right: 0;
   z-index: -1;
 
-  img{
+  img {
     object-fit: cover;
     width: 100%;
     height: 100%;
   }
+}
+
+div#google_oauth {
+  margin-top: var(--sl-spacing-medium);
 }
 </style>
