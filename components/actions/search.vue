@@ -1,29 +1,65 @@
 <template>
-  <sl-input
-    :disabled="state.disabled"
-    placeholder="Suche"
-    clearable
-    @sl-input="search_input"
-    @sl-clear="reset_filter"
-  >
-    <sl-icon
-      v-if="state.searchType === 'database'"
-      slot="suffix"
-      name="database"
-      :title="$t('search.database')"
-    ></sl-icon>
-    <sl-icon
-      v-else-if="state.searchType === 'local'"
-      slot="suffix"
-      name="list-ul"
-      :title="$t('search.local')"
-    ></sl-icon>
-    <sl-icon
-      v-else
-      slot="suffix"
-      name="search"
-    ></sl-icon>
-  </sl-input>
+  <sl-button-group>
+    <sl-input
+      size="small"
+      :disabled="state.disabled"
+      placeholder="Suche"
+      clearable
+      @sl-input="search_input"
+      @sl-clear="reset_filter"
+    >
+    </sl-input>
+
+    <sl-dropdown
+      :open="state.searchTypeOpened"
+      hoist
+      @sl-after-show="state.searchTypeOpened = true"
+      @sl-after-hide="state.searchTypeOpened = false"
+    >
+      <sl-button
+        slot="trigger"
+        size="small"
+        caret
+      >
+        <sl-icon
+          slot="prefix"
+          :name="searchTypeIcon()"
+        ></sl-icon>
+      </sl-button>
+      <sl-menu @sl-select="typeSelection">
+        <sl-menu-item
+          title="Wenn alle Einträge geladen wurden wird lokal gesucht"
+          value="auto"
+        >
+          <sl-icon
+            slot="prefix"
+            name="system"
+          ></sl-icon>
+          Automatisch
+        </sl-menu-item>
+
+        <sl-menu-item
+          :title="$t('search.local')"
+          value="local"
+          ><sl-icon
+            slot="prefix"
+            name="list-ul"
+          ></sl-icon>
+          Lokale Suche
+        </sl-menu-item>
+
+        <sl-menu-item
+          :title="$t('search.database')"
+          value="database"
+          ><sl-icon
+            slot="prefix"
+            name="database"
+          ></sl-icon>
+          Datenbank Suche
+        </sl-menu-item>
+      </sl-menu>
+    </sl-dropdown>
+  </sl-button-group>
 </template>
 
 <script lang="ts">
@@ -51,13 +87,23 @@ export default defineComponent({
         return false //till core update
         return !searchableBone
       }),
-      searchType: computed(() => {
-        return currentlist?.state.state === 2 ? "local" : "database"
-      })
+      searchTypeAuto: computed(() => {
+        return currentlist?.state.state === 2 && state.state.searchValue ? "local" : "database"
+      }),
+      searchType: "auto",
+      searchValue: "",
+      searchTypeOpened: false
     })
 
     function search_input(event) {
-      if (state.searchType === "local") {
+      state.searchValue = event.target.value
+
+      let currentSearchType = state.searchType
+      if (currentSearchType === "auto") {
+        currentSearchType = state.searchTypeAuto
+      }
+
+      if (currentSearchType === "local") {
         handlerState.filter = event.target.value
         try {
           delete currentlist.state.params["search"]
@@ -79,17 +125,34 @@ export default defineComponent({
       } catch (e) {}
       handlerState.filter = null
       reloadAction()
-      console.log(currentlist.state.params)
+    }
+
+    function typeSelection(event) {
+      state.searchType = event.detail.item.value
+      state.searchTypeOpened = false
+    }
+
+    function searchTypeIcon() {
+      if (state.searchType === "auto") return "system"
+      if (state.searchType === "local") return "list-ul"
+      if (state.searchType === "database") return "database"
     }
 
     return {
       state,
       search_input,
       reset_filter,
+      typeSelection,
+      searchTypeIcon,
       handlerState
     }
   }
 })
 </script>
 
-<style scoped></style>
+<style scoped>
+sl-input::part(base) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+</style>
