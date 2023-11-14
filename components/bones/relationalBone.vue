@@ -1,11 +1,22 @@
 <template>
   <div class="record">
     <div class="single-entry">
-      <sl-input
-        v-if="state.selection"
-        :disabled="true"
-        :value="value ? formatString(state.format, state.selection) : ''"
-      ></sl-input>
+      <sl-button-group v-if="state.selection">
+        <sl-input
+          class="entry-input"
+          :disabled="true"
+          :value="value ? formatString(state.format, state.selection) : ''"
+        ></sl-input>
+        <sl-button
+          v-if="!boneState.isEmpty"
+          variant="info"
+          outline
+          class="square-btn"
+          @click="editSelection"
+        >
+          <sl-icon name="pencil"></sl-icon>
+        </sl-button>
+      </sl-button-group>
       <sl-combobox
         v-else
         :disabled="boneState.readonly"
@@ -17,23 +28,15 @@
 
       <sl-button
         class="square-btn"
+        :disabled="boneState.readonly"
         @click="openRelationalSelection"
       >
         <sl-icon name="list-ul"></sl-icon>
       </sl-button>
 
       <sl-button
-        v-if="!boneState.isEmpty"
-        variant="info"
-        outline
-        class="square-btn"
-        @click="editSelection"
-      >
-        <sl-icon name="pencil"></sl-icon>
-      </sl-button>
-
-      <sl-button
         v-if="!boneState.multiple && !boneState.isEmpty"
+        :disabled="boneState.readonly"
         variant="danger"
         outline
         :title="$t('bone.del')"
@@ -233,11 +236,11 @@ export default defineComponent({
   display: flex;
   gap: 10px;
 
-  :deep(sl-combobox){
-    &::part(input__base){
+  :deep(sl-combobox) {
+    &::part(input__base) {
       border-top-left-radius: 0;
       border-bottom-left-radius: 0;
-     }
+    }
   }
 }
 
@@ -273,5 +276,14 @@ sl-combobox {
   :deep(.form) {
     margin-top: var(--sl-spacing-x-small);
   }
+}
+
+sl-button-group {
+  width: 100%;
+}
+
+.entry-input::part(base) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
 }
 </style>

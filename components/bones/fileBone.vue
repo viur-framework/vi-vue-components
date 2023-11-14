@@ -89,6 +89,7 @@
     </sl-button>
     <sl-button
       v-if="!boneState.multiple && !boneState.isEmpty"
+      :disabled="boneState.readonly"
       variant="danger"
       outline
       :title="$t('bone.del')"
@@ -301,6 +302,8 @@ export default defineComponent({
   border-radius: 5px;
   min-height: 40px;
   max-height: 40px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 .preview {
@@ -351,6 +354,8 @@ export default defineComponent({
 .info-btn {
   &::part(base) {
     aspect-ratio: 1;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
   }
 }
 
