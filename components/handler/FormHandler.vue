@@ -64,7 +64,7 @@
             <component
               :is="'listhandler'"
               :module="handler['module']"
-              :filter="{ [handler['context']]: skelkey }"
+              :filter="editViewFilter(handler)"
             >
             </component>
           </div>
@@ -127,7 +127,7 @@
 
 <script lang="ts">
 //@ts-nocheck
-import { reactive, defineComponent, onBeforeMount, computed, provide, toRaw, unref,watch } from "vue"
+import { reactive, defineComponent, onBeforeMount, computed, provide, toRaw, unref, watch } from "vue"
 import { Request } from "@viur/vue-utils"
 import { useDBStore } from "../stores/db"
 import { useRoute } from "vue-router"
@@ -154,20 +154,19 @@ export default defineComponent({
     skeltype: null,
     noTopbar: false,
     secure: false,
-    bones:{
-      type:Array,
-      default:[]
+    bones: {
+      type: Array,
+      default: []
     },
-    values:{
-      type:Object,
-      default:null
+    values: {
+      type: Object,
+      default: null
     },
-    renderer:{
-      type:String,
+    renderer: {
+      type: String,
       default: import.meta.env.VITE_DEFAULT_RENDERER || "vi"
     },
-    errors:[]
-
+    errors: []
   },
   components: { EntryBar, bone, ...handlers, VueJsonPretty, Loader },
   emit: ["change"],
@@ -189,8 +188,8 @@ export default defineComponent({
       formGroups: computed(() => {
         let groups = { default: { name: "Allgemein", bones: [], groupVisible: false } }
         for (const [boneName, bone] of Object.entries(state.structure)) {
-          if (props.bones.length>0){
-            if (!props.bones.includes(boneName)){
+          if (props.bones.length > 0) {
+            if (!props.bones.includes(boneName)) {
               continue
             }
           }
@@ -287,7 +286,7 @@ export default defineComponent({
       requestHandler(url, { dataObj: dataObj }).then(async (resp) => {
         let data = await resp.json()
 
-        if(props.values){
+        if (props.values) {
           for (const [key, val] of Object.entries(props.values)) {
             data["values"][key] = val
           }
@@ -405,17 +404,30 @@ export default defineComponent({
       }
     }
 
+    function editViewFilter(handler) {
+      let filter = {}
+      if (handler["filter"]) {
+        filter = handler["filter"]
+      }
+      filter[handler["context"]] = props.skelkey
+      return filter
+    }
+
     onBeforeMount(() => {
       fetchData()
     })
 
-    watch(()=>props.errors, (newVal, oldVal)=>{
-      state.errors=props.errors
-    })
+    watch(
+      () => props.errors,
+      (newVal, oldVal) => {
+        state.errors = props.errors
+      }
+    )
 
     return {
       state,
       values,
+      editViewFilter,
       getWidget,
       updateValue,
       modulesStore,
@@ -521,10 +533,10 @@ sl-details {
   position: relative;
 }
 
-.embeded-list{
+.embeded-list {
   position: relative;
 
-  :deep(.main-wrapper){
+  :deep(.main-wrapper) {
     height: auto;
     max-height: calc(100vh - 170px);
   }
