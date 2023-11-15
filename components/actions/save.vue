@@ -53,10 +53,14 @@ export default defineComponent({
       //Send request
       const formData: FormData = new FormData()
       for (const [boneName, boneValue] of Object.entries(handlerState.formValues)) {
-        for (const value of boneValue) {
-          for (const [k, v] of Object.entries(value)) {
-            formData.append(k, v)
+        if (boneValue.length > 0) {
+          for (const value of boneValue) {
+            for (const [k, v] of Object.entries(value)) {
+              formData.append(k, v)
+            }
           }
+        } else {
+          formData.append(boneName, "")
         }
       }
       const obj = {}
