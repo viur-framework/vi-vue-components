@@ -3,14 +3,14 @@
     <div class="background-img">
       <img
         :src="state.backgroundImage"
-        @error="$event.target.src = 's/login-background.jpg'"
+        @error="$event.target.src = Utils.publicAsset('login-background.jpg')"
       />
     </div>
     <div class="card">
       <img
         class="logo"
         :src="state.logo"
-        @error="$event.target.src = 's/logo.svg'"
+        @error="$event.target.src = Utils.publicAsset('logo.svg')"
       />
       <sl-alert
         v-if="userStore.state['user.loggedin'] === 'error'"
@@ -114,6 +114,7 @@ import { useUserStore } from "../stores/user"
 import { reactive, computed, onBeforeMount, defineComponent } from "vue"
 import { useAppStore } from "../stores/app"
 import Loader from "@viur/vue-utils/generic/Loader.vue"
+import Utils from "../utils"
 
 import { getBoneWidget } from "@viur/vue-utils/bones/edit/index"
 
@@ -208,6 +209,7 @@ export default defineComponent({
       googleLogin,
       logout,
       userStore,
+      Utils,
       userLogin,
       state,
       userSecondFactor,
