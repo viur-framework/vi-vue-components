@@ -226,7 +226,10 @@ export default defineComponent({
 #google_oauth {
   display: flex;
   justify-content: center;
-  padding-bottom: 20px;
+
+  &:has(*){
+    margin-top: var(--sl-spacing-medium);
+ }
 }
 
 .wrapper {
@@ -362,7 +365,4 @@ sl-input {
   }
 }
 
-div#google_oauth {
-  margin-top: var(--sl-spacing-medium);
-}
 </style>

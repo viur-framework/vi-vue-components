@@ -333,8 +333,10 @@ sl-button-group {
   opacity: 0;
   transition: all ease 0.3s;
   z-index: 1;
+  pointer-events: none;
 
   :deep(sl-button) {
+    pointer-events: auto;
     transform: translateX(50%);
   }
 }
@@ -349,8 +351,10 @@ sl-button-group {
   opacity: 0;
   transition: all ease 0.3s;
   z-index: 1;
+  pointer-events: none;
 
   :deep(sl-button) {
+    pointer-events: auto;
     transform: translateX(-50%);
   }
 }
