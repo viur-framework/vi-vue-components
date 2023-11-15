@@ -80,15 +80,22 @@ export default defineComponent({
       } else if (boneState.bonestructure["type"] === "relational.tree.node.file") {
         params = "skelType=node&"
       }
-      return Request.get(`/json/${boneState.bonestructure["module"]}/list?${params}limit=99`).then(async (resp) => {
-        //?viurTags$lk=${search.toLowerCase()}
-        const data = await resp.json()
-        state.skels = data["skellist"].reduce((acc, curr) => ((acc[curr["key"]] = curr), acc), {})
+      let filter = `&search=${search.toLowerCase()}`
 
-        return data["skellist"]?.map((d: any) => {
-          return { text: formatString(boneState.bonestructure["format"], { dest: d }), value: d.key, data: d }
-        })
-      })
+      if (!search || search.length < 2) {
+        filter = ""
+      }
+
+      return Request.get(`/json/${boneState.bonestructure["module"]}/list?${params}limit=99${filter}`).then(
+        async (resp) => {
+          const data = await resp.json()
+          state.skels = data["skellist"].reduce((acc, curr) => ((acc[curr["key"]] = curr), acc), {})
+
+          return data["skellist"]?.map((d: any) => {
+            return { text: formatString(boneState.bonestructure["format"], { dest: d }), value: d.key, data: d }
+          })
+        }
+      )
     }
     function openSelector(lang) {
       state.openedSelection = true
