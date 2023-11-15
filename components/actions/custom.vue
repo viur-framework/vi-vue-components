@@ -174,7 +174,15 @@ export default defineComponent({
     function handleFetch(selection) {
       function triggerServersideAction(url) {
         url = buildUrl(url, selection)
-        Request.get(url).then((resp) => {
+        let request = Request.get
+        for (const skey of ["?skey={{skey}}", "&skey={{skey}}"]) {
+          if (url.includes(skey)) {
+            url = url.replace(skey, "")
+            request = Request.securePost
+          }
+        }
+
+        request(url).then((resp) => {
           if (state.info?.["then"] === "reload-module") {
             tableReload()
           } else if (state.info?.["then"] === "reload-vi") {
