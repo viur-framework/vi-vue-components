@@ -88,7 +88,7 @@ export default defineComponent({
         return !searchableBone
       }),
       searchTypeAuto: computed(() => {
-        return currentlist?.state.state === 2 && state.state.searchValue ? "local" : "database"
+        return currentlist?.state.state === 2 && state.searchValue ? "local" : "database"
       }),
       searchType: "auto",
       searchValue: "",
