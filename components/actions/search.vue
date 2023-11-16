@@ -5,9 +5,13 @@
       :disabled="state.disabled"
       placeholder="Suche"
       clearable
-      @sl-input="search_input"
+      @sl-input="debouncedSearch"
       @sl-clear="reset_filter"
     >
+      <sl-spinner-viur
+        v-if="state.loading"
+        slot="suffix"
+      ></sl-spinner-viur>
     </sl-input>
 
     <sl-dropdown
@@ -65,6 +69,7 @@
 <script lang="ts">
 import { reactive, defineComponent, inject, computed } from "vue"
 import { useMessageStore } from "../stores/message"
+import { useDebounceFn } from "@vueuse/core"
 
 export default defineComponent({
   props: {},
@@ -92,10 +97,17 @@ export default defineComponent({
       }),
       searchType: "auto",
       searchValue: "",
-      searchTypeOpened: false
+      searchTypeOpened: false,
+      loading: false
     })
 
+    const debouncedSearch = useDebounceFn((event) => {
+      state.loading = true
+      search_input(event)
+    }, 500)
+
     function search_input(event) {
+      state.loading = true
       state.searchValue = event.target.value
 
       let currentSearchType = state.searchType
@@ -105,21 +117,31 @@ export default defineComponent({
 
       if (currentSearchType === "local") {
         handlerState.filter = event.target.value
+        state.loading = false
         try {
           delete currentlist.state.params["search"]
         } catch (e) {}
       } else {
         if (event.target.value === "") {
           reset_filter()
+          state.loading = false
+          return 0
         }
 
         currentlist.state.params["search"] = event.target.value
-        currentlist.fetch().catch((error) => {
-          messageStore.addMessage("error", `${error.message}`, error.response?.url)
-        })
+        currentlist
+          .fetch()
+          .catch((error) => {
+            state.loading = false
+            messageStore.addMessage("error", `${error.message}`, error.response?.url)
+          })
+          .then((resp) => {
+            state.loading = false
+          })
       }
     }
     function reset_filter() {
+      state.loading = false
       try {
         delete currentlist.state.params["search"]
       } catch (e) {}
@@ -144,7 +166,8 @@ export default defineComponent({
       reset_filter,
       typeSelection,
       searchTypeIcon,
-      handlerState
+      handlerState,
+      debouncedSearch
     }
   }
 })
