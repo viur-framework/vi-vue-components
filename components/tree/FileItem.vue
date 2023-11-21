@@ -10,7 +10,7 @@
     }"
     @dragstart="tree.onDragStart($event, idx, 'leaf')"
     @drop.stop="tree.onDrop($event, idx)"
-     @click="entrySelected(skel)"
+    @click="entrySelected(skel)"
   >
     <td>
       <div class="file">
@@ -24,6 +24,7 @@
         </div>
         <sl-icon
           name="download"
+          title="download"
           sprite
           @click="downloadFile(skel)"
         ></sl-icon>
@@ -98,7 +99,7 @@ export default defineComponent({
       treeState.selected_leaf = skel
     }
     function downloadFile(skel) {
-      window.open(import.meta.env.VITE_API_URL + skel["downloadUrl"] + "&download=1", "_blank")
+      window.open(Request.downloadUrlFor({ dest: skel }, false), "_blank", "noreferrer")
     }
     const tree = useTree(props.module, treeState, state)
     return {
