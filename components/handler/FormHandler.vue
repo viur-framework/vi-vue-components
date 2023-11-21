@@ -130,6 +130,7 @@
 import { reactive, defineComponent, onBeforeMount, computed, provide, toRaw, unref, watch } from "vue"
 import { Request } from "@viur/vue-utils"
 import { useDBStore } from "../stores/db"
+import {useContextStore} from "../stores/context"
 import { useRoute } from "vue-router"
 import EntryBar from "../bars/EntryBar.vue"
 import { useModulesStore } from "../stores/modules"
@@ -173,6 +174,7 @@ export default defineComponent({
   setup(props, context) {
     const dbStore = useDBStore()
     const appStore = useAppStore()
+    const contextStore = useContextStore()
     const route = useRoute()
     const modulesStore = useModulesStore()
     const values = reactive({})
@@ -410,6 +412,7 @@ export default defineComponent({
         filter = handler["filter"]
       }
       filter[handler["context"]] = props.skelkey
+      contextStore.setContext(handler["context"], props.skelkey, state.tabId)
       return filter
     }
 
