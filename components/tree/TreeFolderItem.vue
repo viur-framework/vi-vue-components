@@ -133,7 +133,7 @@ export default defineComponent({
     }
     function buildCurrentEntry() {
       state.currentEntry = tree.EntryFromPath(props.path)
-      if (props.path && props.path.length === 1 && props.path[0] === 0) {
+      if (false && props.path && props.path.length === 1 && props.path[0] === 0) {
         // prefetch rootnode childs
         state.currentRootNode = state.currentEntry["key"]
         state.currentEntry["_status"] = "loading"

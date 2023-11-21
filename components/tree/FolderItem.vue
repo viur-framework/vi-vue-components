@@ -12,7 +12,7 @@
     @dragover.prevent="tree.onDragOver($event, idx)"
     @dragleave="tree.onDragLeave($event, idx)"
     @drop.stop="tree.onDrop($event, idx)"
-    @click="changeParentEntry(idx)"
+
   >
     <td>
       <div
@@ -34,6 +34,7 @@
         v-else
         class="folder"
       >
+        <sl-radio></sl-radio>
         <div
           v-if="treeState.dragging"
           class="dragger"
@@ -49,6 +50,7 @@
         <span
           class="filename"
           v-html="skel['name']"
+          @click="changeParentEntry(idx)"
         ></span>
       </div>
     </td>
@@ -90,6 +92,8 @@ export default defineComponent({
   components: {},
   setup(props, context) {
     const treeState = inject("handlerState")
+    const fetchAll = inject("fetchAll")
+
     const state = reactive({
       currentEntry: {},
       child: computed(() => {
@@ -103,33 +107,13 @@ export default defineComponent({
 
     onMounted(() => {
       state.currentEntry = tree.EntryFromPath(props.path)
-      if (props.path && props.path.length === 1 && props.path[0] === 0) {
-        // prefetch rootnode childs
-        state.currentEntry["_status"] = "loading"
-        Request.get(`/vi/${props.module}/list`, {
-          dataObj: {
-            skelType: "node",
-            orderby: "sortindex",
-            parententry: state.currentEntry["key"],
-            ...treeState.params
-          }
-        }).then(async (resp) => {
-          let data = await resp.json()
-          state.currentEntry["_nodes"] = data["skellist"]
-          state.currentEntry["_disabled"] = false
-          state.currentEntry["_status"] = "loaded" //loading, loaded
-          state.currentEntry["_dragging"] = false
-          state.currentEntry["_isover"] = false
-          state.currentEntry["_overElement"] = null
-          state.currentEntry["_drop"] = null
-        })
-      }
     })
 
     //folder navigation
     function changeParentEntry(idx) {
       treeState.selectedPath.push(idx)
       treeState.selected_leaf = null
+      fetchAll()
     }
 
     function changeParentEntryUp() {

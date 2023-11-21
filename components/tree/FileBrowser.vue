@@ -41,7 +41,6 @@
           :leafs="state.currentEntry?.['_leafs']"
         >
           <sl-table-wrapper
-            :search="filter"
             sortable
             class="scroller"
           >
@@ -351,6 +350,7 @@ export default defineComponent({
       fetch("leaf")
       state.loading = false
     }
+    provide("fetchAll",fetchAll)
 
     /**
      * Fetch nodes and leafs
@@ -358,7 +358,6 @@ export default defineComponent({
      * @returns {Promise<Response>|number}
      */
     function fetch(skelType) {
-      console.log("FFFF")
       let parent_entry_key = state.selectedEntries.at(-1)?.["key"]
       if (!parent_entry_key) return 0
 

@@ -167,6 +167,7 @@ export default function useTree(module, treeState, state) {
 
   function requestChildren(idx, entryType = "node") {
     state.currentEntry["_nodes"][idx]["_status"] = "loading"
+    //return 0
     return Request.get(`/vi/${module}/list`, {
       dataObj: {
         skelType: entryType,

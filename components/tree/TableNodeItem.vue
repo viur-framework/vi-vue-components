@@ -116,7 +116,7 @@ export default defineComponent({
 
     onMounted(() => {
       state.currentEntry = tree.EntryFromPath(props.path)
-      if (props.path && props.path.length === 1 && props.path[0] === 0) {
+      if (false && props.path && props.path.length === 1 && props.path[0] === 0) {
         // prefetch rootnode childs
         state.currentEntry["_status"] = "loading"
         Request.get(`/vi/${props.module}/list`, {
