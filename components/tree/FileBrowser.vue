@@ -11,9 +11,9 @@
 
   <sl-split-panel
     class="main"
-    position="30"
-    snap="30%"
-    style="--min: 200px; --max: 30%"
+    position="20"
+    snap="25%"
+    style="--min: 200px; --max: 25%"
   >
     <div
       slot="start"
@@ -29,8 +29,8 @@
 
     <sl-split-panel
       slot="end"
-      position="70"
-      style="--max: 70%"
+      position="80"
+      style="--max: 80%"
     >
       <div
         slot="start"
@@ -131,43 +131,68 @@
         >
           <div
             class="headline"
+            @click="openFileNewTab(state.selected_leaf)"
             v-html="state.selected_leaf.name"
           ></div>
-          <div
-            v-if="state.selected_leaf?.mimetype && state.selected_leaf?.mimetype.startsWith('image/')"
-            class="file-preview"
-            @click="openFileNewTab(state.selected_leaf)"
-          >
-            <vi-image :src="Request.downloadUrlFor({ dest: state.selected_leaf }, true)"> </vi-image>
+
+          <div class="file-preview">
+            <vi-image
+              v-if="state.selected_leaf?.mimetype && state.selected_leaf?.mimetype.startsWith('image/')"
+              :src="Request.downloadUrlFor({ dest: state.selected_leaf }, true)"
+              @click="openFileNewTab(state.selected_leaf)"
+            >
+            </vi-image>
+            <iframe
+              v-else-if="state.selected_leaf?.mimetype && state.selected_leaf?.mimetype.startsWith('application/pdf')"
+              id="iframe"
+              :src="Request.downloadUrlFor({ dest: state.selected_leaf })"
+              @click="openFileNewTab(state.selected_leaf)"
+            >
+            </iframe>
+            <sl-button
+              class="dl-button"
+              variant="secondary"
+              size="small"
+              @click="openFileNewTab(state.selected_leaf)"
+            >
+              <sl-icon
+                slot="prefix"
+                name="download"
+                sprite
+              ></sl-icon>
+              Download
+            </sl-button>
           </div>
-          <div class="details">
-            <span class="details-name">Hochgeladen am:</span>
-            <sl-format-date
-              year="numeric"
-              month="numeric"
-              day="2-digit"
-              :date="state.selected_leaf.creationdate"
-            ></sl-format-date>
-          </div>
-          <div class="details">
-            <span class="details-name">Letzte Änderung am:</span>
-            <sl-format-date
-              year="numeric"
-              month="numeric"
-              day="2-digit"
-              :date="state.selected_leaf.changedate"
-            ></sl-format-date>
-          </div>
-          <div class="details">
-            <span class="details-name">Größe:</span>
-            <sl-format-bytes
-              class="download-size"
-              :value="state.selected_leaf['size']"
-            ></sl-format-bytes>
-          </div>
-          <div class="details">
-            <span class="details-name">Mimetype:</span>
-            {{ state.selected_leaf.mimetype }}
+
+          <div class="details-wrap">
+            <div class="details">
+              <span class="details-name">Datum:</span>
+              <sl-format-date
+                year="numeric"
+                month="numeric"
+                day="2-digit"
+                :date="state.selected_leaf.changedate"
+              ></sl-format-date>
+            </div>
+            <div class="details">
+              <span class="details-name">Größe:</span>
+              <sl-format-bytes
+                class="download-size"
+                :value="state.selected_leaf['size']"
+              ></sl-format-bytes>
+            </div>
+            <div class="details details-mimetype">
+              <sl-tooltip :content="state.selected_leaf.mimetype">
+                <span class="details-name">Type:</span>
+                <div
+                  v-html="
+                    state.selected_leaf.name.split('.').pop().length > 0
+                      ? state.selected_leaf.name.split('.').pop()
+                      : state.selected_leaf.name
+                  "
+                ></div>
+              </sl-tooltip>
+            </div>
           </div>
         </slot>
       </div>
@@ -176,8 +201,8 @@
 </template>
 
 <script lang="js">
-import { reactive, defineComponent, computed, provide, onBeforeMount, watch } from "vue"
-import { Request } from "@viur/vue-utils"
+import { reactive, defineComponent, computed, provide, onBeforeMount, watch, onUnmounted } from "vue"
+import { Request, ListRequest, destroyStore } from "@viur/vue-utils"
 import TreeFolderItem from "./TreeFolderItem.vue"
 import ViImage from "@viur/vue-utils/generic/Image.vue"
 import useTree from "./tree.js"
@@ -196,11 +221,23 @@ export default defineComponent({
     },
     view: null,
     dragging: false,
-    params: {}
+    params: {},
+    refresh: false
   },
   emits: ["changed"],
   components: { FileItem, FolderItem, ViImage, TreeFolderItem },
   setup(props, context) {
+    const time = new Date().getTime()
+    let nodeHandler = ListRequest(props.module + "_node_handler" + time, { module: props.module })
+    let leafHandler = ListRequest(props.module + "_leaf_handler" + time, { module: props.module })
+
+    onUnmounted(() => {
+      destroyStore(nodeHandler)
+      destroyStore(leafHandler)
+      nodeHandler = null
+      leafHandler = null
+    })
+
     const state = reactive({
       tree: [],
       leafView: 100,
@@ -214,7 +251,10 @@ export default defineComponent({
           if (Array.isArray(entry)) {
             entry = entry[i]
             if (!entry) break
-            entry["_expanded"] = true
+            if (entry["_expanded"] === undefined) {
+              entry["_expanded"] = true
+            }
+
             retVal.push(entry)
           }
           if (state.selectedPath.length - 1 !== x && Object.keys(entry).includes("_nodes")) {
@@ -243,9 +283,11 @@ export default defineComponent({
 
     //update if path changes
     watch(
-      () => state.selectedEntries,
+      () => state.selectedPath,
       (newVal, oldVal) => {
-        fetchAll()
+        if (newVal.toString() !== oldVal.toString()) {
+          fetchAll()
+        }
       }
     )
 
@@ -269,8 +311,21 @@ export default defineComponent({
       }
     )
 
+    watch(
+      () => props.refresh,
+      (newVal, oldVal) => {
+        if (newVal) {
+          fetchAll()
+          state.refreshList = false
+        }
+      }
+    )
+
     // init tree
     onBeforeMount(() => {
+      nodeHandler = ListRequest(props.module + "_node_handler" + time, { module: props.module })
+      leafHandler = ListRequest(props.module + "_leaf_handler" + time, { module: props.module })
+
       state.tree = [props.rootnode]
       state.selectedPath = [0]
     })
@@ -283,6 +338,7 @@ export default defineComponent({
 
     //breadcrumb navigation
     function changePath(idx) {
+      state.selected_leaf = null
       state.selectedPath.splice(idx + 1, state.selectedPath.length - (idx + 1))
       fetchAll()
     }
@@ -291,13 +347,7 @@ export default defineComponent({
       state.selected_leaf = null
       state.loading = true
       context.emit("changed", null, null)
-      try {
-        fetch("node").then((resp) => {
-          state.selectedNode = state.selectedEntries.at(-1)
-          context.emit("changed", state.selectedNode, "node")
-          state.leafView = 100
-        })
-      } catch (e) {}
+      fetch("node")
       fetch("leaf")
       state.loading = false
     }
@@ -308,27 +358,30 @@ export default defineComponent({
      * @returns {Promise<Response>|number}
      */
     function fetch(skelType) {
+      console.log("FFFF")
       let parent_entry_key = state.selectedEntries.at(-1)?.["key"]
       if (!parent_entry_key) return 0
 
-      return Request.list(props.module, {
-        dataObj: {
-          parententry: parent_entry_key,
-          skelType: skelType,
-          orderby: "sortindex",
-          amount: 99,
-          ...state.params
-        }
-      })
+      let handler = nodeHandler
+      if (skelType === "leaf") {
+        handler = leafHandler
+      }
+      if (!handler) return 0
+      handler.state["params"] = {
+        parententry: parent_entry_key,
+        skelType: skelType,
+        orderby: "name",
+        limit: 99
+      }
+      handler
+        .fetchAll()
         .then(async (resp) => {
-          let data = await resp.json()
+          state.request_state = handler.state.request_state
 
-          state.request_state = parseInt(resp.status)
-          state.cursor = data["cursor"]
           if (skelType === "node") {
-            state.currentEntry["_nodes"] = data["skellist"]
-          } else {
-            state.currentEntry["_leafs"] = data["skellist"]
+            state.selectedNode = state.selectedEntries.at(-1)
+            context.emit("changed", state.selectedNode, "node")
+            state.leafView = 100
           }
         })
         .catch((error) => {
@@ -341,9 +394,28 @@ export default defineComponent({
         })
     }
 
+    watch(
+      () => leafHandler.state.skellist,
+      (newVal, oldVal) => {
+        state.currentEntry["_leafs"] = leafHandler.state.skellist
+      }
+    )
+
+    watch(
+      () => nodeHandler.state.skellist,
+      (newVal, oldVal) => {
+        state.currentEntry["_nodes"] = nodeHandler.state.skellist
+      }
+    )
+
+    function openFileNewTab(leaf) {
+      window.open(Request.downloadUrlFor({ dest: leaf }, false), "_blank", "noreferrer")
+    }
+
     return {
       state,
       Request,
+      openFileNewTab,
       changePath
     }
   }
@@ -558,7 +630,6 @@ sl-format-date {
     border-radius: 3px;
   }
 }
-
 .file-name {
   white-space: nowrap;
   overflow: hidden;
@@ -570,6 +641,41 @@ sl-format-date {
 .file-preview {
   cursor: pointer;
   margin-bottom: 10px;
+  position: relative;
+  background-color: var(--sl-color-neutral-200);
+  min-height: calc(var(--sl-input-height-small) + 20px);
+
+  &:has(iframe) {
+    aspect-ratio: 3 / 4;
+  }
+
+  & iframe {
+    width: 100%;
+    height: 100%;
+  }
+
+  .dl-button {
+    position: absolute;
+    margin-top: 0;
+    right: 10px;
+    bottom: 10px;
+  }
+}
+
+#iframe {
+  cursor: pointer;
+}
+
+.image {
+  &:hover {
+    object-fit: contain !important;
+  }
+}
+
+.details-wrap {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  font-size: 0.85em;
 }
 
 .details {
@@ -579,6 +685,10 @@ sl-format-date {
 .details-name {
   display: block;
   font-weight: 700;
+}
+
+.details-mimetype {
+  word-break: break-all;
 }
 
 .breadcrumbs {
