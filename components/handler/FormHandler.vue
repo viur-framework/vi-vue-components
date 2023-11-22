@@ -130,7 +130,7 @@
 import { reactive, defineComponent, onBeforeMount, computed, provide, toRaw, unref, watch } from "vue"
 import { Request } from "@viur/vue-utils"
 import { useDBStore } from "../stores/db"
-import {useContextStore} from "../stores/context"
+import { useContextStore } from "../stores/context"
 import { useRoute } from "vue-router"
 import EntryBar from "../bars/EntryBar.vue"
 import { useModulesStore } from "../stores/modules"
@@ -271,7 +271,7 @@ export default defineComponent({
         }
         url += `/${props.skelkey}`
       }
-      const dataObj = {}
+      let dataObj = {}
       if (state.skeltype === "node" && props.action === "add") {
         url += `/node`
         dataObj["node"] = props.skelkey
@@ -285,6 +285,9 @@ export default defineComponent({
       if (props.secure) {
         requestHandler = Request.securePost
       }
+
+      dataObj = { ...dataObj, ...contextStore.getContext(state.tabId) }
+
       requestHandler(url, { dataObj: dataObj }).then(async (resp) => {
         let data = await resp.json()
 
