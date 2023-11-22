@@ -22,6 +22,7 @@ import { useRoute, useRouter } from "vue-router"
 import { useDBStore } from "../stores/db"
 import { Request } from "@viur/vue-utils"
 import { useMessageStore } from "../stores/message"
+import { useContextStore } from "../stores/context"
 export default defineComponent({
   props: {
     close: {
@@ -43,6 +44,7 @@ export default defineComponent({
     const router = useRouter()
     const route = useRoute()
     const dbStore = useDBStore()
+    const contextStore = useContextStore()
     const state = reactive({
       loading: false
     })
@@ -63,7 +65,7 @@ export default defineComponent({
           formData.append(boneName, "")
         }
       }
-      const obj = {}
+      let obj = {}
       for (const key: string of formData.keys()) {
         obj[[key]] = formData.getAll(key)
       }
@@ -82,6 +84,8 @@ export default defineComponent({
       if (handlerState.action === "edit") {
         url += `/${handlerState.skelkey}`
       }
+
+      obj = { ...obj, ...contextStore.getContext(handlerState.tabId) }
 
       Request.securePost(url, { dataObj: obj })
         .then(async (resp: Response) => {
