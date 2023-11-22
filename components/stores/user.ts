@@ -187,6 +187,11 @@ export const useUserStore = defineStore("user", () => {
               //We have a second factor
               state["user.loggedin"] = "secound_factor_choice"
               state["user.login.secound_factor_choice"] = loginResponse
+            } else if (typeof loginResponse === "object" && loginResponse["values"] !== undefined) {
+              loginResponse["structure"] = structureToDict(loginResponse["structure"])
+              state["user.login.secound_factor"] = loginResponse
+              console.log(state["user.login.secound_factor"]["structure"] ,"HEst ?")
+              state["user.loggedin"] = "secound_factor_input"
             } else if (loginResponse === "FAILURE") {
               state["user.loggedin"] = "error"
               reject(respLogin)
@@ -374,7 +379,7 @@ export const useUserStore = defineStore("user", () => {
         const answ = await resp.json()
         answ["structure"] = structureToDict(answ["structure"])
         state["user.login.secound_factor"] = answ
-        console.log(state["user.login.secound_factor"]["structure"])
+        //console.log(state["user.login.secound_factor"]["structure"])
         state["user.loggedin"] = "secound_factor_input"
         resolve()
       })

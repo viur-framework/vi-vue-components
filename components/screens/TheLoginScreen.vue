@@ -27,10 +27,9 @@
       >
         <loader></loader>
       </div>
-      <form
-        v-show="userStore.state['user.loggedin'] === 'no'"
-        autocomplete="on"
-      >
+
+      <form autocomplete="on"  v-show="['no','error'].includes(userStore.state['user.loggedin'])">
+
         <input
           v-model="state.name"
           class="input"
