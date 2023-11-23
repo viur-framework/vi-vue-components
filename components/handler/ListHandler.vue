@@ -308,7 +308,6 @@ export default defineComponent({
       const url = `/db/${state.module}/edit/${state.currentSelection[0]["key"]}`
       let route = router.resolve(unref(url))
       dbStore.addOpened(route, state.module, state.view)
-      router.push(url)
     }
 
     function primaryAction(e: Event) {
