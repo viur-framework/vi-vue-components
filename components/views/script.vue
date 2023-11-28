@@ -1,7 +1,7 @@
 <template>
-  <iframe
+  <iframe @load="null"
       style="height:100%"
-      :src="state.url">
+      :src="url()">
   </iframe>
 </template>
 
@@ -24,19 +24,20 @@ export default defineComponent({
     const dbStore = useDBStore()
     const route = useRoute()
     const state = reactive({
-      url: computed(()=>{
-        let url = `${import.meta.env.VITE_API_URL}${appStore.state['admin.scriptor.url']}#/home?key=${route['params']['key']}`
+    })
+
+    function url(){
+      let url = `${import.meta.env.VITE_API_URL}${appStore.state['admin.scriptor.url']}#/home?key=${route['params']['key']}`
         if (Object.keys(route.query).length>0){
           url += `&scriptor_params=${JSON.stringify(route.query)}`
         }
-
-
         return url
-      })
-    })
+    }
+
     return {
       state,
-      route
+      route,
+      url
     }
   }
 })
