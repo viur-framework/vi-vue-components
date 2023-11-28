@@ -79,7 +79,7 @@ export default defineComponent({
 
     function relationUpdateSelection(selection) {
       if (props.rowselect === 1) {
-        state.selection = selection[0]
+        state.selection = selection?.[0]
       } else {
         state.selection = selection
       }

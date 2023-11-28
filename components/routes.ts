@@ -80,7 +80,13 @@ const default_routes = [
     name: "fluidpage",
     props: true,
     component: () => import("./views/fluidpage.vue")
-  }
+  },
+  {
+    path: "/db/scriptor/frame/:key",
+    name: "script",
+    props: true,
+    component: () => import("./views/script.vue")
+  },
 ]
 
 function createRouterInstance(routes, replace = false) {
