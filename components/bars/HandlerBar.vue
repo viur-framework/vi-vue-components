@@ -16,7 +16,14 @@
                   :is="`${groupaction}_action`"
                   size="small"
                 >
-                  <custom_action :name="groupaction"></custom_action>
+                  <script_action
+                    v-if="groupaction.startsWith('scriptor_')"
+                    :name="groupaction"
+                  ></script_action>
+                  <custom_action
+                    v-else
+                    :name="groupaction"
+                  ></custom_action>
                 </component>
               </sl-menu-item>
             </template>
@@ -28,7 +35,14 @@
           v-else
           size="small"
         >
-          <custom_action :name="action"></custom_action>
+          <script_action
+            v-if="action.startsWith('scriptor_')"
+            :name="action"
+          ></script_action>
+          <custom_action
+            v-else
+            :name="action"
+          ></custom_action>
         </component>
       </template>
 
@@ -42,6 +56,7 @@ import { reactive, defineComponent, computed, inject } from "vue"
 import { useDBStore } from "../stores/db"
 import { useRoute } from "vue-router"
 import actions from "../actions/actions"
+import { useModulesStore } from "../stores/modules"
 
 export default defineComponent({
   props: {
@@ -58,6 +73,7 @@ export default defineComponent({
   components: { ...actions },
   setup(props, context) {
     const handlerState = inject("handlerState")
+    const modulesStore = useModulesStore()
     const dbStore = useDBStore()
     const route = useRoute()
 
@@ -159,6 +175,12 @@ export default defineComponent({
           actions["default"][0] = actions["default"][0].concat(actiongroups.split(" "))
         }
 
+        if (modulesStore.state.modules?.[props.module]?.["scripts"]) {
+          for (const script of modulesStore.state.modules[props.module]["scripts"]) {
+            actions["default"][0].push("scriptor_" + script["dest"]["key"])
+          }
+        }
+
         if (Object.keys(conf).includes("actionGroups")) {
           for (const [groupName, config] of Object.entries(conf["actionGroups"])) {
             state.actionGroups[groupName] = config
@@ -167,6 +189,7 @@ export default defineComponent({
             ]
           }
         }
+
         return actions
       })
     })
