@@ -25,6 +25,13 @@
               v-show="dbStore.getActiveTab()['id'] === tab?.['id']"
               :id="'view_dialogs_' + tab?.['id']"
             ></div>
+
+            <!--<template v-if="!tab['keep']">
+              <component
+                :is="urlToRoute(tab)"
+                v-show="dbStore.getActiveTab()['id'] === tab?.['id']"
+              ></component>
+            </template>-->
           </template>
           <view-wrapper :component="Component"></view-wrapper>
         </div>
@@ -44,7 +51,7 @@ import TheTopbar from "../main/TheMainScreenTopbar.vue"
 import TheSidebar from "../main/TheMainScreenSidebar.vue"
 import { useRoute, useRouter } from "vue-router"
 import { Request } from "@viur/vue-utils"
-import { defineComponent, onBeforeMount, unref } from "vue"
+import { defineComponent, onBeforeMount, unref, h } from "vue"
 import { useDBStore } from "../stores/db"
 import { useAppStore } from "../stores/app"
 
@@ -95,6 +102,20 @@ export default defineComponent({
       dbStore.addTopBarAction(ViAction)
     }
 
+    function urlToRoute(tab) {
+      let ViewComponent = tab.to
+      if (!ViewComponent.matched) {
+        ViewComponent = router.resolve(ViewComponent)
+      }
+
+      const component = h(ViewComponent.matched[0].components.default, {
+        ...ViewComponent.params
+      })
+
+      console.log(component)
+      return () => component
+    }
+
     onBeforeMount(() => {
       collectViurConfig()
       initTopBarActions()
@@ -102,7 +123,8 @@ export default defineComponent({
 
     return {
       route,
-      dbStore
+      dbStore,
+      urlToRoute
     }
   }
 })

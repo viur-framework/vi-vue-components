@@ -4,7 +4,7 @@ import { reactive, computed, Component, getCurrentInstance } from "vue"
 import { defineStore, StoreDefinition } from "pinia"
 import { useRoute, useRouter } from "vue-router"
 import { useViewStore } from "./views"
-import { useLocalStore} from "./local";
+import { useLocalStore } from "./local"
 import { useUserStore } from "./user"
 import { useContextStore } from "./context"
 import { destroyStore } from "@viur/vue-utils/utils/handlers"
@@ -81,7 +81,7 @@ function adminTreeLayer(itemList: Array<ModuleInfo>, parent: ModuleInfo): Array<
     } else if (conf["handler"] === "tree.node" || conf["handler"].startsWith("tree.node.")) {
       conf["url"] = { path: `/db/${conf["module"]}/tree.node` }
       conf["handlerComponent"] = "hierarchyhandler"
-    }else if (conf["handler"] === "tree" || conf["handler"].startsWith("tree.")) {
+    } else if (conf["handler"] === "tree" || conf["handler"].startsWith("tree.")) {
       conf["url"] = { path: `/db/${conf["module"]}/tree` }
       conf["handlerComponent"] = "treehandler"
     } else if (conf["handler"] === "singleton" || conf["handler"].startsWith("singleton.")) {
@@ -255,7 +255,8 @@ export const useDBStore = defineStore("db", () => {
     icon = "",
     library = "",
     contextInheritance = true,
-    force = false
+    force = false,
+    keep = false
   ) {
     let currentConf = getConf(module, view)
     let currentModuleConf = getConf(module)
@@ -300,10 +301,11 @@ export const useDBStore = defineStore("db", () => {
       mode: mode,
       moduleDescr: currentConf["name"],
       closeable: true,
-      update: false
+      update: false,
+      keep: keep //always render and keep open, use v-show while navigation
     }
 
-    if(route['meta']?.["action"] && route['meta']?.["action"]==="edit"){
+    if (route["meta"]?.["action"] && route["meta"]?.["action"] === "edit") {
       localStore.addEntries(entry)
     }
 

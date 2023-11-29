@@ -4,23 +4,23 @@
     :to="state.url"
     custom
   >
-  <sl-button
-    v-if="state.canAccess"
-    size="small"
-    :disabled="!state.active"
-    :title="state.current['dest']['name']"
-    @click="createAndNavigate(route)"
-  >
-    <sl-icon
-      v-if="state.current['rel']['icon']"
-      slot="prefix"
-      :name="state.current['rel']['icon']?.split('___')[1]"
-      :library="state.current['rel']['icon']?.split('___')[0]"
-    ></sl-icon>
-    <template v-else>
-      {{ state.current["dest"]["name"] }}
-    </template>
-  </sl-button>
+    <sl-button
+      v-if="state.canAccess"
+      size="small"
+      :disabled="!state.active"
+      :title="state.current['dest']['name']"
+      @click="createAndNavigate(route)"
+    >
+      <sl-icon
+        v-if="state.current['rel']['icon']"
+        slot="prefix"
+        :name="state.current['rel']['icon']?.split('___')[1]"
+        :library="state.current['rel']['icon']?.split('___')[0]"
+      ></sl-icon>
+      <template v-else>
+        {{ state.current["dest"]["name"] }}
+      </template>
+    </sl-button>
   </router-link>
 </template>
 
@@ -32,7 +32,7 @@ import { useMessageStore } from "../stores/message"
 import { useRoute } from "vue-router"
 import { useUserStore } from "../stores/user"
 import { useModulesStore } from "../stores/modules"
-import {useAppStore} from "../stores/app";
+import { useAppStore } from "../stores/app"
 import { useDBStore } from "../stores/db"
 
 export default defineComponent({
@@ -51,12 +51,12 @@ export default defineComponent({
     const route = useRoute()
     const state = reactive({
       active: computed(() => {
-        if (state.current['rel']['capable']==='none'){
+        if (state.current["rel"]["capable"] === "none") {
           return true
         }
         return handlerState.currentSelection && handlerState.currentSelection.length > 0
       }),
-      scriptKey:computed(()=>{
+      scriptKey: computed(() => {
         return props.name.replace("scriptor_", "")
       }),
       current: computed(() => {
@@ -67,16 +67,38 @@ export default defineComponent({
       }),
       canAccess: computed(() => {
         if (userStore.state.user.access.indexOf("root") !== -1) {
-          return true
+          //return true
         }
-        return userStore.state.user.access.indexOf(`${handlerState.module}-delete`) > -1
+
+        let scriptAccess = false
+        if (!state.current["dest"]["access"]) {
+          scriptAccess = true
+        } else {
+          scriptAccess =
+            userStore.userAccess.filter((x) => state.current["dest"]["access"].includes(x)).length ===
+            state.current["dest"]["access"].length
+        }
+
+        if (!scriptAccess) return false
+
+        let actionAccess = false
+        if (!state.current["rel"]["access"]) {
+          actionAccess = true
+        } else {
+          actionAccess =
+            userStore.userAccess.filter((x) => state.current["rel"]["access"].includes(x)).length ===
+            state.current["rel"]["access"].length
+        }
+        return actionAccess
       }),
       opened: false,
       url: computed(() => {
         let url = `/db/scriptor/frame/${state.scriptKey}`
 
-        if (handlerState.currentSelection){
-         let params =  Object.fromEntries(handlerState.currentSelection.map((i,idx) => [`key${(idx===0)?'':idx}`,i['key']]))
+        if (handlerState.currentSelection) {
+          let params = Object.fromEntries(
+            handlerState.currentSelection.map((i, idx) => [`key${idx === 0 ? "" : idx}`, i["key"]])
+          )
           url += "?" + new URLSearchParams(params).toString()
         }
 
@@ -84,8 +106,21 @@ export default defineComponent({
       })
     })
 
+    function ScriptorUrl() {
+      let url = `${import.meta.env.VITE_API_URL}${appStore.state["admin.scriptor.url"]}#/home?key=${state.scriptKey}`
+      if (handlerState.currentSelection) {
+        let params = Object.fromEntries(
+          handlerState.currentSelection.map((i, idx) => [`key${idx === 0 ? "" : idx}`, i["key"]])
+        )
+        url += `&scriptor_params=${JSON.stringify(params)}`
+      }
+      return url
+    }
+
     function createAndNavigate(route: any) {
-      dbStore.addOpened(route, handlerState["module"], handlerState["view"])
+      window.open(ScriptorUrl(), "_blank").focus()
+
+      //dbStore.addOpened(route, handlerState["module"], handlerState["view"]) //, "", "", "", true, false, true
     }
 
     return { state, createAndNavigate }
