@@ -201,7 +201,7 @@ export default defineComponent({
 <style scoped>
 .bar {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   padding: var(--sl-spacing-small);
   gap: var(--sl-spacing-small);
   width: 100%;
