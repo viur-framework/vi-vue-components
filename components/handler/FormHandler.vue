@@ -127,11 +127,13 @@
 
 <script lang="ts">
 //@ts-nocheck
-import { reactive, defineComponent, onBeforeMount, computed, provide, toRaw, unref, watch } from "vue"
+import { reactive, defineComponent, onBeforeMount, computed, provide, toRaw, unref, watch, onActivated } from "vue"
 import { Request } from "@viur/vue-utils"
 import { useDBStore } from "../stores/db"
 import { useContextStore } from "../stores/context"
 import { useRoute } from "vue-router"
+import { useMessageStore } from "../stores/message"
+import { useUserStore } from "../stores/user"
 import EntryBar from "../bars/EntryBar.vue"
 import { useModulesStore } from "../stores/modules"
 import handlers from "../handler/handlers"
@@ -177,6 +179,8 @@ export default defineComponent({
     const contextStore = useContextStore()
     const route = useRoute()
     const modulesStore = useModulesStore()
+    const messageStore = useMessageStore()
+    const userStore = useUserStore()
     const values = reactive({})
     const state = reactive({
       type: "formhandler",
@@ -186,7 +190,9 @@ export default defineComponent({
       conf: computed(() => {
         return dbStore.getConf(props.module)
       }),
-      tabId: computed(() => unref(route.query?.["_"])),
+      tabId: computed(() => {
+        return unref(route.query?.["_"])
+      }),
       formGroups: computed(() => {
         let groups = { default: { name: "Allgemein", bones: [], groupVisible: false } }
         for (const [boneName, bone] of Object.entries(state.structure)) {
@@ -290,6 +296,18 @@ export default defineComponent({
 
       requestHandler(url, { dataObj: dataObj }).then(async (resp) => {
         let data = await resp.json()
+
+        if (data["status"] && data["status"] !== 200) {
+          let txt = data["descr"]
+          //todo sl-details format traceback
+          /*if (userStore.userAccess.includes("root")) {
+            txt += "\n" + data["traceback"]
+          }*/
+
+          messageStore.addMessage("error", data["title"], txt)
+          state.loading = false
+          return
+        }
 
         if (props.values) {
           for (const [key, val] of Object.entries(props.values)) {
