@@ -415,7 +415,8 @@ export default defineComponent({
         filter = handler["filter"]
       }
       filter[handler["context"]] = props.skelkey
-      contextStore.setContext(handler["context"], props.skelkey, state.tabId)
+      //todo set Context on routing
+      //contextStore.setContext(handler["context"], props.skelkey, state.tabId)
       return filter
     }
 
