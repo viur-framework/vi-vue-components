@@ -153,6 +153,9 @@ export const useDBStore = defineStore("db", () => {
     "topbar.actions": [],
     "floatingbar.actions": [],
 
+    //boneViewer
+    "bones.view": {},
+
     //dynamic child buckets
     "handlers.opened": [
       { to: { name: "home", fullPath: "/" }, url: "/", name: "Dashboard", icon: "dashboard", closeable: false, id: 0 }
