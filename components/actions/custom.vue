@@ -166,9 +166,16 @@ export default defineComponent({
           handleView(i)
         } else if (state.info["action"] === "open") {
           handleOpen(i)
+        } else if (state.info["action"] === "route") {
+          routeOpen(i)
         }
       }
       state.confirm = false
+    }
+
+    function routeOpen(i) {
+      let route = router.resolve(unref(state.info["url"]))
+      dbStore.addOpened(route, null, null, state.info["name"], state.info["icon"], state.info["icon"])
     }
 
     function handleFetch(selection) {

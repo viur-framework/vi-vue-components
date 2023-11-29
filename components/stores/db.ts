@@ -252,7 +252,7 @@ export const useDBStore = defineStore("db", () => {
 
   function addOpened(
     route,
-    module: string,
+    module: string = null,
     view = null,
     name = "",
     icon = "",
@@ -261,9 +261,15 @@ export const useDBStore = defineStore("db", () => {
     force = false,
     keep = false
   ) {
-    let currentConf = getConf(module, view)
-    let currentModuleConf = getConf(module)
-    let moduleIconData = currentConf["icon"].split("___")
+    let currentConf = {}
+    let currentModuleConf = {}
+    let moduleIconData = []
+    if (module) {
+      currentConf = getConf(module, view)
+      currentModuleConf = getConf(module)
+      moduleIconData = currentConf["icon"].split("___")
+    }
+
     let mode = "view"
 
     if (!Object.keys(route.query).includes("_")) {
