@@ -12,10 +12,7 @@
           >
             <template v-for="groupaction in actiongrouplist">
               <sl-menu-item>
-                <component
-                  :is="`${groupaction}_action`"
-                  size="small"
-                >
+                <component :is="`${groupaction}_action`">
                   <script_action
                     v-if="groupaction.startsWith('scriptor_')"
                     :name="groupaction"
@@ -33,7 +30,6 @@
         <component
           :is="`${action}_action`"
           v-else
-          size="small"
         >
           <script_action
             v-if="action.startsWith('scriptor_')"
