@@ -75,7 +75,7 @@
               name="pencil"
               sprite
             ></sl-icon>
-            Berarbeiten
+            Bearbeiten
           </sl-menu-item>
           <sl-menu-item @click="openItem(route, true)">
             <sl-icon
@@ -83,7 +83,7 @@
               name="plus"
               sprite
             ></sl-icon>
-            öffnen
+            Öffnen
           </sl-menu-item>
         </sl-menu>
       </sl-dropdown>
