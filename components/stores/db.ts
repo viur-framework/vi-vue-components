@@ -309,6 +309,7 @@ export const useDBStore = defineStore("db", () => {
       group: currentConf?.["group"],
       mode: mode,
       moduleDescr: currentConf?.["name"],
+      currentConf: currentConf,
       closeable: true,
       update: false,
       keep: keep //always render and keep open, use v-show while navigation

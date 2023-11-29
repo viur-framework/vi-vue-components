@@ -160,7 +160,7 @@ export default defineComponent({
 
     const state = reactive({
       type: "listhandler",
-      tabId: computed(() => unref(route.query?.["_"])),
+      tabId: route.query?.["_"],
       storeName: computed(() => {
         let name: string = `module___${props.module}`
         if (props.view) {
@@ -323,7 +323,7 @@ export default defineComponent({
         let module = conf["handler"].split(".").at(-1)
         let url = `/db/${module}/fluidpage/${state.module}/${state.currentSelection[0]["key"]}`
         let route = router.resolve(unref(url))
-        //contextStore.setContext("fluidpage.dest.key", state.currentSelection[0]["key"], state.tabId)
+        contextStore.setContext("fluidpage.dest.key", state.currentSelection[0]["key"], state.tabId)
         dbStore.addOpened(route, module)
         return 0
       }

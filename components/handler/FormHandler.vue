@@ -190,9 +190,7 @@ export default defineComponent({
       conf: computed(() => {
         return dbStore.getConf(props.module)
       }),
-      tabId: computed(() => {
-        return unref(route.query?.["_"])
-      }),
+      tabId: route.query?.["_"],
       formGroups: computed(() => {
         let groups = { default: { name: "Allgemein", bones: [], groupVisible: false } }
         for (const [boneName, bone] of Object.entries(state.structure)) {
@@ -434,7 +432,7 @@ export default defineComponent({
       }
       filter[handler["context"]] = props.skelkey
       //todo set Context on routing
-      //contextStore.setContext(handler["context"], props.skelkey, state.tabId)
+      contextStore.setContext(handler["context"], props.skelkey, state.tabId)
       return filter
     }
 

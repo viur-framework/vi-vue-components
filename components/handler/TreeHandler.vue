@@ -51,6 +51,7 @@ export default defineComponent({
 
     const state = reactive({
       type: "treehandler",
+      tabId: route.query?.["_"],
       currentRootNodes: [],
       currentRootNode: null,
       module: computed(() => props.module),

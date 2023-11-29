@@ -102,6 +102,7 @@ export default defineComponent({
         }
         return name
       }),
+      tabId: route.query?.["_"],
       currentRootNodes: [],
       currentSelectionType: "node",
       currentRootNode: null,
