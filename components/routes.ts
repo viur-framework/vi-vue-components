@@ -86,7 +86,7 @@ const default_routes = [
     name: "script",
     props: true,
     component: () => import("./views/script.vue")
-  },
+  }
 ]
 
 function createRouterInstance(routes, replace = false) {
@@ -94,8 +94,9 @@ function createRouterInstance(routes, replace = false) {
   if (replace) {
     newRoutes = routes
   } else {
-    newRoutes = default_routes.concat(routes)
+    newRoutes = routes.concat(default_routes)
   }
+
   const router = createRouter({
     // @ts-ignore
     history: createWebHashHistory(import.meta.env.BASE_URL),
