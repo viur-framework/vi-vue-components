@@ -267,7 +267,7 @@ export const useDBStore = defineStore("db", () => {
     if (module) {
       currentConf = getConf(module, view)
       currentModuleConf = getConf(module)
-      moduleIconData = currentConf["icon"].split("___")
+      moduleIconData = currentConf?.["icon"]?.split("___")
     }
 
     let mode = "view"
@@ -292,23 +292,23 @@ export const useDBStore = defineStore("db", () => {
     }
 
     if (!name) {
-      name = currentConf["name"]
-      if (currentConf["name"] !== currentModuleConf["name"]) {
-        name = `${currentModuleConf["name"]} / ${currentConf["name"]}`
+      name = currentConf?.["name"]
+      if (currentConf?.["name"] !== currentModuleConf["name"]) {
+        name = `${currentModuleConf["name"]} / ${currentConf?.["name"]}`
       }
     }
     let entry = {
       to: route,
       id: route.query["_"],
       url: url,
-      icon: icon ? icon : moduleIconData[1],
-      library: library ? library : moduleIconData[0],
+      icon: icon ? icon : moduleIconData?.[1],
+      library: library ? library : moduleIconData?.[0],
       name: name,
       _name: name,
       module: module,
-      group: currentConf["group"],
+      group: currentConf?.["group"],
       mode: mode,
-      moduleDescr: currentConf["name"],
+      moduleDescr: currentConf?.["name"],
       closeable: true,
       update: false,
       keep: keep //always render and keep open, use v-show while navigation
