@@ -124,6 +124,9 @@ function createRouterInstance(routes, replace = false) {
         (key) => to.query[key] === newQuery[key] && to.query.hasOwnProperty(key) && newQuery.hasOwnProperty(key)
       )
     ) {
+      //disabled because of to much context copy and updates
+      // Writes query to context
+      /*
       for (const [k, v] of Object.entries(to.query)) {
         if (k.startsWith("_")) continue
         if (Object.keys(contextStore.state.localContext).includes(handlerId)) {
@@ -131,7 +134,7 @@ function createRouterInstance(routes, replace = false) {
         } else {
           contextStore.state.localContext[handlerId] = { [k]: v }
         }
-      }
+      }*/
       next() // no change
     } else {
       to.query = newQuery
