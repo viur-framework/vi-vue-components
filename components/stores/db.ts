@@ -302,7 +302,7 @@ export const useDBStore = defineStore("db", () => {
       id: route.query["_"],
       url: url,
       icon: icon ? icon : moduleIconData[1],
-      library: library ? library : moduleIconData[2],
+      library: library ? library : moduleIconData[0],
       name: name,
       _name: name,
       module: module,
