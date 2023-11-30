@@ -25,12 +25,12 @@ export default {
     fluidpage: {
       edit: "Edit Contents",
       emptyheadline: "This Fluidpage is empty",
-      emptytext: "Please use the \"Add\"-Button to add content to this page.",
+      emptytext: 'Please use the "Add"-Button to add content to this page.'
     },
     reset: "Reset",
     open: "Open",
     sortasc: "Sort Ascending",
-    sortdesc: "Sort Descending",
+    sortdesc: "Sort Descending"
   },
   sidebar: {
     workspace: "Workspace",
@@ -77,4 +77,8 @@ export default {
     with_google: "Login with Google",
     or: "or"
   },
+  noaccess: {
+    title: "No access",
+    descr: "This user does not have enough permissions."
+  }
 }

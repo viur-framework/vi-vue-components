@@ -1,48 +1,61 @@
 <template>
-  <the-topbar></the-topbar>
-
-  <sl-split-panel
-    class="split-panel"
-    position-in-pixels="300"
-    snap="300px"
-  >
-    <div
-      slot="start"
-      class="sidebar"
-    >
-      <the-sidebar></the-sidebar>
+  <template v-if="!state.access">
+    <div class="wrapper">
+      <sl-dialog
+        open
+        :label="$t('noaccess.title')"
+        @sl-request-close="$event.preventDefault()"
+      >
+        {{ $t("noaccess.descr") }}
+      </sl-dialog>
     </div>
+  </template>
+  <template v-else>
+    <the-topbar></the-topbar>
 
-    <div
-      slot="end"
-      class="content"
+    <sl-split-panel
+      class="split-panel"
+      position-in-pixels="300"
+      snap="300px"
     >
-      <the-main-screen-tabbar></the-main-screen-tabbar>
-      <router-view v-slot="{ Component }">
-        <div class="wrap-for-popup">
-          <template v-for="tab in dbStore.state['handlers.opened']">
-            <div
-              v-show="dbStore.getActiveTab()['id'] === tab?.['id']"
-              :id="'view_dialogs_' + tab?.['id']"
-            ></div>
+      <div
+        slot="start"
+        class="sidebar"
+      >
+        <the-sidebar></the-sidebar>
+      </div>
 
-            <!--<template v-if="!tab['keep']">
+      <div
+        slot="end"
+        class="content"
+      >
+        <the-main-screen-tabbar></the-main-screen-tabbar>
+        <router-view v-slot="{ Component }">
+          <div class="wrap-for-popup">
+            <template v-for="tab in dbStore.state['handlers.opened']">
+              <div
+                v-show="dbStore.getActiveTab()['id'] === tab?.['id']"
+                :id="'view_dialogs_' + tab?.['id']"
+              ></div>
+
+              <!--<template v-if="!tab['keep']">
               <component
                 :is="urlToRoute(tab)"
                 v-show="dbStore.getActiveTab()['id'] === tab?.['id']"
               ></component>
             </template>-->
-          </template>
-          <view-wrapper :component="Component"></view-wrapper>
-        </div>
-      </router-view>
-    </div>
-  </sl-split-panel>
-  <the-main-screen-skel-drawer></the-main-screen-skel-drawer>
+            </template>
+            <view-wrapper :component="Component"></view-wrapper>
+          </div>
+        </router-view>
+      </div>
+    </sl-split-panel>
+    <the-main-screen-skel-drawer></the-main-screen-skel-drawer>
 
-  <message-drawer></message-drawer>
+    <message-drawer></message-drawer>
 
-  <div id="dialogs"></div>
+    <div id="dialogs"></div>
+  </template>
 </template>
 
 <script lang="ts">
@@ -51,7 +64,7 @@ import TheTopbar from "../main/TheMainScreenTopbar.vue"
 import TheSidebar from "../main/TheMainScreenSidebar.vue"
 import { useRoute, useRouter } from "vue-router"
 import { Request } from "@viur/vue-utils"
-import { defineComponent, onBeforeMount, unref, h } from "vue"
+import { defineComponent, onBeforeMount, unref, h, reactive, computed } from "vue"
 import { useDBStore } from "../stores/db"
 import { useAppStore } from "../stores/app"
 
@@ -78,6 +91,20 @@ export default defineComponent({
     const router = useRouter()
     const dbStore = useDBStore()
     const appStore = useAppStore()
+    const userStore = useUserStore()
+
+    const state = reactive({
+      backgroundImage: computed(() => `url('${appStore.state["admin.login.background"]}'`),
+      access: computed(() => {
+        if (
+          userStore.state.user &&
+          (userStore.state.user["access"].includes("root") || userStore.state.user["access"].includes("admin"))
+        ) {
+          return true
+        }
+        return false
+      })
+    })
 
     function collectViurConfig() {
       Request.get("/vi/config").then(async (resp: Response) => {
@@ -111,8 +138,6 @@ export default defineComponent({
       const component = h(ViewComponent.matched[0].components.default, {
         ...ViewComponent.params
       })
-
-      console.log(component)
       return () => component
     }
 
@@ -124,7 +149,8 @@ export default defineComponent({
     return {
       route,
       dbStore,
-      urlToRoute
+      urlToRoute,
+      state
     }
   }
 })
@@ -189,5 +215,15 @@ export default defineComponent({
   flex: 1;
   height: 1px;
   position: relative;
+}
+
+.wrapper {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: v-bind("state.backgroundImage");
+  background-position: center center;
+  background-size: cover;
 }
 </style>
