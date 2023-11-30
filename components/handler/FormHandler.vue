@@ -156,7 +156,10 @@ export default defineComponent({
     skelkey: null,
     skeltype: null,
     noTopbar: false,
-    secure: false,
+    secure: {
+      type: Boolean,
+      default: true
+    },
     bones: {
       type: Array,
       default: []
