@@ -152,8 +152,6 @@ export default defineComponent({
       }),
       secondFactorFormdata: {}
     })
-    console.log(state.userPasswordLoginActivated)
-    console.log(state.userGoogleLoginActivated)
 
     function googleLogin() {
       state.waitForLogout = false

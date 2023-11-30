@@ -33,13 +33,19 @@
       v-if="!state.loading"
       class="scroll-content"
     >
-      <template v-for="(group, key) in state.formGroups">
+      <template
+        v-for="(group, key) in state.formGroups"
+        :key="key"
+      >
         <sl-details
           v-show="group['groupVisible']"
           :summary="group['name']"
-          :open="key !== 'system'"
+          :open="group['groupOpen']"
         >
-          <template v-for="bone in group['bones']">
+          <template
+            v-for="bone in group['bones']"
+            :key="bone['name']"
+          >
             <bone
               :is="getBoneWidget(state.structure[bone['boneName']]['type'])"
               v-show="state.structure[bone['boneName']]['visible']"
@@ -195,7 +201,7 @@ export default defineComponent({
       }),
       tabId: route.query?.["_"],
       formGroups: computed(() => {
-        let groups = { default: { name: "Allgemein", bones: [], groupVisible: false } }
+        let groups = { default: { name: "Allgemein", bones: [], groupVisible: false, groupOpen: true } }
         for (const [boneName, bone] of Object.entries(state.structure)) {
           if (props.bones.length > 0) {
             if (!props.bones.includes(boneName)) {
@@ -231,9 +237,19 @@ export default defineComponent({
           if (boneStructure["visible"] === true) {
             groups[category]["groupVisible"] = true
           }
+          console.log(state.conf)
+          console.log(category)
+          if (
+            (state.conf?.["collapsedCategories"] &&
+              state.conf["collapsedCategories"].map((x) => x.toLowerCase()).includes(category)) ||
+            category === "system"
+          ) {
+            groups[category]["groupOpen"] = false
+          } else {
+            groups[category]["groupOpen"] = true
+          }
         }
         let sortedGroups = {}
-
         Object.keys(groups)
           .sort()
           .forEach(function (key) {
