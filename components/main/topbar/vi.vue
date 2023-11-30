@@ -148,6 +148,7 @@
 </template>
 
 <script lang="ts">
+//@ts-nocheck
 import { reactive, defineComponent, computed, onMounted } from "vue"
 import { useUserStore } from "../../stores/user"
 import { useMessageStore } from "../../stores/message"
@@ -226,7 +227,7 @@ export default defineComponent({
 
     useEventListener(window, "beforeunload", (e) => {
       e.preventDefault()
-      e.returnValue="Do you really want to reload?"
+      e.returnValue = "Do you really want to reload?"
     })
 
     onMounted(() => {
@@ -234,8 +235,6 @@ export default defineComponent({
         let data = await resp.json()
         dbStore.state["tasks"] = data["skellist"]
       })
-
-
     })
     function executeTask(key) {
       console.log(key)

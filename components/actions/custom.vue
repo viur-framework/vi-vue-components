@@ -50,7 +50,6 @@
 import { reactive, defineComponent, computed, inject, unref } from "vue"
 import { useDBStore } from "../stores/db"
 import { useRoute, useRouter } from "vue-router"
-import app from "../../App.vue"
 import { useUserStore } from "../stores/user"
 import { useContextStore } from "../stores/context"
 import Logics from "logics-js"
