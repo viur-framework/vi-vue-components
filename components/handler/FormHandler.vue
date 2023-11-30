@@ -237,8 +237,6 @@ export default defineComponent({
           if (boneStructure["visible"] === true) {
             groups[category]["groupVisible"] = true
           }
-          console.log(state.conf)
-          console.log(category)
           if (
             (state.conf?.["collapsedCategories"] &&
               state.conf["collapsedCategories"].map((x) => x.toLowerCase()).includes(category)) ||
@@ -320,7 +318,6 @@ export default defineComponent({
           /*if (userStore.userAccess.includes("root")) {
             txt += "\n" + data["traceback"]
           }*/
-
           messageStore.addMessage("error", data["title"], txt)
           state.loading = false
           return
