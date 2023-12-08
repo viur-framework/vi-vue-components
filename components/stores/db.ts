@@ -55,10 +55,7 @@ function adminTreeLayer(itemList: Array<ModuleInfo>, parent: ModuleInfo): Array<
     if (!Object.keys(conf).includes("icon")) {
       conf["icon"] = ""
     } else if (!conf["icon"].includes("___") && conf["icon"] !== "") {
-      let icon = conf["icon"].replace("icon-", "").replace("icons-", "")
-      if (icon === "list") {
-        icon = "list-ul"
-      }
+      let icon = conf["icon"]
       conf["icon"] = "default___" + icon
     }
     // build url by handler
