@@ -3,7 +3,7 @@
     class="bar"
     style="z-index: 50"
   >
-    <reloadentry v-if="!['add'].includes(handlerState.action)"></reloadentry>
+    <reloadentry></reloadentry>
 
     <template v-if="appStore.state.debug">
       <debugentry></debugentry>
