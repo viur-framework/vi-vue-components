@@ -240,7 +240,8 @@ export default defineComponent({
           if (
             (state.conf?.["collapsedCategories"] &&
               state.conf["collapsedCategories"].map((x) => x.toLowerCase()).includes(category)) ||
-            category === "system"
+            category === "system" ||
+            state.conf?.["collapsedCategories"]?.[0] === "*"
           ) {
             groups[category]["groupOpen"] = false
           } else {
