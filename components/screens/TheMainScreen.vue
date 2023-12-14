@@ -1,11 +1,7 @@
 <template>
   <template v-if="!state.access">
     <div class="wrapper">
-      <sl-dialog
-        open
-        :label="$t('noaccess.title')"
-        @sl-request-close="$event.preventDefault()"
-      >
+      <sl-dialog open :label="$t('noaccess.title')" @sl-request-close="$event.preventDefault()">
         {{ $t("noaccess.descr") }}
       </sl-dialog>
     </div>
@@ -13,30 +9,17 @@
   <template v-else>
     <the-topbar></the-topbar>
 
-    <sl-split-panel
-      class="split-panel"
-      position-in-pixels="300"
-      snap="300px"
-    >
-      <div
-        slot="start"
-        class="sidebar"
-      >
+    <sl-split-panel class="split-panel" position-in-pixels="300" snap="300px">
+      <div slot="start" class="sidebar">
         <the-sidebar></the-sidebar>
       </div>
 
-      <div
-        slot="end"
-        class="content"
-      >
+      <div slot="end" class="content">
         <the-main-screen-tabbar></the-main-screen-tabbar>
         <router-view v-slot="{ Component }">
           <div class="wrap-for-popup">
             <template v-for="tab in dbStore.state['handlers.opened']">
-              <div
-                v-show="dbStore.getActiveTab()['id'] === tab?.['id']"
-                :id="'view_dialogs_' + tab?.['id']"
-              ></div>
+              <div v-show="dbStore.getActiveTab()['id'] === tab?.['id']" :id="'view_dialogs_' + tab?.['id']"></div>
 
               <!--<template v-if="!tab['keep']">
               <component
@@ -110,7 +93,11 @@ export default defineComponent({
       Request.get("/vi/config").then(async (resp: Response) => {
         let data = await resp.json()
         dbStore.state["vi.name"] = data["configuration"]["vi.name"]
-        dbStore.state["vi.modules.groups"] = data["configuration"]["moduleGroups"]
+        if (Object.keys(data["configuration"]).includes("module_groups")) {
+          dbStore.state["vi.modules.groups"] = data["configuration"]["module_groups"]
+        } else if (Object.keys(data["configuration"]).includes("moduleGroups")) {
+          dbStore.state["vi.modules.groups"] = data["configuration"]["moduleGroups"]
+        }
         dbStore.state["vi.modules"] = data["modules"]
 
         if (route.path !== "/") {
