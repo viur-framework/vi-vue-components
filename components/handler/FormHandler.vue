@@ -367,7 +367,11 @@ export default defineComponent({
     function updateValue(data) {
       state.formValues[data.name] = data.value
       if (data.name === "name") {
-        dbStore.updateActiveTabName(data.value[0]["name"])
+        if (data.lang) {
+          dbStore.updateActiveTabName(data.value[0][Object.keys(data.value[0])[0]])
+        } else {
+          dbStore.updateActiveTabName(data.value[0]["name"])
+        }
       }
 
       visibleIf(data)
