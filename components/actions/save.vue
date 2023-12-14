@@ -1,16 +1,7 @@
 <template>
-  <sl-button
-    variant="success"
-    size="small"
-    :loading="state.loading"
-    title="$t(name)"
-    :outline="name === 'actions.save_next'"
-    @click="save"
-  >
-    <sl-icon
-      slot="prefix"
-      :name="icon"
-    ></sl-icon>
+  <sl-button variant="success" size="small" :loading="state.loading" title="$t(name)"
+    :outline="name === 'actions.save_next' || name === 'actions.save_close'" @click="save">
+    <sl-icon slot="prefix" :name="icon"></sl-icon>
     {{ $t(name) }}
   </sl-button>
 </template>
