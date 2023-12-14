@@ -10,12 +10,12 @@
     </template>
     <save
       v-if="['clone', 'add'].includes(handlerState.action)"
-      :module="module"
+      :module="handlerState.module"
       :action="action"
       name="actions.save_next"
     ></save>
     <save
-      :module="module"
+      :module="handlerState.module"
       :action="action"
     ></save>
     <!--<save
