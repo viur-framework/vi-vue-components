@@ -263,6 +263,7 @@ export default defineComponent({
       group: props.group,
       skelkey: props.skelkey,
       skeltype: props.skeltype,
+      renderer: computed(() => props.renderer),
       relation_opened: [],
       loading: false
     })
@@ -551,6 +552,7 @@ sl-details {
   &::part(prefix) {
     display: none;
   }
+
   &::part(base) {
     border-radius: 0;
     border-left: none;
@@ -558,6 +560,7 @@ sl-details {
     border-top: none;
     border-bottom: solid 1px var(--sl-color-neutral-300);
   }
+
   &::part(summary) {
     font-weight: 700;
   }

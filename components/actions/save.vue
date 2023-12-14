@@ -60,7 +60,9 @@ export default defineComponent({
       for (const key: string of formData.keys()) {
         obj[[key]] = formData.getAll(key)
       }
-      let url = `/vi/${handlerState.module}/${handlerState.action === "clone" ? "add" : handlerState.action}`
+      let url = `/${handlerState.renderer}/${handlerState.module}/${
+        handlerState.action === "clone" ? "add" : handlerState.action
+      }`
 
       if (handlerState.skeltype === "node" || handlerState.skeltype === "leaf") {
         url += `/${handlerState.skeltype}`
