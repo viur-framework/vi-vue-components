@@ -1,59 +1,21 @@
 <template>
-  <sl-button
-    size="small"
-    :title="$t('actions.filter.text')"
-    @click="openFilterDrawer"
-  >
-    <sl-icon
-      slot="prefix"
-      name="funnel"
-    ></sl-icon>
+  <sl-button size="small" :title="$t('actions.filter.text')" @click="openFilterDrawer">
+    <sl-icon slot="prefix" name="funnel"></sl-icon>
     {{ $t("actions.filter.text") }}
   </sl-button>
   <template v-if="state.activeFilter.length > 0">
-    <sl-select
-      size="small"
-      multiple
-      clearable
-      hoist
-      style="max-width: 200px"
-      :value="state.activeFilter?.map((i) => i['key'])"
-      @sl-change="removeFromFilter"
-      @sl-clearable="removeFromFilter"
-    >
-      <sl-option
-        v-for="filter in state.activeFilter"
-        :value="filter['key']"
-        >{{ filter["name"] }}</sl-option
-      >
+    <sl-select size="small" multiple clearable hoist style="max-width: 200px"
+      :value="state.activeFilter?.map((i) => i['key'])" @sl-change="removeFromFilter" @sl-clearable="removeFromFilter">
+      <sl-option v-for="filter in state.activeFilter" :value="filter['key']">{{ filter["name"] }}</sl-option>
     </sl-select>
   </template>
 
-  <teleport
-    v-if="state.opened"
-    to="#dialogs"
-    :disabled="!state.opened"
-  >
-    <sl-dialog
-      :label="$t('actions.filter.text')"
-      open
-      class="filter-dialog"
-      style="--width: 55%"
-      @sl-after-hide="closed"
-    >
-      <sl-select
-        placeholder="Auswahl"
-        hoist
-        :value="state.activeBone?.['key']"
-        @sl-change="selectedBone"
-      >
+  <teleport v-if="state.opened" to="#dialogs" :disabled="!state.opened">
+    <sl-dialog :label="$t('actions.filter.text')" open class="filter-dialog" style="--width: 55%" @sl-after-hide="closed">
+      <sl-select placeholder="Auswahl" size="small" hoist :value="state.activeBone?.['key']" @sl-change="selectedBone">
         <template v-for="(bone, boneName) in currentlist.structure">
-          <sl-option
-            v-if="filterableField(bone)"
-            :value="boneName"
-          >
-            {{ bone["descr"] }}</sl-option
-          >
+          <sl-option v-if="filterableField(bone)" :value="boneName">
+            {{ bone["descr"] }}</sl-option>
         </template>
       </sl-select>
       <template v-if="state.activeBone">
@@ -63,35 +25,22 @@
           <sl-switch @sl-change="setBoolOperator($event)">{{ state.activeBone?.["descr"] }}</sl-switch>
         </div>
         <div v-else-if="state.activeBone?.['type']?.startsWith('str')">
-          <sl-input
-            help-text="exakter Vergleich"
-            @sl-change="setStrOperator($event)"
-            >{{ state.activeBone?.["descr"] }}</sl-input
-          >
+          <sl-input help-text="exakter Vergleich" @sl-change="setStrOperator($event)">{{ state.activeBone?.["descr"]
+            }}</sl-input>
         </div>
         <div v-else-if="state.activeBone?.['type']?.startsWith('numeric')">
-          <sl-input
-            type="number"
-            help-text="exakter Vergleich"
-            @sl-change="setNumericOperator($event)"
-            >{{ state.activeBone?.["descr"] }}</sl-input
-          >
+          <sl-input type="number" help-text="exakter Vergleich" @sl-change="setNumericOperator($event)">{{
+            state.activeBone?.["descr"] }}</sl-input>
         </div>
         <div v-else-if="state.activeBone?.['type']?.startsWith('select')">
-          <sl-select
-            hoist
-            @sl-change="setSelectOperator($event)"
-          >
-            <sl-option
-              v-for="val in state.activeBone['values']"
-              :value="val[0]"
-              >{{ val[1] }}</sl-option
-            >
+          <sl-select hoist size="small" @sl-change="setSelectOperator($event)">
+            <sl-option v-for="val in state.activeBone['values']" :value="val[0]">{{ val[1] }}</sl-option>
           </sl-select>
         </div>
 
         <div v-else-if="false">
-          <sl-select placeholder="Typ"> </sl-select>
+          <sl-select placeholder="Typ" size="small">
+          </sl-select>
         </div>
         <!--
         {{ state.activeBone?.['descr'] }}
@@ -99,13 +48,7 @@
         {{ state.activeFilter }}
           -->
       </template>
-      <sl-button
-        slot="footer"
-        variant="success"
-        size="small"
-        :disabled="!state.addEnabled"
-        @click="addToFilter"
-      >
+      <sl-button slot="footer" variant="success" size="small" :disabled="!state.addEnabled" @click="addToFilter">
         Filter hinzufügen
       </sl-button>
     </sl-dialog>
@@ -236,6 +179,7 @@ export default defineComponent({
 h2 {
   margin: 20px 0 0 0;
 }
+
 .filter-dialog {
   &::part(panel) {
     min-height: 300px;
