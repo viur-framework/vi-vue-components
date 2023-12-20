@@ -174,7 +174,8 @@ export default defineComponent({
 
     function routeOpen(i) {
       let route = router.resolve(unref(state.info["url"]))
-      dbStore.addOpened(route, null, null, state.info["name"], state.info["icon"], state.info["icon"])
+      contextStore.setContext('selection', i, route.query["_"])
+      dbStore.addOpened(route, null, null, state.info["name"], state.info["icon"], state.info["libraryco"])
     }
 
     function handleFetch(selection) {
