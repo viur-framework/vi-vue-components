@@ -255,7 +255,7 @@ export default defineComponent({
 
     function changeEventNested(val) {
       if (!state.selection) state.selection = {}
-      if (Object.keys(state.selection).includes("rel")) {
+      if (Object.keys(state.selection).includes("rel") && state.selection["rel"]) {
         state.selection["rel"][val.name] = val.value
       } else {
         state.selection["rel"] = { [val.name]: val.value }

@@ -80,6 +80,12 @@ const default_routes = [
     name: "fluidpage",
     props: true,
     component: () => import("./views/fluidpage.vue")
+  },
+  {
+    path: "/db/scriptor/frame/:key",
+    name: "script",
+    props: true,
+    component: () => import("./views/script.vue")
   }
 ]
 
@@ -88,8 +94,9 @@ function createRouterInstance(routes, replace = false) {
   if (replace) {
     newRoutes = routes
   } else {
-    newRoutes = default_routes.concat(routes)
+    newRoutes = routes.concat(default_routes)
   }
+
   const router = createRouter({
     // @ts-ignore
     history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -117,6 +124,9 @@ function createRouterInstance(routes, replace = false) {
         (key) => to.query[key] === newQuery[key] && to.query.hasOwnProperty(key) && newQuery.hasOwnProperty(key)
       )
     ) {
+      //disabled because of to much context copy and updates
+      // Writes query to context
+      /*
       for (const [k, v] of Object.entries(to.query)) {
         if (k.startsWith("_")) continue
         if (Object.keys(contextStore.state.localContext).includes(handlerId)) {
@@ -124,7 +134,7 @@ function createRouterInstance(routes, replace = false) {
         } else {
           contextStore.state.localContext[handlerId] = { [k]: v }
         }
-      }
+      }*/
       next() // no change
     } else {
       to.query = newQuery

@@ -30,7 +30,7 @@ export default {
     fluidpage: {
       edit: "Inhalt bearbeiten",
       emptyheadline: "Diese Fluidpage ist noch leer",
-      emptytext: "Mit dem \"Hinzufügen\"-Button können Inhalte auf dieser Fluidpage hinzugefügt werden.",
+      emptytext: 'Mit dem "Hinzufügen"-Button können Inhalte auf dieser Fluidpage hinzugefügt werden.'
     },
     open: "Öffnen",
     sortasc: "Aufsteigend Sortieren",
@@ -78,4 +78,8 @@ export default {
     with_google: "Mit Google einloggen",
     or: "oder"
   },
+  noaccess: {
+    title: "Nicht genügend Berechtigungen",
+    descr: "Dieser Nutzer hat nicht genügend Berechtigungen."
+  }
 }

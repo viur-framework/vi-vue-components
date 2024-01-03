@@ -4,7 +4,7 @@ import { reactive, computed, Component, getCurrentInstance } from "vue"
 import { defineStore, StoreDefinition } from "pinia"
 import { useRoute, useRouter } from "vue-router"
 import { useViewStore } from "./views"
-import { useLocalStore} from "./local";
+import { useLocalStore } from "./local"
 import { useUserStore } from "./user"
 import { useContextStore } from "./context"
 import { destroyStore } from "@viur/vue-utils/utils/handlers"
@@ -55,10 +55,7 @@ function adminTreeLayer(itemList: Array<ModuleInfo>, parent: ModuleInfo): Array<
     if (!Object.keys(conf).includes("icon")) {
       conf["icon"] = ""
     } else if (!conf["icon"].includes("___") && conf["icon"] !== "") {
-      let icon = conf["icon"].replace("icon-", "").replace("icons-", "")
-      if (icon === "list") {
-        icon = "list-ul"
-      }
+      let icon = conf["icon"]
       conf["icon"] = "default___" + icon
     }
     // build url by handler
@@ -81,7 +78,7 @@ function adminTreeLayer(itemList: Array<ModuleInfo>, parent: ModuleInfo): Array<
     } else if (conf["handler"] === "tree.node" || conf["handler"].startsWith("tree.node.")) {
       conf["url"] = { path: `/db/${conf["module"]}/tree.node` }
       conf["handlerComponent"] = "hierarchyhandler"
-    }else if (conf["handler"] === "tree" || conf["handler"].startsWith("tree.")) {
+    } else if (conf["handler"] === "tree" || conf["handler"].startsWith("tree.")) {
       conf["url"] = { path: `/db/${conf["module"]}/tree` }
       conf["handlerComponent"] = "treehandler"
     } else if (conf["handler"] === "singleton" || conf["handler"].startsWith("singleton.")) {
@@ -152,6 +149,9 @@ export const useDBStore = defineStore("db", () => {
     //actions
     "topbar.actions": [],
     "floatingbar.actions": [],
+
+    //boneViewer
+    "bones.view": {},
 
     //dynamic child buckets
     "handlers.opened": [
@@ -249,17 +249,24 @@ export const useDBStore = defineStore("db", () => {
 
   function addOpened(
     route,
-    module: string,
+    module: string = null,
     view = null,
     name = "",
     icon = "",
     library = "",
     contextInheritance = true,
-    force = false
+    force = false,
+    keep = false
   ) {
-    let currentConf = getConf(module, view)
-    let currentModuleConf = getConf(module)
-    let moduleIconData = currentConf["icon"].split("___")
+    let currentConf = {}
+    let currentModuleConf = {}
+    let moduleIconData = []
+    if (module) {
+      currentConf = getConf(module, view)
+      currentModuleConf = getConf(module)
+      moduleIconData = currentConf?.["icon"]?.split("___")
+    }
+
     let mode = "view"
 
     if (!Object.keys(route.query).includes("_")) {
@@ -282,28 +289,30 @@ export const useDBStore = defineStore("db", () => {
     }
 
     if (!name) {
-      name = currentConf["name"]
-      if (currentConf["name"] !== currentModuleConf["name"]) {
-        name = `${currentModuleConf["name"]} / ${currentConf["name"]}`
+      name = currentConf?.["name"]
+      if (currentConf?.["name"] !== currentModuleConf["name"]) {
+        name = `${currentModuleConf["name"]} / ${currentConf?.["name"]}`
       }
     }
     let entry = {
       to: route,
       id: route.query["_"],
       url: url,
-      icon: icon ? icon : moduleIconData[1],
-      library: library ? library : moduleIconData[2],
+      icon: icon ? icon : moduleIconData?.[1],
+      library: library ? library : moduleIconData?.[0],
       name: name,
       _name: name,
       module: module,
-      group: currentConf["group"],
+      group: currentConf?.["group"],
       mode: mode,
-      moduleDescr: currentConf["name"],
+      moduleDescr: currentConf?.["name"],
+      currentConf: currentConf,
       closeable: true,
-      update: false
+      update: false,
+      keep: keep //always render and keep open, use v-show while navigation
     }
 
-    if(route['meta']?.["action"] && route['meta']?.["action"]==="edit"){
+    if (route["meta"]?.["action"] && route["meta"]?.["action"] === "edit") {
       localStore.addEntries(entry)
     }
 
@@ -335,9 +344,11 @@ export const useDBStore = defineStore("db", () => {
         state["handlers.active"] = idx - 1
       })
     } else if (idx < state["handlers.active"]) {
-      state["handlers.opened"].splice(idx, 1)
-      viewStore.destroy(url)
-      state["handlers.active"] = state["handlers.active"] - 1 //update to new idx
+      router.push(state["handlers.opened"][state["handlers.active"] - 1]["to"]).then(() => {
+        state["handlers.opened"].splice(idx, 1)
+        viewStore.destroy(url)
+        state["handlers.active"] = state["handlers.active"] - 1 //update to new idx
+      })
     } else if (idx > state["handlers.active"]) {
       state["handlers.opened"].splice(idx, 1)
       viewStore.destroy(url)

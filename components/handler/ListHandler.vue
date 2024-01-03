@@ -65,9 +65,15 @@
               @click.shift="entrySelected(idx, 'range')"
             >
               <td v-for="name in state.selectedBones">
-                <div class="ellipsis">
-                  {{ skel[name] }}
-                </div>
+                <component
+                  :is="getWidget(skel, name, idx)"
+                  :skel="currentlist.state.skellist[idx]"
+                  :structure="currentlist.structure"
+                  :bonename="name"
+                  :idx="idx"
+                  :rendered="skel[name]"
+                >
+                </component>
               </td>
             </tr>
           </template>
@@ -122,6 +128,7 @@ import FloatingBar from "../bars/FloatingBar.vue"
 import { useContextStore } from "../stores/context"
 import { useLocalStore } from "../stores/local"
 import WidgetSmall from "../dashboard/WidgetSmall.vue"
+import BoneView from "../bones/boneView.vue"
 
 export default defineComponent({
   props: {
@@ -140,7 +147,7 @@ export default defineComponent({
     columns: []
   },
   emits: ["currentSelection", "closeSelector"],
-  components: { WidgetSmall, FloatingBar, Loader, HandlerBar },
+  components: { WidgetSmall, FloatingBar, Loader, HandlerBar, BoneView },
   setup(props, context) {
     const dbStore = useDBStore()
     const route = useRoute()
@@ -153,7 +160,7 @@ export default defineComponent({
 
     const state = reactive({
       type: "listhandler",
-      tabId: computed(() => unref(route.query?.["_"])),
+      tabId: route.query?.["_"],
       storeName: computed(() => {
         let name: string = `module___${props.module}`
         if (props.view) {
@@ -427,6 +434,32 @@ export default defineComponent({
       }
     }
 
+    function getWidget(renderedSkel, name, idx) {
+      let bone = currentlist.structure[name]
+      let boneType = bone.type
+
+      if (dbStore.state["bones.view"]) {
+        if (Object.keys(dbStore.state["bones.view"]).includes(boneType)) {
+          //exact match
+          return dbStore.state["bones.view"][boneType]
+        } else {
+          let typeParts = boneType.split(".") //prefix match
+          let matchingPrefixes = Object.entries(dbStore.state["bones.view"]).filter((prefix) =>
+            prefix[0].startsWith(typeParts[0] + ".")
+          )
+          if (matchingPrefixes.length > 0) {
+            matchingPrefixes.sort((a, b) => b.length - a.length)
+            for (let prefix of matchingPrefixes) {
+              if (boneType.startsWith(prefix[0])) {
+                return dbStore.state["bones.view"][prefix[0]]
+              }
+            }
+          }
+        }
+      }
+      return BoneView
+    }
+
     /*
     computed(()=>{
         if(state.selectedBones.length>0){
@@ -451,7 +484,8 @@ export default defineComponent({
       stickyHeader,
       datatable,
       sorting,
-      filter_update
+      filter_update,
+      getWidget
     }
   }
 })

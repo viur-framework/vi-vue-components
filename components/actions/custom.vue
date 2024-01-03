@@ -50,7 +50,6 @@
 import { reactive, defineComponent, computed, inject, unref } from "vue"
 import { useDBStore } from "../stores/db"
 import { useRoute, useRouter } from "vue-router"
-import app from "../../App.vue"
 import { useUserStore } from "../stores/user"
 import { useContextStore } from "../stores/context"
 import Logics from "logics-js"
@@ -166,9 +165,17 @@ export default defineComponent({
           handleView(i)
         } else if (state.info["action"] === "open") {
           handleOpen(i)
+        } else if (state.info["action"] === "route") {
+          routeOpen(i)
         }
       }
       state.confirm = false
+    }
+
+    function routeOpen(i) {
+      let route = router.resolve(unref(state.info["url"]))
+      contextStore.setContext('selection', i, route.query["_"])
+      dbStore.addOpened(route, null, null, state.info["name"], state.info["icon"], state.info["library"])
     }
 
     function handleFetch(selection) {

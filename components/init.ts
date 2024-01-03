@@ -46,7 +46,8 @@ export function useInitConnection() {
             }
           }
         }
-        document.title = data["admin.name"]
+
+        document.title = data["admin.name"] ? data["admin.name"] : "ViUR Administration"
 
         userStore.googleInit(data["admin.user.google.clientID"]).catch(() => {
           throw new Error("clientId is required since the plugin is not initialized with a Client Id")

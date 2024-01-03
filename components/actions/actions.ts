@@ -22,6 +22,7 @@ import nextpage_action from "./nextpage.vue"
 import group_action from "./group.vue"
 import groupdivider_action from "./group-divider.vue"
 import search_action from "./search.vue"
+import script_action from "./script.vue"
 
 export default {
   add_action,
@@ -46,5 +47,6 @@ export default {
   nextpage_action,
   group_action,
   groupdivider_action,
-  search_action
+  search_action,
+  script_action
 }

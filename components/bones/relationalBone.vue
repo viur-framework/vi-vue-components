@@ -124,7 +124,7 @@ export default defineComponent({
         params = "skelType=node&"
       }
 
-      return Request.get(`/json/${boneState.bonestructure["module"]}/list?${params}limit=99`).then(async (resp) => {
+      return Request.get(`/vi/${boneState.bonestructure["module"]}/list?${params}limit=99`).then(async (resp) => {
         //?viurTags$lk=${search.toLowerCase()
         const data = await resp.json()
         state.skellistdata = {}

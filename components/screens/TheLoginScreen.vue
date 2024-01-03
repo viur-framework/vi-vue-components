@@ -28,8 +28,10 @@
         <loader></loader>
       </div>
 
-      <form autocomplete="on"  v-show="['no','error'].includes(userStore.state['user.loggedin'])">
-
+      <form
+        v-show="['no', 'error'].includes(userStore.state['user.loggedin'])"
+        autocomplete="on"
+      >
         <input
           v-model="state.name"
           class="input"
@@ -113,6 +115,7 @@
 </template>
 
 <script lang="ts">
+//@ts-nocheck
 import { useUserStore } from "../stores/user"
 import { reactive, computed, onBeforeMount, defineComponent } from "vue"
 import { useAppStore } from "../stores/app"
@@ -153,8 +156,6 @@ export default defineComponent({
       }),
       secondFactorFormdata: {}
     })
-    console.log(state.userPasswordLoginActivated)
-    console.log(state.userGoogleLoginActivated)
 
     function googleLogin() {
       state.waitForLogout = false
@@ -231,8 +232,14 @@ export default defineComponent({
   justify-content: center;
 }
 
+<<<<<<< HEAD
 sl-button.more-login-btn:has(+ #google_oauth > *){
   display: none;
+=======
+  &:has(*) {
+    margin-top: var(--sl-spacing-medium);
+  }
+>>>>>>> 678ac0ca143f3ce81f1f85d157f4936ed4fcaa6f
 }
 
 .wrapper {

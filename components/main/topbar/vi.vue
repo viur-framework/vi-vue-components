@@ -17,11 +17,15 @@
         :image="state.avatarUser"
         :label="state.name"
         :initials="state.nameInitials"
-        @click="state.sidebarOpen = !state.sidebarOpen"
+        @click="openUser"
       ></sl-avatar>
 
-      <div class="name">{{ state.name }}</div>
-
+      <div
+        class="name"
+        @click="openUser"
+      >
+        {{ state.name }}
+      </div>
       <sl-button
         variant="primary"
         size="small"
@@ -148,7 +152,9 @@
 </template>
 
 <script lang="ts">
+//@ts-nocheck
 import { reactive, defineComponent, computed, onMounted } from "vue"
+import { useRouter } from "vue-router"
 import { useUserStore } from "../../stores/user"
 import { useMessageStore } from "../../stores/message"
 import { useAppStore } from "../../stores/app"
@@ -165,6 +171,7 @@ export default defineComponent({
     const appStore = useAppStore()
     const dbStore = useDBStore()
     const messageStore = useMessageStore()
+    const router = useRouter()
     const state = reactive({
       sidebarOpen: false,
       nameInitials: computed(() => {
@@ -226,7 +233,7 @@ export default defineComponent({
 
     useEventListener(window, "beforeunload", (e) => {
       e.preventDefault()
-      e.returnValue="Do you really want to reload?"
+      e.returnValue = "Do you really want to reload?"
     })
 
     onMounted(() => {
@@ -234,8 +241,6 @@ export default defineComponent({
         let data = await resp.json()
         dbStore.state["tasks"] = data["skellist"]
       })
-
-
     })
     function executeTask(key) {
       console.log(key)
@@ -270,6 +275,12 @@ export default defineComponent({
       state.formValues = formValues
     }
 
+    function openUser() {
+      let route = router.resolve("/db/user/edit/self")
+      dbStore.addOpened(route, "user")
+      state.sidebarOpen = !state.sidebarOpen
+    }
+
     return {
       state,
       userStore,
@@ -277,7 +288,8 @@ export default defineComponent({
       logout,
       openTask,
       executeTask,
-      setValues
+      setValues,
+      openUser
     }
   }
 })
@@ -323,6 +335,9 @@ sl-drawer {
   padding: 10px 15px;
   height: 60px;
   border-bottom: 2px solid var(--sl-color-primary-500);
+  & sl-avatar {
+    cursor: pointer;
+  }
 }
 
 .drawer-footer {
@@ -390,6 +405,7 @@ sl-drawer {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  cursor: pointer;
 }
 
 .user {

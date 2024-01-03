@@ -47,7 +47,7 @@ export default defineComponent({
         let url = `/db/${handlerState.module}/add`
 
         if (handlerState.group) {
-          url += `/db/${handlerState.group}`
+          url += `/${handlerState.group}`
         }
 
         url += "?" + new URLSearchParams(props.params).toString()

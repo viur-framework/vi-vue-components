@@ -86,7 +86,7 @@ export default defineComponent({
         filter = ""
       }
 
-      return Request.get(`/json/${boneState.bonestructure["module"]}/list?${params}limit=99${filter}`).then(
+      return Request.get(`/vi/${boneState.bonestructure["module"]}/list?${params}limit=99${filter}`).then(
         async (resp) => {
           const data = await resp.json()
           state.skels = data["skellist"].reduce((acc, curr) => ((acc[curr["key"]] = curr), acc), {})
@@ -115,7 +115,7 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      if (props.value === null || props.value.length === 0) {
+      if (!props.value || props.value.length === 0) {
         context.emit("change", props.name, [], props.lang) //init
       }
     })

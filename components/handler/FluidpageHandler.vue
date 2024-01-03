@@ -13,7 +13,10 @@
   >
   </loader>
   <div class="fluid-wrap">
-    <template v-for="grid in state.grids" v-if="state.grids.length">
+    <template
+      v-for="grid in state.grids"
+      v-if="state.grids.length"
+    >
       <component
         :is="state.fluidpageElement"
         v-for="contentSkel in grid"
@@ -43,13 +46,22 @@
         </component>
       </div>
     </template>
-    <div class="empty-page" v-else>
-      <sl-alert variant="info" open>
-        <sl-icon slot="icon" name="info-circle"></sl-icon>
-        <strong>{{ $t("actions.fluidpage.emptyheadline") }}</strong><br>
+    <div
+      v-else
+      class="empty-page"
+    >
+      <sl-alert
+        variant="info"
+        open
+      >
+        <sl-icon
+          slot="icon"
+          name="info-circle"
+        ></sl-icon>
+        <strong>{{ $t("actions.fluidpage.emptyheadline") }}</strong
+        ><br />
         {{ $t("actions.fluidpage.emptytext") }}
       </sl-alert>
-
     </div>
   </div>
 </template>
@@ -113,6 +125,7 @@ export default defineComponent({
 
         return name
       }),
+      tabId: route.query?.["_"],
       currentSelection: null,
       module: computed(() => props.module),
       group: computed(() => props.group),
@@ -543,7 +556,7 @@ export default defineComponent({
   }
 }
 
-.empty-page{
+.empty-page {
   display: flex;
   justify-content: center;
   padding: 0 var(--sl-spacing-medium) var(--sl-spacing-medium) var(--sl-spacing-medium);

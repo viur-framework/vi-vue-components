@@ -75,7 +75,7 @@
               name="pencil"
               sprite
             ></sl-icon>
-            Berarbeiten
+            Bearbeiten
           </sl-menu-item>
           <sl-menu-item @click="openItem(route, true)">
             <sl-icon
@@ -83,7 +83,7 @@
               name="plus"
               sprite
             ></sl-icon>
-            öffnen
+            Öffnen
           </sl-menu-item>
         </sl-menu>
       </sl-dropdown>
@@ -255,7 +255,11 @@ export default defineComponent({
         }
         return (1 - layer * 0.1).toString() + "em"
       }),
-      maxtabsReached: false
+      maxtabsReached: false,
+      padding: computed(() => {
+        let layer = props.layer
+        return `calc(var(--sl-spacing-medium) * ${layer})`
+      })
     })
 
     function openGroup() {
@@ -494,7 +498,7 @@ sl-icon {
 
 .sublist {
   & .item {
-    padding-left: var(--sl-spacing-medium);
+    padding-left: v-bind("state.padding");
   }
 }
 </style>

@@ -33,13 +33,19 @@
       v-if="!state.loading"
       class="scroll-content"
     >
-      <template v-for="(group, key) in state.formGroups">
+      <template
+        v-for="(group, key) in state.formGroups"
+        :key="key"
+      >
         <sl-details
           v-show="group['groupVisible']"
           :summary="group['name']"
-          :open="key !== 'system'"
+          :open="group['groupOpen']"
         >
-          <template v-for="bone in group['bones']">
+          <template
+            v-for="bone in group['bones']"
+            :key="bone['name']"
+          >
             <bone
               :is="getBoneWidget(state.structure[bone['boneName']]['type'])"
               v-show="state.structure[bone['boneName']]['visible']"
@@ -127,11 +133,13 @@
 
 <script lang="ts">
 //@ts-nocheck
-import { reactive, defineComponent, onBeforeMount, computed, provide, toRaw, unref, watch } from "vue"
+import { reactive, defineComponent, onBeforeMount, computed, provide, toRaw, unref, watch, onActivated } from "vue"
 import { Request } from "@viur/vue-utils"
 import { useDBStore } from "../stores/db"
 import { useContextStore } from "../stores/context"
 import { useRoute } from "vue-router"
+import { useMessageStore } from "../stores/message"
+import { useUserStore } from "../stores/user"
 import EntryBar from "../bars/EntryBar.vue"
 import { useModulesStore } from "../stores/modules"
 import handlers from "../handler/handlers"
@@ -154,7 +162,10 @@ export default defineComponent({
     skelkey: null,
     skeltype: null,
     noTopbar: false,
-    secure: false,
+    secure: {
+      type: Boolean,
+      default: true
+    },
     bones: {
       type: Array,
       default: []
@@ -177,6 +188,8 @@ export default defineComponent({
     const contextStore = useContextStore()
     const route = useRoute()
     const modulesStore = useModulesStore()
+    const messageStore = useMessageStore()
+    const userStore = useUserStore()
     const values = reactive({})
     const state = reactive({
       type: "formhandler",
@@ -186,9 +199,9 @@ export default defineComponent({
       conf: computed(() => {
         return dbStore.getConf(props.module)
       }),
-      tabId: computed(() => unref(route.query?.["_"])),
+      tabId: route.query?.["_"],
       formGroups: computed(() => {
-        let groups = { default: { name: "Allgemein", bones: [], groupVisible: false } }
+        let groups = { default: { name: "Allgemein", bones: [], groupVisible: false, groupOpen: true } }
         for (const [boneName, bone] of Object.entries(state.structure)) {
           if (props.bones.length > 0) {
             if (!props.bones.includes(boneName)) {
@@ -224,9 +237,18 @@ export default defineComponent({
           if (boneStructure["visible"] === true) {
             groups[category]["groupVisible"] = true
           }
+          if (
+            (state.conf?.["collapsedCategories"] &&
+              state.conf["collapsedCategories"].map((x) => x.toLowerCase()).includes(category)) ||
+            category === "system" ||
+            state.conf?.["collapsedCategories"]?.[0] === "*"
+          ) {
+            groups[category]["groupOpen"] = false
+          } else {
+            groups[category]["groupOpen"] = true
+          }
         }
         let sortedGroups = {}
-
         Object.keys(groups)
           .sort()
           .forEach(function (key) {
@@ -241,6 +263,7 @@ export default defineComponent({
       group: props.group,
       skelkey: props.skelkey,
       skeltype: props.skeltype,
+      renderer: computed(() => props.renderer),
       relation_opened: [],
       loading: false
     })
@@ -291,6 +314,17 @@ export default defineComponent({
       requestHandler(url, { dataObj: dataObj }).then(async (resp) => {
         let data = await resp.json()
 
+        if (data["status"] && data["status"] !== 200) {
+          let txt = data["descr"]
+          //todo sl-details format traceback
+          /*if (userStore.userAccess.includes("root")) {
+            txt += "\n" + data["traceback"]
+          }*/
+          messageStore.addMessage("error", data["title"], txt)
+          state.loading = false
+          return
+        }
+
         if (props.values) {
           for (const [key, val] of Object.entries(props.values)) {
             data["values"][key] = val
@@ -334,7 +368,11 @@ export default defineComponent({
     function updateValue(data) {
       state.formValues[data.name] = data.value
       if (data.name === "name") {
-        dbStore.updateActiveTabName(data.value[0]["name"])
+        if (data.lang) {
+          dbStore.updateActiveTabName(data.value[0][Object.keys(data.value[0])[0]])
+        } else {
+          dbStore.updateActiveTabName(data.value[0]["name"])
+        }
       }
 
       visibleIf(data)
@@ -415,6 +453,7 @@ export default defineComponent({
         filter = handler["filter"]
       }
       filter[handler["context"]] = props.skelkey
+      //todo set Context on routing
       contextStore.setContext(handler["context"], props.skelkey, state.tabId)
       return filter
     }
@@ -513,6 +552,7 @@ sl-details {
   &::part(prefix) {
     display: none;
   }
+
   &::part(base) {
     border-radius: 0;
     border-left: none;
@@ -520,6 +560,7 @@ sl-details {
     border-top: none;
     border-bottom: solid 1px var(--sl-color-neutral-300);
   }
+
   &::part(summary) {
     font-weight: 700;
   }
