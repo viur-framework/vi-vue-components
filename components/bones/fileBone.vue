@@ -328,6 +328,10 @@ export default defineComponent({
   display: flex;
   gap: 10px;
   position: relative;
+
+  & + .nested_wrapper{
+    padding-top: 0 !important;
+  }
 }
 
 .droparea {
