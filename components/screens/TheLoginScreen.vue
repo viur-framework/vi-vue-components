@@ -232,14 +232,8 @@ export default defineComponent({
   justify-content: center;
 }
 
-<<<<<<< HEAD
-sl-button.more-login-btn:has(+ #google_oauth > *){
+sl-button.more-login-btn:has(+ #google_oauth > *) {
   display: none;
-=======
-  &:has(*) {
-    margin-top: var(--sl-spacing-medium);
-  }
->>>>>>> 678ac0ca143f3ce81f1f85d157f4936ed4fcaa6f
 }
 
 .wrapper {
