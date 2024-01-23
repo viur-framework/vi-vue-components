@@ -196,7 +196,7 @@ export default defineComponent({
     })
     provide("handlerState", state)
     const currentlist = ListRequest(state.storeName, {
-      module: props.module,
+      module: props.module.replace(".","/"),
       params: {},
       group: props.group,
       renderer: "vi"
