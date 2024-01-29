@@ -232,6 +232,7 @@ export default defineComponent({
   justify-content: center;
 }
 
+
 sl-button.more-login-btn:has(+ #google_oauth > *) {
   display: none;
 }
