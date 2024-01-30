@@ -44,7 +44,8 @@ export default {
     logout: "Ausloggen",
     logout_text: "Wenn Sie sich ausloggen, gehen alle nicht gespeicherten Daten verloren. Möchten sie fortfahren?",
     section_general_name: "Allgemein",
-    section_system_name: "Servertasks"
+    section_system_name: "Servertasks",
+    section_tools: "Tools",
   },
   skeldrawer: {
     noentry: "Kein Eintrag ausgewählt"

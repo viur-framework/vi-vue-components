@@ -51,6 +51,19 @@
       </div> -->
 
       <div class="group">
+        <template v-if="userStore.userAccess.includes('scriptor')">
+          <div class="group-headline">
+            {{ $t("sidebar.section_tools") }}
+          </div>
+          <sl-button
+            size="medium"
+            @click="openScriptor"
+          >
+            <sl-icon name="code-slash"></sl-icon>
+             Scriptor
+          </sl-button>
+        </template>
+
         <div class="group-headline">
           {{ $t("sidebar.section_system_name") }}
         </div>
@@ -281,6 +294,11 @@ export default defineComponent({
       state.sidebarOpen = !state.sidebarOpen
     }
 
+    function openScriptor(){
+      let url = `${import.meta.env.VITE_API_URL}${appStore.state["admin.scriptor.url"]}#/home`
+      window.open(url, "_blank").focus()
+    }
+
     return {
       state,
       userStore,
@@ -289,7 +307,8 @@ export default defineComponent({
       openTask,
       executeTask,
       setValues,
-      openUser
+      openUser,
+      openScriptor
     }
   }
 })

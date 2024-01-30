@@ -67,7 +67,7 @@ export default defineComponent({
       }),
       canAccess: computed(() => {
         if (userStore.state.user.access.indexOf("root") !== -1) {
-          //return true
+          return true
         }
 
         let scriptAccess = false
