@@ -283,7 +283,7 @@ export default defineComponent({
 
     function fetchData() {
       state.loading = true
-      let url = `/${props.renderer}/${props.module}/${props.action === "clone" ? "edit" : props.action}`
+      let url = `/${props.renderer}/${props.module.replace(".","/")}/${props.action === "clone" ? "edit" : props.action}`
       if (props.group) url += `/${props.group}`
 
       if (props.action === "edit" || props.action === "clone") {

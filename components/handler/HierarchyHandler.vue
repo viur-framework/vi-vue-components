@@ -181,7 +181,7 @@ export default defineComponent({
     })
 
     function fetchRoots() {
-      return Request.get(`/vi/${props.module}/listRootNodes`).then(async (resp) => {
+      return Request.get(`/vi/${props.module.replace(".","/")}/listRootNodes`).then(async (resp) => {
         let data = await resp.json()
         state.currentRootNodes = data
         if (!state.currentRootNode) {

@@ -137,7 +137,7 @@ export default defineComponent({
         // prefetch rootnode childs
         state.currentRootNode = state.currentEntry["key"]
         state.currentEntry["_status"] = "loading"
-        Request.get(`/vi/${props.module}/list`, {
+        Request.get(`/vi/${props.module.replace(".","/")}/list`, {
           dataObj: {
             skelType: "node",
             orderby: "sortindex",

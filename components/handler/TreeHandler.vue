@@ -74,7 +74,7 @@ export default defineComponent({
         return 0
       }
 
-      return Request.get(`/vi/${props.module}/listRootNodes`)
+      return Request.get(`/vi/${props.module.replace(".","/")}/listRootNodes`)
         .then(async (resp) => {
           let data = await resp.json()
           state.currentRootNodes = data

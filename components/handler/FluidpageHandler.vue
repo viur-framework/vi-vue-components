@@ -158,7 +158,7 @@ export default defineComponent({
     })
     provide("handlerState", state)
     const currentlist = ListRequest(state.storeName, {
-      module: props.module,
+      module: props.module.replace(".","/"),
       params: {
         limit: 99,
         "fluidpage.dest.key": route.params["key"]
@@ -220,7 +220,7 @@ export default defineComponent({
         currentEntry["sortindex"] += 0.0001
       }
 
-      Request.edit(props.module, currentEntry["key"], {
+      Request.edit(props.module.replace(".","/"), currentEntry["key"], {
         dataObj: {
           sortindex: currentEntry["sortindex"]
         }
@@ -241,7 +241,7 @@ export default defineComponent({
       }
 
       state.debounceSave = setTimeout(() => {
-        Request.edit(props.module, key, {
+        Request.edit(props.module.replace(".","/"), key, {
           dataObj: {
             width: width
           }
