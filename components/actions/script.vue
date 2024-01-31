@@ -8,7 +8,7 @@
       v-if="state.canAccess"
       size="small"
       :disabled="!state.active"
-      :title="state.current['dest']['name']"
+      :title="state.current['rel']['name']"
       @click="createAndNavigate(route)"
     >
       <sl-icon
@@ -18,7 +18,7 @@
         :library="state.current['rel']['icon']?.split('___')[0]"
       ></sl-icon>
       <template v-else>
-        {{ state.current["dest"]["name"] }}
+        {{ state.current["rel"]["name"] }}
       </template>
     </sl-button>
   </router-link>
@@ -107,7 +107,7 @@ export default defineComponent({
     })
 
     function ScriptorUrl() {
-      let url = `${import.meta.env.VITE_API_URL}${appStore.state["admin.scriptor.url"]}#/home?key=${state.scriptKey}`
+      let url = `${import.meta.env.VITE_API_URL}${appStore.state["admin.scriptor.url"]}#/runner?key=${state.scriptKey}`
       if (handlerState.currentSelection) {
         let params = Object.fromEntries(
           handlerState.currentSelection.map((i, idx) => [`key${idx === 0 ? "" : idx}`, i["key"]])
