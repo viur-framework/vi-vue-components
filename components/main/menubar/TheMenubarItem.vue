@@ -279,7 +279,7 @@ export default defineComponent({
       let new_route = router.resolve(unref(route))
       state.maxtabsReached = !dbStore.addOpened(
         new_route,
-        route.params["module"],
+        route.params["module"].replace(".", "/"),
         route.query["view"],
         "",
         "",

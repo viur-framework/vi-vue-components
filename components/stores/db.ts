@@ -214,9 +214,9 @@ export const useDBStore = defineStore("db", () => {
 
   function getConf(module: string, view = null) {
     let conf = null
-    let name = module
+    let name = module.replace(".", "/")
     if (typeof view === "string" && isNaN(parseFloat(view))) {
-      view = modulesList.value?.[module]?.["views"].findIndex((x) => x["group"] === view)
+      view = modulesList.value?.[module.replace(".", "/")]?.["views"].findIndex((x) => x["group"] === view)
     }
     if (view) name += "_" + view
     conf = modulesList.value?.[name]
@@ -277,6 +277,11 @@ export const useDBStore = defineStore("db", () => {
     }
 
     let url = route.fullPath
+
+    if (module.includes("/")) {
+      // in case of nested modules like shop/cart replace in url with . to shop.cart
+      url = url.replace(module, module.replace("/", "."))
+    }
 
     if (url) {
       if (url.includes("/add")) {
@@ -356,7 +361,7 @@ export const useDBStore = defineStore("db", () => {
 
     const conf = getConfByRoute(route)
     if (conf) {
-      let findStorename = `module___${route.params.module}`
+      let findStorename = `module___${route.params.module.replace(".", "/")}`
       if (Object.keys(conf).includes("view_number")) {
         findStorename += `___${conf["view_number"]}`
       }

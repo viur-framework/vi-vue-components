@@ -1,7 +1,11 @@
 <template>
   <template v-if="!state.access">
     <div class="wrapper">
-      <sl-dialog open :label="$t('noaccess.title')" @sl-request-close="$event.preventDefault()">
+      <sl-dialog
+        open
+        :label="$t('noaccess.title')"
+        @sl-request-close="$event.preventDefault()"
+      >
         {{ $t("noaccess.descr") }}
       </sl-dialog>
     </div>
@@ -9,17 +13,30 @@
   <template v-else>
     <the-topbar></the-topbar>
 
-    <sl-split-panel class="split-panel" position-in-pixels="300" snap="300px">
-      <div slot="start" class="sidebar">
+    <sl-split-panel
+      class="split-panel"
+      position-in-pixels="300"
+      snap="300px"
+    >
+      <div
+        slot="start"
+        class="sidebar"
+      >
         <the-sidebar></the-sidebar>
       </div>
 
-      <div slot="end" class="content">
+      <div
+        slot="end"
+        class="content"
+      >
         <the-main-screen-tabbar></the-main-screen-tabbar>
         <router-view v-slot="{ Component }">
           <div class="wrap-for-popup">
             <template v-for="tab in dbStore.state['handlers.opened']">
-              <div v-show="dbStore.getActiveTab()['id'] === tab?.['id']" :id="'view_dialogs_' + tab?.['id']"></div>
+              <div
+                v-show="dbStore.getActiveTab()['id'] === tab?.['id']"
+                :id="'view_dialogs_' + tab?.['id']"
+              ></div>
 
               <!--<template v-if="!tab['keep']">
               <component
@@ -98,11 +115,20 @@ export default defineComponent({
         } else if (Object.keys(data["configuration"]).includes("moduleGroups")) {
           dbStore.state["vi.modules.groups"] = data["configuration"]["moduleGroups"]
         }
-        dbStore.state["vi.modules"] = data["modules"]
+
+        let currentModules = Object.entries(data["modules"]).map((i) => {
+          i[0] = i[0].replace(".", "/")
+          return i
+        })
+
+        dbStore.state["vi.modules"] = currentModules.reduce((obj, i) => {
+          obj[i[0]] = i[1]
+          return obj
+        }, {})
 
         if (route.path !== "/") {
           let new_route = router.resolve(unref(route))
-          dbStore.addOpened(new_route, new_route.params["module"], new_route.query["view"])
+          dbStore.addOpened(new_route, new_route.params["module"].replace(".", "/"), new_route.query["view"])
         }
       })
       Request.get("/vi/getVersion").then(async (resp: Response) => {

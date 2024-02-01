@@ -43,7 +43,7 @@ export default defineComponent({
       }),
       contentModule: computed(() => {
         let conf = dbStore.getConf(handlerState.module)
-        let module = conf["handler"].split(".").at(-1)
+        let module = conf["handler"].split(".").at(-1).replace("/", ".")
         return module
       }),
       url: computed(() => {

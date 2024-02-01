@@ -196,7 +196,7 @@ export default defineComponent({
     })
     provide("handlerState", state)
     const currentlist = ListRequest(state.storeName, {
-      module: props.module.replace(".","/"),
+      module: props.module,
       params: {},
       group: props.group,
       renderer: "vi"
@@ -320,7 +320,7 @@ export default defineComponent({
     function primaryAction(e: Event) {
       if (state.conf["handler"].startsWith("list.fluidpage")) {
         let conf = dbStore.getConf(state.module)
-        let module = conf["handler"].split(".").at(-1)
+        let module = conf["handler"].split(".").at(-1).replace("/", ".")
         let url = `/db/${module}/fluidpage/${state.module}/${state.currentSelection[0]["key"]}`
         let route = router.resolve(unref(url))
         contextStore.setContext("fluidpage.dest.key", state.currentSelection[0]["key"], state.tabId)
