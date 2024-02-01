@@ -26,7 +26,7 @@
       <h2 class="headline">
         Zuletzt bearbeitet
         <sl-icon
-          name="x"
+          name="x-lg"
           @click="localStore.removeAllEntries()"
         ></sl-icon>
       </h2>

@@ -96,7 +96,10 @@
       class="delete-btn"
       @click="$emit('change', name, '', lang, index)"
     >
-      <sl-icon name="x"></sl-icon>
+      <sl-icon
+        slot="prefix"
+        name="x-lg"
+      ></sl-icon>
     </sl-button>
   </div>
   <div class="nested_wrapper">

@@ -20,6 +20,7 @@ export interface ModuleInfo {
   parententry: string
   parentrepo: string
   icon: string
+  iconType: string
   handler: string
   url: null | Object
   children: Array<ModuleInfo>
@@ -52,14 +53,20 @@ function adminTreeLayer(itemList: Array<ModuleInfo>, parent: ModuleInfo): Array<
     conf["parentrepo"] = "root"
 
     // add empty icon if missing or construct library prefixed icon if needed
+    conf["iconType"] = "library"
     if (!Object.keys(conf).includes("icon")) {
       conf["icon"] = ""
     } else if (conf["icon"].includes("bootstrap___")) {
       conf["icon"] = conf["icon"].replace("bootstrap___", "default___")
+    } else if (conf["icon"].startsWith("/static/")) {
+      conf["iconType"] = "path"
+      conf["icon"] = `${import.meta.env.VITE_API_URL}` + conf["icon"]
+      console.log(conf["icon"])
     } else if (!conf["icon"].includes("___") && conf["icon"] !== "") {
       let icon = conf["icon"]
       conf["icon"] = "default___" + icon
     }
+
     // build url by handler
     if (!Object.keys(conf).includes("handler")) {
       conf["url"] = null // if handler is missing, this is a moduleGroup
@@ -157,7 +164,14 @@ export const useDBStore = defineStore("db", () => {
 
     //dynamic child buckets
     "handlers.opened": [
-      { to: { name: "home", fullPath: "/" }, url: "/", name: "Dashboard", icon: "dashboard", closeable: false, id: 0 }
+      {
+        to: { name: "home", fullPath: "/" },
+        url: "/",
+        name: "Dashboard",
+        icon: "grid-3x3-gap-fill",
+        closeable: false,
+        id: 0
+      }
     ], // {'url','name','library'}
     "handlers.opened.max": 1,
     "handlers.opened.max.modules": {},

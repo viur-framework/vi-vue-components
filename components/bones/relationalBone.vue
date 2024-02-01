@@ -48,7 +48,10 @@
           }
         "
       >
-        <sl-icon name="x"></sl-icon>
+        <sl-icon
+          slot="prefix"
+          name="x-lg"
+        ></sl-icon>
       </sl-button>
     </div>
 
