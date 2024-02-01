@@ -16,7 +16,7 @@
 
       <sl-icon
         v-if="state.slotitems"
-        name="play"
+        name="caret-right-fill"
         class="arrow"
         :class="{ 'is-open': state.open }"
       >

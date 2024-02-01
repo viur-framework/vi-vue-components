@@ -9,7 +9,10 @@
       class="delete-btn"
       @click="removeMultipleEntries(index, lang)"
     >
-      <sl-icon name="x"></sl-icon>
+      <sl-icon
+        slot="prefix"
+        name="x-lg"
+      ></sl-icon>
     </sl-button>
 
     <sl-combobox
@@ -25,7 +28,11 @@
       class="add-btn"
       @click="openSelector(lang)"
     >
-      <sl-icon name="plus"></sl-icon> {{ $t("bone.add") }}
+      <sl-icon
+        slot="prefix"
+        name="plus-lg"
+      ></sl-icon>
+      {{ $t("bone.add") }}
     </sl-button>
   </div>
 

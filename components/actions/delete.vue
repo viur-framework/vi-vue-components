@@ -8,7 +8,7 @@
   >
     <sl-icon
       slot="prefix"
-      name="trash"
+      name="trash-fill"
     ></sl-icon>
   </sl-button>
 

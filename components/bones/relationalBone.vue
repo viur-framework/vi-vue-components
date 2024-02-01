@@ -14,7 +14,7 @@
           class="square-btn"
           @click="editSelection"
         >
-          <sl-icon name="pencil"></sl-icon>
+          <sl-icon name="pencil-fill"></sl-icon>
         </sl-button>
       </sl-button-group>
       <sl-combobox

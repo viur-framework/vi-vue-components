@@ -85,7 +85,7 @@
       class="info-btn"
       @click="editSelection"
     >
-      <sl-icon name="pencil"></sl-icon>
+      <sl-icon name="pencil-fill"></sl-icon>
     </sl-button>
     <sl-button
       v-if="!boneState.multiple && !boneState.isEmpty"
@@ -329,7 +329,7 @@ export default defineComponent({
   gap: 10px;
   position: relative;
 
-  & + .nested_wrapper{
+  & + .nested_wrapper {
     padding-top: 0 !important;
   }
 }

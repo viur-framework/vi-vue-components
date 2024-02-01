@@ -28,7 +28,7 @@
           :style="{ marginLeft: path.concat([idx]).length - 2 + 'em' }"
         >
           <sl-icon
-            name="play"
+            name="caret-right-fill"
             :class="{ disabled: child['_disabled'], expanded: child['_expanded'] }"
           ></sl-icon>
         </div>
@@ -48,7 +48,7 @@
         @mousedown="tree.mouseDownHandle($event, idx)"
       >
         <div class="dragger">
-          <sl-icon name="menu"></sl-icon>
+          <sl-icon name="grip-vertical"></sl-icon>
         </div>
       </td>
 
@@ -299,7 +299,7 @@ tr {
   height: 1em;
 
   & sl-icon {
-    font-size: 0.9em;
+    font-size: 1.5em;
   }
 }
 
@@ -363,7 +363,7 @@ tr {
   margin-right: var(--sl-spacing-x-small);
 
   & sl-icon {
-    font-size: 0.5em;
+    font-size: 0.7em;
     color: var(--sl-color-neutral-700);
 
     &.expanded {

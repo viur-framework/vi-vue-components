@@ -14,7 +14,7 @@
     >
       <sl-icon
         slot="prefix"
-        name="press"
+        name="newspaper"
       ></sl-icon>
     </sl-button>
   </router-link>

@@ -20,7 +20,7 @@
           @mouseup="tree.mouseUpHandle($event, idx, 'leaf')"
           @mousedown="tree.mouseDownHandle($event, idx, 'leaf')"
         >
-          <sl-icon name="menu"></sl-icon>
+          <sl-icon name="grip-vertical"></sl-icon>
         </div>
         <sl-icon
           name="download"
@@ -179,7 +179,7 @@ td {
   color: var(--vi-foreground-color);
 
   & sl-icon {
-    font-size: 0.7em;
+    font-size: 1em;
   }
 }
 </style>

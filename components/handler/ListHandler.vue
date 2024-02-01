@@ -37,7 +37,7 @@
               >
                 <sl-icon
                   v-if="state.sorting === '' || state.sorting !== bone + '$asc'"
-                  name="play"
+                  name="caret-right-fill"
                   class="sort-arrow sort-up"
                   :class="{ 'sort-active': state.sorting === bone + '$desc' }"
                   :title="$t('actions.sortasc')"
@@ -45,7 +45,7 @@
                 ></sl-icon>
                 <sl-icon
                   v-if="state.sorting === bone + '$asc'"
-                  name="play"
+                  name="caret-right-fill"
                   class="sort-arrow sort-down"
                   :class="{ 'sort-active': state.sorting === bone + '$asc' }"
                   :title="$t('actions.sortdesc')"

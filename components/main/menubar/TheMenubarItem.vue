@@ -72,7 +72,7 @@
           <sl-menu-item @click="openConfig()">
             <sl-icon
               slot="prefix"
-              name="pencil"
+              name="pencil-fill"
               sprite
             ></sl-icon>
             Bearbeiten
@@ -80,7 +80,7 @@
           <sl-menu-item @click="openItem(route, true)">
             <sl-icon
               slot="prefix"
-              name="plus"
+              name="plus-lg"
               sprite
             ></sl-icon>
             Öffnen

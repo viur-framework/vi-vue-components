@@ -8,7 +8,7 @@
   >
     <sl-icon
       slot="prefix"
-      name="plus"
+      name="plus-lg"
     ></sl-icon>
     {{ $t("actions.addfile") }}
   </sl-button>

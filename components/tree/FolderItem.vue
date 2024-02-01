@@ -40,7 +40,7 @@
           @mouseup="tree.mouseUpHandle($event, idx)"
           @mousedown="tree.mouseDownHandle($event, idx)"
         >
-          <sl-icon name="menu"></sl-icon>
+          <sl-icon name="grip-vertical"></sl-icon>
         </div>
         <sl-icon
           name="folder"

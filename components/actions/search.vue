@@ -37,7 +37,7 @@
         >
           <sl-icon
             slot="prefix"
-            name="system"
+            name="robot"
           ></sl-icon>
           Automatisch
         </sl-menu-item>
@@ -155,7 +155,7 @@ export default defineComponent({
     }
 
     function searchTypeIcon() {
-      if (state.searchType === "auto") return "system"
+      if (state.searchType === "auto") return "robot"
       if (state.searchType === "local") return "list-ul"
       if (state.searchType === "database") return "database"
     }

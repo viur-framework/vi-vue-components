@@ -25,7 +25,7 @@
         @mouseup="tree.mouseUpHandle($event, idx)"
         @mousedown="tree.mouseDownHandle($event, idx)"
       >
-        <sl-icon name="menu"></sl-icon>
+        <sl-icon name="grip-vertical"></sl-icon>
       </div>
 
       <div
@@ -33,7 +33,7 @@
         @click="clickToExpand(idx)"
       >
         <sl-icon
-          name="play"
+          name="caret-right-fill"
           :class="{ disabled: child['_disabled'], expanded: child['_expanded'] }"
         ></sl-icon>
       </div>
@@ -193,7 +193,7 @@ export default defineComponent({
   color: var(--vi-foreground-color);
 
   & sl-icon {
-    font-size: 0.7em;
+    font-size: 1em;
   }
 }
 
@@ -256,7 +256,7 @@ export default defineComponent({
   margin-right: var(--sl-spacing-x-small);
 
   & sl-icon {
-    font-size: 0.4em;
+    font-size: 0.7em;
     color: var(--vi-foreground-color);
 
     &.expanded {

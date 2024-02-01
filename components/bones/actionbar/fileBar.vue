@@ -13,7 +13,10 @@
       class="delete-btn"
       @click="removeMultipleEntries(index, lang)"
     >
-      <sl-icon name="x"></sl-icon>
+      <sl-icon
+        slot="prefix"
+        name="x-lg"
+      ></sl-icon>
     </sl-button>
 
     <div
@@ -49,7 +52,10 @@
       class="upload-btn"
       @click="uploadinput.click()"
     >
-      <sl-icon name="upload"></sl-icon>
+      <sl-icon
+        slot="prefix"
+        name="upload"
+      ></sl-icon>
       {{ $t("bone.upload") }}
       <sl-spinner-viur
         v-if="state.loading"
