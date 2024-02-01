@@ -54,6 +54,8 @@ function adminTreeLayer(itemList: Array<ModuleInfo>, parent: ModuleInfo): Array<
     // add empty icon if missing or construct library prefixed icon if needed
     if (!Object.keys(conf).includes("icon")) {
       conf["icon"] = ""
+    } else if (conf["icon"].includes("bootstrap___")) {
+      conf["icon"] = conf["icon"].replace("bootstrap___", "default___")
     } else if (!conf["icon"].includes("___") && conf["icon"] !== "") {
       let icon = conf["icon"]
       conf["icon"] = "default___" + icon
