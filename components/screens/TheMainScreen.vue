@@ -7,6 +7,14 @@
         @sl-request-close="$event.preventDefault()"
       >
         {{ $t("noaccess.descr") }}
+        <div style="margin-top: 10px">
+          <sl-button
+            variant="danger"
+            @click="userStore.logout()"
+          >
+            {{ $t("login.logout") }}
+          </sl-button>
+        </div>
       </sl-dialog>
     </div>
   </template>
@@ -163,6 +171,7 @@ export default defineComponent({
       route,
       dbStore,
       urlToRoute,
+      userStore,
       state
     }
   }
