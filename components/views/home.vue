@@ -68,9 +68,9 @@ export default defineComponent({
         if (!userStore.state.user) return name
 
         if (userStore.state.user["firstname"] && userStore.state.user["lastname"]) {
-          name = userStore.state.user["firstname"] + " " + userStore.state.user["lastname"]
+          name = `${userStore.state.user["firstname"]} ${userStore.state.user["lastname"]} (${userStore.state.user.name})`
         } else if (userStore.state.user["firstname"]) {
-          name = userStore.state.user["firstname"]
+          name = userStore.state.user["firstname"] + ` (${userStore.state.user.name})`
         } else {
           name = userStore.state.user["name"]
         }
