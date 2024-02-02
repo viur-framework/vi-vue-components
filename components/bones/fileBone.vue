@@ -16,12 +16,14 @@
       :title="$t('bone.upload')"
       outline
       class="upload-btn"
+      variant="success"
       @click="uploadinput.click()"
     >
       <sl-icon
         slot="prefix"
         name="upload"
       ></sl-icon>
+      {{ $t("bone.upload") }}
       <sl-spinner-viur
         v-if="state.loading"
         slot="suffix"
