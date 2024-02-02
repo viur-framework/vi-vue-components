@@ -233,7 +233,7 @@ export default defineComponent({
     provide("setLimit", setLimit)
 
     onMounted(() => {
-      if (props.columns) {
+      if (props.columns && props.columns.length > 0) {
         state.selectedBones = props.columns
       }
       state.conf = dbStore.getConf(props.module, props.view)
@@ -355,12 +355,12 @@ export default defineComponent({
     }
 
     function setSelectedBones() {
-      if (props.columns) {
+      if (props.columns && props.columns.length > 0) {
         state.selectedBones = props.columns
         return 0
       }
       state.conf = dbStore.getConf(props.module, props.view)
-      if (state.conf && state.conf?.["columns"]) {
+      if (state.conf && state.conf?.["columns"] && state.conf?.["columns"].length > 0) {
         state.selectedBones = state.conf["columns"]
       } else {
         let bones = []
