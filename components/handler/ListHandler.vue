@@ -25,34 +25,36 @@
       <table ref="datatable">
         <thead>
           <tr>
-            <th
-              v-for="bone in state.selectedBones"
-              :class="{ 'stick-header': state.sticky }"
-              :style="{ width: '150px' }"
-            >
-              {{ currentlist.structure?.[bone]?.["descr"] }}
-              <div
-                v-if="currentlist.state.state === 2"
-                class="sort-arrow-wrap"
+            <template v-for="bone in state.selectedBones">
+              <th
+                v-if="currentlist.structure?.[bone]"
+                :class="{ 'stick-header': state.sticky }"
+                :style="{ width: '150px' }"
               >
-                <sl-icon
-                  v-if="state.sorting === '' || state.sorting !== bone + '$asc'"
-                  name="caret-right-fill"
-                  class="sort-arrow sort-up"
-                  :class="{ 'sort-active': state.sorting === bone + '$desc' }"
-                  :title="$t('actions.sortasc')"
-                  @click="sorting(bone, 'asc')"
-                ></sl-icon>
-                <sl-icon
-                  v-if="state.sorting === bone + '$asc'"
-                  name="caret-right-fill"
-                  class="sort-arrow sort-down"
-                  :class="{ 'sort-active': state.sorting === bone + '$asc' }"
-                  :title="$t('actions.sortdesc')"
-                  @click="sorting(bone, 'desc')"
-                ></sl-icon>
-              </div>
-            </th>
+                {{ currentlist.structure?.[bone]?.["descr"] }}
+                <div
+                  v-if="currentlist.state.state === 2"
+                  class="sort-arrow-wrap"
+                >
+                  <sl-icon
+                    v-if="state.sorting === '' || state.sorting !== bone + '$asc'"
+                    name="caret-right-fill"
+                    class="sort-arrow sort-up"
+                    :class="{ 'sort-active': state.sorting === bone + '$desc' }"
+                    :title="$t('actions.sortasc')"
+                    @click="sorting(bone, 'asc')"
+                  ></sl-icon>
+                  <sl-icon
+                    v-if="state.sorting === bone + '$asc'"
+                    name="caret-right-fill"
+                    class="sort-arrow sort-down"
+                    :class="{ 'sort-active': state.sorting === bone + '$asc' }"
+                    :title="$t('actions.sortdesc')"
+                    @click="sorting(bone, 'desc')"
+                  ></sl-icon>
+                </div>
+              </th>
+            </template>
           </tr>
         </thead>
         <tbody>
@@ -64,17 +66,19 @@
               @click.ctrl="entrySelected(idx, 'append')"
               @click.shift="entrySelected(idx, 'range')"
             >
-              <td v-for="name in state.selectedBones">
-                <component
-                  :is="getWidget(skel, name, idx)"
-                  :skel="currentlist.state.skellist[idx]"
-                  :structure="currentlist.structure"
-                  :bonename="name"
-                  :idx="idx"
-                  :rendered="skel[name]"
-                >
-                </component>
-              </td>
+              <template v-for="name in state.selectedBones">
+                <td v-if="currentlist.structure?.[name]">
+                  <component
+                    :is="getWidget(skel, name, idx)"
+                    :skel="currentlist.state.skellist[idx]"
+                    :structure="currentlist.structure"
+                    :bonename="name"
+                    :idx="idx"
+                    :rendered="skel[name]"
+                  >
+                  </component>
+                </td>
+              </template>
             </tr>
           </template>
         </tbody>
@@ -436,6 +440,7 @@ export default defineComponent({
 
     function getWidget(renderedSkel, name, idx) {
       let bone = currentlist.structure[name]
+      if (!bone) return undefined
       let boneType = bone.type
 
       if (dbStore.state["bones.view"]) {
