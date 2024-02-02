@@ -154,17 +154,9 @@ sl-combobox {
 
 .delete-btn {
   margin-right: var(--sl-spacing-x-small);
-
-  &::part(base) {
-    aspect-ratio: 1;
-  }
 }
 
 .add-btn {
   margin-left: var(--sl-spacing-x-small);
-
-  & sl-icon {
-    margin-right: var(--sl-spacing-x-small);
-  }
 }
 </style>

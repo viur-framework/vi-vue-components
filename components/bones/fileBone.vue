@@ -18,7 +18,10 @@
       class="upload-btn"
       @click="uploadinput.click()"
     >
-      <sl-icon name="upload"></sl-icon>
+      <sl-icon
+        slot="prefix"
+        name="upload"
+      ></sl-icon>
       <sl-spinner-viur
         v-if="state.loading"
         slot="suffix"
@@ -29,7 +32,10 @@
       class="relation-btn"
       @click="openRelationalSelection"
     >
-      <sl-icon name="menu"></sl-icon>
+      <sl-icon
+        slot="prefix"
+        name="list-ul"
+      ></sl-icon>
     </sl-button>
     <input
       ref="uploadinput"
@@ -352,29 +358,10 @@ export default defineComponent({
   justify-content: center;
 }
 
-.delete-btn {
-  &::part(base) {
-    aspect-ratio: 1;
-  }
-}
-
 .info-btn {
   &::part(base) {
-    aspect-ratio: 1;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
-  }
-}
-
-.upload-btn {
-  &::part(base) {
-    aspect-ratio: 1;
-  }
-}
-
-.relation-btn {
-  &::part(base) {
-    aspect-ratio: 1;
   }
 }
 

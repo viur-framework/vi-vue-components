@@ -248,25 +248,11 @@ sl-combobox {
   justify-content: center;
 }
 
-.delete-btn {
-  &::part(base) {
-    aspect-ratio: 1;
-  }
-}
-
 .add-btn {
   margin-left: var(--sl-spacing-x-small);
-
-  &::part(base) {
-    aspect-ratio: 1;
-  }
 }
 
 .upload-btn {
   margin-left: auto;
-
-  & sl-icon {
-    margin-right: var(--sl-spacing-x-small);
-  }
 }
 </style>
