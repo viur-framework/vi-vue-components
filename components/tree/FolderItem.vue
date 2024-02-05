@@ -1,7 +1,7 @@
 <template>
   <tr
     class="noderow entry"
-    :draggable="state.child?.['_dragging'] && treeState.dragging"
+    :draggable="state.child?.['_dragging'] && browserState.dragging"
     :class="{
       dropin: state.child?.['_isover'] && state.child?.['_drop'] === 'in',
       dropafter: state.child?.['_isover'] && state.child?.['_drop'] === 'after',
@@ -14,6 +14,9 @@
     @drop.stop="tree.onDrop($event, idx)"
     @click="changeParentEntry(idx)"
   >
+    <td v-if="false">
+      <sl-checkbox @sl-change="selectItem"></sl-checkbox>
+    </td>
     <td>
       <div
         v-if="up"
@@ -22,20 +25,15 @@
         <sl-icon
           name="folder"
           sprite
-          @click="changeParentEntryUp"
         ></sl-icon>
-        <span
-          class="filename"
-          @click="changeParentEntryUp"
-          >..</span
-        >
+        <span class="filename">..</span>
       </div>
       <div
         v-else
         class="folder"
       >
         <div
-          v-if="treeState.dragging"
+          v-if="browserState.dragging"
           class="dragger"
           @mouseup="tree.mouseUpHandle($event, idx)"
           @mousedown="tree.mouseDownHandle($event, idx)"
@@ -89,7 +87,7 @@ export default defineComponent({
   },
   components: {},
   setup(props, context) {
-    const treeState = inject("handlerState")
+    const browserState = inject("browserState")
     const state = reactive({
       currentEntry: {},
       child: computed(() => {
@@ -99,7 +97,7 @@ export default defineComponent({
         return state.currentEntry["_nodes"][props.idx]
       })
     })
-    const tree = useTree(props.module, treeState, state)
+    const tree = useTree(props.module, browserState, state)
 
     onMounted(() => {
       state.currentEntry = tree.EntryFromPath(props.path)
@@ -111,10 +109,11 @@ export default defineComponent({
             skelType: "node",
             orderby: "sortindex",
             parententry: state.currentEntry["key"],
-            ...treeState.params
+            ...browserState.params
           }
         }).then(async (resp) => {
           let data = await resp.json()
+          console.log("ping")
           state.currentEntry["_nodes"] = data["skellist"]
           state.currentEntry["_disabled"] = false
           state.currentEntry["_status"] = "loaded" //loading, loaded
@@ -128,21 +127,33 @@ export default defineComponent({
 
     //folder navigation
     function changeParentEntry(idx) {
-      treeState.selectedPath.push(idx)
-      treeState.selected_leaf = null
+      browserState.selectedPath.push(idx)
+      browserState.selected_leaf = null
     }
 
     function changeParentEntryUp() {
-      treeState.selectedPath = treeState.selectedPath.splice(0, -1)
-      treeState.selected_leaf = null
+      browserState.selectedPath = browserState.selectedPath.splice(0, -1)
+      browserState.selected_leaf = null
+    }
+
+    function selectItem(e) {
+      let elementList = browserState.userSelection.filter((x) => x["key"] === props.skel["key"])
+      if (e.target.checked && elementList.length === 0) {
+        //add if not in list and selected
+        browserState.userSelection.push(props.skel)
+      } else if (!e.target.checked && elementList.length !== 0) {
+        //remove if not selected and in list
+        browserState.userSelection = browserState.userSelection.filter((x) => x["key"] !== props.skel["key"])
+      }
     }
 
     return {
       state,
-      treeState,
+      browserState,
       tree,
       changeParentEntry,
-      changeParentEntryUp
+      changeParentEntryUp,
+      selectItem
     }
   }
 })

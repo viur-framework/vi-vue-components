@@ -1,9 +1,9 @@
 <template>
   <tr
     :key="skel['key']"
-    :draggable="treeState.dragging"
+    :draggable="browserState.dragging"
     :class="{
-      isSelected: treeState.selected_leaf?.key === skel.key,
+      isSelected: browserState.selected_leaf?.key === skel.key,
       dropin: state.currentEntry['_isover'] && state.currentEntry['_drop'] === 'in',
       dropafter: state.currentEntry['_isover'] && state.currentEntry['_drop'] === 'after',
       dropbefore: state.currentEntry['_isover'] && state.currentEntry['_drop'] === 'before'
@@ -12,10 +12,13 @@
     @drop.stop="tree.onDrop($event, idx)"
     @click="entrySelected(skel)"
   >
+    <td v-if="false">
+      <sl-checkbox @sl-change="selectItem"></sl-checkbox>
+    </td>
     <td>
       <div class="file">
         <div
-          v-if="treeState.dragging"
+          v-if="browserState.dragging"
           class="dragger"
           @mouseup="tree.mouseUpHandle($event, idx, 'leaf')"
           @mousedown="tree.mouseDownHandle($event, idx, 'leaf')"
@@ -79,7 +82,7 @@ export default defineComponent({
   },
   components: {},
   setup(props, context) {
-    const treeState = inject("handlerState")
+    const browserState = inject("browserState")
     const state = reactive({
       currentEntry: {},
       child: computed(() => {
@@ -96,18 +99,31 @@ export default defineComponent({
 
     //activate File
     function entrySelected(skel) {
-      treeState.selected_leaf = skel
+      browserState.selected_leaf = skel
     }
     function downloadFile(skel) {
       window.open(Request.downloadUrlFor({ dest: skel }, false), "_blank", "noreferrer")
     }
-    const tree = useTree(props.module, treeState, state)
+
+    function selectItem(e) {
+      let elementList = browserState.userSelection.filter((x) => x["key"] === props.skel["key"])
+      if (e.target.checked && elementList.length === 0) {
+        //add if not in list and selected
+        browserState.userSelection.push(props.skel)
+      } else if (!e.target.checked && elementList.length !== 0) {
+        //remove if not selected and in list
+        browserState.userSelection = browserState.userSelection.filter((x) => x["key"] !== props.skel["key"])
+      }
+    }
+
+    const tree = useTree(props.module, browserState, state)
     return {
       state,
-      treeState,
+      browserState,
       tree,
       entrySelected,
-      downloadFile
+      downloadFile,
+      selectItem
     }
   }
 })

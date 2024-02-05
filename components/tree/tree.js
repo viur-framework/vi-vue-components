@@ -172,7 +172,8 @@ export default function useTree(module, treeState, state) {
         skelType: entryType,
         orderby: "sortindex",
         parententry: state.currentEntry["_nodes"][idx]["key"],
-        ...state.params
+        ...state.params,
+        limit: 99
       }
     }).then(async (resp) => {
       let data = await resp.json()

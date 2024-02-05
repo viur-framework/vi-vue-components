@@ -6,31 +6,11 @@
   >
     <div
       class="entry"
-      :draggable="child['_dragging'] && treeState.dragging"
-      :class="{
-        dropin: child['_isover'] && child['_drop'] === 'in',
-        dropafter: child['_isover'] && child['_drop'] === 'after',
-        dropbefore: child['_isover'] && child['_drop'] === 'before'
-      }"
-      @dragstart="tree.onDragStart($event, idx)"
-      @dragenter.prevent="tree.onDragEnter($event, idx)"
-      @dragover.prevent="tree.onDragOver($event, idx)"
-      @dragleave="tree.onDragLeave($event, idx)"
-      @drop.stop="tree.onDrop($event, idx)"
-      @click="selectChild(idx)"
+      @click.stop="clickToExpand(idx, false)"
     >
       <div
-        v-if="treeState.dragging"
-        class="dragger"
-        @mouseup="tree.mouseUpHandle($event, idx)"
-        @mousedown="tree.mouseDownHandle($event, idx)"
-      >
-        <sl-icon name="grip-vertical"></sl-icon>
-      </div>
-
-      <div
         class="chevron"
-        @click="clickToExpand(idx)"
+        @click.stop="clickToExpand(idx, true)"
       >
         <sl-icon
           name="caret-right-fill"
@@ -70,7 +50,7 @@
 <script lang="js">
 import { reactive, defineComponent, inject, onBeforeMount, watch, computed, onMounted, unref, toRaw } from "vue"
 import { Request } from "@viur/vue-utils"
-import useTree from "./tree.js"
+import useTree from "./browser.js"
 
 export default defineComponent({
   components: {},
@@ -85,64 +65,74 @@ export default defineComponent({
   },
 
   setup(props, context) {
-    const treeState = inject("handlerState")
+    const browserState = inject("browserState")
     const state = reactive({
       currentEntry: {},
       currentRootNode: null
     })
-    const tree = useTree(props.module, treeState, state)
+    const tree = useTree(props.module, browserState, state)
 
     onMounted(() => {
       buildCurrentEntry()
     })
+
     watch(
       () => props.path,
       (newVal, oldVal) => {
         if (!newVal.every((x) => oldVal.includes(x))) {
           buildCurrentEntry()
-        } else if (props.path.length === 1 && state.currentRootNode != treeState.tree?.[0]?.["key"]) {
+        } else if (props.path.length === 1 && state.currentRootNode != browserState.tree?.[0]?.["key"]) {
           buildCurrentEntry()
+        } else {
+          let currentEntry = tree.EntryFromPath(props.path)
+          console.log(currentEntry)
+          console.log(props.path)
+          currentEntry["_expanded"] = true
         }
       }
     )
-    function selectChild(idx) {
-      treeState.selectedPath = props.path.concat([idx])
-    }
 
     function isactive(idx) {
-      return treeState.selectedPath.toString() === props.path.concat([idx]).toString()
+      return browserState.selectedPath.toString() === props.path.concat([idx]).toString()
     }
 
-    function clickToExpand(idx) {
+    function clickToExpand(idx, toggle) {
       if (state.currentEntry["_nodes"][idx]["_loading"] === true) return 0 //wait
 
       if (!Object.keys(state.currentEntry["_nodes"][idx]).includes("_nodes")) {
-        tree.requestChildren(idx).then(() => expandChildren(idx))
+        tree.requestChildren(idx).then(() => {
+          expandChildren(idx, toggle)
+        })
       } else {
-        expandChildren(idx)
+        expandChildren(idx, toggle)
       }
     }
 
-    function expandChildren(idx) {
+    function expandChildren(idx, toggle) {
       let clickedEntry = state.currentEntry["_nodes"][idx]
-      if (Object.keys(clickedEntry).includes("_expanded")) {
+
+      if (toggle && Object.keys(clickedEntry).includes("_expanded")) {
         clickedEntry["_expanded"] = !clickedEntry["_expanded"]
       } else {
         clickedEntry["_expanded"] = true
       }
+      browserState.selectedPath = props.path.concat([idx])
     }
+
     function buildCurrentEntry() {
       state.currentEntry = tree.EntryFromPath(props.path)
       if (props.path && props.path.length === 1 && props.path[0] === 0) {
         // prefetch rootnode childs
         state.currentRootNode = state.currentEntry["key"]
         state.currentEntry["_status"] = "loading"
+
         Request.get(`/vi/${props.module}/list`, {
           dataObj: {
             skelType: "node",
             orderby: "sortindex",
             parententry: state.currentEntry["key"],
-            ...treeState.params
+            ...browserState.params,
+            limit: 99
           }
         }).then(async (resp) => {
           let data = await resp.json()
@@ -158,10 +148,9 @@ export default defineComponent({
 
     return {
       state,
-      treeState,
+      browserState,
       clickToExpand,
       isactive,
-      selectChild,
       tree
     }
   }

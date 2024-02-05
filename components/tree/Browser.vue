@@ -51,6 +51,17 @@
             >
               <thead>
                 <tr>
+                  <th
+                    v-if="false"
+                    style="width: 40px"
+                  >
+                    <div
+                      class="th-inner"
+                      style="max-width: 100%"
+                    >
+                      <!--<sl-checkbox @sl-change="selectAllItems"></sl-checkbox>-->
+                    </div>
+                  </th>
                   <th style="width: 50%">
                     <div class="th-inner">Dateiname</div>
                   </th>
@@ -176,8 +187,8 @@
 </template>
 
 <script lang="js">
-import { reactive, defineComponent, computed, provide, onBeforeMount, watch } from "vue"
-import { Request } from "@viur/vue-utils"
+import { reactive, defineComponent, computed, provide, onBeforeMount, watch, inject } from "vue"
+import { Request, ListRequest } from "@viur/vue-utils"
 import TreeFolderItem from "./TreeFolderItem.vue"
 import ViImage from "@viur/vue-utils/generic/Image.vue"
 import useTree from "./tree.js"
@@ -201,6 +212,11 @@ export default defineComponent({
   emits: ["changed"],
   components: { FileItem, FolderItem, ViImage, TreeFolderItem },
   setup(props, context) {
+    const handlerState = inject("handlerState")
+    const time = new Date().getTime()
+    let nodeHandler = ListRequest(props.module + "_node_handler" + time, { module: props.module })
+    let leafHandler = ListRequest(props.module + "_leaf_handler" + time, { module: props.module })
+
     const state = reactive({
       tree: [],
       leafView: 100,
@@ -214,7 +230,7 @@ export default defineComponent({
           if (Array.isArray(entry)) {
             entry = entry[i]
             if (!entry) break
-            entry["_expanded"] = true
+            //entry["_expanded"] = true
             retVal.push(entry)
           }
           if (state.selectedPath.length - 1 !== x && Object.keys(entry).includes("_nodes")) {
@@ -235,101 +251,71 @@ export default defineComponent({
       loading: false,
       selectedNode: null,
       selectedType: null,
-      params: computed(() => props.params)
+      params: computed(() => props.params),
+      userSelection: []
     })
-    provide("handlerState", state) // expose to components
+    provide("browserState", state) // expose to components
 
     const tree = useTree(props.module, state, state)
 
-    //update if path changes
+    // init tree
+    onBeforeMount(() => {
+      nodeHandler = ListRequest(props.module + "_node_handler" + time, { module: props.module })
+      leafHandler = ListRequest(props.module + "_leaf_handler" + time, { module: props.module })
+
+      state.tree = [props.rootnode]
+      state.selectedPath = [0]
+    })
+
+    //breadcrumb navigation
+    function changePath(idx) {
+      state.selected_leaf = null
+      state.selectedPath.splice(idx + 1, state.selectedPath.length - (idx + 1))
+      fetchData("node")
+      fetchData("leaf")
+    }
+
     watch(
-      () => state.selectedEntries,
+      () => state.selectedPath.at(-1) || state.selectedPath.length,
       (newVal, oldVal) => {
-        fetchAll()
+        console.log(newVal)
+        if (newVal !== oldVal) {
+          state.selectedNode = state.selectedEntries.at(-1)
+          context.emit("changed", state.selectedNode, "node")
+          fetchData("node")
+          fetchData("leaf")
+          console.log(handlerState.currentSelection[0]["key"])
+        }
       }
     )
 
     watch(
       () => state.selected_leaf,
       (newVal, oldVal) => {
-        state.selectedNode = state.selected_leaf
         context.emit("changed", state.selectedNode, "leaf")
-        state.leafView = 50
       }
     )
 
-    //update if marked as needs update
-    watch(
-      () => state.refreshList,
-      (newVal, oldVal) => {
-        if (newVal) {
-          fetchAll()
-          state.refreshList = false
-        }
-      }
-    )
-
-    // init tree
-    onBeforeMount(() => {
-      state.tree = [props.rootnode]
-      state.selectedPath = [0]
-    })
-    watch(
-      () => props.rootnode,
-      (newVal, oldVal) => {
-        state.tree = [newVal]
-      }
-    )
-
-    //breadcrumb navigation
-    function changePath(idx) {
-      state.selectedPath.splice(idx + 1, state.selectedPath.length - (idx + 1))
-      fetchAll()
-    }
-
-    function fetchAll() {
-      state.selected_leaf = null
-      state.loading = true
-      context.emit("changed", null, null)
-      try {
-        fetch("node").then((resp) => {
-          state.selectedNode = state.selectedEntries.at(-1)
-          context.emit("changed", state.selectedNode, "node")
-          state.leafView = 100
-        })
-      } catch (e) {}
-      fetch("leaf")
-      state.loading = false
-    }
-
-    /**
-     * Fetch nodes and leafs
-     * @param skelType
-     * @returns {Promise<Response>|number}
-     */
-    function fetch(skelType) {
+    function fetchData(skelType) {
+      //fetch current parententry, for view in the middle
       let parent_entry_key = state.selectedEntries.at(-1)?.["key"]
       if (!parent_entry_key) return 0
 
-      return Request.list(props.module, {
-        dataObj: {
-          parententry: parent_entry_key,
-          skelType: skelType,
-          orderby: "sortindex",
-          amount: 99,
-          ...state.params
-        }
-      })
+      let handler = nodeHandler
+      if (skelType === "leaf") {
+        handler = leafHandler
+      }
+      if (!handler) return 0
+      handler.state["params"] = {
+        parententry: parent_entry_key,
+        skelType: skelType,
+        orderby: "sortindex",
+        limit: 99
+      }
+      handler
+        .fetchAll()
         .then(async (resp) => {
-          let data = await resp.json()
-
-          state.request_state = parseInt(resp.status)
-          state.cursor = data["cursor"]
-          if (skelType === "node") {
-            state.currentEntry["_nodes"] = data["skellist"]
-          } else {
-            state.currentEntry["_leafs"] = data["skellist"]
-          }
+          state.currentEntry[`_${skelType}s`] = handler.state.skellist
         })
         .catch((error) => {
           if (error.response) {

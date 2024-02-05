@@ -7,15 +7,15 @@
     v-if="!state.currentRootNode"
     size="3"
   ></loader>
-  <file-browser
+
+  <browser
     v-if="state.currentRootNode"
     :rootnode="state.currentRootNode"
     :module="module"
-    :dragging="true"
     :params="contextStore.state.globalContext"
     @changed="onSelectionChanged"
   >
-  </file-browser>
+  </browser>
 </template>
 
 <script lang="ts">
@@ -25,7 +25,7 @@ import HandlerBar from "../bars/HandlerBar.vue"
 import { ListRequest } from "@viur/vue-utils"
 import { useDBStore } from "../stores/db"
 import { Request } from "@viur/vue-utils"
-import FileBrowser from "../tree/FileBrowser.vue"
+import Browser from "../tree/Browser.vue"
 import { useMessageStore } from "../stores/message"
 import { useUserStore } from "../stores/user"
 import { useContextStore } from "../stores/context"
@@ -42,7 +42,7 @@ export default defineComponent({
     selector: false
   },
   emits: ["currentSelection"],
-  components: { FileBrowser, HandlerBar, Loader },
+  components: { Browser, HandlerBar, Loader },
   setup(props, context) {
     const dbStore = useDBStore()
     const userStore = useUserStore()
@@ -89,8 +89,9 @@ export default defineComponent({
       return fetchRoots()
     }
 
-    function reloadAction() {
+    function reloadAction(path) {
       state.currentRootNode = null
+
       return fetchRoots()
     }
 
@@ -122,7 +123,12 @@ export default defineComponent({
 
     function onSelectionChanged(selection, type) {
       if (selection) {
-        state.currentSelection = [selection]
+        if (Array.isArray(selection)) {
+          state.currentSelection = selection
+        } else {
+          state.currentSelection = [selection]
+        }
+
         state.currentSelectionType = type
       } else {
         state.currentSelection = null

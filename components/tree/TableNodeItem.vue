@@ -55,8 +55,8 @@
       <template v-for="name in treeState.selectedBones">
         <td
           v-if="!name?.startsWith('_')"
-          @click="selectChild(idx)"
           @dblclick="openEditor"
+          @click="clickToExpand(idx)"
         >
           <div class="ellipsis">
             {{ getBoneViewer(child, name) }}
@@ -170,6 +170,7 @@ export default defineComponent({
       } else {
         clickedEntry["_expanded"] = true
       }
+      treeState.selectedPath = props.path.concat([idx])
     }
 
     function getBoneViewer(skel, boneName) {
