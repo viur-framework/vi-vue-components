@@ -1,6 +1,6 @@
 //@ts-nocheck
 
-import { reactive, computed, Component, getCurrentInstance } from "vue"
+import { reactive, computed, Component, getCurrentInstance, unref } from "vue"
 import { defineStore, StoreDefinition } from "pinia"
 import { useRoute, useRouter } from "vue-router"
 import { useViewStore } from "./views"
@@ -293,10 +293,13 @@ export const useDBStore = defineStore("db", () => {
     }
 
     let url = route.fullPath
-
     if (module.includes("/")) {
       // in case of nested modules like shop/cart replace in url with . to shop.cart
       url = url.replace(module, module.replace("/", "."))
+
+      let dotted_module = module.replace("/", ".")
+      let raw_route = url.replace(module, dotted_module)
+      route = router.resolve(unref(raw_route))
     }
 
     if (url) {

@@ -5,9 +5,8 @@
       :module="module"
       handler="listhandler"
     ></handler-bar>
-
     <sl-details
-      v-if="modulesStore.state.loaded && modulesStore.state.modules[module]['help_text']"
+      v-if="modulesStore.state.loaded && modulesStore.state.modules[module]?.['help_text']"
       open
       summary="Modul Info"
     >

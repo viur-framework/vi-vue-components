@@ -1,6 +1,6 @@
 <template>
   <tree-handler
-    :module="module"
+    :module="module.replace('.', '/')"
     :node="node"
   >
   </tree-handler>

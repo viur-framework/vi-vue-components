@@ -1,6 +1,6 @@
 <template>
   <form-handler
-    :module="module"
+    :module="module.replace('.', '/')"
     :group="!['node', 'leaf'].includes(skeltype) ? skeltype : ''"
     :action="route.meta['action']"
     :skelkey="skelkey"

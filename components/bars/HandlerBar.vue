@@ -96,7 +96,7 @@ export default defineComponent({
         const fileActions = {
           ":options": [["selectfields", "overlay"]],
           default: [
-            ["selectfields", "rootnodelist", "reload"],
+            ["rootnodelist", "reload"],
             ["delete", "clone", "preview", "edit", "addfolder", "addfile"]
           ]
         }
@@ -104,7 +104,7 @@ export default defineComponent({
         const treeActions = {
           ":options": [["selectfields", "overlay"]],
           default: [
-            ["selectfields", "rootnodelist", "reload"],
+            ["rootnodelist", "reload"],
             ["delete", "clone", "preview", "edit", "addnode", "addleaf"]
           ]
         }

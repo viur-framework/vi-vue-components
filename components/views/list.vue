@@ -1,6 +1,6 @@
 <template>
   <list-handler
-    :module="module"
+    :module="module.replace('.', '/')"
     :group="group"
     :view="state.view"
   >
