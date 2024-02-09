@@ -70,6 +70,7 @@
             <component
               :is="'listhandler'"
               :module="handler['module']"
+              :columns="handler?.['columns'] ? handler['columns'] : []"
               :filter="editViewFilter(handler)"
             >
             </component>
