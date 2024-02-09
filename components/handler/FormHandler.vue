@@ -264,6 +264,7 @@ export default defineComponent({
       group: props.group,
       skelkey: props.skelkey,
       skeltype: props.skeltype,
+      renderer: computed(() => props.renderer),
       relation_opened: [],
       loading: false
     })
@@ -368,7 +369,11 @@ export default defineComponent({
     function updateValue(data) {
       state.formValues[data.name] = data.value
       if (data.name === "name") {
-        dbStore.updateActiveTabName(data.value[0]["name"])
+        if (data.lang) {
+          dbStore.updateActiveTabName(data.value[0][Object.keys(data.value[0])[0]])
+        } else {
+          dbStore.updateActiveTabName(data.value[0]["name"])
+        }
       }
 
       visibleIf(data)
@@ -548,6 +553,7 @@ sl-details {
   &::part(prefix) {
     display: none;
   }
+
   &::part(base) {
     border-radius: 0;
     border-left: none;
@@ -555,6 +561,7 @@ sl-details {
     border-top: none;
     border-bottom: solid 1px var(--sl-color-neutral-300);
   }
+
   &::part(summary) {
     font-weight: 700;
   }

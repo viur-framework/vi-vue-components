@@ -14,7 +14,7 @@
     >
       <sl-icon
         slot="prefix"
-        name="add-box"
+        name="folder-plus"
       ></sl-icon>
       {{ $t("actions.addnode") }}
     </sl-button>

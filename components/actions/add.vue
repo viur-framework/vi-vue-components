@@ -13,7 +13,7 @@
     >
       <sl-icon
         slot="prefix"
-        name="plus"
+        name="plus-lg"
       ></sl-icon>
       <template v-if="label"> {{ $t("actions.add") }} </template>
     </sl-button>

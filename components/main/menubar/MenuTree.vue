@@ -8,6 +8,7 @@
       v-if="x['display'] !== 'hidden'"
       :icon="getIcon(x)"
       :library="getLibrary(x)"
+      :icon-type="getIconType(x)"
       :name="x['name']"
       :layer="layer"
       :to="x['url']"
@@ -52,7 +53,10 @@ export default defineComponent({
       if (!node["icon"]) {
         return undefined
       }
-      return node["icon"].split("___")[1]
+      if (node["icon"].includes("___")) {
+        return node["icon"].split("___")[1]
+      }
+      return node["icon"]
     }
 
     function getLibrary(node: ModuleInfo) {
@@ -62,7 +66,14 @@ export default defineComponent({
       return node["icon"].split("___")[0]
     }
 
-    return { entryType, getIcon, getLibrary }
+    function getIconType(node: ModuleInfo) {
+      if (!node["iconType"]) {
+        return undefined
+      }
+      return node["iconType"]
+    }
+
+    return { entryType, getIcon, getLibrary, getIconType }
   }
 })
 </script>

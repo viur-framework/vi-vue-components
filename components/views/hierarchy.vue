@@ -1,6 +1,6 @@
 <template>
   <hierarchy-handler
-    :module="module"
+    :module="module.replace('.', '/')"
     :node="node"
   >
   </hierarchy-handler>

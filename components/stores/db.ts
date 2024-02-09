@@ -1,6 +1,6 @@
 //@ts-nocheck
 
-import { reactive, computed, Component, getCurrentInstance } from "vue"
+import { reactive, computed, Component, getCurrentInstance, unref } from "vue"
 import { defineStore, StoreDefinition } from "pinia"
 import { useRoute, useRouter } from "vue-router"
 import { useViewStore } from "./views"
@@ -20,6 +20,7 @@ export interface ModuleInfo {
   parententry: string
   parentrepo: string
   icon: string
+  iconType: string
   handler: string
   url: null | Object
   children: Array<ModuleInfo>
@@ -52,12 +53,20 @@ function adminTreeLayer(itemList: Array<ModuleInfo>, parent: ModuleInfo): Array<
     conf["parentrepo"] = "root"
 
     // add empty icon if missing or construct library prefixed icon if needed
+    conf["iconType"] = "library"
     if (!Object.keys(conf).includes("icon")) {
       conf["icon"] = ""
+    } else if (conf["icon"].includes("bootstrap___")) {
+      conf["icon"] = conf["icon"].replace("bootstrap___", "default___")
+    } else if (conf["icon"].startsWith("/static/")) {
+      conf["iconType"] = "path"
+      conf["icon"] = `${import.meta.env.VITE_API_URL}` + conf["icon"]
+      console.log(conf["icon"])
     } else if (!conf["icon"].includes("___") && conf["icon"] !== "") {
       let icon = conf["icon"]
       conf["icon"] = "default___" + icon
     }
+
     // build url by handler
     if (!Object.keys(conf).includes("handler")) {
       conf["url"] = null // if handler is missing, this is a moduleGroup
@@ -155,7 +164,14 @@ export const useDBStore = defineStore("db", () => {
 
     //dynamic child buckets
     "handlers.opened": [
-      { to: { name: "home", fullPath: "/" }, url: "/", name: "Dashboard", icon: "dashboard", closeable: false, id: 0 }
+      {
+        to: { name: "home", fullPath: "/" },
+        url: "/",
+        name: "Dashboard",
+        icon: "grid-3x3-gap-fill",
+        closeable: false,
+        id: 0
+      }
     ], // {'url','name','library'}
     "handlers.opened.max": 1,
     "handlers.opened.max.modules": {},
@@ -214,9 +230,9 @@ export const useDBStore = defineStore("db", () => {
 
   function getConf(module: string, view = null) {
     let conf = null
-    let name = module
+    let name = module.replace(".", "/")
     if (typeof view === "string" && isNaN(parseFloat(view))) {
-      view = modulesList.value?.[module]?.["views"].findIndex((x) => x["group"] === view)
+      view = modulesList.value?.[module.replace(".", "/")]?.["views"].findIndex((x) => x["group"] === view)
     }
     if (view) name += "_" + view
     conf = modulesList.value?.[name]
@@ -277,6 +293,14 @@ export const useDBStore = defineStore("db", () => {
     }
 
     let url = route.fullPath
+    if (module.includes("/")) {
+      // in case of nested modules like shop/cart replace in url with . to shop.cart
+      url = url.replace(module, module.replace("/", "."))
+
+      let dotted_module = module.replace("/", ".")
+      let raw_route = url.replace(module, dotted_module)
+      route = router.resolve(unref(raw_route))
+    }
 
     if (url) {
       if (url.includes("/add")) {
@@ -344,9 +368,11 @@ export const useDBStore = defineStore("db", () => {
         state["handlers.active"] = idx - 1
       })
     } else if (idx < state["handlers.active"]) {
-      state["handlers.opened"].splice(idx, 1)
-      viewStore.destroy(url)
-      state["handlers.active"] = state["handlers.active"] - 1 //update to new idx
+      router.push(state["handlers.opened"][state["handlers.active"] - 1]["to"]).then(() => {
+        state["handlers.opened"].splice(idx, 1)
+        viewStore.destroy(url)
+        state["handlers.active"] = state["handlers.active"] - 1 //update to new idx
+      })
     } else if (idx > state["handlers.active"]) {
       state["handlers.opened"].splice(idx, 1)
       viewStore.destroy(url)
@@ -354,7 +380,7 @@ export const useDBStore = defineStore("db", () => {
 
     const conf = getConfByRoute(route)
     if (conf) {
-      let findStorename = `module___${route.params.module}`
+      let findStorename = `module___${route.params.module.replace(".", "/")}`
       if (Object.keys(conf).includes("view_number")) {
         findStorename += `___${conf["view_number"]}`
       }

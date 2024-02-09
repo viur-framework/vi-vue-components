@@ -62,7 +62,11 @@
         </sl-button>
       </form>
 
-      <div class="or">{{ $t("login.or") }}</div>
+      <div
+        v-if="['no', 'error'].includes(userStore.state['user.loggedin'])"
+        class="or">
+        {{ $t("login.or") }}
+      </div>
 
       <div v-if="['no', 'loading', 'error'].includes(userStore.state['user.loggedin'])">
         <sl-button
@@ -226,10 +230,11 @@ export default defineComponent({
 #google_oauth {
   display: flex;
   justify-content: center;
+}
 
-  &:has(*) {
-    margin-top: var(--sl-spacing-medium);
-  }
+
+sl-button.more-login-btn:has(+ #google_oauth > *) {
+  display: none;
 }
 
 .wrapper {
@@ -364,4 +369,15 @@ sl-input {
     height: 100%;
   }
 }
+
+sl-alert{
+  margin-bottom: var(--sl-spacing-x-small);
+
+  &::part(message){
+      font-weight: 700;
+      color: var(--sl-color-danger-500);
+      padding: var(--sl-spacing-x-small) var(--sl-spacing-medium)
+   }
+}
+
 </style>

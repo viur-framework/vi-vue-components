@@ -1,13 +1,6 @@
 <template>
-  <sl-select
-    :value="state.initValue"
-    @sl-change="rootNodeChange"
-  >
-    <sl-option
-      v-for="node in handlerState['currentRootNodes']"
-      :value="node['key']"
-      >{{ node["name"] }}</sl-option
-    >
+  <sl-select size="small" :value="state.initValue" @sl-change="rootNodeChange">
+    <sl-option v-for="node in handlerState['currentRootNodes']" :value="node['key']">{{ node["name"] }}</sl-option>
   </sl-select>
 </template>
 

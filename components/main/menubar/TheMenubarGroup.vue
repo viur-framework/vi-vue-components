@@ -5,10 +5,16 @@
       @click="openGroup"
     >
       <sl-icon
-        v-if="icon"
+        v-if="icon && iconType === 'library'"
         slot="icon"
         :name="icon"
         :library="library"
+        sprite
+      ></sl-icon>
+      <sl-icon
+        v-if="icon && iconType === 'path'"
+        slot="icon"
+        :src="icon"
       ></sl-icon>
 
       <span v-if="name">{{ name }}</span>
@@ -16,7 +22,7 @@
 
       <sl-icon
         v-if="state.slotitems"
-        name="play"
+        name="caret-right-fill"
         class="arrow"
         :class="{ 'is-open': state.open }"
       >
@@ -53,6 +59,10 @@ export default defineComponent({
     library: {
       type: String,
       default: "default"
+    },
+    iconType: {
+      type: String,
+      default: "library"
     }
   },
   setup(props, context) {

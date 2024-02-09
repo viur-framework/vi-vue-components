@@ -1,19 +1,11 @@
 <template>
-  <sl-button
-    v-if="(typeof state.conf?.['preview']) === 'string'"
-    :disabled="!state.active"
-    size="small"
-    :title="$t('actions.preview')"
-    @click="openPreview"
-  >
-    <sl-icon
-      slot="prefix"
-      name="eye"
-    ></sl-icon>
+  <sl-button v-if="typeof state.conf?.['preview'] === 'string'" :disabled="!state.active" size="small"
+    :title="$t('actions.preview')" @click="openPreview">
+    <sl-icon slot="prefix" name="eye"></sl-icon>
   </sl-button>
 
-  <sl-select v-else placeholder="Vorschau" @sl-change="openPreview">
-    <sl-option v-for="(k,v) in state.conf?.['preview']" :value="k">{{v}}</sl-option>
+  <sl-select v-else-if="state.conf?.['preview']" placeholder="Vorschau" size="small" @sl-change="openPreview">
+    <sl-option v-for="(k, v) in state.conf?.['preview']" :value="k">{{ v }}</sl-option>
   </sl-select>
 </template>
 
@@ -34,15 +26,14 @@ export default defineComponent({
       active: computed(() => {
         return handlerState.currentSelection && handlerState.currentSelection.length > 0
       }),
-      conf: computed(()=>{
+      conf: computed(() => {
         let module = handlerState["module"]
-          if (Object.keys(route.params).includes("parentmodule")) {
+        if (Object.keys(route.params).includes("parentmodule")) {
           module = route.params["parentmodule"]
         }
         return dbStore.state["vi.modules"][module]
       })
     })
-
 
     function buildUrl(url, selection) {
       url = url.replace("{{module}}", handlerState.module)
@@ -58,7 +49,7 @@ export default defineComponent({
 
     function openPreview(e) {
       let url = state.conf["preview"]
-      if (e['type']==="sl-change"){
+      if (e["type"] === "sl-change") {
         url = e.target.value
       }
 
@@ -66,7 +57,6 @@ export default defineComponent({
         window.open(import.meta.env.VITE_API_URL + buildUrl(url, selection), "_blank").focus()
       }
       e.target.value = ""
-
     }
 
     return {

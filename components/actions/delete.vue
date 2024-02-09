@@ -8,7 +8,7 @@
   >
     <sl-icon
       slot="prefix"
-      name="trash"
+      name="trash-fill"
     ></sl-icon>
   </sl-button>
 
@@ -75,6 +75,7 @@ export default defineComponent({
 
     async function deleteEntries() {
       state.opened = false
+      let deletionSuccess = true
 
       for (const entry of handlerState.currentSelection) {
         let url = `/vi/${handlerState.module}/delete`
@@ -83,9 +84,18 @@ export default defineComponent({
           dataObj["skelType"] = handlerState?.currentSelectionType
         }
 
-        await Request.securePost(url, { dataObj: dataObj })
+        await Request.securePost(url, { dataObj: dataObj }).then(async (resp) => {
+          if (resp.status !== 200) {
+            messageStore.addMessage("error", `Error on Save`, "Error on Save")
+            deletionSuccess = false
+            return 0
+          }
+        })
       }
-      messageStore.addMessage("success", `Delete`, "Entry deleted successfully")
+      if (deletionSuccess) {
+        messageStore.addMessage("success", `Delete`, "Entry deleted successfully")
+      }
+
       tableReload()
     }
 

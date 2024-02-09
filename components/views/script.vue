@@ -26,7 +26,7 @@ export default defineComponent({
     const state = reactive({})
 
     function url() {
-      let url = `${import.meta.env.VITE_API_URL}${appStore.state["admin.scriptor.url"]}#/home?key=${
+      let url = `${import.meta.env.VITE_API_URL}${appStore.state["admin.scriptor.url"]}#/runner?key=${
         route["params"]["key"]
       }`
       if (Object.keys(route.query).length > 0) {

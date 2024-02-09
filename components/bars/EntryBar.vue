@@ -1,29 +1,14 @@
 <template>
-  <div
-    class="bar"
-    style="z-index: 50"
-  >
+  <div class="bar" style="z-index: 50">
     <reloadentry></reloadentry>
 
     <template v-if="appStore.state.debug">
       <debugentry></debugentry>
     </template>
-    <save
-      v-if="['clone', 'add'].includes(handlerState.action)"
-      :module="module"
-      :action="action"
-      name="actions.save_next"
-    ></save>
-    <save
-      :module="module"
-      :action="action"
-    ></save>
-    <!--<save
-      name="actions.save_close"
-      icon="check-all"
-      :close="true"
-      :module="module" :action="action"
-    ></save>-->
+    <save v-if="['clone', 'add'].includes(handlerState.action)" :module="handlerState.module" :action="action"
+      name="actions.save_next"></save>
+    <save :module="handlerState.module" :action="action"></save>
+    <save name="actions.save_close" icon="check-all" :close="true" :module="handlerState.module" :action="action"></save>
   </div>
 </template>
 

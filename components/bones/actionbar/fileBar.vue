@@ -13,7 +13,10 @@
       class="delete-btn"
       @click="removeMultipleEntries(index, lang)"
     >
-      <sl-icon name="x"></sl-icon>
+      <sl-icon
+        slot="prefix"
+        name="x-lg"
+      ></sl-icon>
     </sl-button>
 
     <div
@@ -30,32 +33,35 @@
       :multiple="boneState.multiple"
       @change="handleUpload"
     />
-    <!--
-      <sl-button v-if="boneState.multiple && !readonly"
-                 @click="openSelector(lang)"
-                 outline
-                 :title='$t("bone.list")'
-                 class="add-btn"
+    <div class="upload-btn">
+      <sl-button
+        v-if="!boneState.readonly"
+        @click="openSelector"
       >
-          <sl-icon name="plus"></sl-icon>
+        <sl-icon
+          slot="prefix"
+          name="list-ul"
+        ></sl-icon>
       </sl-button>
-      -->
 
-    <sl-button
-      v-if="boneState.multiple && !readonly"
-      variant="success"
-      outline
-      :title="$t('bone.upload')"
-      class="upload-btn"
-      @click="uploadinput.click()"
-    >
-      <sl-icon name="upload"></sl-icon>
-      {{ $t("bone.upload") }}
-      <sl-spinner-viur
-        v-if="state.loading"
-        slot="suffix"
-      ></sl-spinner-viur>
-    </sl-button>
+      <sl-button
+        v-if="boneState.multiple && !readonly"
+        variant="success"
+        outline
+        :title="$t('bone.upload')"
+        @click="uploadinput.click()"
+      >
+        <sl-icon
+          slot="prefix"
+          name="upload"
+        ></sl-icon>
+        {{ $t("bone.upload") }}
+        <sl-spinner-viur
+          v-if="state.loading"
+          slot="suffix"
+        ></sl-spinner-viur>
+      </sl-button>
+    </div>
   </div>
 
   <relational-selector
@@ -102,7 +108,8 @@ export default defineComponent({
       loading: false,
       droparea: false,
       moduleInfo: computed(() => dbStore.getConf(boneState?.bonestructure["module"])),
-      hasUsing: computed(() => boneState?.bonestructure["using"])
+      hasUsing: computed(() => boneState?.bonestructure["using"]),
+      openedSelection: false
     })
 
     function uploadFile(file) {
@@ -177,7 +184,8 @@ export default defineComponent({
       state.loading = false
     }
 
-    function openSelector(lang) {
+    function openSelector() {
+      console.log("GGG")
       state.openedSelection = true
     }
 
@@ -242,25 +250,13 @@ sl-combobox {
   justify-content: center;
 }
 
-.delete-btn {
-  &::part(base) {
-    aspect-ratio: 1;
-  }
-}
-
 .add-btn {
   margin-left: var(--sl-spacing-x-small);
-
-  &::part(base) {
-    aspect-ratio: 1;
-  }
 }
 
 .upload-btn {
   margin-left: auto;
-
-  & sl-icon {
-    margin-right: var(--sl-spacing-x-small);
-  }
+  gap: 10px;
+  display: flex;
 }
 </style>

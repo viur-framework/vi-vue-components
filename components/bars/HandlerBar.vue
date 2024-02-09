@@ -12,10 +12,7 @@
           >
             <template v-for="groupaction in actiongrouplist">
               <sl-menu-item>
-                <component
-                  :is="`${groupaction}_action`"
-                  size="small"
-                >
+                <component :is="`${groupaction}_action`">
                   <script_action
                     v-if="groupaction.startsWith('scriptor_')"
                     :name="groupaction"
@@ -33,7 +30,6 @@
         <component
           :is="`${action}_action`"
           v-else
-          size="small"
         >
           <script_action
             v-if="action.startsWith('scriptor_')"
@@ -100,7 +96,7 @@ export default defineComponent({
         const fileActions = {
           ":options": [["selectfields", "overlay"]],
           default: [
-            ["selectfields", "rootnodelist", "reload"],
+            ["rootnodelist", "reload"],
             ["delete", "clone", "preview", "edit", "addfolder", "addfile"]
           ]
         }
@@ -108,7 +104,7 @@ export default defineComponent({
         const treeActions = {
           ":options": [["selectfields", "overlay"]],
           default: [
-            ["selectfields", "rootnodelist", "reload"],
+            ["rootnodelist", "reload"],
             ["delete", "clone", "preview", "edit", "addnode", "addleaf"]
           ]
         }

@@ -26,7 +26,7 @@
       <h2 class="headline">
         Zuletzt bearbeitet
         <sl-icon
-          name="x"
+          name="x-lg"
           @click="localStore.removeAllEntries()"
         ></sl-icon>
       </h2>
@@ -68,9 +68,9 @@ export default defineComponent({
         if (!userStore.state.user) return name
 
         if (userStore.state.user["firstname"] && userStore.state.user["lastname"]) {
-          name = userStore.state.user["firstname"] + " " + userStore.state.user["lastname"]
+          name = `${userStore.state.user["firstname"]} ${userStore.state.user["lastname"]} (${userStore.state.user.name})`
         } else if (userStore.state.user["firstname"]) {
-          name = userStore.state.user["firstname"]
+          name = userStore.state.user["firstname"] + ` (${userStore.state.user.name})`
         } else {
           name = userStore.state.user["name"]
         }

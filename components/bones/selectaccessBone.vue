@@ -81,13 +81,13 @@ export default defineComponent({
           let name = parts[parts.length - 1]
           let icon = "eye"
           if (name === "edit") {
-            icon = "pencil"
+            icon = "pencil-fill"
           } else if (name === "delete") {
-            icon = "trash"
+            icon = "trash-fill"
           } else if (name === "manage") {
             icon = "gear"
           } else if (name === "add") {
-            icon = "plus"
+            icon = "plus-lg"
           }
 
           //if (parts[0].startsWith("_")) continue

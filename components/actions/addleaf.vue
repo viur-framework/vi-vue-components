@@ -13,7 +13,7 @@
     >
       <sl-icon
         slot="prefix"
-        name="file-earmark"
+        name="file-earmark-fill"
       ></sl-icon>
       {{ $t("actions.addleaf") }}
     </sl-button>

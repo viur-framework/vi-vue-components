@@ -16,9 +16,14 @@
       :title="$t('bone.upload')"
       outline
       class="upload-btn"
+      variant="success"
       @click="uploadinput.click()"
     >
-      <sl-icon name="upload"></sl-icon>
+      <sl-icon
+        slot="prefix"
+        name="upload"
+      ></sl-icon>
+      {{ $t("bone.upload") }}
       <sl-spinner-viur
         v-if="state.loading"
         slot="suffix"
@@ -29,7 +34,10 @@
       class="relation-btn"
       @click="openRelationalSelection"
     >
-      <sl-icon name="menu"></sl-icon>
+      <sl-icon
+        slot="prefix"
+        name="list-ul"
+      ></sl-icon>
     </sl-button>
     <input
       ref="uploadinput"
@@ -85,7 +93,7 @@
       class="info-btn"
       @click="editSelection"
     >
-      <sl-icon name="pencil"></sl-icon>
+      <sl-icon name="pencil-fill"></sl-icon>
     </sl-button>
     <sl-button
       v-if="!boneState.multiple && !boneState.isEmpty"
@@ -96,7 +104,10 @@
       class="delete-btn"
       @click="$emit('change', name, '', lang, index)"
     >
-      <sl-icon name="x"></sl-icon>
+      <sl-icon
+        slot="prefix"
+        name="x-lg"
+      ></sl-icon>
     </sl-button>
   </div>
   <div class="nested_wrapper">
@@ -255,7 +266,7 @@ export default defineComponent({
 
     function changeEventNested(val) {
       if (!state.selection) state.selection = {}
-      if (Object.keys(state.selection).includes("rel")) {
+      if (Object.keys(state.selection).includes("rel") && state.selection["rel"]) {
         state.selection["rel"][val.name] = val.value
       } else {
         state.selection["rel"] = { [val.name]: val.value }
@@ -328,6 +339,10 @@ export default defineComponent({
   display: flex;
   gap: 10px;
   position: relative;
+
+  & + .nested_wrapper {
+    padding-top: 0 !important;
+  }
 }
 
 .droparea {
@@ -345,29 +360,10 @@ export default defineComponent({
   justify-content: center;
 }
 
-.delete-btn {
-  &::part(base) {
-    aspect-ratio: 1;
-  }
-}
-
 .info-btn {
   &::part(base) {
-    aspect-ratio: 1;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
-  }
-}
-
-.upload-btn {
-  &::part(base) {
-    aspect-ratio: 1;
-  }
-}
-
-.relation-btn {
-  &::part(base) {
-    aspect-ratio: 1;
   }
 }
 

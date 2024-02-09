@@ -8,7 +8,7 @@
   >
     <sl-icon
       slot="prefix"
-      name="pencil"
+      name="pencil-fill"
     ></sl-icon>
   </sl-button>
 </template>

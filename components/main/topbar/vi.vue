@@ -11,6 +11,7 @@
     :label="$t('sidebar.name')"
     class="drawer-overview"
     :open="state.sidebarOpen"
+    @sl-hide="state.sidebarOpen = false"
   >
     <div class="drawer-header">
       <sl-avatar
@@ -25,13 +26,27 @@
         @click="openUser"
       >
         {{ state.name }}
+        <span class="subline">{{ userStore.state.user.name }}</span>
       </div>
-      <sl-button
-        variant="primary"
-        size="small"
-        @click="state.openLogout = !state.openLogout"
-        >{{ $t("sidebar.logout") }}
-      </sl-button>
+      <sl-button-group>
+        <sl-button
+          variant="primary"
+          size="small"
+          @click="state.openLogout = !state.openLogout"
+          >{{ $t("sidebar.logout") }}
+        </sl-button>
+        <sl-button
+          variant="primary"
+          size="small"
+          @click="state.sidebarOpen = false"
+        >
+          <sl-icon
+            slot="prefix"
+            name="x-lg"
+          >
+          </sl-icon>
+        </sl-button>
+      </sl-button-group>
     </div>
 
     <div class="drawer-scroller">
@@ -51,6 +66,19 @@
       </div> -->
 
       <div class="group">
+        <template v-if="userStore.userAccess.includes('scriptor')">
+          <div class="group-headline">
+            {{ $t("sidebar.section_tools") }}
+          </div>
+          <sl-button
+            size="medium"
+            @click="openScriptor"
+          >
+            <sl-icon name="code-slash"></sl-icon>
+            Scriptor
+          </sl-button>
+        </template>
+
         <div class="group-headline">
           {{ $t("sidebar.section_system_name") }}
         </div>
@@ -281,6 +309,11 @@ export default defineComponent({
       state.sidebarOpen = !state.sidebarOpen
     }
 
+    function openScriptor() {
+      let url = `${import.meta.env.VITE_API_URL}${appStore.state["admin.scriptor.url"]}#/home`
+      window.open(url, "_blank").focus()
+    }
+
     return {
       state,
       userStore,
@@ -289,7 +322,8 @@ export default defineComponent({
       openTask,
       executeTask,
       setValues,
-      openUser
+      openUser,
+      openScriptor
     }
   }
 })
@@ -406,6 +440,9 @@ sl-drawer {
   overflow: hidden;
   text-overflow: ellipsis;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
 }
 
 .user {
@@ -418,5 +455,13 @@ sl-drawer {
     flex-direction: row;
     justify-content: space-between;
   }
+}
+
+.subline {
+  font-size: 0.7rem;
+  text-align: left;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>

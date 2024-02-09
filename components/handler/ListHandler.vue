@@ -5,9 +5,8 @@
       :module="module"
       handler="listhandler"
     ></handler-bar>
-
     <sl-details
-      v-if="modulesStore.state.loaded && modulesStore.state.modules[module]['help_text']"
+      v-if="modulesStore.state.loaded && modulesStore.state.modules[module]?.['help_text']"
       open
       summary="Modul Info"
     >
@@ -25,34 +24,36 @@
       <table ref="datatable">
         <thead>
           <tr>
-            <th
-              v-for="bone in state.selectedBones"
-              :class="{ 'stick-header': state.sticky }"
-              :style="{ width: '150px' }"
-            >
-              {{ currentlist.structure?.[bone]?.["descr"] }}
-              <div
-                v-if="currentlist.state.state === 2"
-                class="sort-arrow-wrap"
+            <template v-for="bone in state.selectedBones">
+              <th
+                v-if="currentlist.structure?.[bone]"
+                :class="{ 'stick-header': state.sticky }"
+                :style="{ width: '150px' }"
               >
-                <sl-icon
-                  v-if="state.sorting === '' || state.sorting !== bone + '$asc'"
-                  name="play"
-                  class="sort-arrow sort-up"
-                  :class="{ 'sort-active': state.sorting === bone + '$desc' }"
-                  :title="$t('actions.sortasc')"
-                  @click="sorting(bone, 'asc')"
-                ></sl-icon>
-                <sl-icon
-                  v-if="state.sorting === bone + '$asc'"
-                  name="play"
-                  class="sort-arrow sort-down"
-                  :class="{ 'sort-active': state.sorting === bone + '$asc' }"
-                  :title="$t('actions.sortdesc')"
-                  @click="sorting(bone, 'desc')"
-                ></sl-icon>
-              </div>
-            </th>
+                {{ currentlist.structure?.[bone]?.["descr"] }}
+                <div
+                  v-if="currentlist.state.state === 2"
+                  class="sort-arrow-wrap"
+                >
+                  <sl-icon
+                    v-if="state.sorting === '' || state.sorting !== bone + '$asc'"
+                    name="caret-right-fill"
+                    class="sort-arrow sort-up"
+                    :class="{ 'sort-active': state.sorting === bone + '$desc' }"
+                    :title="$t('actions.sortasc')"
+                    @click="sorting(bone, 'asc')"
+                  ></sl-icon>
+                  <sl-icon
+                    v-if="state.sorting === bone + '$asc'"
+                    name="caret-right-fill"
+                    class="sort-arrow sort-down"
+                    :class="{ 'sort-active': state.sorting === bone + '$asc' }"
+                    :title="$t('actions.sortdesc')"
+                    @click="sorting(bone, 'desc')"
+                  ></sl-icon>
+                </div>
+              </th>
+            </template>
           </tr>
         </thead>
         <tbody>
@@ -64,17 +65,19 @@
               @click.ctrl="entrySelected(idx, 'append')"
               @click.shift="entrySelected(idx, 'range')"
             >
-              <td v-for="name in state.selectedBones">
-                <component
-                  :is="getWidget(skel, name, idx)"
-                  :skel="currentlist.state.skellist[idx]"
-                  :structure="currentlist.structure"
-                  :bonename="name"
-                  :idx="idx"
-                  :rendered="skel[name]"
-                >
-                </component>
-              </td>
+              <template v-for="name in state.selectedBones">
+                <td v-if="currentlist.structure?.[name]">
+                  <component
+                    :is="getWidget(skel, name, idx)"
+                    :skel="currentlist.state.skellist[idx]"
+                    :structure="currentlist.structure"
+                    :bonename="name"
+                    :idx="idx"
+                    :rendered="skel[name]"
+                  >
+                  </component>
+                </td>
+              </template>
             </tr>
           </template>
         </tbody>
@@ -229,7 +232,7 @@ export default defineComponent({
     provide("setLimit", setLimit)
 
     onMounted(() => {
-      if (props.columns) {
+      if (props.columns && props.columns.length > 0) {
         state.selectedBones = props.columns
       }
       state.conf = dbStore.getConf(props.module, props.view)
@@ -320,7 +323,7 @@ export default defineComponent({
     function primaryAction(e: Event) {
       if (state.conf["handler"].startsWith("list.fluidpage")) {
         let conf = dbStore.getConf(state.module)
-        let module = conf["handler"].split(".").at(-1)
+        let module = conf["handler"].split(".").at(-1).replace("/", ".")
         let url = `/db/${module}/fluidpage/${state.module}/${state.currentSelection[0]["key"]}`
         let route = router.resolve(unref(url))
         contextStore.setContext("fluidpage.dest.key", state.currentSelection[0]["key"], state.tabId)
@@ -351,12 +354,12 @@ export default defineComponent({
     }
 
     function setSelectedBones() {
-      if (props.columns) {
+      if (props.columns && props.columns.length > 0) {
         state.selectedBones = props.columns
         return 0
       }
       state.conf = dbStore.getConf(props.module, props.view)
-      if (state.conf && state.conf?.["columns"]) {
+      if (state.conf && state.conf?.["columns"] && state.conf?.["columns"].length > 0) {
         state.selectedBones = state.conf["columns"]
       } else {
         let bones = []
@@ -436,6 +439,7 @@ export default defineComponent({
 
     function getWidget(renderedSkel, name, idx) {
       let bone = currentlist.structure[name]
+      if (!bone) return undefined
       let boneType = bone.type
 
       if (dbStore.state["bones.view"]) {

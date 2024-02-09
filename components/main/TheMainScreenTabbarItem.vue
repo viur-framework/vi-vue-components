@@ -89,9 +89,9 @@ export default defineComponent({
     const state = reactive({
       icon: true,
       modeIcon: computed(() => {
-        if (props.mode === "add") return "plus"
-        if (props.mode === "edit") return "pencil"
-        if (props.mode === "clone") return "clone"
+        if (props.mode === "add") return "plus-lg"
+        if (props.mode === "edit") return "pencil-fill"
+        if (props.mode === "clone") return "copy"
       })
     })
     function onIconError() {

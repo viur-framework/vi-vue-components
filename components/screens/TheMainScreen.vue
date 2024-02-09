@@ -7,6 +7,14 @@
         @sl-request-close="$event.preventDefault()"
       >
         {{ $t("noaccess.descr") }}
+        <div style="margin-top: 10px">
+          <sl-button
+            variant="danger"
+            @click="userStore.logout()"
+          >
+            {{ $t("login.logout") }}
+          </sl-button>
+        </div>
       </sl-dialog>
     </div>
   </template>
@@ -110,12 +118,25 @@ export default defineComponent({
       Request.get("/vi/config").then(async (resp: Response) => {
         let data = await resp.json()
         dbStore.state["vi.name"] = data["configuration"]["vi.name"]
-        dbStore.state["vi.modules.groups"] = data["configuration"]["moduleGroups"]
-        dbStore.state["vi.modules"] = data["modules"]
+        if (Object.keys(data["configuration"]).includes("module_groups")) {
+          dbStore.state["vi.modules.groups"] = data["configuration"]["module_groups"]
+        } else if (Object.keys(data["configuration"]).includes("moduleGroups")) {
+          dbStore.state["vi.modules.groups"] = data["configuration"]["moduleGroups"]
+        }
+
+        let currentModules = Object.entries(data["modules"]).map((i) => {
+          i[0] = i[0].replace(".", "/")
+          return i
+        })
+
+        dbStore.state["vi.modules"] = currentModules.reduce((obj, i) => {
+          obj[i[0]] = i[1]
+          return obj
+        }, {})
 
         if (route.path !== "/") {
           let new_route = router.resolve(unref(route))
-          dbStore.addOpened(new_route, new_route.params["module"], new_route.query["view"])
+          dbStore.addOpened(new_route, new_route.params["module"].replace(".", "/"), new_route.query["view"])
         }
       })
       Request.get("/vi/getVersion").then(async (resp: Response) => {
@@ -150,6 +171,7 @@ export default defineComponent({
       route,
       dbStore,
       urlToRoute,
+      userStore,
       state
     }
   }

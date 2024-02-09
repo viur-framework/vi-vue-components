@@ -37,7 +37,7 @@
         >
           <sl-icon
             slot="prefix"
-            name="system"
+            name="robot"
           ></sl-icon>
           Automatisch
         </sl-menu-item>
@@ -67,7 +67,7 @@
 </template>
 
 <script lang="ts">
-import { reactive, defineComponent, inject, computed } from "vue"
+import { reactive, defineComponent, inject, computed, watch } from "vue"
 import { useMessageStore } from "../stores/message"
 import { useDebounceFn } from "@vueuse/core"
 
@@ -92,14 +92,26 @@ export default defineComponent({
         return false //till core update
         return !searchableBone
       }),
-      searchTypeAuto: computed(() => {
-        return currentlist?.state.state === 2 && state.searchValue ? "local" : "database"
-      }),
+      searchTypeAuto: "database",
       searchType: "auto",
       searchValue: "",
       searchTypeOpened: false,
-      loading: false
+      loading: false,
+      isLarge: false
     })
+
+    watch(
+      () => currentlist?.state.state,
+      (newVal, oldVal) => {
+        if (newVal === 1) {
+          state.isLarge = true
+        }
+
+        if (!state.isLarge && newVal === 2) {
+          state.searchTypeAuto = "local"
+        }
+      }
+    )
 
     const debouncedSearch = useDebounceFn((event) => {
       state.loading = true
@@ -122,7 +134,7 @@ export default defineComponent({
           delete currentlist.state.params["search"]
         } catch (e) {}
       } else {
-        if (event.target.value === "") {
+        if (event.target.value === "" || event.target.value.length === 1) {
           reset_filter()
           state.loading = false
           return 0
@@ -155,7 +167,7 @@ export default defineComponent({
     }
 
     function searchTypeIcon() {
-      if (state.searchType === "auto") return "system"
+      if (state.searchType === "auto") return "robot"
       if (state.searchType === "local") return "list-ul"
       if (state.searchType === "database") return "database"
     }

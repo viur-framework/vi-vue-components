@@ -12,11 +12,16 @@
         @click="openItem(route)"
       >
         <sl-icon
-          v-if="icon"
+          v-if="icon && iconType === 'library'"
           slot="icon"
           :name="icon"
           :library="library"
           sprite
+        ></sl-icon>
+        <sl-icon
+          v-if="icon && iconType === 'path'"
+          slot="icon"
+          :src="icon"
         ></sl-icon>
       </sl-avatar>
 
@@ -30,7 +35,7 @@
       <sl-icon
         v-if="closeable"
         sprite
-        name="x"
+        name="x-lg"
         class="icon-end"
         @click.stop="removeItem"
       >
@@ -72,7 +77,7 @@
           <sl-menu-item @click="openConfig()">
             <sl-icon
               slot="prefix"
-              name="pencil"
+              name="pencil-fill"
               sprite
             ></sl-icon>
             Bearbeiten
@@ -80,7 +85,7 @@
           <sl-menu-item @click="openItem(route, true)">
             <sl-icon
               slot="prefix"
-              name="plus"
+              name="plus-lg"
               sprite
             ></sl-icon>
             Öffnen
@@ -222,6 +227,10 @@ export default defineComponent({
       type: String,
       default: "default"
     },
+    iconType: {
+      type: String,
+      default: "library"
+    },
     layer: {
       type: Number,
       default: 0
@@ -279,7 +288,7 @@ export default defineComponent({
       let new_route = router.resolve(unref(route))
       state.maxtabsReached = !dbStore.addOpened(
         new_route,
-        route.params["module"],
+        props.moduleInfo["module"],
         route.query["view"],
         "",
         "",

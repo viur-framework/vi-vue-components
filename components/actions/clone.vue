@@ -7,7 +7,7 @@
   >
     <sl-icon
       slot="prefix"
-      name="clone"
+      name="copy"
     ></sl-icon>
   </sl-button>
 </template>
