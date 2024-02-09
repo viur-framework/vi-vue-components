@@ -11,6 +11,7 @@
 import { reactive, defineComponent, inject, computed } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useDBStore } from "../stores/db"
+import { useAppStore} from "../stores/app";
 import { Request } from "@viur/vue-utils"
 import { useMessageStore } from "../stores/message"
 import { useContextStore } from "../stores/context"
@@ -36,6 +37,7 @@ export default defineComponent({
     const route = useRoute()
     const dbStore = useDBStore()
     const contextStore = useContextStore()
+    const appStore = useAppStore()
     const state = reactive({
       loading: false
     })
@@ -60,9 +62,18 @@ export default defineComponent({
       for (const key: string of formData.keys()) {
         obj[[key]] = formData.getAll(key)
       }
+
       let url = `/${handlerState.renderer}/${handlerState.module}/${
         handlerState.action === "clone" ? "add" : handlerState.action
       }`
+
+      if (
+        appStore.state["core.version"] &&
+        appStore.state["core.version"]?.[0] >= 3 &&
+        appStore.state["core.version"]?.[1] >= 6
+      ) {
+        url = `/${handlerState.renderer}/${handlerState.module}/${handlerState.action}`
+      }
 
       if (handlerState.skeltype === "node" || handlerState.skeltype === "leaf") {
         url += `/${handlerState.skeltype}`
