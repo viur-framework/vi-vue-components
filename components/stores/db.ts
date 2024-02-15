@@ -9,6 +9,7 @@ import { useUserStore } from "./user"
 import { useContextStore } from "./context"
 import { destroyStore } from "@viur/vue-utils/utils/handlers"
 import hierarchyhandler from "../components/handler/HierarchyHandler.vue"
+import Utils from "../utils"
 //import Element from "../fluidpage/element.vue"
 
 export interface ModuleInfo {
@@ -52,21 +53,9 @@ function adminTreeLayer(itemList: Array<ModuleInfo>, parent: ModuleInfo): Array<
     conf["parententry"] = parent["module"]
     conf["parentrepo"] = "root"
 
-    // add empty icon if missing or construct library prefixed icon if needed
-    conf["iconType"] = "library"
-    if (!Object.keys(conf).includes("icon")) {
-      conf["icon"] = ""
-    } else if (conf["icon"].includes("bootstrap___")) {
-      conf["icon"] = conf["icon"].replace("bootstrap___", "default___")
-    } else if (conf["icon"].startsWith("/static/")) {
-      conf["iconType"] = "path"
-      conf["icon"] = `${import.meta.env.VITE_API_URL}` + conf["icon"]
-      console.log(conf["icon"])
-    } else if (!conf["icon"].includes("___") && conf["icon"] !== "") {
-      let icon = conf["icon"]
-      conf["icon"] = "default___" + icon
-    }
-
+    const [icon, iconType, iconname, library] = Utils.iconNormalization(conf["icon"])
+    conf["icon"] = icon
+    conf["iconType"] = iconType
     // build url by handler
     if (!Object.keys(conf).includes("handler")) {
       conf["url"] = null // if handler is missing, this is a moduleGroup

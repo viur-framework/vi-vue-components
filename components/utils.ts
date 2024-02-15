@@ -99,4 +99,41 @@ export default class Utils {
     }
     return path
   }
+
+  static iconNormalization(icon) {
+    let oldicons = {
+      "file-system": "folder-fill",
+      users: "people-fill",
+      user: "person-fill",
+      dashboard: "grid-3x3-gap-fill",
+      trash: "trash-fill",
+      interface: "shuffle",
+      hierarchy: "diagram-2-fill",
+      "icon-settings": "gear-fill",
+      "icon-hashtag": "hash",
+      "icon-list": "list-ul"
+    }
+
+    // add empty icon if missing or construct library prefixed icon if needed
+    let iconType = "library"
+    if (!icon) {
+      icon = ""
+    } else if (Object.keys(oldicons).includes(icon)) {
+      icon = "default___" + oldicons[icon]
+    } else if (icon.startsWith("bootstrap___")) {
+      icon = icon.replace("bootstrap___", "default___")
+    } else if (icon.startsWith("/static/")) {
+      iconType = "path"
+      icon = `${import.meta.env.VITE_API_URL}` + icon
+    } else if (!icon.includes("___") && icon !== "") {
+      icon = "default___" + icon
+    }
+
+    if (iconType === "library") {
+      let [library, iconname] = icon.split("___")
+      return [icon, iconType, iconname, library]
+    }
+
+    return [icon, iconType, null, null]
+  }
 }

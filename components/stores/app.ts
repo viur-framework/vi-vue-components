@@ -23,7 +23,20 @@ export const useAppStore = defineStore("appStore", () => {
     "admin.login.logo": Utils.publicAsset("logo.svg"),
     "admin.color.primary": "",
     "admin.color.secondary": "",
-    "admin.scriptor.url": "/scriptor/index.html"
+    "admin.scriptor.url": "/scriptor/index.html",
+
+    oldicons: {
+      "file-system": "folder-fill",
+      users: "people-fill",
+      user: "person-fill",
+      dashboard: "grid-3x3-gap-fill",
+      trash: "trash-fill",
+      interface: "shuffle",
+      hierarchy: "diagram-2-fill",
+      "icon-settings": "gear-fill",
+      "icon-hashtag": "hash",
+      "icon-list": "list-ul"
+    }
   })
 
   return { state }

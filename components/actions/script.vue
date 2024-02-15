@@ -14,8 +14,8 @@
       <sl-icon
         v-if="state.current['rel']['icon']"
         slot="prefix"
-        :name="state.current['rel']['icon']?.split('___')[1]"
-        :library="state.current['rel']['icon']?.split('___')[0]"
+        :name="state.iconInfo[1]"
+        :library="state.iconInfo[0]"
       ></sl-icon>
       <template v-else>
         {{ state.current["rel"]["name"] }}
@@ -34,6 +34,7 @@ import { useUserStore } from "../stores/user"
 import { useModulesStore } from "../stores/modules"
 import { useAppStore } from "../stores/app"
 import { useDBStore } from "../stores/db"
+import Utils from "../utils"
 
 export default defineComponent({
   props: {
@@ -103,6 +104,10 @@ export default defineComponent({
         }
 
         return url
+      }),
+      iconInfo: computed(() => {
+        const [icon, iconType, iconname, library] = Utils.iconNormalization(state.current["rel"]?.["icon"])
+        return [library, iconname]
       })
     })
 

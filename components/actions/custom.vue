@@ -49,11 +49,13 @@
 <script lang="ts">
 import { reactive, defineComponent, computed, inject, unref } from "vue"
 import { useDBStore } from "../stores/db"
+import { useAppStore } from "../stores/app"
 import { useRoute, useRouter } from "vue-router"
 import { useUserStore } from "../stores/user"
 import { useContextStore } from "../stores/context"
 import Logics from "logics-js"
 import { Request } from "@viur/vue-utils"
+import Utils from "../utils"
 
 export default defineComponent({
   props: {
@@ -66,6 +68,7 @@ export default defineComponent({
     const handlerState: any = inject("handlerState")
     const dbStore = useDBStore()
     const contextStore = useContextStore()
+    const appStore = useAppStore()
     const userStore = useUserStore()
     const tableReload: any = inject("reloadAction")
 
@@ -119,16 +122,8 @@ export default defineComponent({
         return true
       }),
       iconInfo: computed(() => {
-        let lib = "default"
-        let icon = ""
-        const icondata = state.info?.["icon"].split("___")
-        if (icondata.length === 2) {
-          lib = icondata[0]
-          icon = icondata[1]
-        } else {
-          icon = icondata[0]
-        }
-        return [lib, icon]
+        const [icon, iconType, iconname, library] = Utils.iconNormalization(state.info?.["icon"])
+        return [library, iconname]
       })
     })
 
@@ -174,7 +169,7 @@ export default defineComponent({
 
     function routeOpen(i) {
       let route = router.resolve(unref(state.info["url"]))
-      contextStore.setContext('selection', i, route.query["_"])
+      contextStore.setContext("selection", i, route.query["_"])
       dbStore.addOpened(route, null, null, state.info["name"], state.info["icon"], state.info["library"])
     }
 
