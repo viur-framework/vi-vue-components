@@ -1,6 +1,6 @@
 //@ts-nocheck
 
-import { reactive, computed, Component, getCurrentInstance, unref } from "vue"
+import { reactive, computed, Component, getCurrentInstance, unref,markRaw } from "vue"
 import { defineStore, StoreDefinition } from "pinia"
 import { useRoute, useRouter } from "vue-router"
 import { useViewStore } from "./views"
@@ -10,7 +10,6 @@ import { useContextStore } from "./context"
 import { destroyStore } from "@viur/vue-utils/utils/handlers"
 import hierarchyhandler from "../components/handler/HierarchyHandler.vue"
 import Utils from "../utils"
-//import Element from "../fluidpage/element.vue"
 
 export interface ModuleInfo {
   name: string
@@ -145,7 +144,7 @@ export const useDBStore = defineStore("db", () => {
     "stores.map": {},
 
     //actions
-    "topbar.actions": [],
+    "topbar.actions": markRaw([]),
     "floatingbar.actions": [],
 
     //boneViewer
@@ -172,7 +171,7 @@ export const useDBStore = defineStore("db", () => {
     "skeldrawer.structure": {},
 
     //fluidpage Element
-    "fluidpage.element": "Element",
+    "fluidpage.element": "FluidpageElement",
 
     //Tasks
     tasks: []

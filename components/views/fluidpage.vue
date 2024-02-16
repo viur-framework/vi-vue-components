@@ -19,7 +19,8 @@ export default defineComponent({
       type: String,
       required: true
     },
-    group: String
+    group: String,
+    parentmodule:String
   },
   components: { FluidpageHandler },
   setup(props, context) {

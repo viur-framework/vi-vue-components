@@ -88,11 +88,13 @@ import handlers from "../handler/handlers"
 import relationalSelector from "./components/relationalSelector.vue"
 
 export default defineComponent({
+  inheritAttrs: false,
   props: {
     name: String,
     value: Object,
     index: Number,
-    lang: String
+    lang: String,
+
   },
   components: { Wrapper_nested, ...handlers, relationalSelector },
   emits: ["change"],

@@ -5,10 +5,10 @@
     <template v-if="appStore.state.debug">
       <debugentry></debugentry>
     </template>
-    <save v-if="['clone', 'add'].includes(handlerState.action)" :module="handlerState.module" :action="action"
+    <save v-if="['clone', 'add'].includes(handlerState.action)" :module="handlerState.module"
       name="actions.save_next"></save>
-    <save :module="handlerState.module" :action="action"></save>
-    <save name="actions.save_close" icon="check-all" :close="true" :module="handlerState.module" :action="action"></save>
+    <save :module="handlerState.module" ></save>
+    <save name="actions.save_close" icon="check-all" :close="true" :module="handlerState.module"></save>
   </div>
 </template>
 

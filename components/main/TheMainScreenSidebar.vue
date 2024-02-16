@@ -19,6 +19,7 @@
 </template>
 
 <script lang="ts">
+// @ts-nocheck
 import MenuTree from "./menubar/MenuTree.vue"
 import { useDBStore } from "../stores/db"
 import { computed, defineComponent, reactive } from "vue"

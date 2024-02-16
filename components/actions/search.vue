@@ -67,6 +67,7 @@
 </template>
 
 <script lang="ts">
+// @ts-nocheck
 import { reactive, defineComponent, inject, computed, watch } from "vue"
 import { useMessageStore } from "../stores/message"
 import { useDebounceFn } from "@vueuse/core"

@@ -9,6 +9,7 @@
 </template>
 
 <script lang="ts">
+// @ts-nocheck
 import { reactive, defineComponent, inject, computed } from "vue"
 import { useRoute } from "vue-router"
 import { useDBStore } from "../stores/db"

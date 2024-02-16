@@ -8,11 +8,13 @@
     <sl-icon
       slot="prefix"
       name="copy"
+      sprite
     ></sl-icon>
   </sl-button>
 </template>
 
 <script lang="ts">
+// @ts-nocheck
 import { reactive, defineComponent, inject, computed } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useDBStore } from "../stores/db"

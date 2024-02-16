@@ -17,6 +17,7 @@
       v-for="grid in state.grids"
       v-if="state.grids.length"
     >
+
       <component
         :is="state.fluidpageElement"
         v-for="contentSkel in grid"
@@ -90,7 +91,7 @@ import router from "../routes"
 import { useModulesStore } from "../stores/modules"
 import { useRoute } from "vue-router"
 import Loader from "@viur/vue-utils/generic/Loader.vue"
-import Element from "../fluidpage/element.vue"
+import FluidpageElement from "../fluidpage/element.vue"
 
 export default defineComponent({
   props: {
@@ -105,7 +106,7 @@ export default defineComponent({
     }
   },
   emits: ["currentSelection"],
-  components: { Loader, HandlerBar, Element },
+  components: { Loader, HandlerBar, FluidpageElement },
   setup(props, context) {
     const dbStore = useDBStore()
     const route = useRoute()

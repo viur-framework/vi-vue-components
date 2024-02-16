@@ -61,6 +61,7 @@ import { reactive, defineComponent, onMounted, inject, computed } from "vue"
 import { useDBStore } from "../stores/db"
 
 export default defineComponent({
+  inheritAttrs: false,
   props: {
     name: String,
     value: Object,

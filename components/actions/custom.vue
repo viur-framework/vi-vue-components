@@ -47,6 +47,7 @@
 </template>
 
 <script lang="ts">
+// @ts-nocheck
 import { reactive, defineComponent, computed, inject, unref } from "vue"
 import { useDBStore } from "../stores/db"
 import { useAppStore } from "../stores/app"

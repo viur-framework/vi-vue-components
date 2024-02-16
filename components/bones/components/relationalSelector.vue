@@ -54,7 +54,7 @@ export default defineComponent({
   props: {
     open: Boolean,
     name: String,
-    handler: Object,
+    handler: [Object, String],
     module: String,
     tabId: String,
     rowselect: {

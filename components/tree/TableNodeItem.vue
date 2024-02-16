@@ -90,7 +90,7 @@ export default defineComponent({
       type: Array
     }
   },
-  emit: ["loaded"],
+  emits: ["loaded"],
   setup(props, context) {
     const treeState = inject("handlerState")
     const closeSelector = inject("closeSelector")

@@ -14,10 +14,7 @@
     @dragend.prevent="dragEnd"
   >
     <div class="actions_before">
-      <add
-        :label="false"
-        :params="{ sortindex: calculateIndex(state.prevIdx), 'fluidpage.dest.key': route.params['key'] }"
-      ></add>
+
     </div>
 
     <div class="header">
@@ -37,7 +34,7 @@
           size="small"
           @click="expandContent"
         >
-          <sl-icon name="plus"></sl-icon>
+          <sl-icon name="plus-lg"></sl-icon>
         </sl-button>
         <sl-button
           v-if="skel['width'] !== '1'"
@@ -46,7 +43,7 @@
           size="small"
           @click="shrinkContent"
         >
-          <sl-icon name="minus"></sl-icon>
+          <sl-icon name="dash-lg"></sl-icon>
         </sl-button>
         <edit></edit>
         <delete></delete>
@@ -67,8 +64,8 @@
       <div class="column">
         <h2 class="element-headline">
           {{ skel["kind"] }}
-          <component v-if="skel['headline']">: {{ skel["headline"] }}</component>
-          <component v-else-if="skel['subline']">: {{ skel["subline"] }}</component>
+          <span v-if="skel['headline']">: {{ skel["headline"] }}</span>
+          <h2 v-else-if="skel['subline']">: {{ skel["subline"] }}</h2>
         </h2>
         <span
           v-if="skel['descr']"

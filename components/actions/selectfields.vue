@@ -56,7 +56,7 @@ export default defineComponent({
   components: {},
   setup(props, context) {
     const handlerState: any = inject("handlerState")
-    const currentlist: any = inject("currentlist")
+
     const state = reactive({
       structure: {},
       active: []
@@ -67,7 +67,8 @@ export default defineComponent({
     function openSelectDialog() {
       if (handlerState.structure) {
         state.structure = handlerState.structure
-      } else if (currentlist) {
+      } else {
+        const currentlist: any = inject("currentlist")
         state.structure = currentlist.structure
       }
 

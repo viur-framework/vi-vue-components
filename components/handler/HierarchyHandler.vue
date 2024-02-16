@@ -72,7 +72,7 @@ import { useRoute } from "vue-router"
 import { useUserStore } from "../stores/user"
 import TableNodeItem from "../tree/TableNodeItem.vue"
 import FloatingBar from "../bars/FloatingBar.vue"
-import useTree from "../tree/tree"
+import useTree from "../tree/tree.js"
 import Loader from "@viur/vue-utils/generic/Loader.vue"
 
 export default defineComponent({

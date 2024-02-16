@@ -41,7 +41,6 @@
           :leafs="state.currentEntry?.['_leafs']"
         >
           <sl-table-wrapper
-            :search="filter"
             sortable
             class="scroller"
           >

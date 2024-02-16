@@ -37,6 +37,7 @@
           class="input"
           :placeholder="$t('login.email')"
           name="username"
+          autocomplete="username"
         />
 
         <input
@@ -45,6 +46,7 @@
           :placeholder="$t('login.password')"
           name="password"
           type="password"
+          autocomplete="current-password"
         />
         <sl-button
           v-if="['no', 'loading', 'error'].includes(userStore.state['user.loggedin'])"

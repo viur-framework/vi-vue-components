@@ -143,6 +143,7 @@ import { useDBStore } from "../stores/db"
 import ViImage from "@viur/vue-utils/generic/Image.vue"
 
 export default defineComponent({
+  inheritAttrs: false,
   props: {
     name: String,
     value: Object,

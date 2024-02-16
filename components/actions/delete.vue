@@ -3,7 +3,7 @@
     variant="danger"
     size="small"
     :disabled="!state.active || !state.canDelete"
-    :title="$t('actions.delete')"
+    :title="$t('actions.delete.text')"
     @click="openDeletePopup"
   >
     <sl-icon
