@@ -100,7 +100,37 @@ export default class Utils {
     return path
   }
 
-  static iconNormalization(icon) {
+  static iconNormalization(icon){
+    let viurIcons = [
+      "audio","chat","dashboard","exclamation-octagon","folder","justify-left",
+      "login","pdf","quote","statistics","type-h3","barcode","check-all","database",
+      "exclamation-triangle","fullscreen-exit","justify-right","logout","pencil","stop",
+      "type-h4","basket","check-circle","delivery-note","eye-slash","fullscreen","justify",
+      "megaphone","person","rename","sun", "type-italic","scriptsbell","check-square-outline",
+      "delivery","eye","funnel","key-chubb","menu","personae","ribbon","system","type-underline",
+      "billing-file","check-square","desktop","file-earmark-arrow-up","gear","key-cylinder",
+      "message-news","phone-book","scale","table","unlock","add-box","billing","check","diagnosis",
+      "file-earmark-check","gift","kiosk","minus","phone","search","tablet","upload","add-file",
+      "book","chevron-down","dot","file-earmark-image","globe","labels","moon","photo","send",
+      "text-center","user-accounts","aircraft","box-arrow-up-right","chevron-left","download-file",
+      "file-earmark-lightning","grip-vertical","laptop","notes","pin","share","text-file","user-contacts",
+      "archive","box","chevron-right","download","file-earmark-minus","hashtag","order-cancelled",
+      "play-circle","shield-check","text-indent","users","arrow-clockwise","briefcase","chevron-up",
+      "draggable","file-earmark-pdf","heart-fill","lightbulb","order-coupon","play","shield-slash",
+      "text-left","wifi","arrow-counterclockwise","bug","clock","droplet","file-earmark-play","heart",
+      "lightning","order-error","plus","shield-warning","text-outdent","workflow","arrow-down",
+      "calendar-check","clone","e-commerce","file-earmark-zip","hierarchy","link-45deg","order-return",
+      "power","shield-x","text-right","wrench","arrow-left-right","calendar-event","cloud","edit-box",
+      "file-earmark","house","list-item","order-shipped","press","slash-square","three-dots","x-circle",
+      "arrow-left","calendar-x","code-slash","envelope-open","file-system","image","list-ul","order","pricelist",
+      "smartphone","trash","x","arrow-repeat","calendar","component","envelope","filter","inbox","loader",
+      "otp-authentification","print","sound-off","truck","zoom-in","arrow-right","cart","configuration",
+      "error-file","flag","info-circle","locations","paragraph-slash","puzzle","sound-on","type-bold","zoom-out",
+      "arrow-up","categories-box","cut","error","folder-back","interface","lock","paragraph","qr-code","star-fill",
+      "type-h1","audio-file","chat-left","dash","euro-circle","folder-plus","invert-selection",
+      "logbook","pause","question","star","type-h2",
+    ]
+
     let oldicons = {
       "file-system": "folder-fill",
       users: "people-fill",
@@ -120,6 +150,8 @@ export default class Utils {
       icon = ""
     } else if (Object.keys(oldicons).includes(icon)) {
       icon = "default___" + oldicons[icon]
+    } else if (viurIcons.includes(icon)) {
+      icon = "viur___" + icon
     } else if (icon.startsWith("bootstrap___")) {
       icon = icon.replace("bootstrap___", "default___")
     } else if (icon.startsWith("/static/")) {

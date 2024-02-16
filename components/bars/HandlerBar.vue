@@ -1,5 +1,6 @@
 <template>
   <div class="bar">
+
     <template v-for="(actionlist, index) in state.actions['default']">
       <template v-for="action in actionlist">
         <group_action
@@ -164,7 +165,7 @@ export default defineComponent({
 
         if (conf["actions"]) {
           //build listed structure
-          let actiongroups = conf["actions"].join(" ").replace(/\n\s/g, "").replace(/\n/g, "").replace(/\|\s/g, "space")
+          let actiongroups = conf["actions"].join(" ").replace('$','').replace('=','').replace(/\n\s/g, "").replace(/\n/g, "").replace(/\|\s/g, "space")
           //add after the first group
           //actions["default"].splice(1, 0, actiongroups.split(" "))
           //add to the first group
@@ -181,7 +182,7 @@ export default defineComponent({
           for (const [groupName, config] of Object.entries(conf["actionGroups"])) {
             state.actionGroups[groupName] = config
             actions[":" + groupName] = [
-              config["actions"].join(" ").replace(/\n\s/g, "").replace(/\n/g, "").replace(/\|\s/g, "space").split(" ")
+              config["actions"].join(" ").replace('$','').replace('=','').replace(/\n\s/g, "").replace(/\n/g, "").replace(/\|\s/g, "space").split(" ")
             ]
           }
         }

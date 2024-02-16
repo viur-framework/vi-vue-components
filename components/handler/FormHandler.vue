@@ -68,7 +68,7 @@
         >
           <div class="embeded-list">
             <component
-              :is="'listhandler'"
+              :is="getEditView(handler)['handlerComponent']"
               :module="handler['module']"
               :columns="handler?.['columns'] ? handler['columns'] : []"
               :filter="editViewFilter(handler)"
@@ -459,6 +459,11 @@ export default defineComponent({
       return filter
     }
 
+    function getEditView(handler){
+      let currentModule = dbStore.getConf(handler['module'])
+      return currentModule
+    }
+
     onBeforeMount(() => {
       fetchData()
     })
@@ -487,7 +492,8 @@ export default defineComponent({
       relationRemoveHandler,
       getBoneWidget,
       fetchData,
-      visibleIf
+      visibleIf,
+      getEditView
     }
   }
 })
@@ -583,10 +589,16 @@ sl-details {
 
 .embeded-list {
   position: relative;
+  min-height: 400px;
 
   :deep(.main-wrapper) {
     height: auto;
+
     max-height: calc(100vh - 170px);
+  }
+
+  :deep(.main){
+    height: auto;
   }
 }
 </style>
