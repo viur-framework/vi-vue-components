@@ -112,7 +112,7 @@ export default defineComponent({
     })
 
     function ScriptorUrl() {
-      let url = `${import.meta.env.VITE_API_URL}${appStore.state["admin.scriptor.url"]}#/runner?key=${state.scriptKey}`
+      let url = `${import.meta.env.VITE_API_URL}${appStore.state["admin.scriptor.url"]}#/runner/${state.scriptKey}`
       if (handlerState.currentSelection) {
         let params = Object.fromEntries(
           handlerState.currentSelection.map((i, idx) => [`key${idx === 0 ? "" : idx}`, i["key"]])
