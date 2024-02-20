@@ -74,7 +74,7 @@
             ></sl-icon>
             Favorisieren
           </sl-menu-item>-->
-          <sl-menu-item @click="openConfig()">
+          <sl-menu-item @click="openConfig()" v-if="userStore.userAccess.includes('root') || userStore.userAccess.includes(`${moduleInfo?.['module']}-manage`)">
             <sl-icon
               slot="prefix"
               name="pencil-fill"
