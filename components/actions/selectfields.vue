@@ -14,6 +14,7 @@
   <sl-dialog
     id="dialog-selectfields"
     :label="$t('actions.selectfields')"
+    @sl-hide="saveConfig"
   >
     <sl-checkbox
       v-for="(bone, boneName) in state.structure"
@@ -56,7 +57,7 @@ export default defineComponent({
   components: {},
   setup(props, context) {
     const handlerState: any = inject("handlerState")
-
+    const currentlist: any = inject("currentlist")
     const state = reactive({
       structure: {},
       active: []
@@ -68,28 +69,38 @@ export default defineComponent({
       if (handlerState.structure) {
         state.structure = handlerState.structure
       } else {
-        const currentlist: any = inject("currentlist")
         state.structure = currentlist.structure
       }
 
-      let conf = dbStore.getConf(handlerState.module)
+      const conf = dbStore.getConf(handlerState.module)
       if (conf && conf?.["columns"]) {
         state.active = conf["columns"]
       } else {
         state.active = Object.keys(Object.fromEntries(Object.entries(state.structure).filter(([, v]) => v["visible"])))
       }
-      handlerState.selectedBones = state.active
-      const dialog = document.getElementById("dialog-selectfields")
-      dialog.show()
+      const dialog = document.getElementById("dialog-selectfields");
+      dialog.show();
     }
 
     function visibleChange(boneName) {
-      if (handlerState.selectedBones.includes(boneName)) {
-        console.log(handlerState.selectedBones)
-        handlerState.selectedBones.splice(handlerState.selectedBones.indexOf(boneName), 1)
-      } else {
-        handlerState.selectedBones.unshift(boneName)
+      if(state.active.includes(boneName))
+      {
+        state.active.splice(state.active.indexOf(boneName),1);
       }
+      else
+      {
+        state.active.push(boneName);
+      }
+      const selectedBones=[];
+      const struct =Object.keys(state.structure);
+      for(const name of struct)
+      {
+        if (state.active.includes(name)) {
+          selectedBones.push(name);
+        }
+      }
+      handlerState.selectedBones = selectedBones;
+     
     }
 
     function selectall() {
@@ -106,8 +117,14 @@ export default defineComponent({
       state.active = Object.keys(state.structure).filter((i) => !state.active.includes(i))
       handlerState.selectedBones = state.active
     }
+    function saveConfig()
+    {
+      const conf = dbStore.getConf(handlerState.module);
+      conf["columns"]=handlerState.selectedBones;
 
-    return { state, openSelectDialog, visibleChange, selectall, unselectall, invertselect }
+    }
+
+    return { state, openSelectDialog, visibleChange, selectall, unselectall, invertselect,saveConfig}
   }
 })
 </script>
