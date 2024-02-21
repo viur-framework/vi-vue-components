@@ -253,8 +253,8 @@ export default defineComponent({
     function relationCloseAction(selection) {
       state.openedSelection = false
       if (selection) {
-        state.selection = selection
-        context.emit("change", props.name, selection, props.lang, props.index)
+        state.selection = { dest: selection, rel: null }
+        context.emit("change", props.name, state.selection, props.lang, props.index)
       }
     }
 
