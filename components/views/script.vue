@@ -30,7 +30,7 @@ export default defineComponent({
         route["params"]["key"]
       }`
       if (Object.keys(route.query).length > 0) {
-        url += `&scriptor_params=${JSON.stringify(route.query)}`
+        url += `?scriptor_params=${JSON.stringify(route.query)}`
       }
       return url
     }

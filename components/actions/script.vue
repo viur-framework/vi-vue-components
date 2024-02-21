@@ -117,7 +117,7 @@ export default defineComponent({
         let params = Object.fromEntries(
           handlerState.currentSelection.map((i, idx) => [`key${idx === 0 ? "" : idx}`, i["key"]])
         )
-        url += `&scriptor_params=${JSON.stringify(params)}`
+        url += `?scriptor_params=${JSON.stringify(params)}`
       }
       return url
     }
