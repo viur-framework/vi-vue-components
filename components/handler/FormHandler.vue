@@ -78,7 +78,7 @@
         </sl-details>
       </template>
 
-      <template v-if="appStore.state.debug">
+      <template v-if="!appStore.state.debug">
         <sl-details summary="DEBUG: Formdata">
           <VueJsonPretty
             :deep="1"
@@ -459,8 +459,8 @@ export default defineComponent({
       return filter
     }
 
-    function getEditView(handler){
-      let currentModule = dbStore.getConf(handler['module'])
+    function getEditView(handler) {
+      let currentModule = dbStore.getConf(handler["module"])
       return currentModule
     }
 
@@ -597,7 +597,7 @@ sl-details {
     max-height: calc(100vh - 170px);
   }
 
-  :deep(.main){
+  :deep(.main) {
     height: auto;
   }
 }

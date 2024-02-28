@@ -1,41 +1,79 @@
 <template>
-  <router-link
-    v-slot="{ route }"
-    :to="state.url"
-    custom
-  >
-    <sl-button
-      size="small"
-      variant="success"
-      outline
-      :disabled="!state.canAdd"
-      :title="$t('actions.addnode')"
-      @click="createAndNavigate(route)"
+  <sl-button-group>
+    <router-link
+      v-slot="{ route }"
+      :to="state.url"
+      custom
     >
-      <sl-icon
-        slot="prefix"
-        name="folder-plus"
-      ></sl-icon>
-      {{ $t("actions.addnode") }}
-    </sl-button>
-  </router-link>
+      <sl-button
+        size="small"
+        variant="success"
+        outline
+        :disabled="state.disabled"
+        :title="$t('actions.addnode')"
+        @click="createAndNavigate(route)"
+      >
+        <sl-icon
+          slot="prefix"
+          :name="itemMeta(null, 'node').icon"
+        ></sl-icon>
+        {{ itemMeta(null, "node").name }} {{ $t("actions.add") }}
+      </sl-button>
+    </router-link>
+    <sl-dropdown
+      v-if="handlerState.conf?.['kinds'] && Object.keys(handlerState.conf['kinds']).length > 1"
+      placement="bottom-end"
+    >
+      <sl-button
+        slot="trigger"
+        :disabled="state.disabled"
+        variant="success"
+        size="small"
+        caret
+        outline
+      ></sl-button>
+      <sl-menu>
+        <template
+          v-for="(kind, type) in handlerState.conf?.['kinds']"
+          :key="type"
+        >
+          <sl-menu-item
+            v-if="type.startsWith('node.')"
+            :disabled="typeDisabled(type)"
+            @click="openEdit(type)"
+          >
+            <sl-icon
+              slot="prefix"
+              :name="kind.icon"
+              :library="kind.library"
+            ></sl-icon>
+            {{ kind["name"] }} {{ $t("actions.add") }}
+          </sl-menu-item>
+        </template>
+      </sl-menu>
+    </sl-dropdown>
+  </sl-button-group>
 </template>
 
 <script lang="ts">
 // @ts-nocheck
 import { reactive, defineComponent, inject, computed } from "vue"
 import { useDBStore } from "../stores/db"
+import { useContextStore } from "../stores/context"
 import { useUserStore } from "../stores/user"
-import { useRoute } from "vue-router"
+import { useRoute, useRouter } from "vue-router"
 
 export default defineComponent({
   props: {},
   components: {},
   setup(props, context) {
     const handlerState: any = inject("handlerState")
+    const itemMeta: any = inject("itemMeta")
     const dbStore = useDBStore()
     const userStore = useUserStore()
+    const contextStore = useContextStore()
     const route = useRoute()
+    const router = useRouter()
 
     const state = reactive({
       url: computed(() => {
@@ -52,6 +90,29 @@ export default defineComponent({
           return true
         }
         return userStore.state.user.access.indexOf(`${handlerState.module}-add`) > -1
+      }),
+      disabled: computed(() => {
+        if (handlerState.currentSelection.length !== 1) {
+          return true
+        }
+        if (!state.canAdd) {
+          return true
+        }
+
+        let entry = handlerState.currentSelection[0]
+        let type = "node"
+        if (entry?.["kind"]) {
+          type += `.${entry["kind"]}`
+        }
+
+        if (
+          handlerState.conf?.["kinds"] &&
+          !handlerState.conf["kinds"][type]["allowedChildren"].map((x) => x.split(".")[0]).includes("node")
+        ) {
+          return true
+        }
+
+        return false
       })
     })
 
@@ -59,9 +120,37 @@ export default defineComponent({
       dbStore.addOpened(route, handlerState["module"], handlerState["view"])
     }
 
+    function openEdit(kind = null) {
+      let newRoute = router.resolve(state.url)
+      if (kind) {
+        newRoute.query = { kind: kind.split(".")[1] }
+      }
+      dbStore.addOpened(newRoute, handlerState["module"], handlerState["view"])
+    }
+
+    function typeDisabled(currentType) {
+      let entry = handlerState.currentSelection[0]
+      let type = "node"
+      if (entry?.["kind"]) {
+        type += `.${entry["kind"]}`
+      }
+      let currentAllowedKinds = handlerState.conf["kinds"][type]["allowedChildren"]
+      if (
+        currentAllowedKinds.includes(currentType) ||
+        (currentType.startsWith("node.") && currentAllowedKinds.includes("node"))
+      ) {
+        return false
+      }
+      return true
+    }
+
     return {
       state,
-      createAndNavigate
+      createAndNavigate,
+      itemMeta,
+      handlerState,
+      openEdit,
+      typeDisabled
     }
   }
 })

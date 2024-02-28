@@ -5,10 +5,19 @@
     @sl-request-close.prevent="dbStore.state['skeldrawer.opened'] = false"
   >
     <span v-if="Object.keys(dbStore.state['skeldrawer.entry']).length === 0">{{ $t("skeldrawer.noentry") }}</span>
-
+    <div
+      v-if="
+        Object.keys(dbStore.state['skeldrawer.entry']).includes('downloadUrl') &&
+        dbStore.state['skeldrawer.entry']['mimetype'].startsWith('image/')
+      "
+    >
+      <img :src="getImageUrl()" />
+    </div>
     <div v-for="(bone, boneName) in dbStore.state['skeldrawer.entry']">
-      {{ dbStore.state["skeldrawer.structure"][boneName]["descr"] }}:
-      {{ getBoneViewer(dbStore.state["skeldrawer.entry"], boneName) }}
+      <span style="font-weight: bold; display: block"
+        >{{ dbStore.state["skeldrawer.structure"][boneName]["descr"] }}:</span
+      >
+      <span>{{ getBoneViewer(dbStore.state["skeldrawer.entry"], boneName) }}</span>
     </div>
   </sl-drawer>
 </template>
@@ -30,10 +39,15 @@ export default defineComponent({
       return getBoneValue(boneName, (skel = skel))
     }
 
+    function getImageUrl() {
+      return import.meta.env.VITE_API_URL + dbStore.state["skeldrawer.entry"]["downloadUrl"]
+    }
+
     return {
       state,
       dbStore,
-      getBoneViewer
+      getBoneViewer,
+      getImageUrl
     }
   }
 })

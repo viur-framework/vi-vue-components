@@ -8,9 +8,9 @@
   >
     <sl-icon
       slot="prefix"
-      name="folder-plus"
+      :name="itemMeta(null, 'node').icon"
     ></sl-icon>
-    {{ $t("actions.addfolder") }}
+    {{ itemMeta(null, "node").name }} {{ $t("actions.add") }}
   </sl-button>
 
   <sl-dialog
@@ -56,6 +56,7 @@ export default defineComponent({
   setup(props, context) {
     const handlerState: any = inject("handlerState")
     const tableReload: any = inject("reloadAction")
+    const itemMeta: any = inject("itemMeta")
     const dbStore = useDBStore()
     const userStore = useUserStore()
     const route = useRoute()
@@ -99,7 +100,8 @@ export default defineComponent({
       state,
       openAction,
       closeAction,
-      createNode
+      createNode,
+      itemMeta
     }
   }
 })

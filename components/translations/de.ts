@@ -1,6 +1,6 @@
 export default {
   actions: {
-    add: "Hinzufügen",
+    add: "hinzufügen",
     addnode: "Gruppe hinzufügen",
     addfolder: "Ordner hinzufügen",
     addfile: "Datei hinzufügen",
@@ -34,7 +34,8 @@ export default {
     },
     open: "Öffnen",
     sortasc: "Aufsteigend Sortieren",
-    sortdesc: "Absteigend Sortieren"
+    sortdesc: "Absteigend Sortieren",
+    move: "verschieben"
   },
   sidebar: {
     workspace: "Arbeitsbereich",
@@ -45,7 +46,7 @@ export default {
     logout_text: "Wenn Sie sich ausloggen, gehen alle nicht gespeicherten Daten verloren. Möchten sie fortfahren?",
     section_general_name: "Allgemein",
     section_system_name: "Servertasks",
-    section_tools: "Tools",
+    section_tools: "Tools"
   },
   skeldrawer: {
     noentry: "Kein Eintrag ausgewählt"

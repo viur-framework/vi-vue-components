@@ -23,6 +23,7 @@ import group_action from "./group.vue"
 import groupdivider_action from "./group-divider.vue"
 import search_action from "./search.vue"
 import script_action from "./script.vue"
+import move_action from "./move.vue"
 
 export default {
   add_action,
@@ -48,5 +49,6 @@ export default {
   group_action,
   groupdivider_action,
   search_action,
-  script_action
+  script_action,
+  move_action
 }

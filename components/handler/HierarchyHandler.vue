@@ -103,7 +103,7 @@ export default defineComponent({
         return name
       }),
       tabId: route.query?.["_"],
-      currentRootNodes: [],
+      availableRootNodes: [],
       currentSelectionType: "node",
       currentRootNode: null,
       currentNode: null,
@@ -145,7 +145,8 @@ export default defineComponent({
       }),
       currentSelection: [],
       selector: computed(() => props.selector),
-      ready: false
+      ready: false,
+      conf: null
     })
     provide("handlerState", state) // expose to components
     const tree = useTree(props.module, state, state)
@@ -183,7 +184,7 @@ export default defineComponent({
     function fetchRoots() {
       return Request.get(`/vi/${props.module}/listRootNodes`).then(async (resp) => {
         let data = await resp.json()
-        state.currentRootNodes = data
+        state.availableRootNodes = data
         if (!state.currentRootNode) {
           state.currentRootNode = data[0]
         }
@@ -191,6 +192,7 @@ export default defineComponent({
     }
 
     onBeforeMount(() => {
+      state.conf = dbStore.getConf(props.module, props.view)
       fetchRoots().then(() => {
         state.tree = [state.currentRootNode]
         state.selectedPath = [0]
@@ -218,16 +220,36 @@ export default defineComponent({
       state.selectedBones = bones
     }
 
-    function changerootNode(key: string) {
-      state.currentRootNode = state.currentRootNodes.filter((i) => i["key"] === key)[0]
+    function changeRootNode(key: string) {
+      state.currentRootNode = state.availableRootNodes.filter((i) => i["key"] === key)[0]
       reloadAction()
     }
-    provide("changerootNode", changerootNode)
+    provide("changeRootNode", changeRootNode)
 
     function closeSelector() {
       context.emit("closeSelector")
     }
     provide("closeSelector", closeSelector)
+
+    function itemMeta(item, skelType = "leaf") {
+      let currentType = skelType
+
+      if (item?.["kind"] && item?.["kind"] !== "-") {
+        currentType += `.${item["kind"]}`
+      }
+      console.log(state.conf)
+      let currentMeta = toRaw(state.conf?.["kinds"]?.[currentType])
+      if (!currentMeta) return 0
+      if (Object.keys(state.conf?.["kinds"]).includes(currentType)) {
+        currentMeta = state.conf?.["kinds"][currentType]
+      }
+      if (!Object.keys(currentMeta).includes("library")) {
+        currentMeta["library"] = "default"
+      }
+
+      return currentMeta
+    }
+    provide("itemMeta", itemMeta)
 
     return {
       state,

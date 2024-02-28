@@ -1,6 +1,7 @@
 <template>
   <div class="home">
     <h1 class="main-headline">Hallo {{ state.name }}</h1>
+    <strong> {{ userStore.state.user.name }}</strong>
 
     <div
       v-if="false && userStore.favoriteModules?.length > 0"
@@ -68,9 +69,9 @@ export default defineComponent({
         if (!userStore.state.user) return name
 
         if (userStore.state.user["firstname"] && userStore.state.user["lastname"]) {
-          name = `${userStore.state.user["firstname"]} ${userStore.state.user["lastname"]} (${userStore.state.user.name})`
+          name = `${userStore.state.user["firstname"]} ${userStore.state.user["lastname"]}`
         } else if (userStore.state.user["firstname"]) {
-          name = userStore.state.user["firstname"] + ` (${userStore.state.user.name})`
+          name = userStore.state.user["firstname"]
         } else {
           name = userStore.state.user["name"]
         }
@@ -106,7 +107,6 @@ export default defineComponent({
 
 .main-headline {
   font-size: 2em;
-  margin-bottom: 15px;
   font-weight: 600;
 }
 
@@ -150,5 +150,10 @@ export default defineComponent({
   grid-template-columns: repeat(2, minmax(0, 1fr));
   grid-template-rows: 1fr;
   grid-gap: 15px;
+}
+
+strong {
+  display: block;
+  margin-bottom: 20px;
 }
 </style>

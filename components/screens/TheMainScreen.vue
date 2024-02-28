@@ -18,7 +18,7 @@
       </sl-dialog>
     </div>
   </template>
-  <template v-else>
+  <template v-else-if="state.status === 'ready'">
     <the-topbar></the-topbar>
 
     <sl-split-panel
@@ -111,17 +111,20 @@ export default defineComponent({
           return true
         }
         return false
-      })
+      }),
+      status: "loading"
     })
 
     function collectViurConfig() {
       Request.get("/vi/config").then(async (resp: Response) => {
         let data = await resp.json()
         dbStore.state["vi.name"] = data["configuration"]["vi.name"]
-        if (Object.keys(data["configuration"]).includes("module_groups")) {
-          dbStore.state["vi.modules.groups"] = data["configuration"]["module_groups"]
+        if (Object.keys(data["configuration"]).includes("module.groups")) {
+          dbStore.state["vi.modules.groups"] = data["configuration"]["module.groups"]
         } else if (Object.keys(data["configuration"]).includes("moduleGroups")) {
           dbStore.state["vi.modules.groups"] = data["configuration"]["moduleGroups"]
+        } else if (Object.keys(data["configuration"]).includes("admin.module.groups")) {
+          dbStore.state["vi.modules.groups"] = data["configuration"]["admin.module.groups"]
         }
 
         let currentModules = Object.entries(data["modules"]).map((i) => {
@@ -138,6 +141,7 @@ export default defineComponent({
           let new_route = router.resolve(unref(route))
           dbStore.addOpened(new_route, new_route.params["module"].replace(".", "/"), new_route.query["view"])
         }
+        state.status = "ready"
       })
       Request.get("/vi/getVersion").then(async (resp: Response) => {
         let data = await resp.json()

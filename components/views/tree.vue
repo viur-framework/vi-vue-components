@@ -1,9 +1,5 @@
 <template>
-  <tree-handler
-    :module="module.replace('.', '/')"
-    :node="node"
-  >
-  </tree-handler>
+  <tree-handler :module="module.replace('.', '/')"> </tree-handler>
 </template>
 
 <script lang="ts">

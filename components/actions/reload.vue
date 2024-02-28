@@ -30,9 +30,13 @@ export default defineComponent({
 
     function reload() {
       state.loading = true
-      tableReload().then(() => {
-        state.loading = false
-      })
+      tableReload()
+        .then(() => {
+          state.loading = false
+        })
+        .catch(() => {
+          state.loading = false
+        })
     }
 
     return {

@@ -1,6 +1,17 @@
 <template>
-  <sl-select size="small" :value="state.initValue" @sl-change="rootNodeChange">
-    <sl-option v-for="node in handlerState['currentRootNodes']" :value="node['key']">{{ node["name"] }}</sl-option>
+  <sl-select
+    size="small"
+    :value="state.initValue"
+    @sl-change="rootNodeChange"
+  >
+    <sl-option
+      v-for="node in handlerState['availableRootNodes']"
+      :key="node['key']"
+      :value="node['key']"
+      :selected="handlerState['currentRootNode']['key'] === node['key']"
+    >
+      {{ node["name"] }}
+    </sl-option>
   </sl-select>
 </template>
 
@@ -18,10 +29,10 @@ export default defineComponent({
       })
     })
     const handlerState: any = inject("handlerState")
-    const changerootNode: any = inject("changerootNode")
+    const changeRootNode: any = inject("changeRootNode")
 
     function rootNodeChange(e: Event) {
-      changerootNode(e.target.value)
+      changeRootNode(e.target.value)
     }
 
     return { state, rootNodeChange, handlerState }

@@ -93,8 +93,7 @@ export default defineComponent({
     name: String,
     value: Object,
     index: Number,
-    lang: String,
-
+    lang: String
   },
   components: { Wrapper_nested, ...handlers, relationalSelector },
   emits: ["change"],

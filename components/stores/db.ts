@@ -1,6 +1,6 @@
 //@ts-nocheck
 
-import { reactive, computed, Component, getCurrentInstance, unref,markRaw } from "vue"
+import { reactive, computed, Component, getCurrentInstance, unref, markRaw } from "vue"
 import { defineStore, StoreDefinition } from "pinia"
 import { useRoute, useRouter } from "vue-router"
 import { useViewStore } from "./views"
@@ -72,12 +72,72 @@ function adminTreeLayer(itemList: Array<ModuleInfo>, parent: ModuleInfo): Array<
     } else if (conf["handler"] === "tree.simple.file") {
       conf["url"] = { path: `/db/${conf["module"]}/tree` }
       conf["handlerComponent"] = "treehandler"
+      if (!Object.keys(conf).includes("kinds")) {
+        conf["kinds"] = {
+          node: { icon: "folder", name: "Ordner", allowedChildren: ["leaf", "node"] },
+          leaf: {
+            icon: "file-earmark",
+            name: "Datei",
+            allowedChildren: null
+          }
+        }
+      }
     } else if (conf["handler"] === "tree.node" || conf["handler"].startsWith("tree.node.")) {
       conf["url"] = { path: `/db/${conf["module"]}/tree.node` }
       conf["handlerComponent"] = "hierarchyhandler"
+      if (!Object.keys(conf).includes("kinds")) {
+        conf["kinds"] = {
+          node: { icon: "diagram-2-fill", name: "Knoten", library: "default", allowedChildren: ["node"] }
+        }
+      }
+      if (!Object.keys(conf["kinds"]).includes("node")) {
+        conf["kinds"]["node"] = {
+          icon: "diagram-2-fill",
+          name: "Knoten",
+          library: "default",
+          allowedChildren: ["node"]
+        }
+      }
+      for (const kind of Object.keys(conf["kinds"])) {
+        if (!Object.keys(conf["kinds"][kind]).includes("library")) {
+          conf["kinds"][kind]["library"] = "default"
+        }
+      }
     } else if (conf["handler"] === "tree" || conf["handler"].startsWith("tree.")) {
       conf["url"] = { path: `/db/${conf["module"]}/tree` }
       conf["handlerComponent"] = "treehandler"
+      if (!Object.keys(conf).includes("kinds")) {
+        conf["kinds"] = {
+          node: { icon: "archive-fill", name: "Gruppe", library: "default", allowedChildren: ["leaf", "node"] },
+          leaf: {
+            icon: "card-heading",
+            name: "Eintrag",
+            library: "default",
+            allowedChildren: null
+          }
+        }
+      }
+      if (!Object.keys(conf["kinds"]).includes("node")) {
+        conf["kinds"]["node"] = {
+          icon: "archive-fill",
+          name: "Gruppe",
+          library: "default",
+          allowedChildren: ["leaf", "node"]
+        }
+      }
+      if (!Object.keys(conf["kinds"]).includes("leaf")) {
+        conf["kinds"]["leaf"] = {
+          icon: "card-heading",
+          name: "Eintrag",
+          library: "default",
+          allowedChildren: null
+        }
+      }
+      for (const kind of Object.keys(conf["kinds"])) {
+        if (!Object.keys(conf["kinds"][kind]).includes("library")) {
+          conf["kinds"][kind]["library"] = "default"
+        }
+      }
     } else if (conf["handler"] === "singleton" || conf["handler"].startsWith("singleton.")) {
       conf["url"] = { path: `/db/${conf["module"]}` }
       conf["handlerComponent"] = "formhandler"

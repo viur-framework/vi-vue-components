@@ -13,9 +13,10 @@
     >
       <sl-icon
         slot="prefix"
-        name="file-earmark-fill"
+        :name="itemMeta(null, 'leaf').icon"
+        :library="itemMeta(null, 'leaf').library"
       ></sl-icon>
-      {{ $t("actions.addleaf") }}
+      {{ itemMeta(null, "leaf").name }} {{ $t("actions.add") }}
     </sl-button>
   </router-link>
 </template>
@@ -32,6 +33,7 @@ export default defineComponent({
   components: {},
   setup(props, context) {
     const handlerState: any = inject("handlerState")
+    const itemMeta: any = inject("itemMeta")
     const dbStore = useDBStore()
     const userStore = useUserStore()
     const route = useRoute()
@@ -60,7 +62,8 @@ export default defineComponent({
 
     return {
       state,
-      createAndNavigate
+      createAndNavigate,
+      itemMeta
     }
   }
 })
