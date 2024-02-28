@@ -21,6 +21,7 @@
         v-if="currentlist.state.state === 0"
         size="3"
       ></loader>
+      <span style="float: right; margin-right: 10px">{{ state.currentSelection.length }} Ausgewählt</span>
       <table ref="datatable">
         <thead>
           <tr>
