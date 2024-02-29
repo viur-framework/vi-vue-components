@@ -307,7 +307,7 @@ export default defineComponent({
 
     function reloadAction() {
       state.needUpdate = true
-      state.currentSelection = []
+      state.currentSelection = [state.currentRootNode]
       state.currentSelectionType = "leaf"
       return handlerLogic.reloadAction()
     }
@@ -316,6 +316,7 @@ export default defineComponent({
       () => state.currentRootNode,
       (newVal, oldVal) => {
         state.currentPath = [newVal]
+        state.currentSelection = [state.currentRootNode]
       }
     )
 
