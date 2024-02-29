@@ -1,7 +1,16 @@
 <template>
-  <sl-button variant="success" size="small" :loading="state.loading" title="$t(name)"
-    :outline="name === 'actions.save_next' || name === 'actions.save_close'" @click="save">
-    <sl-icon slot="prefix" :name="icon"></sl-icon>
+  <sl-button
+    variant="success"
+    size="small"
+    :loading="state.loading"
+    title="$t(name)"
+    :outline="name === 'actions.save_next' || name === 'actions.save_close'"
+    @click="save"
+  >
+    <sl-icon
+      slot="prefix"
+      :name="icon"
+    ></sl-icon>
     {{ $t(name) }}
   </sl-button>
 </template>
@@ -11,7 +20,7 @@
 import { reactive, defineComponent, inject, computed } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useDBStore } from "../stores/db"
-import { useAppStore} from "../stores/app";
+import { useAppStore } from "../stores/app"
 import { Request } from "@viur/vue-utils"
 import { useMessageStore } from "../stores/message"
 import { useContextStore } from "../stores/context"
@@ -131,6 +140,9 @@ export default defineComponent({
                   let new_route = router.resolve(`/db/${handlerState.module}/edit/${responsedata["values"]["key"]}`)
                   if (handlerState.skeltype === "node") {
                     new_route = router.resolve(`/db/${handlerState.module}/edit/node/${responsedata["values"]["key"]}`)
+                  }
+                  if (handlerState.skeltype === "leaf") {
+                    new_route = router.resolve(`/db/${handlerState.module}/edit/leaf/${responsedata["values"]["key"]}`)
                   }
 
                   dbStore.addOpened(new_route, handlerState.module)
