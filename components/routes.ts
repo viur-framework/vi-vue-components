@@ -1,7 +1,7 @@
 // @ts-nocheck
 import view_missing from "./views/view_missing.vue"
 import { createRouter, createWebHashHistory } from "vue-router"
-import { useUserStore } from "./stores/user"
+import { useUserStore } from "@viur/vue-utils/login/stores/user"
 import { useContextStore } from "./stores/context"
 import home from "./views/home.vue"
 

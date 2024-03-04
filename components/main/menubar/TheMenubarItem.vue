@@ -201,7 +201,7 @@ import { computed, reactive, onMounted, onUpdated, defineComponent, unref } from
 import Utils from "../../utils"
 import { useDBStore } from "../../stores/db"
 import { useRoute, useRouter } from "vue-router"
-import { useUserStore } from "../../stores/user"
+import { useUserStore } from "@viur/vue-utils/login/stores/user"
 import { Request } from "@viur/vue-utils"
 
 export default defineComponent({

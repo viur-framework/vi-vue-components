@@ -11,7 +11,7 @@
 import { reactive, defineComponent, computed } from "vue"
 import { useRoute, onBeforeRouteUpdate } from "vue-router"
 import ListHandler from "../handler/ListHandler.vue"
-import { useUserStore } from "../stores/user"
+import { useUserStore } from "@viur/vue-utils/login/stores/user"
 
 export default defineComponent({
   props: {

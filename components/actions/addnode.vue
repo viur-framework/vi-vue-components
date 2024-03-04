@@ -60,7 +60,7 @@
 import { reactive, defineComponent, inject, computed } from "vue"
 import { useDBStore } from "../stores/db"
 import { useContextStore } from "../stores/context"
-import { useUserStore } from "../stores/user"
+import { useUserStore } from "@viur/vue-utils/login/stores/user"
 import { useRoute, useRouter } from "vue-router"
 
 export default defineComponent({

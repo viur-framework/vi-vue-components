@@ -1,7 +1,7 @@
 //@ts-nocheck
 import { onBeforeMount } from "vue"
 import { Request } from "@viur/vue-utils"
-import { useUserStore } from "./stores/user"
+import { useUserStore } from "@viur/vue-utils/login/stores/user"
 import { useAppStore } from "./stores/app"
 import { useColorStore } from "./stores/color"
 import { useModulesStore } from "./stores/modules"

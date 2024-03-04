@@ -87,7 +87,7 @@
 // @ts-nocheck
 import { reactive, defineComponent, inject, computed, ref } from "vue"
 import { useDBStore } from "../stores/db"
-import { useUserStore } from "../stores/user"
+import { useUserStore } from "@viur/vue-utils/login/stores/user"
 import { useRoute } from "vue-router"
 import { Request } from "@viur/vue-utils"
 

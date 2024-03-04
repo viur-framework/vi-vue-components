@@ -51,7 +51,7 @@
 // @ts-nocheck
 import { defineComponent, reactive, computed } from "vue"
 import { useRoute } from "vue-router"
-import { useUserStore } from "../stores/user"
+import { useUserStore } from "@viur/vue-utils/login/stores/user"
 import { useLocalStore } from "../stores/local"
 import Utils from "../utils"
 import WidgetSmall from "../dashboard/WidgetSmall.vue"

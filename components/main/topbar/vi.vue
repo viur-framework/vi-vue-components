@@ -183,7 +183,7 @@
 //@ts-nocheck
 import { reactive, defineComponent, computed, onMounted } from "vue"
 import { useRouter } from "vue-router"
-import { useUserStore } from "../../stores/user"
+import { useUserStore } from "@viur/vue-utils/login/stores/user"
 import { useMessageStore } from "../../stores/message"
 import { useAppStore } from "../../stores/app"
 import { useDBStore } from "../../stores/db"

@@ -83,7 +83,7 @@ import MessageDrawer from "../main/messages/MessageDrawer.vue"
 import TheMainScreenSkelDrawer from "../main/TheMainScreenSkelDrawer.vue"
 import ViewWrapper from "../main/ViewWrapper.vue"
 import TheMainScreenTabbar from "../main/TheMainScreenTabbar.vue"
-import { useUserStore } from "../stores/user"
+import { useUserStore } from "@viur/vue-utils/login/stores/user"
 
 export default defineComponent({
   components: {
@@ -139,7 +139,11 @@ export default defineComponent({
 
         if (route.path !== "/") {
           let new_route = router.resolve(unref(route))
-          dbStore.addOpened(new_route, new_route.params["module"].replace(".", "/"), new_route.query["view"])
+          dbStore.addOpened(
+            new_route,
+            new_route.params["module"]?.replace(".", "/") ? new_route.params["module"]?.replace(".", "/") : "",
+            new_route.query["view"]
+          )
         }
         state.status = "ready"
       })

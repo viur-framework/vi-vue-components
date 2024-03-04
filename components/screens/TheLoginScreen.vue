@@ -1,5 +1,6 @@
 <template>
   <div class="wrapper">
+
     <div class="background-img">
       <img
         :src="state.backgroundImage"
@@ -118,7 +119,7 @@
 
 <script lang="ts">
 //@ts-nocheck
-import { useUserStore } from "../stores/user"
+import { useUserStore } from "@viur/vue-utils/login/stores/user"
 import { reactive, computed, onBeforeMount, defineComponent } from "vue"
 import { useAppStore } from "../stores/app"
 import Loader from "@viur/vue-utils/generic/Loader.vue"

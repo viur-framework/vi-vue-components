@@ -7,7 +7,7 @@
 import { reactive, defineComponent, computed } from "vue"
 import TreeHandler from "../handler/TreeHandler.vue"
 import { onBeforeRouteUpdate, useRoute } from "vue-router"
-import { useUserStore } from "../stores/user"
+import { useUserStore } from "@viur/vue-utils/login/stores/user"
 
 export default defineComponent({
   props: {

@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import { reactive, defineComponent } from "vue"
-import { useUserStore } from "../../stores/user"
+import { useUserStore } from "@viur/vue-utils/login/stores/user"
 
 export default defineComponent({
   props: {},

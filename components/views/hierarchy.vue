@@ -10,7 +10,7 @@
 import { reactive, defineComponent, computed } from "vue"
 import HierarchyHandler from "../handler/HierarchyHandler.vue"
 import { onBeforeRouteUpdate, useRoute } from "vue-router"
-import { useUserStore } from "../stores/user"
+import { useUserStore } from "@viur/vue-utils/login/stores/user"
 
 export default defineComponent({
   props: {

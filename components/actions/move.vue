@@ -51,7 +51,7 @@
 <script lang="ts">
 // @ts-nocheck
 import { reactive, defineComponent, inject, onBeforeMount, computed } from "vue"
-import { useUserStore } from "../stores/user"
+import { useUserStore } from "@viur/vue-utils/login/stores/user"
 import treeItem from "../tree/TreeItem.vue"
 import { Request } from "@viur/vue-utils"
 

@@ -25,7 +25,7 @@ import { useDBStore } from "../stores/db"
 import { computed, defineComponent, reactive } from "vue"
 import TheMenubarGroup from "./menubar/TheMenubarGroup.vue"
 import TheMenubarItem from "./menubar/TheMenubarItem.vue"
-import { useUserStore } from "../stores/user"
+import { useUserStore } from "@viur/vue-utils/login/stores/user"
 import Loader from "@viur/vue-utils/generic/Loader.vue"
 
 export default defineComponent({
