@@ -213,8 +213,13 @@ export default defineComponent({
           let params = state.info?.["params"]
           for (const [k, v] of Object.entries(params)) {
             let akey = k
-            if (k === "rootNode") akey = "parentrepo"
-            contextStore.setContext(akey, selection[akey], route.query["_"])
+
+            if (k === "rootNode") {
+              akey = "parentrepo"
+              contextStore.setContext(akey, selection[akey], route.query["_"])
+            } else {
+              contextStore.setContext(akey, buildUrl(v, selection), route.query["_"])
+            }
           }
         }
         let urlparts = state.info?.["url"].split("/")
