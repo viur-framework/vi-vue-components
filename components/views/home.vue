@@ -35,9 +35,9 @@
       <div class="home-grid">
         <widget-small
           v-for="i in localStore.state.lastEntries"
-          :icon="i['icon']"
+          :icon="iconInfo(i)[1]"
           :name="i['name']"
-          :library="i['library']"
+          :library="iconInfo(i)[0]"
           :to="i['to']"
         >
           {{ i["name"] }}
@@ -63,6 +63,7 @@ export default defineComponent({
     const route = useRoute()
     const userStore = useUserStore()
     const localStore = useLocalStore()
+
     const state = reactive({
       name: computed(() => {
         let name = ""
@@ -82,10 +83,14 @@ export default defineComponent({
     function createInitials(name: string) {
       return Utils.nameToInitials(name)
     }
-
+    function iconInfo(conf){
+      const [icon, iconType, iconname, library] = Utils.iconNormalization(conf["icon"])
+      return [library,iconname]
+    }
     return {
       state,
       route,
+      iconInfo,
       userStore,
       localStore,
       createInitials

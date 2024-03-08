@@ -388,10 +388,6 @@ export const useDBStore = defineStore("db", () => {
       keep: keep //always render and keep open, use v-show while navigation
     }
 
-    if (route["meta"]?.["action"] && route["meta"]?.["action"] === "edit") {
-      localStore.addEntries(entry)
-    }
-
     let tabNames = state["handlers.opened"].map((e) => e["url"]).filter((name) => name.startsWith(url))
     if (!Object.keys(state["handlers.opened.max.modules"]).includes(module)) {
       state["handlers.opened.max.modules"][module] = state["handlers.opened.max"]

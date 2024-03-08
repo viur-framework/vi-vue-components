@@ -137,6 +137,7 @@
 import { reactive, defineComponent, onBeforeMount, computed, provide, toRaw, unref, watch, onActivated } from "vue"
 import { Request } from "@viur/vue-utils"
 import { useDBStore } from "../stores/db"
+import { useLocalStore} from "../stores/local"
 import { useContextStore } from "../stores/context"
 import { useRoute } from "vue-router"
 import { useMessageStore } from "../stores/message"
@@ -190,6 +191,7 @@ export default defineComponent({
     const route = useRoute()
     const modulesStore = useModulesStore()
     const messageStore = useMessageStore()
+    const localStore = useLocalStore()
     const userStore = useUserStore()
     const values = reactive({})
     const state = reactive({
@@ -351,6 +353,16 @@ export default defineComponent({
         state.structure = structureToDict(data["structure"])
         state.errors = data["errors"]
         state.loading = false
+
+        if (props.action === "edit") {
+
+          let data = {...state.conf}
+          data['key'] = state.skel['key']
+          if (Object.keys(state.skel).includes('name')){
+            data['name'] = state.skel['name']
+          }
+          localStore.addEntries(data)
+        }
       })
     }
     provide("fetchData", fetchData)
