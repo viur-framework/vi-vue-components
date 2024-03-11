@@ -7,10 +7,10 @@
       <menu-tree :tree="userStore.favoriteModules"></menu-tree>
     </the-menubar-group>
     <the-menubar-group :name="$t('sidebar.administration')">
-      <menu-tree :tree="dbStore.modulesTree"></menu-tree>
+      <menu-tree  :tree="dbStore.state['vi.moduleTree']"></menu-tree>
     </the-menubar-group>
     <div
-      v-if="dbStore.modulesTree.length === 0"
+      v-if="dbStore.state['vi.moduleTree'].length === 0"
       class="loader"
     >
       <loader></loader>

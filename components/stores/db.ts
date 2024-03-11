@@ -152,11 +152,13 @@ function adminTreeLayer(itemList: Array<ModuleInfo>, parent: ModuleInfo): Array<
       conf["url"]["query"] = { view: conf["view_number"] }
     }
 
-    // append children (moduleGroups)
+
     if (!Object.keys(conf).includes("children")) {
       conf["children"] = []
-    } else if (conf["children"].length > 0) {
-      conf["children"].concat(adminTreeLayer(conf["children"], conf))
+    }
+    // append children (moduleGroups)
+    if (conf["moduleGroups"]?.length > 0) {
+      conf["children"] = conf["children"].concat(adminTreeLayer(conf["moduleGroups"], conf))
     }
 
     //append children (views)
@@ -200,6 +202,7 @@ export const useDBStore = defineStore("db", () => {
     "vi.access.open": ["root", "admin"],
     "vi.modules.groups": {},
     "vi.modules": {},
+    "vi.moduleTree": [],
 
     //lists
     "list.amount.default": 30,
@@ -240,39 +243,35 @@ export const useDBStore = defineStore("db", () => {
     //Tasks
     tasks: []
   })
-  const modulesTree = computed(() => {
+  function modulesTree() {
     let groups = {}
     for (let moduleGroup in state["vi.modules.groups"]) {
       let groupconf = state["vi.modules.groups"][moduleGroup]
       groupconf["module"] = moduleGroup
+      groupconf['moduleGroups'] = Object.values(state["vi.modules"]).filter( i=> i['moduleGroup']===moduleGroup)
       groups[moduleGroup] = groupconf
     }
-
     let itemList = []
+
     for (let modulename in state["vi.modules"]) {
       let moduleconf = state["vi.modules"][modulename]
       moduleconf["module"] = modulename
-
       if (Object.keys(moduleconf).includes("moduleGroup") && groups[moduleconf["moduleGroup"]]) {
-        if (Object.keys(groups[moduleconf["moduleGroup"]]).includes("children")) {
-          groups[moduleconf["moduleGroup"]]["children"].push(moduleconf)
-        } else {
-          groups[moduleconf["moduleGroup"]]["children"] = [moduleconf]
-        }
       } else {
         itemList.push(moduleconf)
       }
     }
+
     for (let group in groups) {
       itemList.push(groups[group])
     }
     //@ts-ignore
     let adminInfoTree: Array<ModuleInfo> = adminTreeLayer(itemList, { module: "start" })
     return adminInfoTree
-  })
+  }
 
   const modulesList = computed(() => {
-    return flattenTree(modulesTree.value)
+    return flattenTree(state['vi.moduleTree'])
   })
 
   function getConfByRoute(route): ModuleInfo | null {
