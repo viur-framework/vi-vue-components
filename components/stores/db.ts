@@ -365,7 +365,7 @@ export const useDBStore = defineStore("db", () => {
 
     if (!name) {
       name = currentConf?.["name"]
-      if (currentConf?.["name"] !== currentModuleConf["name"]) {
+      if (currentConf?.["name"] !== currentModuleConf?.["name"]) {
         name = `${currentModuleConf["name"]} / ${currentConf?.["name"]}`
       }
     }
