@@ -315,6 +315,7 @@ export default defineComponent({
     watch(
       () => state.currentRootNode,
       (newVal, oldVal) => {
+        if (!newVal) return 0
         state.currentPath = [newVal]
         state.currentSelection = [state.currentRootNode]
       }

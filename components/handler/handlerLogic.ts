@@ -76,7 +76,12 @@ export function useHandlerLogic(props, handler_state) {
         } else if (update) {
           handler_state.currentRootNode = data[0]
         }
-        handler_state.currentPath = [handler_state.currentRootNode]
+        if(!handler_state.currentRootNode){
+          handler_state.currentRootNode = null
+        }else{
+          handler_state.currentPath = [handler_state.currentRootNode]
+        }
+
       })
       .catch((error) => {
         if (error.statusCode === 401) userStore.updateUser()
@@ -97,7 +102,10 @@ export function useHandlerLogic(props, handler_state) {
   function reloadAction(params = {}, all = false) {
     if (handler_state.availableRootNodes.length === 0 || all || handler_state.needUpdate) {
       let requestPromises = []
-      fetchRoots(!all).then((resp) => {
+      let rootPromise = fetchRoots(!all)
+      requestPromises.push(requestPromises)
+
+      rootPromise.then((resp) => {
         handler_state.needUpdate = false
         for (const [type, handler] of Object.entries(currentHandlers)) {
           let aPromise = new Promise((resolve, reject) => {
@@ -107,7 +115,7 @@ export function useHandlerLogic(props, handler_state) {
                 ...handler.state.params,
                 ...params,
                 ...contextStore.getContext(),
-                parententry: handler_state.currentPath.slice(-1)[0]["key"]
+                parententry: handler_state.currentPath.slice(-1)[0]?.["key"]
               })
               .catch((error) => {
                 messageStore.addMessage("error", `${error.message}`, error.response?.url)

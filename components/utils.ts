@@ -178,5 +178,9 @@ export default class Utils {
       .replace(/&#40;/g, "(")
       .replace(/&#41;/g, ")")
       .replace(/&#61;/g, "=")
+      .replace(/&#039;/g, "'")
+      .replace(/&#040;/g, "(")
+      .replace(/&#041;/g, ")")
+      .replace(/&#061;/g, "=")
   }
 }

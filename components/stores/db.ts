@@ -38,8 +38,8 @@ function adminTreeLayer(itemList: Array<ModuleInfo>, parent: ModuleInfo): Array<
     }
 
     // set index as sortindex if missing
-    if (!Object.keys(conf).includes("sortIndex")) {
-      conf["sortIndex"] = i
+    if (!Object.keys(conf).includes("sortIndex") || conf["sortIndex"] === 0) {
+      conf["sortIndex"] = Array.from(conf["name"].substring(0, 3)).map(x=>x.charCodeAt(0).toString().padStart(3,'0')).join("")
     }
     if (!Object.keys(conf).includes("columns")) {
       conf["columns"] = undefined
