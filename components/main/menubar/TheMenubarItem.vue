@@ -1,203 +1,205 @@
 <template>
-  <router-link
-    v-if="to"
-    v-slot="{ route }"
-    :to="to"
-    custom
-  >
-    <div class="item">
-      <sl-avatar
-        shape="rounded"
-        :initials="icon ? '' : state.initials"
-        @click="openItem(route)"
-      >
+  <template v-if="menuState.search === '' || name.includes(menuState.search) || state.slotitems>0">
+    <router-link
+      v-if="to"
+      v-slot="{ route }"
+      :to="to"
+      custom
+    >
+      <div class="item">
+        <sl-avatar
+          shape="rounded"
+          :initials="icon ? '' : state.initials"
+          @click="openItem(route)"
+        >
+          <sl-icon
+            v-if="icon && iconType === 'library'"
+            slot="icon"
+            :name="icon"
+            :library="library"
+            sprite
+          ></sl-icon>
+          <sl-icon
+            v-if="icon && iconType === 'path'"
+            slot="icon"
+            :src="icon"
+          ></sl-icon>
+        </sl-avatar>
+
+        <div
+          class="name"
+          @click="openItem(route)"
+        >
+          {{ name }}
+        </div>
+
         <sl-icon
-          v-if="icon && iconType === 'library'"
-          slot="icon"
-          :name="icon"
-          :library="library"
+          v-if="closeable"
           sprite
-        ></sl-icon>
-        <sl-icon
-          v-if="icon && iconType === 'path'"
-          slot="icon"
-          :src="icon"
-        ></sl-icon>
-      </sl-avatar>
-
-      <div
-        class="name"
-        @click="openItem(route)"
-      >
-        {{ name }}
-      </div>
-
-      <sl-icon
-        v-if="closeable"
-        sprite
-        name="x-lg"
-        class="icon-end"
-        @click.stop="removeItem"
-      >
-      </sl-icon>
-
-      <div
-        v-if="state.slotitems"
-        class="arrow"
-        :class="{ 'is-open': state.open }"
-        @click.stop="openGroup"
-      >
-        <sl-icon
-          name="chevron-right"
-          sprite
+          name="x-lg"
+          class="icon-end"
+          @click.stop="removeItem"
         >
         </sl-icon>
-      </div>
 
-      <div
-        v-else
-        class="space"
-      ></div>
-
-      <sl-dropdown class="dropdown">
-        <sl-icon-button
-          slot="trigger"
-          name="three-dots"
+        <div
+          v-if="state.slotitems"
+          class="arrow"
+          :class="{ 'is-open': state.open }"
+          @click.stop="openGroup"
         >
-        </sl-icon-button>
-        <sl-menu>
-          <!--<sl-menu-item @click="toogleFavItem()">
-            <sl-icon
-              slot="prefix"
-              name="heart"
-              sprite
-            ></sl-icon>
-            Favorisieren
-          </sl-menu-item>-->
-          <sl-menu-item @click="openConfig()" v-if="userStore.userAccess.includes('root') || userStore.userAccess.includes(`${moduleInfo?.['module']}-manage`)">
-            <sl-icon
-              slot="prefix"
-              name="pencil-fill"
-              sprite
-            ></sl-icon>
-            Bearbeiten
-          </sl-menu-item>
-          <sl-menu-item @click="openItem(route, true)">
-            <sl-icon
-              slot="prefix"
-              name="plus-lg"
-              sprite
-            ></sl-icon>
-            Öffnen
-          </sl-menu-item>
-        </sl-menu>
-      </sl-dropdown>
-    </div>
+          <sl-icon
+            name="chevron-right"
+            sprite
+          >
+          </sl-icon>
+        </div>
 
-    <div
-      v-show="state.open"
-      class="sublist"
-    >
-      <slot> </slot>
-    </div>
-  </router-link>
-  <a
-    v-else-if="href"
-    :href="href"
-  >
-    <div
-      class="item"
-      @click.stop="openGroup"
-    >
-      <sl-avatar
-        shape="rounded"
-        :initials="icon ? '' : state.initials"
-      >
-        <sl-icon
-          v-if="icon"
-          slot="icon"
-          :name="icon"
-          :library="library"
-          sprite
-        ></sl-icon>
-      </sl-avatar>
+        <div
+          v-else
+          class="space"
+        ></div>
 
-      <div class="name">
-        {{ name }}
+        <sl-dropdown class="dropdown">
+          <sl-icon-button
+            slot="trigger"
+            name="three-dots"
+          >
+          </sl-icon-button>
+          <sl-menu>
+            <!--<sl-menu-item @click="toogleFavItem()">
+              <sl-icon
+                slot="prefix"
+                name="heart"
+                sprite
+              ></sl-icon>
+              Favorisieren
+            </sl-menu-item>-->
+            <sl-menu-item @click="openConfig()" v-if="userStore.userAccess.includes('root') || userStore.userAccess.includes(`${moduleInfo?.['module']}-manage`)">
+              <sl-icon
+                slot="prefix"
+                name="pencil-fill"
+                sprite
+              ></sl-icon>
+              Bearbeiten
+            </sl-menu-item>
+            <sl-menu-item @click="openItem(route, true)">
+              <sl-icon
+                slot="prefix"
+                name="plus-lg"
+                sprite
+              ></sl-icon>
+              Öffnen
+            </sl-menu-item>
+          </sl-menu>
+        </sl-dropdown>
       </div>
 
       <div
-        v-if="state.slotitems"
-        class="arrow"
-        :class="{ 'is-open': state.open }"
+        v-show="state.open"
+        class="sublist"
+      >
+        <slot> </slot>
+      </div>
+    </router-link>
+    <a
+      v-else-if="href"
+      :href="href"
+    >
+      <div
+        class="item"
         @click.stop="openGroup"
       >
-        <sl-icon
-          name="chevron-right"
-          sprite
+        <sl-avatar
+          shape="rounded"
+          :initials="icon ? '' : state.initials"
         >
-        </sl-icon>
-      </div>
-    </div>
+          <sl-icon
+            v-if="icon"
+            slot="icon"
+            :name="icon"
+            :library="library"
+            sprite
+          ></sl-icon>
+        </sl-avatar>
 
-    <div
-      v-show="state.open"
-      class="sublist"
-    >
-      <slot> </slot>
-    </div>
-  </a>
-  <div
-    v-else
-    class="wrapper"
-  >
-    <div
-      class="item"
-      @click.stop="openGroup"
-    >
-      <sl-avatar
-        shape="rounded"
-        :initials="icon ? '' : state.initials"
-      >
-        <sl-icon
-          v-if="icon"
-          slot="icon"
-          :name="icon"
-          :library="library"
-          sprite
-        ></sl-icon>
-      </sl-avatar>
+        <div class="name">
+          {{ name }}
+        </div>
 
-      <div class="name">
-        {{ name }}
+        <div
+          v-if="state.slotitems"
+          class="arrow"
+          :class="{ 'is-open': state.open }"
+          @click.stop="openGroup"
+        >
+          <sl-icon
+            name="chevron-right"
+            sprite
+          >
+          </sl-icon>
+        </div>
       </div>
 
       <div
-        v-if="state.slotitems"
-        class="arrow"
-        :class="{ 'is-open': state.open }"
+        v-show="state.open"
+        class="sublist"
+      >
+        <slot> </slot>
+      </div>
+    </a>
+    <div
+      v-else
+      class="wrapper"
+    >
+      <div
+        class="item"
         @click.stop="openGroup"
       >
-        <sl-icon
-          name="chevron-right"
-          sprite
+        <sl-avatar
+          shape="rounded"
+          :initials="icon ? '' : state.initials"
         >
-        </sl-icon>
+          <sl-icon
+            v-if="icon"
+            slot="icon"
+            :name="icon"
+            :library="library"
+            sprite
+          ></sl-icon>
+        </sl-avatar>
+
+        <div class="name">
+          {{ name }}
+        </div>
+
+        <div
+          v-if="state.slotitems"
+          class="arrow"
+          :class="{ 'is-open': state.open }"
+          @click.stop="openGroup"
+        >
+          <sl-icon
+            name="chevron-right"
+            sprite
+          >
+          </sl-icon>
+        </div>
+      </div>
+
+      <div
+        v-show="state.open"
+        class="sublist"
+      >
+        <slot> </slot>
       </div>
     </div>
-
-    <div
-      v-show="state.open"
-      class="sublist"
-    >
-      <slot> </slot>
-    </div>
-  </div>
+  </template>
 </template>
 
 <script lang="ts">
 // @ts-nocheck
-import { computed, reactive, onMounted, onUpdated, defineComponent, unref } from "vue"
+import { computed, reactive, onMounted, onUpdated, defineComponent, unref, inject } from "vue"
 import Utils from "../../utils"
 import { useDBStore } from "../../stores/db"
 import { useRoute, useRouter } from "vue-router"
@@ -252,7 +254,7 @@ export default defineComponent({
     const dbStore = useDBStore()
     const router = useRouter()
     const userStore = useUserStore()
-
+    const menuState = inject("menuState")
     const state = reactive({
       open: !props.closed,
       slotitems: 0,
@@ -268,7 +270,8 @@ export default defineComponent({
       padding: computed(() => {
         let layer = props.layer
         return `calc(var(--sl-spacing-medium) * ${layer})`
-      })
+      }),
+      visible: true
     })
 
     function openGroup() {
@@ -351,7 +354,8 @@ export default defineComponent({
       toogleFavItem,
       userStore,
       openConfig,
-      handleMaxTabOpen
+      handleMaxTabOpen,
+      menuState
     }
   }
 })
