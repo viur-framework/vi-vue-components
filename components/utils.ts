@@ -168,4 +168,15 @@ export default class Utils {
 
     return [icon, iconType, null, null]
   }
+
+  static unescape(value) {
+    return String(value)
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/&#40;/g, "(")
+      .replace(/&#41;/g, ")")
+      .replace(/&#61;/g, "=")
+  }
 }

@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <h1 class="main-headline">Hallo {{ state.name }}</h1>
+    <h1 class="main-headline">Hallo {{ Utils.unescape(state.name) }}</h1>
     <strong> {{ userStore.state.user.name }}</strong>
 
     <div
@@ -89,6 +89,7 @@ export default defineComponent({
     }
     return {
       state,
+      Utils,
       route,
       iconInfo,
       userStore,
