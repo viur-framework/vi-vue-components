@@ -42,7 +42,7 @@ function adminTreeLayer(itemList: Array<ModuleInfo>, parent: ModuleInfo): Array<
       conf["sortIndex"] = i
     }
     if (!Object.keys(conf).includes("columns")) {
-      conf["columns"] = []
+      conf["columns"] = undefined
     }
 
     // if module is missing (views) update parent with conf
