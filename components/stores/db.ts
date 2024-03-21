@@ -418,7 +418,9 @@ export const useDBStore = defineStore("db", () => {
   function removeOpened(route) {
     let url = route.fullPath
     let idx = state["handlers.opened"].findIndex((e) => e["url"] === url)
-    if (idx === state["handlers.active"]) {
+    if (idx === 0){
+      return 0
+    } else if (idx === state["handlers.active"]) {
       router.push(state["handlers.opened"][idx - 1]["to"]).then(() => {
         state["handlers.opened"].splice(idx, 1)
         viewStore.destroy(url)
