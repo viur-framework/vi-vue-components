@@ -7,9 +7,6 @@
       <menu-tree :tree="userStore.favoriteModules"></menu-tree>
     </the-menubar-group>
     <the-menubar-group :name="$t('sidebar.administration')">
-      <sl-input v-model="state.search" size="small" placeholder="Suche" class="modulesearch" clearable @sl-clear="state.search=''">
-        <sl-icon name="search" slot="prefix"></sl-icon>
-      </sl-input>
       <menu-tree :tree="dbStore.state['vi.moduleTree']"></menu-tree>
     </the-menubar-group>
     <div
@@ -36,11 +33,8 @@ export default defineComponent({
   setup(props, context) {
     const dbStore = useDBStore()
     const userStore = useUserStore()
-
     const state = reactive({
-      search: ""
     })
-    provide("menuState", state)
     return { state, dbStore, userStore }
   }
 })
@@ -62,7 +56,4 @@ export default defineComponent({
 }
 
 
-.modulesearch::part(base){
-  border-radius:0px;
-}
 </style>

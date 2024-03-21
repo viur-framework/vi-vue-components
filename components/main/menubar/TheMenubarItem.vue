@@ -199,7 +199,7 @@
 
 <script lang="ts">
 // @ts-nocheck
-import { computed, reactive, onMounted, onUpdated, defineComponent, unref, inject } from "vue"
+import { computed, reactive, onMounted, onUpdated, defineComponent, unref, inject, watch } from "vue"
 import Utils from "../../utils"
 import { useDBStore } from "../../stores/db"
 import { useRoute, useRouter } from "vue-router"
@@ -343,6 +343,14 @@ export default defineComponent({
 
     onUpdated(() => {
       state.slotitems = Utils.getSlotLength(context.slots.default)
+    })
+
+    watch(()=>menuState.search, (newVal, oldVal)=>{
+      if(newVal){
+        state.open = true
+      }else{
+        state.open = false
+      }
     })
 
     return {

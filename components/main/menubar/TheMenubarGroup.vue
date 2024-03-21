@@ -25,6 +25,7 @@
         name="caret-right-fill"
         class="arrow"
         :class="{ 'is-open': state.open }"
+
       >
       </sl-icon>
     </div>
@@ -32,14 +33,18 @@
       v-show="state.open"
       class="list"
     >
+      <sl-input v-model="state.searchValue" size="small" placeholder="Suche" class="modulesearch" clearable @sl-clear="state.searchValue=''">
+        <sl-icon name="search" slot="prefix"></sl-icon>
+      </sl-input>
       <slot></slot>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { reactive, onMounted, defineComponent } from "vue"
+import {reactive, onMounted, defineComponent, provide, watch} from "vue"
 import Utils from "../../utils"
+import {useDebounceFn} from "@vueuse/core/index";
 
 export default defineComponent({
   name: "TheMenubarGroup",
@@ -68,8 +73,19 @@ export default defineComponent({
   setup(props, context) {
     const state = reactive({
       open: !props.closed,
-      slotitems: 0
+      slotitems: 0,
+      searchValue: "",
+      search: ""
     })
+    provide("menuState", state)
+    watch(()=>state.searchValue, (newVal, oldVal)=>{
+      const debouncedSearch = useDebounceFn((event) => {
+        state.search = state.searchValue
+      }, 500)
+      debouncedSearch()
+    })
+
+
 
     function openGroup() {
       state.open = !state.open
@@ -131,5 +147,9 @@ span {
     width: 100%;
     height: auto;
   }
+}
+
+.modulesearch::part(base){
+  border-radius:0px;
 }
 </style>
