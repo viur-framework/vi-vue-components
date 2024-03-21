@@ -13,7 +13,9 @@
       :library="state.currentMeta.library"
     >
     </sl-icon>
-    {{ name }}
+    <div class="name">
+      {{ name }}
+    </div>
     <sl-tree-item v-if="!state.needsRequest && state.items.length === 0"
       ><span style="color: var(--sl-color-neutral-300); font-style: italic; font-size: 0.7em"
         >keine Einträge</span
@@ -123,6 +125,16 @@ export default defineComponent({
 
 <style scoped>
 sl-tree-item {
-  overflow: hidden;
+  display: flex;
+  max-width: 100%;
+}
+
+sl-icon{
+  min-width: 1em;
+}
+
+.name{
+  max-width: 100%;
+  white-space: nowrap;
 }
 </style>

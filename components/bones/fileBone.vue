@@ -9,7 +9,7 @@
       v-if="state.droparea"
       class="droparea"
     >
-      Dateien hier hinziehen
+      $t('bone.dragFile')
     </div>
     <sl-button
       v-if="!boneState.readonly && (!value || state.loading)"
@@ -33,6 +33,7 @@
       v-if="!boneState.readonly && (!value || state.loading)"
       class="relation-btn"
       @click="openRelationalSelection"
+      :title="$t('bone.chooseFile')"
     >
       <sl-icon
         slot="prefix"
@@ -49,6 +50,7 @@
     <sl-button
       v-if="value"
       @click="downloadFile"
+      :title="$t('bone.download')"
     >
       <sl-icon
         slot="prefix"
@@ -84,16 +86,29 @@
         class="ellipsis"
       >
         {{ decodeURIComponent(value?.["dest"]?.["name"]) }}
+
+
       </div>
+      <sl-button
+          v-if="value"
+          variant="info"
+          outline
+          class="edit-btn"
+          @click="editSelection"
+          :title="$t('bone.editFile')"
+        >
+          <sl-icon name="pencil-fill"></sl-icon>
+        </sl-button>
     </div>
     <sl-button
       v-if="value"
       variant="info"
       outline
       class="info-btn"
-      @click="editSelection"
+      @click="openRelationalSelection"
+      :title="$t('bone.chooseFile')"
     >
-      <sl-icon name="pencil-fill"></sl-icon>
+      <sl-icon name="list-ul"></sl-icon>
     </sl-button>
     <sl-button
       v-if="!boneState.multiple && !boneState.isEmpty"
@@ -305,7 +320,6 @@ export default defineComponent({
 .box {
   display: flex;
   align-items: center;
-  padding: 0 var(--sl-spacing-small) 0 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -316,6 +330,12 @@ export default defineComponent({
   max-height: 40px;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
+
+  &:hover{
+    .edit-btn{
+      opacity: 1;
+    }
+   }
 }
 
 .preview {
@@ -363,6 +383,7 @@ export default defineComponent({
 
 .info-btn {
   &::part(base) {
+    aspect-ratio: 1;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
   }
@@ -375,5 +396,27 @@ export default defineComponent({
 .ellipsis {
   overflow: hidden;
   text-overflow: ellipsis;
+  margin-right: var(--sl-spacing-small);
+}
+
+.edit-btn{
+  margin-left: auto;
+  opacity: 0;
+  transition: all ease .3s;
+
+  &::part(base) {
+    border: none;
+    aspect-ratio: 1;
+    color: var(--sl-color-neutral-300);
+    transition: all ease .3s;
+   }
+
+ &:hover{
+  &::part(base) {
+     border: none;
+     color: var(--sl-color-neutral-800);
+     background-color: transparent;
+   }
+  }
 }
 </style>
