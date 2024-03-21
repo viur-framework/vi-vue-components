@@ -76,6 +76,10 @@ function adminTreeLayer(itemList: Array<ModuleInfo>, parent: ModuleInfo): Array<
     } else if (conf["handler"] === "tree.simple.file") {
       conf["url"] = { path: `/db/${conf["module"]}/tree` }
       conf["handlerComponent"] = "treehandler"
+
+      if (!conf["columns"]){
+        conf["columns"] = ['name']
+      }
       if (!Object.keys(conf).includes("kinds")) {
         conf["kinds"] = {
           node: { icon: "folder", name: "Ordner", allowedChildren: ["leaf", "node"] },

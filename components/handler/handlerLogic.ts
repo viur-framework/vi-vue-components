@@ -101,36 +101,38 @@ export function useHandlerLogic(props, handler_state) {
 
   function reloadAction(params = {}, all = false) {
     if (handler_state.availableRootNodes.length === 0 || all || handler_state.needUpdate) {
-      let requestPromises = []
-      let rootPromise = fetchRoots(!all)
-      requestPromises.push(requestPromises)
+      return new Promise((resolve, reject) => {
+        let requestPromises = []
+        fetchRoots(!all).then((resp) => {
+          handler_state.needUpdate = false
 
-      rootPromise.then((resp) => {
-        handler_state.needUpdate = false
-        for (const [type, handler] of Object.entries(currentHandlers)) {
-          let aPromise = new Promise((resolve, reject) => {
-            handler.reset()
-            handler
-              .filter({
-                ...handler.state.params,
-                ...params,
-                ...contextStore.getContext(),
-                parententry: handler_state.currentPath.slice(-1)[0]?.["key"]
-              })
-              .catch((error) => {
-                messageStore.addMessage("error", `${error.message}`, error.response?.url)
-                reject()
-              })
-              .then((resp) => {
-                resolve()
-              })
+          for (const [type, handler] of Object.entries(currentHandlers)) {
+            let aPromise = new Promise((resolve, reject) => {
+              handler.reset()
+              handler
+                .filter({
+                  ...handler.state.params,
+                  ...params,
+                  ...contextStore.getContext(),
+                  parententry: handler_state.currentPath.slice(-1)[0]?.["key"]
+                })
+                .catch((error) => {
+                  messageStore.addMessage("error", `${error.message}`, error.response?.url)
+                  reject()
+                })
+                .then((resp) => {
+                  resolve()
+                })
+            })
+            requestPromises.push(aPromise)
+          }
+          Promise.all(requestPromises).then((resp) => {
+              resolve()
+            //messageStore.addMessage("success", `Reload`, "Liste neu geladen")
+          }).catch((error) => {
+              reject()
           })
-          requestPromises.push(aPromise)
-        }
-      })
-
-      return Promise.all(requestPromises).then((resp) => {
-        //messageStore.addMessage("success", `Reload`, "Liste neu geladen")
+        })
       })
     } else {
       let requestPromises = []
@@ -288,6 +290,7 @@ export function useHandlerLogic(props, handler_state) {
       handler_state.selectedBones = props.columns
       return 0
     }
+
     handler_state.conf = dbStore.getConf(props.module, props.view)
     if (handler_state.conf && handler_state.conf?.["columns"] && handler_state.conf?.["columns"].length > 0) {
       handler_state.selectedBones = handler_state.conf["columns"]

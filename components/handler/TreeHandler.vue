@@ -343,7 +343,6 @@ export default defineComponent({
       if (props.columns && props.columns.length > 0) {
         state.selectedBones = props.columns
       }
-      console.log("mount")
       handlerLogic.reloadAction().then((resp) => {
         handlerLogic.setSelectedBones()
       })
