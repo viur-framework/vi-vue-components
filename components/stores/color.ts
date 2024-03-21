@@ -9,10 +9,12 @@ export const useColorStore = defineStore("colorStore", () => {
   })
 
   function getPrimaryColor(lightness = 0) {
-    return colorConvert(state.primaryColor, lightness)
+    const [h,s,l] = colorConvert(state.primaryColor, lightness)
+    return "hsl(" + h + "," + s + "%," + l + "%)"
   }
   function getSecondaryColor(lightness = 0) {
-    return colorConvert(state.secondaryColor, lightness)
+    const [h,s,l] = colorConvert(state.secondaryColor, lightness)
+    return "hsl(" + h + "," + s + "%," + l + "%)"
   }
   function colorConvert(hexColor, lightness) {
     const r = parseInt("0x" + hexColor[1] + hexColor[2]) / 255
@@ -42,8 +44,14 @@ export const useColorStore = defineStore("colorStore", () => {
     if (lightness) {
       l = lightness
     }
-    return "hsl(" + h + "," + s + "%," + l + "%)"
+    return [h,s,l]
+
   }
 
-  return { state, getPrimaryColor, getSecondaryColor }
+  function getAlphaColor(color, lightness, alpha){
+    const [h,s,l] = colorConvert(state[color], lightness)
+    return "hsla(" + h + "," + s + "%," + l + "% , "+ alpha +"%)"
+  }
+
+  return { state, getPrimaryColor, getSecondaryColor, getAlphaColor }
 })
