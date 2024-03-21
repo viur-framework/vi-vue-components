@@ -3,6 +3,7 @@
     size="small"
     variant="flap"
     @sl-tab-show="onTabShown"
+    @contextmenu.prevent="()=>{return 0}"
   >
     <the-main-screen-tabbar-item
       v-for="(entry, idx) in dbStore.state['handlers.opened']"
