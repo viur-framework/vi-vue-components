@@ -12,7 +12,7 @@
     >
       <div v-html="modulesStore.state.modules[module]['help_text']"></div>
     </sl-details>
-    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0 10px 0 0">
+    <div class="breadcrumb">
       <sl-breadcrumb>
         <sl-breadcrumb-item
           v-for="path in state.currentPath"
@@ -688,6 +688,21 @@ table {
   overflow: auto;
   flex: 1;
   padding-bottom: 80px;
+
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  &::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+    background-color: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--sl-color-neutral-400);
+    border-radius: 3px;
+  }
 }
 .stick-header {
   position: sticky;
@@ -725,7 +740,59 @@ sl-details {
   justify-content: center;
   padding: 20px 20px 15px 20px;
 }
+
 sl-split-panel {
+  --min: 25%;
+  --max: 75%;
+  --divider-width: 1px;
+
+  &::part(divider){
+    background-color: var(--vi-border-color);
+   }
+
   overflow: auto;
 }
+
+sl-tree{
+  display: flex;
+  overflow: auto;
+
+  &::part(base){
+    width: 100%;
+   }
+
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  &::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+    background-color: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--sl-color-neutral-400);
+    border-radius: 3px;
+  }
+}
+
+sl-tree-item {
+  width: 100%;
+
+  &::part(base) {
+    width: 100%;
+  }
+
+}
+
+.breadcrumb{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--sl-spacing-medium) 0 0;
+  border-bottom: 1px solid var(--vi-border-color);
+  font-size: .9em;
+}
+
 </style>
