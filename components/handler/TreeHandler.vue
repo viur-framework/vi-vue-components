@@ -24,7 +24,7 @@
             :name="listItemMeta(path, 'node').icon"
             :library="listItemMeta(path, 'node').library"
           ></sl-icon>
-          {{ path["name"] }}</sl-breadcrumb-item
+          {{ Utils.unescape( path["name"]) }}</sl-breadcrumb-item
         >
       </sl-breadcrumb>
       <span>{{ state.currentSelection.length }} Ausgewählt</span>
@@ -231,6 +231,7 @@ import WidgetSmall from "../dashboard/WidgetSmall.vue"
 import BoneView from "../bones/boneView.vue"
 import { useHandlerLogic } from "./handlerLogic"
 import treeItem from "../tree/TreeItem.vue"
+import Utils from "../utils"
 
 export default defineComponent({
   props: {
@@ -528,7 +529,8 @@ export default defineComponent({
       nodeSelection,
       handlerLogic,
       goToPath,
-      listItemMeta
+      listItemMeta,
+      Utils
     }
   }
 })

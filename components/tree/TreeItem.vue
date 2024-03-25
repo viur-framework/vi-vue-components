@@ -14,7 +14,7 @@
     >
     </sl-icon>
     <div class="name">
-      {{ name }}
+      {{Utils.unescape(name) }}
     </div>
     <sl-tree-item v-if="!state.needsRequest && state.items.length === 0"
       ><span style="color: var(--sl-color-neutral-300); font-style: italic; font-size: 0.7em"
@@ -39,6 +39,7 @@ import { reactive, defineComponent, inject, onBeforeMount, watch, computed, onMo
 import { Request } from "@viur/vue-utils"
 import useTree from "./tree.js"
 import { isNavigationFailure } from "vue-router"
+import Utils from "../utils.js"
 
 export default defineComponent({
   components: {},
@@ -117,7 +118,8 @@ export default defineComponent({
       state,
       handlerState,
       itemMeta,
-      enforceUpdate
+      enforceUpdate,
+      Utils
     }
   }
 })
