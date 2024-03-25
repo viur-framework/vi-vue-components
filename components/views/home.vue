@@ -15,7 +15,7 @@
           :library="i['library']"
           :to="i['to']"
         >
-          {{ i["name"] }}
+          {{ Utils.unescape(i["name"]) }}
         </widget-small>
       </div>
     </div>
@@ -40,7 +40,7 @@
           :library="iconInfo(i)[0]"
           :to="i['to']"
         >
-          {{ i["name"] }}
+          {{ Utils.unescape(i["name"]) }}
         </widget-small>
       </div>
     </div>
