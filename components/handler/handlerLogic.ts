@@ -69,19 +69,21 @@ export function useHandlerLogic(props, handler_state) {
       .then(async (resp) => {
         let data = await resp.json()
         handler_state.availableRootNodes = data
-        if (Object.keys(context).includes("parentrepo")) {
+
+        let contextKeys = Object.keys(context)
+        if (contextKeys.includes("parentrepo")) {
           handler_state.currentRootNode = data.filter((i) => i["key"] === context["parentrepo"])?.[0]
-        } else if (Object.keys(context).includes("@rootNode")) {
+        }else if (contextKeys.includes("@rootNode")) {
           handler_state.currentRootNode = data.filter((i) => i["key"] === context["@rootNode"])?.[0]
-        } else if (update) {
+        }else if (update) {
           handler_state.currentRootNode = data[0]
         }
-        if(!handler_state.currentRootNode){
+
+        if (!handler_state.currentRootNode) {
           handler_state.currentRootNode = null
-        }else{
+        } else {
           handler_state.currentPath = [handler_state.currentRootNode]
         }
-
       })
       .catch((error) => {
         if (error.statusCode === 401) userStore.updateUser()

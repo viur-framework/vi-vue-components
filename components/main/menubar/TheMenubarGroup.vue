@@ -42,6 +42,7 @@
 </template>
 
 <script lang="ts">
+// @ts-nocheck
 import {reactive, onMounted, defineComponent, provide, watch} from "vue"
 import Utils from "../../utils"
 import {useDebounceFn} from "@vueuse/core/index";

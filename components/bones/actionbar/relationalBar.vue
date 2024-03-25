@@ -35,12 +35,11 @@
       {{ $t("bone.add") }}
     </sl-button>
   </div>
-
   <relational-selector
     :open="state.openedSelection"
     :name="boneState.bonestructure['descr']"
     :tab-id="handlerState.tabId"
-    :handler="state.moduleInfo['handlerComponent']"
+    :handler="state.moduleInfo?.['handlerComponent']"
     :module="boneState?.bonestructure['module']"
     :rowselect="2"
     @close="relationCloseAction"
@@ -135,7 +134,8 @@ export default defineComponent({
       removeMultipleEntries,
       openSelector,
       getList,
-      relationCloseAction
+      relationCloseAction,
+      dbStore
     }
   }
 })
