@@ -340,13 +340,6 @@ export const useDBStore = defineStore("db", () => {
 
     let mode = "view"
 
-    if (!Object.keys(route.query).includes("_")) {
-      route.query["_"] = new Date().getTime()
-    }
-    if (contextInheritance) {
-      contextStore.copyLocalContext(currentRoute.query["_"], route.query["_"])
-    }
-
     let url = route.fullPath
     if (module.includes("/")) {
       // in case of nested modules like shop/cart replace in url with . to shop.cart
@@ -355,6 +348,13 @@ export const useDBStore = defineStore("db", () => {
       let dotted_module = module.replace("/", ".")
       let raw_route = url.replace(module, dotted_module)
       route = router.resolve(unref(raw_route))
+    }
+
+    if (!Object.keys(route.query).includes("_")) {
+      route.query["_"] = new Date().getTime()
+    }
+    if (contextInheritance) {
+      contextStore.copyLocalContext(currentRoute.query["_"], route.query["_"])
     }
 
     if (url) {

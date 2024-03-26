@@ -95,7 +95,12 @@ export default class Utils {
 
   static publicAsset(path, prefix = "s") {
     if (import.meta.env.DEV) {
-      return `${prefix}/${path}`
+      if(path.startsWith("/")){
+        return `${import.meta.env.VITE_API_URL}${path}`
+      }else{
+        return `${prefix}/${path}`
+      }
+
     }
     return path
   }
