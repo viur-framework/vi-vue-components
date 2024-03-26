@@ -20,7 +20,7 @@ export const useAppStore = defineStore("appStore", () => {
     "admin.loader.logo": undefined,
     "admin.loader.color": undefined,
     "admin.login.background": Utils.publicAsset("login-background.jpg"),
-    "admin.login.logo": Utils.publicAsset("logo.svg"),
+    "admin.login.logo": Utils.publicAsset("logo-center.svg"),
     "admin.color.primary": "",
     "admin.color.secondary": "",
     "admin.scriptor.url": "/scriptor/index.html",
