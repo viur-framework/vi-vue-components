@@ -9,7 +9,7 @@
       v-if="state.droparea"
       class="droparea"
     >
-      $t('bone.dragFile')
+      {{$t('bone.dragFile')}}
     </div>
     <sl-button
       v-if="!boneState.readonly && (!value || state.loading)"

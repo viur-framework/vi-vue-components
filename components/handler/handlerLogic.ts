@@ -73,12 +73,14 @@ export function useHandlerLogic(props, handler_state) {
         let contextKeys = Object.keys(context)
         if (contextKeys.includes("parentrepo")) {
           handler_state.currentRootNode = data.filter((i) => i["key"] === context["parentrepo"])?.[0]
-        }else if (contextKeys.includes("@rootNode")) {
+        } else if (contextKeys.includes("@rootNode")) {
           handler_state.currentRootNode = data.filter((i) => i["key"] === context["@rootNode"])?.[0]
-        }else if (update) {
+          if (!handler_state.currentRootNode){
+            handler_state.currentRootNode = data[0]
+          }
+        } else if (update) {
           handler_state.currentRootNode = data[0]
         }
-
         if (!handler_state.currentRootNode) {
           handler_state.currentRootNode = null
         } else {
