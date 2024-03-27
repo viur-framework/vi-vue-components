@@ -358,7 +358,7 @@ export default defineComponent({
 .file-wrapper {
   width: 100%;
   display: flex;
-  gap: 10px;
+  gap: var(--sl-spacing-x-small);
   position: relative;
 
   & + .nested_wrapper {

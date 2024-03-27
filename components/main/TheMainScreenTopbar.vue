@@ -94,7 +94,7 @@ header {
 .main-group {
   margin-right: 15px;
   display: flex;
-  gap: 10px;
+  gap: var(--sl-spacing-small);
   align-items: center;
 }
 </style>

@@ -118,7 +118,7 @@ export default defineComponent({
   font-weight: 600;
   border-bottom: 1px solid var(--vi-foreground-color);
   width: 100%;
-  gap: 10px;
+  gap: var(--sl-spacing-small);
   cursor: pointer;
   color: var(--vi-foreground-color);
 
@@ -150,6 +150,9 @@ span {
 }
 
 .modulesearch::part(base){
-  border-radius:0px;
+  border: none;
+  border-bottom: 1px solid var(--vi-border-color);
+  border-radius: 0;
+    font-size: 0.85em;
 }
 </style>

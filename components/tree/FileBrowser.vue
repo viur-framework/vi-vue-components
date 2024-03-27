@@ -406,7 +406,7 @@ sl-split-panel {
   @media (max-width: 39.95em) {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: var(--sl-spacing-small);
     ::part(start) {
       display: none;
     }
