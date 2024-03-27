@@ -256,7 +256,7 @@ sl-combobox {
 
 .upload-btn {
   margin-left: auto;
-  gap: 10px;
+  gap: var(--sl-spacing-x-small);
   display: flex;
 }
 </style>
