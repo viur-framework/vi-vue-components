@@ -465,9 +465,20 @@ export default defineComponent({
       if (handler["filter"]) {
         filter = handler["filter"]
       }
-      filter[handler["context"]] = props.skelkey
+
       //todo set Context on routing
-      contextStore.setContext(handler["context"], props.skelkey, state.tabId)
+      if(typeof handler["context"] === 'object'){
+        for (const [k, v] of Object.entries(handler["context"])) {
+          if (Object.keys(state.skel).includes(v)) {
+            contextStore.setContext(k, state.skel[v], state.tabId)
+            filter[k] = state.skel[v]
+          }
+        }
+      } else {
+        filter[handler["context"]] = props.skelkey
+        contextStore.setContext(handler["context"], props.skelkey, state.tabId)
+      }
+
       return filter
     }
 
