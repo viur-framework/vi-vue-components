@@ -21,7 +21,7 @@
       </sl-button>
     </router-link>
     <sl-dropdown
-      v-if="handlerState.conf?.['kinds'] && Object.keys(handlerState.conf['kinds']).length > 1"
+      v-if="handlerState.conf?.['kinds'] && Object.keys(handlerState.conf['kinds']).length > 2"
       placement="bottom-end"
     >
       <sl-button

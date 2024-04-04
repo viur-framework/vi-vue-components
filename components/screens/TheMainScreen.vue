@@ -118,13 +118,14 @@ export default defineComponent({
     function collectViurConfig() {
       Request.get("/vi/config").then(async (resp: Response) => {
         let data = await resp.json()
+        console.log(data["configuration"])
         dbStore.state["vi.name"] = data["configuration"]["vi.name"]
-        if (Object.keys(data["configuration"]).includes("module.groups")) {
-          dbStore.state["vi.modules.groups"] = data["configuration"]["module.groups"]
-        } else if (Object.keys(data["configuration"]).includes("moduleGroups")) {
-          dbStore.state["vi.modules.groups"] = data["configuration"]["moduleGroups"]
-        } else if (Object.keys(data["configuration"]).includes("admin.module.groups")) {
-          dbStore.state["vi.modules.groups"] = data["configuration"]["admin.module.groups"]
+
+        for (const group of ["module.groups", "module_groups", "moduleGroups"]) {
+          if (Object.keys(data["configuration"]).includes(group)) {
+            dbStore.state["vi.modules.groups"] = data["configuration"][group]
+            break
+          }
         }
 
         let currentModules = Object.entries(data["modules"]).map((i) => {
