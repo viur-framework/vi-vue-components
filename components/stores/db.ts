@@ -1,6 +1,6 @@
 //@ts-nocheck
 
-import { reactive, computed, Component, getCurrentInstance, unref, markRaw } from "vue"
+import { reactive, computed, Component, getCurrentInstance, unref, markRaw,shallowRef } from "vue"
 import { defineStore, StoreDefinition } from "pinia"
 import { useRoute, useRouter } from "vue-router"
 import { useViewStore } from "./views"
@@ -216,10 +216,10 @@ export const useDBStore = defineStore("db", () => {
 
     //actions
     "topbar.actions": markRaw([]),
-    "floatingbar.actions": [],
+    "floatingbar.actions": markRaw([]),
 
     //boneViewer
-    "bones.view": {},
+    "bones.view": shallowRef({}),
 
     //dynamic child buckets
     "handlers.opened": [
