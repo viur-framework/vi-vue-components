@@ -111,6 +111,7 @@ export default defineComponent({
           }
 
           handlerState.errors = []
+          handlerState.skel = responsedata["values"]
           if (handlerState.action === "edit") {
             if (responsedata["action"] === "edit") {
               //Something went wrong we must thorw (show) errors

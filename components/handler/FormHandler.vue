@@ -8,7 +8,7 @@
         <span v-if="['clone', 'add'].includes(action)">Neuer</span>
         <span v-else-if="['edit'].includes(action)">Bearbeite</span>
         {{ state.conf?.["name"] }} Eintrag
-        <span v-if="state.formValues?.['name']?.[0]['name']">: {{ state.formValues["name"][0]["name"] }}</span>
+        <span v-if="state.formValues?.['name']?.[0]['name']">: {{ Utils.unescape(state.formValues["name"][0]["name"]) }}</span>
       </div>
       <entry-bar
         :module="module"
@@ -152,6 +152,7 @@ import { useAppStore } from "../stores/app"
 import VueJsonPretty from "vue-json-pretty"
 import "vue-json-pretty/lib/styles.css"
 import Logics from "logics-js"
+import Utils from "../utils"
 
 export default defineComponent({
   props: {
@@ -501,6 +502,7 @@ export default defineComponent({
     return {
       state,
       values,
+      Utils,
       editViewFilter,
       getWidget,
       updateValue,

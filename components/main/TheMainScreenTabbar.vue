@@ -17,7 +17,7 @@
       :name="entry['name']"
       :title="entry['_name']"
     >
-      {{ entry["name"] }}
+      {{ Utils.unescape(entry["name"])}}
     </the-main-screen-tabbar-item>
   </sl-tab-group>
 </template>
@@ -26,7 +26,7 @@
 import { reactive, defineComponent } from "vue"
 import { useDBStore } from "../stores/db"
 import TheMainScreenTabbarItem from "./TheMainScreenTabbarItem.vue"
-
+import Utils from "../utils"
 export default defineComponent({
   props: {},
   components: { TheMainScreenTabbarItem },
@@ -42,7 +42,8 @@ export default defineComponent({
     return {
       state,
       dbStore,
-      onTabShown
+      onTabShown,
+      Utils
     }
   }
 })
