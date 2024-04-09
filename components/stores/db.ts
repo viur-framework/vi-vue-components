@@ -215,6 +215,7 @@ export const useDBStore = defineStore("db", () => {
     "stores.map": {},
 
     //actions
+    "handlerbar.actions": markRaw({}),
     "topbar.actions": markRaw([]),
     "floatingbar.actions": markRaw([]),
 

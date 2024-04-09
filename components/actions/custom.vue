@@ -1,49 +1,62 @@
 <template>
   <template v-if="state.access && state.info">
-    <sl-button
-      :disabled="state.disabled"
-      size="small"
-      :title="state.info['name']"
-      @click="buttonClicked"
+    <template v-if="state.info['action'] === 'component'">
+      <component
+        :is="dbStore.state['handlerbar.actions'][state.info['component']]"
+        :info="state.info"
+      >
+      </component>
+    </template>
+    <template v-else>
+      <sl-button
+        :disabled="state.disabled"
+        size="small"
+        :variant="state.variantInfo"
+        :outline="state.outlineInfo"
+        :title="state.info['name']"
+        @click="buttonClicked"
+      >
+        <sl-icon
+          v-once
+          slot="prefix"
+          :name="state.iconInfo[1]"
+          :library="state.iconInfo[0]"
+          sprite
+        ></sl-icon>
+        <template v-if="state.showLabelInfo">
+          {{ state.info["name"] }}
+        </template>
+      </sl-button>
+    </template>
+    <teleport
+      v-if="state.confirm"
+      to="#dialogs"
+      :disabled="!state.confirm"
     >
-      <sl-icon
-        v-once
-        slot="prefix"
-        :name="state.iconInfo[1]"
-        :library="state.iconInfo[0]"
-        sprite
-      ></sl-icon>
-      {{ state.info["name"] }}
-    </sl-button>
-  </template>
-  <teleport
-    v-if="state.confirm"
-    to="#dialogs"
-    :disabled="!state.confirm"
-  >
-    <sl-dialog
-      :label="state.info?.['name']"
-      open
-      @sl-after-hide="state.confirm = false"
-    >
-      {{ state.info?.["confirm"] }}
+      <sl-dialog
+        :label="state.info?.['name']"
+        open
+        @sl-after-hide="state.confirm = false"
+      >
+        {{ state.info?.["confirm"] }}
 
-      <sl-button
-        slot="footer"
-        variant="success"
-        @click="triggerAction"
-      >
-        {{ $t("confirm") }}
-      </sl-button>
-      <sl-button
-        slot="footer"
-        variant="danger"
-        @click="state.confirm = false"
-      >
-        {{ $t("abort") }}
-      </sl-button>
-    </sl-dialog>
-  </teleport>
+        <sl-button
+          slot="footer"
+          variant="success"
+          @click="triggerAction"
+        >
+          {{ $t("confirm") }}
+        </sl-button>
+        <sl-button
+          slot="footer"
+          variant="danger"
+          @click="state.confirm = false"
+        >
+          {{ $t("abort") }}
+        </sl-button>
+      </sl-dialog>
+    </teleport>
+  </template>
 </template>
 
 <script lang="ts">
@@ -80,13 +93,15 @@ export default defineComponent({
         if (handlerState["view"]) {
           conf = conf["children"].filter((i) => i["view_number"] === parseInt(handlerState["view"]))?.[0]
         }
+        console.log(props.name)
         return conf?.["customActions"]?.[props.name]
       }),
       access: computed(() => {
         let access = false
         if (state.info && state.info["access"]) {
           for (let i of state.info["access"]) {
-            if (userStore.state.user?.access.includes(i)) {
+            let current_access = buildUrl(i)
+            if (userStore.state.user?.access.includes(current_access)) {
               access = true
             }
           }
@@ -125,11 +140,26 @@ export default defineComponent({
       iconInfo: computed(() => {
         const [icon, iconType, iconname, library] = Utils.iconNormalization(state.info?.["icon"])
         return [library, iconname]
+      }),
+      variantInfo: computed(() => {
+        if (!state.info["variant"]) return "default"
+        return state.info["variant"]
+      }),
+      outlineInfo: computed(() => {
+        if (!state.info["outline"]) return false
+        return state.info["outline"]
+      }),
+      showLabelInfo: computed(() => {
+        if (!Object.keys(state.info).includes("show_label")) return true
+        return state.info["show_label"]
       })
     })
 
     function buildUrl(url, selection) {
       url = url.replace("{{module}}", handlerState.module)
+      if (handlerState.group){
+        url = url.replace("{{group}}", handlerState.group)
+      }
 
       if (selection) {
         for (const [k, v] of Object.entries(selection)) {
@@ -156,13 +186,19 @@ export default defineComponent({
 
       for (let i of actions) {
         if (state.info["action"] === "fetch") {
+          //call server url
           handleFetch(i)
         } else if (state.info["action"] === "view") {
+          // open an admin internal url as tab
           handleView(i)
         } else if (state.info["action"] === "open") {
+          // open external url
           handleOpen(i)
         } else if (state.info["action"] === "route") {
+          // open an vue router route as tab
           routeOpen(i)
+        } else if (state.info["action"] === "component") {
+          // replace the whole button with a custom component, only access with be evaluated
         }
       }
       state.confirm = false
@@ -183,6 +219,9 @@ export default defineComponent({
             url = url.replace(skey, "")
             request = Request.securePost
           }
+        }
+        if (url.startsWith("http") || url.startsWith("//")) {
+          return false
         }
 
         request(url).then((resp) => {
@@ -235,7 +274,8 @@ export default defineComponent({
     return {
       state,
       buttonClicked,
-      triggerAction
+      triggerAction,
+      dbStore
     }
   }
 })
