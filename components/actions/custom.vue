@@ -157,7 +157,7 @@ export default defineComponent({
 
     function buildUrl(url, selection) {
       url = url.replace("{{module}}", handlerState.module)
-      if (handlerState.group){
+      if (handlerState.group) {
         url = url.replace("{{group}}", handlerState.group)
       }
 

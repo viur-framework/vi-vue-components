@@ -1,5 +1,7 @@
 <template>
-  <template v-if="menuState.search === '' || name.includes(menuState.search) || state.slotitems>0">
+  <template
+    v-if="menuState.search === '' || name.toLowerCase().includes(menuState.search.toLowerCase()) || state.slotitems > 0"
+  >
     <router-link
       v-if="to"
       v-slot="{ route }"
@@ -75,7 +77,13 @@
               ></sl-icon>
               Favorisieren
             </sl-menu-item>-->
-            <sl-menu-item @click="openConfig()" v-if="userStore.userAccess.includes('root') || userStore.userAccess.includes(`${moduleInfo?.['module']}-manage`)">
+            <sl-menu-item
+              v-if="
+                userStore.userAccess.includes('root') ||
+                userStore.userAccess.includes(`${moduleInfo?.['module']}-manage`)
+              "
+              @click="openConfig()"
+            >
               <sl-icon
                 slot="prefix"
                 name="pencil-fill"
@@ -345,13 +353,16 @@ export default defineComponent({
       state.slotitems = Utils.getSlotLength(context.slots.default)
     })
 
-    watch(()=>menuState.search, (newVal, oldVal)=>{
-      if(newVal){
-        state.open = true
-      }else{
-        state.open = false
+    watch(
+      () => menuState.search,
+      (newVal, oldVal) => {
+        if (newVal) {
+          state.open = true
+        } else {
+          state.open = false
+        }
       }
-    })
+    )
 
     return {
       state,
