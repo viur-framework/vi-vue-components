@@ -121,7 +121,7 @@ export default defineComponent({
         console.log(data["configuration"])
         dbStore.state["vi.name"] = data["configuration"]["vi.name"]
 
-        for (const group of ["module.groups", "module_groups", "moduleGroups"]) {
+        for (const group of ["admin.module.groups", "module.groups", "module_groups", "moduleGroups"]) {
           if (Object.keys(data["configuration"]).includes(group)) {
             dbStore.state["vi.modules.groups"] = data["configuration"][group]
             break
@@ -146,7 +146,7 @@ export default defineComponent({
             new_route.query["view"]
           )
         }
-        dbStore.state['vi.moduleTree'] = dbStore.modulesTree()
+        dbStore.state["vi.moduleTree"] = dbStore.modulesTree()
         state.status = "ready"
       })
       Request.get("/vi/getVersion").then(async (resp: Response) => {
