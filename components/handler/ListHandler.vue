@@ -316,7 +316,10 @@ export default defineComponent({
         context.emit("closeSelector", state.currentSelection)
         return 0
       }
-      const url = `/db/${state.module}/edit/${state.currentSelection[0]["key"]}`
+      let url = `/db/${state.module}/edit/${state.currentSelection[0]["key"]}`
+      if (state.group) {
+        url = `/db/${state.module}/edit/${state.group}/${state.currentSelection[0]["key"]}`
+      }
       let route = router.resolve(unref(url))
       dbStore.addOpened(route, state.module, state.view)
     }
