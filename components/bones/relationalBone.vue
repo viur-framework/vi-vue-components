@@ -121,6 +121,7 @@ export default defineComponent({
     })
 
     function getList(search: String) {
+      if (!search) return []
       let params = ""
       if (boneState.bonestructure["type"] === "relational.tree.leaf.file") {
         params = "skelType=leaf&"
