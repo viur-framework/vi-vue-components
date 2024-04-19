@@ -76,6 +76,7 @@ export default defineComponent({
     function filterableField(bone) {
       if (!bone["indexed"]) return false
       if (!bone["visible"]) return false
+      if (bone?.params?.filter === "no") return false
       if (!["bool", "numeric", "select", "str"].some((type) => bone["type"].startsWith(type))) return false //todo relational and date
 
       return true
