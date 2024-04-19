@@ -68,7 +68,11 @@ export default defineComponent({
         if (userStore.state.user.access.indexOf("root") !== -1) {
           return true
         }
-        return userStore.state.user.access.indexOf(`${handlerState.module}-delete`) > -1
+        if (handlerState.group) {
+          return userStore.state.user.access.indexOf(`${handlerState.module}-${handlerState.group}-delete`) > -1
+        } else {
+          return userStore.state.user.access.indexOf(`${handlerState.module}-delete`) > -1
+        }
       }),
       opened: false
     })

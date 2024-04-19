@@ -15,7 +15,7 @@
         slot="prefix"
         name="plus-lg"
       ></sl-icon>
-      <template v-if="label"> {{ $t("actions.add") }} </template>
+      <template v-if="label"> {{ $t("actions.add") }}</template>
     </sl-button>
   </router-link>
 </template>
@@ -58,7 +58,11 @@ export default defineComponent({
         if (userStore.state.user.access.indexOf("root") !== -1) {
           return true
         }
-        return userStore.state.user.access.indexOf(`${handlerState.module}-add`) > -1
+        if (handlerState.group) {
+          return userStore.state.user.access.indexOf(`${handlerState.module}-${handlerState.group}-add`) > -1
+        } else {
+          return userStore.state.user.access.indexOf(`${handlerState.module}-add`) > -1
+        }
       })
     })
 
@@ -68,6 +72,7 @@ export default defineComponent({
 
     return {
       state,
+      handlerState,
       createAndNavigate
     }
   }

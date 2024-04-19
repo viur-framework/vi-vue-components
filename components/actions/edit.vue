@@ -48,7 +48,7 @@ export default defineComponent({
             continue
           }
           if (handlerState.group) {
-            urls.push(`/db/${handlerState.module}/edit/${handlerState.group}/${selection["key"]}`)
+            urls.push(`/db/${handlerState.module}/edit/${selection["listgroup"]}/${selection["key"]}`)
           } else {
             urls.push(`/db/${handlerState.module}/edit/${selection["key"]}`)
           }
@@ -59,7 +59,11 @@ export default defineComponent({
         if (userStore.state.user.access.indexOf("root") !== -1) {
           return true
         }
-        return userStore.state.user.access.indexOf(`${handlerState.module}-edit`) > -1
+        if (handlerState.group) {
+          return userStore.state.user.access.indexOf(`${handlerState.module}-${handlerState.group}-edit`) > -1
+        } else {
+          return userStore.state.user.access.indexOf(`${handlerState.module}-edit`) > -1
+        }
       })
     })
 
