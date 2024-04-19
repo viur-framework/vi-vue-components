@@ -70,6 +70,7 @@
             <component
               :is="getEditView(handler)['handlerComponent']"
               :module="handler['module']"
+              :group="handler['group']"
               :columns="handler?.['columns'] ? handler['columns'] : []"
               :filter="editViewFilter(handler)"
             >
@@ -362,6 +363,7 @@ export default defineComponent({
           if (Object.keys(state.skel).includes('name')){
             data['name'] = state.skel['name']
           }
+          data["to"] = {...route}
           localStore.addEntries(data)
         }
       })
