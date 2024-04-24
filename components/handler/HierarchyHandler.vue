@@ -203,6 +203,7 @@ export default defineComponent({
       () => state.selectedEntries,
       (newVal, oldVal) => {
         state.currentSelection = [state.currentEntry]
+        context.emit("currentSelection", state.currentSelection)
       }
     )
 
