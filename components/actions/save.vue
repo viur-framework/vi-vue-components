@@ -94,6 +94,10 @@ export default defineComponent({
         }
       }
 
+      if (handlerState.group) {
+        url += `/${handlerState.group}`
+      }
+
       if (handlerState.action === "edit") {
         url += `/${handlerState.skelkey}`
       }
