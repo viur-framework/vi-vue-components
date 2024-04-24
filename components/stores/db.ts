@@ -374,6 +374,10 @@ export const useDBStore = defineStore("db", () => {
         name = `${currentModuleConf["name"]} / ${currentConf?.["name"]}`
       }
     }
+    let group = currentConf?.["group"]
+    if (!group && route.params['group']) {
+      group = route.params['group']
+    }
     let entry = {
       to: route,
       id: route.query["_"],
@@ -383,7 +387,7 @@ export const useDBStore = defineStore("db", () => {
       name: name,
       _name: name,
       module: module,
-      group: currentConf?.["group"],
+      group: group,
       mode: mode,
       moduleDescr: currentConf?.["name"],
       currentConf: currentConf,
