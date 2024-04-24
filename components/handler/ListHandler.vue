@@ -60,7 +60,7 @@
         <tbody>
           <template v-for="(skel, idx) in state.renderedList">
             <tr
-              :class="{ selected: state.selectedRows.includes(idx), 'is-hidden': !filter_update(skel) }"
+              :class="{ selected: state.selectedRows.includes(idx), 'is-hidden': !skel['_visible'] }"
               @dblclick="primaryAction"
               @click.exact="entrySelected(idx)"
               @click.ctrl="entrySelected(idx, 'append')"
@@ -84,7 +84,7 @@
         </tbody>
       </table>
       <div
-        v-if="state.renderedList.length === 0 && currentlist.state.state > 0"
+        v-if="state.emptyList"
         class="empty-message"
       >
         <sl-alert
@@ -193,10 +193,21 @@ export default defineComponent({
           for (const [k, v] of Object.entries(skel)) {
             vSkel[k] = getBoneViewer(skel, k).toString()
           }
+          vSkel["_visible"] = filter_update(vSkel) ? "true" : ""
           return vSkel
         })
       }),
-      filter: null
+      filter: null,
+      emptyList: computed(()=>{
+        if (state.renderedList.length === 0 && currentlist.state.state > 0){
+          return true
+        }
+
+        if (state.renderedList.filter(x=>x['_visible']).length===0){
+          return true
+        }
+        return false
+      })
     })
     provide("handlerState", state)
     const currentlist = ListRequest(state.storeName, {
