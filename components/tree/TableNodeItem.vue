@@ -130,7 +130,14 @@ export default defineComponent({
         }).then(async (resp) => {
           let data = await resp.json()
           if (!treeState.structure || Object.keys(treeState.structure).length === 0) {
-            treeState.structure = structureToDict(data["structure"])
+            let structure = data["structure"]
+            if (!data["structure"]) {
+              const moduleStructure = await Request.getStructure(treeState.module).then((structureResponse) =>
+                structureResponse.json().then((_structure) => _structure)
+              )
+              structure = moduleStructure["viewNodeSkel"]
+            }
+            treeState.structure = structureToDict(structure)
           }
 
           state.currentEntry["_nodes"] = data["skellist"]
