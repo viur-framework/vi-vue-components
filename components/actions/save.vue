@@ -72,9 +72,7 @@ export default defineComponent({
         obj[[key]] = formData.getAll(key)
       }
 
-      let url = `/${handlerState.renderer}/${handlerState.module}/${
-        handlerState.action === "clone" ? "add" : handlerState.action
-      }`
+      let url = ""
 
       if (
         appStore.state["core.version"] &&
@@ -82,6 +80,10 @@ export default defineComponent({
         appStore.state["core.version"]?.[1] >= 6
       ) {
         url = `/${handlerState.renderer}/${handlerState.module}/${handlerState.action}`
+      } else {
+        url = `/${handlerState.renderer}/${handlerState.module}/${
+          handlerState.action === "clone" ? "add" : handlerState.action
+        }`
       }
 
       if (handlerState.skeltype === "node" || handlerState.skeltype === "leaf") {
@@ -98,7 +100,13 @@ export default defineComponent({
         url += `/${handlerState.group}`
       }
 
-      if (handlerState.action === "edit") {
+      if (
+        handlerState.action === "edit" ||
+        (appStore.state["core.version"] &&
+          appStore.state["core.version"]?.[0] >= 3 &&
+          appStore.state["core.version"]?.[1] >= 6 &&
+          handlerState.action === "clone")
+      ) {
         url += `/${handlerState.skelkey}`
       }
 

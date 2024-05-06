@@ -159,6 +159,8 @@ export default defineComponent({
       url = url.replace("{{module}}", handlerState.module)
       if (handlerState.group) {
         url = url.replace("{{group}}", handlerState.group)
+      }else{
+        url = url.replace("{{group}}", 'all')
       }
 
       if (selection) {
