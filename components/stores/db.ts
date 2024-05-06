@@ -286,6 +286,7 @@ export const useDBStore = defineStore("db", () => {
 
   function getConf(module: string, view = null) {
     let conf = null
+    if (!module) return null
     let name = module.replace(".", "/")
     if (typeof view === "string" && isNaN(parseFloat(view))) {
       view = modulesList.value?.[module.replace(".", "/")]?.["views"].findIndex((x) => x["group"] === view)
