@@ -388,17 +388,17 @@ export default defineComponent({
     function filter_update(skel) {
       if (state.filter === null || state.filter === "") return true
       let wordlist = state.filter ? state.filter.split(" ") : []
+      const regexStr = /[^{a-zA-ZÄÖÜßüöä_0-9}]+/gu
       for (const [k, v] of Object.entries(skel)) {
         if (currentlist.structure?.[k]?.["visible"] === false) continue
         for (let word of wordlist) {
-          word = word.toLowerCase().replace(/[\W_]+/g, "") //remove all nun alphanum chars
-
+          word = word.toLowerCase().replace(regexStr, "") //remove all nun alphanum chars
           if (!word || word.length === 0) {
           } else {
             if (
               v
                 .toLowerCase()
-                .replace(/[\W_]+/g, "")
+                .replace(regexStr, "")
                 .includes(word)
             ) {
               return true
