@@ -207,7 +207,15 @@ export default defineComponent({
 
     function editSelection() {
       const mod = boneState.bonestructure["module"]
-      const url = `/db/${mod}/edit/${props.value["dest"]["key"]}`
+
+      let url = `/db/${mod}/edit`
+      if (boneState.bonestructure['type'].startsWith("relational.tree.leaf")){
+        url += "/leaf"
+      } else if (boneState.bonestrucure['type'].startsWith("relational.tree.node")){
+        url += "/node"
+      }
+
+      url+=`/${props.value["dest"]["key"]}`
       let route = router.resolve(unref(url))
       dbStore.addOpened(route, mod)
     }
