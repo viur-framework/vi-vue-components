@@ -1,6 +1,7 @@
 <template>
   <form-handler
     :module="module.replace('.', '/')"
+    :view="state.view"
     :group="group ? group : !['node', 'leaf'].includes(skeltype) ? skeltype : ''"
     :action="route.meta['action']"
     :skelkey="skelkey"
@@ -11,7 +12,7 @@
 
 <script lang="ts">
 //@ts-nocheck
-import { reactive, defineComponent, onDeactivated, watch, getCurrentInstance } from "vue"
+import { reactive, defineComponent, onDeactivated, watch, getCurrentInstance, computed } from "vue"
 import FormHandler from "../handler/FormHandler.vue"
 import { useRoute } from "vue-router"
 import { useDBStore } from "../stores/db"
@@ -29,7 +30,13 @@ export default defineComponent({
   },
   components: { FormHandler },
   setup(props, context) {
-    const state = reactive({})
+    const state = reactive({
+      view: computed(() => {
+        if (Object.keys(route.query).includes("view")) {
+          return route.query["view"]
+        }
+        return null
+      })})
     const dbStore = useDBStore()
     const route = useRoute()
 

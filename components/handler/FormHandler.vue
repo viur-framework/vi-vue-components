@@ -161,6 +161,7 @@ export default defineComponent({
       type: String,
       required: true
     },
+    view: null,
     action: null,
     group: null,
     skelkey: null,
@@ -264,6 +265,7 @@ export default defineComponent({
       }),
       formValues: {},
       module: props.module,
+      view: props.view,
       action: props.action,
       group: props.group,
       skelkey: props.skelkey,

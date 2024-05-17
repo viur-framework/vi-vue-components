@@ -11,7 +11,8 @@ export const useContextStore = defineStore("contextStore", () => {
 
   function setContext(key, value, handlerId = null) {
     if (handlerId) {
-      if (Object.keys(state.localContext).includes(handlerId)) {
+
+      if (Object.keys(state.localContext).includes(''+ handlerId)) {
         state.localContext[handlerId][key] = value
       } else {
         state.localContext[handlerId] = { [key]: value }
