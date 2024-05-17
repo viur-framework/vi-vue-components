@@ -93,7 +93,6 @@ export default defineComponent({
         if (handlerState["view"]) {
           conf = conf["children"].filter((i) => i["view_number"] === parseInt(handlerState["view"]))?.[0]
         }
-        console.log(props.name)
         return conf?.["customActions"]?.[props.name]
       }),
       access: computed(() => {

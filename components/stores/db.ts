@@ -48,6 +48,21 @@ function adminTreeLayer(itemList: Array<ModuleInfo>, parent: ModuleInfo): Array<
     // if module is missing (views) update parent with conf
     if (!Object.keys(conf).includes("module")) {
       conf = { ...parent, ...conf }
+
+      // merge some cases manual
+      if (Object.keys(parent).includes('context')){
+        try {
+          let currentContext = conf?.['context']
+          if (!currentContext){
+            currentContext = {}
+          }
+
+          conf['context'] = { ...parent['context'], ...currentContext }
+        }catch (e){
+          console.log("Error while merging context")
+        }
+      }
+
       delete conf["views"] //remove views from parent
       conf["view_number"] = i
     }
