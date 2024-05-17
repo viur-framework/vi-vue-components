@@ -50,16 +50,17 @@
         outline
         :title="$t('bone.upload')"
         @click="uploadinput.click()"
+        :loading="state.loading"
       >
         <sl-icon
           slot="prefix"
           name="upload"
         ></sl-icon>
         {{ $t("bone.upload") }}
-        <sl-spinner-viur
+        <sl-spinner
           v-if="state.loading"
           slot="suffix"
-        ></sl-spinner-viur>
+        ></sl-spinner>
       </sl-button>
     </div>
   </div>
@@ -160,6 +161,7 @@ export default defineComponent({
       state.loading = true
       for (let file of event.target.files) {
         let fileresult = await uploadFile(file)
+        uploadinput.value.value = null
         let relDefault = null
         if (state.hasUsing) {
           relDefault = undefined
