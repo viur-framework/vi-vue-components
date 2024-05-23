@@ -171,6 +171,7 @@ export default function useTree(module, treeState, state) {
       dataObj: {
         skelType: entryType,
         orderby: "sortindex",
+        limit: 99,
         parententry: state.currentEntry["_nodes"][idx]["key"],
         ...state.params
       }
