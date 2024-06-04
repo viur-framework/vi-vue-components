@@ -12,7 +12,7 @@
       {{$t('bone.dragFile')}}
     </div>
     <sl-button
-      v-if="!boneState.readonly && (!value || state.loading)"
+      v-if="!boneState.readonly && (!value?.['dest'] || state.loading)"
       :title="$t('bone.upload')"
       outline
       class="upload-btn"
@@ -30,7 +30,7 @@
       ></sl-spinner-viur>
     </sl-button>
     <sl-button
-      v-if="!boneState.readonly && (!value || state.loading)"
+      v-if="!boneState.readonly && (!value?.['dest'] || state.loading)"
       class="relation-btn"
       @click="openRelationalSelection"
       :title="$t('bone.chooseFile')"
@@ -48,7 +48,7 @@
       @change="handleUpload"
     />
     <sl-button
-      v-if="value"
+      v-if="value?.['dest']"
       @click="downloadFile"
       :title="$t('bone.download')"
     >
@@ -58,7 +58,7 @@
       ></sl-icon>
     </sl-button>
     <div
-      v-if="!boneState.isEmpty"
+      v-if="!boneState.isEmpty && value?.['dest']"
       class="box"
     >
       <div
@@ -90,7 +90,7 @@
 
       </div>
       <sl-button
-          v-if="value"
+          v-if="value?.['dest']"
           variant="info"
           outline
           class="edit-btn"
@@ -101,7 +101,7 @@
         </sl-button>
     </div>
     <sl-button
-      v-if="value"
+      v-if="value?.['dest']"
       variant="info"
       outline
       class="info-btn"
@@ -111,7 +111,7 @@
       <sl-icon name="list-ul"></sl-icon>
     </sl-button>
     <sl-button
-      v-if="!boneState.multiple && !boneState.isEmpty"
+      v-if="!boneState.multiple && !boneState.isEmpty && value?.['dest']"
       :disabled="boneState.readonly"
       variant="danger"
       outline
