@@ -5,6 +5,7 @@
       :disabled="state.disabled"
       placeholder="Suche"
       clearable
+      :value="state.searchValue"
       @sl-input="debouncedSearch"
       @sl-clear="reset_filter"
     >
@@ -68,7 +69,7 @@
 
 <script lang="ts">
 // @ts-nocheck
-import { reactive, defineComponent, inject, computed, watch } from "vue"
+import { reactive, defineComponent, inject, computed, watch, onMounted } from "vue"
 import { useMessageStore } from "../stores/message"
 import { useDebounceFn } from "@vueuse/core"
 
@@ -106,6 +107,7 @@ export default defineComponent({
       (newVal, oldVal) => {
         if (newVal === 1) {
           state.isLarge = true
+          state.searchTypeAuto = "database"
         }
 
         if (!state.isLarge && newVal === 2) {
@@ -113,6 +115,15 @@ export default defineComponent({
         }
       }
     )
+
+    onMounted(()=>{
+      if(handlerState.filter){
+        state.searchValue = handlerState.filter
+      }
+      if(currentlist.state.params?.["search"]){
+        state.searchValue = currentlist.state.params?.["search"]
+      }
+    })
 
     const debouncedSearch = useDebounceFn((event) => {
       state.loading = true
