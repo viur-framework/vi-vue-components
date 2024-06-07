@@ -5,7 +5,7 @@
   >
     <component
       :is="entryType(x)"
-      v-if="x['display'] !== 'hidden'"
+      v-if="isVisible(x)"
       :icon="getIcon(x)"
       :library="getLibrary(x)"
       :icon-type="getIconType(x)"
@@ -27,8 +27,10 @@
 <script lang="ts">
 import TheMenubarItem from "./TheMenubarItem.vue"
 import TheMenubarGroup from "./TheMenubarGroup.vue"
-import { defineComponent } from "vue"
+import { defineComponent, computed } from "vue"
 import { ModuleInfo } from "../../stores/db"
+import {useUserStore} from "@viur/vue-utils/login/stores/user"
+
 
 export default defineComponent({
   components: { TheMenubarGroup, TheMenubarItem },
@@ -42,6 +44,8 @@ export default defineComponent({
     }
   },
   setup(props, context) {
+    const userStore = useUserStore()
+
     function entryType(node: ModuleInfo) {
       if (node["parententry"] === node["parentrepo"]) {
         return TheMenubarGroup
@@ -73,7 +77,30 @@ export default defineComponent({
       return node["iconType"]
     }
 
-    return { entryType, getIcon, getLibrary, getIconType }
+    function isVisible(node: ModuleInfo){
+      let ret = node['display'] !== 'hidden'
+
+      if (!ret){
+        return false
+      }
+
+      //hide empty moduleGroups
+      if (!node?.['handlerComponent'] && node['children'].length===0){
+        return false
+      }
+
+      let accessflag = `${node['module']}-view`
+      if (node?.group){
+        accessflag = `${node['module']}-${node['group']}-view`
+      }
+
+      if (!userStore.userAccess.includes('root') && !userStore.userAccess.includes(accessflag)){
+        return false
+      }
+      return true
+    }
+
+    return { entryType, getIcon, getLibrary, getIconType,isVisible }
   }
 })
 </script>
