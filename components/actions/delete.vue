@@ -21,13 +21,14 @@
       id="dialog-delete"
       :open="state.opened"
       :label="$t('actions.delete.text')"
+      @sl-after-hide="state.opened=false"
     >
-      {{ $t("actions.delete.msg", { amount: state.count })
+      {{ $tc("actions.delete.msg", { n: state.count })
       }}<!--TODO Translate-->
       <sl-button
         slot="footer"
         variant="primary"
-        :title="$t('actions.delete')"
+        :title="$t('actions.delete.text')"
         @click="deleteEntries"
       >
         {{ $t("actions.delete.text") }}
