@@ -94,7 +94,7 @@ export default defineComponent({
         accessflag = `${node['module']}-${node['group']}-view`
       }
 
-      if (!userStore.userAccess.includes('root') && !userStore.userAccess.includes(accessflag)){
+      if (node?.['handlerComponent'] && node["display"]!== "group" && !userStore.userAccess.includes('root') && !userStore.userAccess.includes(accessflag)){
         return false
       }
       return true
