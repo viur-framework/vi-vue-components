@@ -8,7 +8,7 @@ export default {
     clone: "Klonen",
     delete: {
       text: "Löschen",
-      msg: "Wollen sie {amount} Einträge löschen"
+      msg: "Wollen Sie keinen Eintrag löschen? | Wollen Sie den Eintrag löschen? | Wollen Sie {n} Einträge löschen?"
     },
     debug: "Debuggen",
     edit: "Bearbeiten",

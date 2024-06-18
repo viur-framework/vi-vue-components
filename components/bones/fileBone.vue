@@ -127,7 +127,7 @@
   </div>
   <div class="nested_wrapper">
     <Wrapper_nested
-      v-if="boneState?.bonestructure['using']"
+      v-if="boneState?.bonestructure['using'] && value?.['dest']"
       :value="value?.['rel']"
       :name="name"
       :index="index"

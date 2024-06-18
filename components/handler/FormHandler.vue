@@ -291,6 +291,16 @@ export default defineComponent({
     function fetchData() {
       state.loading = true
       let url = `/${props.renderer}/${props.module}/${props.action === "clone" ? "edit" : props.action}`
+
+      if (
+        props.action === "clone" ||
+        (appStore.state["core.version"] &&
+          appStore.state["core.version"]?.[0] >= 3 &&
+          appStore.state["core.version"]?.[1] >= 6)
+      ) {
+        url = `/${props.renderer}/${props.module}/${props.action}`
+      }
+
       if (props.group) url += `/${props.group}`
 
       if (props.action === "edit" || props.action === "clone") {
