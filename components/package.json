@@ -1,6 +1,6 @@
 {
   "name": "@viur/vue-components",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "a collection of complex components to build uis",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
