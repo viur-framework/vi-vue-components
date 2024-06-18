@@ -125,7 +125,7 @@ export default defineComponent({
           handlerState.errors = []
           handlerState.skel = responsedata["values"]
           if (handlerState.action === "edit") {
-            if (responsedata["action"] === "edit") {
+            if (responsedata["action"] === "edit" || responsedata["action"] === "clone") {
               //Something went wrong we must thorw (show) errors
               handlerState.errors = responsedata["errors"]
               state.loading = false
@@ -139,7 +139,7 @@ export default defineComponent({
             }
           }
           if (handlerState.action === "add" || handlerState.action === "clone") {
-            if (responsedata["action"] === "add") {
+            if (responsedata["action"] === "add" || responsedata["action"] === "clone") {
               //Something went wrong we must thorw (show) errors
               handlerState.errors = responsedata["errors"]
               state.loading = false
@@ -158,7 +158,7 @@ export default defineComponent({
                     new_route = router.resolve(`/db/${handlerState.module}/edit/leaf/${responsedata["values"]["key"]}`)
                   }
 
-                  dbStore.addOpened(new_route, handlerState.module)
+                  dbStore.addOpened(new_route, handlerState.module, handlerState.group)
                 }
               }
             }
