@@ -178,6 +178,7 @@ export default defineComponent({
       module: computed(() => props.module),
       group: computed(() => props.group),
       view: computed(() => props.view),
+      listfilter: computed(()=>props.filter),
       editableTable: false,
       active: false,
       conf: {},
@@ -258,7 +259,6 @@ export default defineComponent({
 
       currentlist.state.params = { ...currentlist.state.params, ...contextStore.getContext(), ...props.filter }
       currentlist.state.params["limit"] = localStore.state.listamount
-
       currentlist
         .fetch()
         .then((resp) => {

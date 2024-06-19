@@ -68,9 +68,9 @@
         >
           <div class="embeded-list">
             <component
-              :is="getEditView(handler)['handlerComponent']"
+              :is="getEditView(handler)"
               :module="handler['module']"
-              :group="handler['group']"
+              :group="handler?.['group']"
               :columns="handler?.['columns'] ? handler['columns'] : []"
               :filter="editViewFilter(handler)"
             >
@@ -499,7 +499,11 @@ export default defineComponent({
 
     function getEditView(handler) {
       let currentModule = dbStore.getConf(handler["module"])
-      return currentModule
+      //fluidpage editview always use lists
+      if (currentModule['handlerComponent'] === "fluidpagehandler"){
+          return "listhandler"
+      }
+      return currentModule['handlerComponent']
     }
 
     onBeforeMount(() => {
