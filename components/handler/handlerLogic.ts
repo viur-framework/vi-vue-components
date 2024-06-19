@@ -121,7 +121,9 @@ export function useHandlerLogic(props, handler_state) {
                   parententry: handler_state.currentPath.slice(-1)[0]?.["key"]
                 })
                 .catch((error) => {
-                  messageStore.addMessage("error", `${error.message}`, error.response?.url)
+                  if (error.statusCode !== 20){
+                    messageStore.addMessage("error", `${error.message}`, error.response?.url)
+                  }
                   reject()
                 })
                 .then((resp) => {
@@ -146,7 +148,9 @@ export function useHandlerLogic(props, handler_state) {
           handler
             .filter({ ...handler.state.params, ...params, ...contextStore.getContext() })
             .catch((error) => {
-              messageStore.addMessage("error", `${error.message}`, error.response?.url)
+              if (error.statusCode !== 20){
+                messageStore.addMessage("error", `${error.message}`, error.response?.url)
+              }
               reject()
             })
             .then((resp) => {
