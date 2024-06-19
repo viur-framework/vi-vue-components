@@ -193,7 +193,6 @@ export default defineComponent({
       const url = `/db/${treeState.module}/edit/node/${treeState.currentSelection[0]["key"]}`
       let route = router.resolve(unref(url))
       dbStore.addOpened(route, treeState.module, treeState.view)
-      router.push(url)
     }
 
     return {
