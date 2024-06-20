@@ -129,6 +129,7 @@ export default defineComponent({
               //Something went wrong we must thorw (show) errors
               handlerState.errors = responsedata["errors"]
               state.loading = false
+              messageStore.addMessage("error", `Error on Save`, "Error on Save")
             } else {
               messageStore.addMessage("success", `Edit`, "Entry edited successfully")
               state.loading = false
@@ -143,6 +144,7 @@ export default defineComponent({
               //Something went wrong we must thorw (show) errors
               handlerState.errors = responsedata["errors"]
               state.loading = false
+              messageStore.addMessage("error", `Error on Save`, "Error on Save")
             } else {
               messageStore.addMessage("success", `Add`, "Entry added successfully")
               state.loading = false
@@ -157,6 +159,12 @@ export default defineComponent({
                   if (handlerState.skeltype === "leaf") {
                     new_route = router.resolve(`/db/${handlerState.module}/edit/leaf/${responsedata["values"]["key"]}`)
                   }
+                  if (handlerState.skel['listgroup']){
+                    new_route = router.resolve(`/db/${handlerState.module}/edit/${handlerState.skel['listgroup']}/${responsedata["values"]["key"]}`)
+                  }else{
+                    new_route = router.resolve(`/db/${handlerState.module}/edit/${handlerState.group}/${responsedata["values"]["key"]}`)
+                  }
+
 
                   dbStore.addOpened(new_route, handlerState.module, handlerState.group)
                 }
