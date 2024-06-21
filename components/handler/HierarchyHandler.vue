@@ -9,6 +9,12 @@
     >
       <div v-html="modulesStore.state.modules[module]['help_text']"></div>
     </sl-details>
+    <div style="display: flex;flex-direction: row; justify-content: flex-end; margin-right: 10px">
+    <div style="display:flex; flex-direction: row; gap:10px; align-items: center">
+        <span>{{ state.currentSelection.length }} Ausgewählt</span>
+        <handler-context></handler-context>
+        </div>
+    </div>
     <div
       v-if="Object.keys(state.selectedPath).length > 0"
       class="table-wrapper"
@@ -74,6 +80,7 @@ import TableNodeItem from "../tree/TableNodeItem.vue"
 import FloatingBar from "../bars/FloatingBar.vue"
 import useTree from "../tree/tree.js"
 import Loader from "@viur/vue-utils/generic/Loader.vue"
+import HandlerContext from "../main/context/HandlerContext.vue";
 
 export default defineComponent({
   props: {
@@ -85,7 +92,7 @@ export default defineComponent({
     selector: false
   },
   emits: ["currentSelection", "closeSelector"],
-  components: { HandlerBar, TableNodeItem, FloatingBar, Loader },
+  components: {HandlerContext, HandlerBar, TableNodeItem, FloatingBar, Loader },
   setup(props, context) {
     const dbStore = useDBStore()
     const userStore = useUserStore()

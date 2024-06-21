@@ -27,7 +27,10 @@
           {{ Utils.unescape( path["name"]) }}</sl-breadcrumb-item
         >
       </sl-breadcrumb>
-      <span>{{ state.currentSelection.length }} Ausgewählt</span>
+      <div style="display:flex; flex-direction: row; gap:10px; align-items: center">
+        <span>{{ state.currentSelection.length }} Ausgewählt</span>
+        <handler-context></handler-context>
+      </div>
     </div>
 
     <sl-split-panel
@@ -232,6 +235,7 @@ import BoneView from "../bones/boneView.vue"
 import { useHandlerLogic } from "./handlerLogic"
 import treeItem from "../tree/TreeItem.vue"
 import Utils from "../utils"
+import HandlerContext from "../main/context/HandlerContext.vue"
 
 export default defineComponent({
   props: {
@@ -250,7 +254,7 @@ export default defineComponent({
     columns: []
   },
   emits: ["currentSelection", "closeSelector"],
-  components: { WidgetSmall, FloatingBar, Loader, HandlerBar, BoneView, treeItem },
+  components: { WidgetSmall, FloatingBar, Loader, HandlerBar, BoneView, treeItem,HandlerContext },
   setup(props, context) {
     const dbStore = useDBStore()
     const route = useRoute()

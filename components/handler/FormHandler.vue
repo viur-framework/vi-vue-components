@@ -4,11 +4,14 @@
       v-if="!noTopbar"
       class="topbar"
     >
-      <div class="top-headline">
-        <span v-if="['clone', 'add'].includes(action)">Neuer</span>
-        <span v-else-if="['edit'].includes(action)">Bearbeite</span>
-        {{ state.conf?.["name"] }} Eintrag
-        <span v-if="state.formValues?.['name']?.[0]['name']">: {{ Utils.unescape(state.formValues["name"][0]["name"]) }}</span>
+      <div class="top-headline" style="display:flex;gap:10px;align-items: center;">
+        <div>
+          <span v-if="['clone', 'add'].includes(action)">Neuer</span>
+          <span v-else-if="['edit'].includes(action)">Bearbeite</span>
+          {{ state.conf?.["name"] }} Eintrag
+          <span v-if="state.formValues?.['name']?.[0]['name']">: {{ Utils.unescape(state.formValues["name"][0]["name"]) }}</span>
+        </div>
+        <handler-context></handler-context>
       </div>
       <entry-bar
         :module="module"
@@ -154,6 +157,7 @@ import VueJsonPretty from "vue-json-pretty"
 import "vue-json-pretty/lib/styles.css"
 import Logics from "logics-js"
 import Utils from "../utils"
+import HandlerContext from "../main/context/HandlerContext.vue";
 
 export default defineComponent({
   props: {
@@ -185,7 +189,7 @@ export default defineComponent({
     },
     errors: []
   },
-  components: { EntryBar, bone, ...handlers, VueJsonPretty, Loader },
+  components: {HandlerContext, EntryBar, bone, ...handlers, VueJsonPretty, Loader },
   emit: ["change"],
   setup(props, context) {
     const dbStore = useDBStore()

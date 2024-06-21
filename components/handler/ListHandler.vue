@@ -21,7 +21,12 @@
         v-if="currentlist.state.state === 0"
         size="3"
       ></loader>
-      <span style="float: right; margin-right: 10px">{{ state.currentSelection.length }} Ausgewählt</span>
+      <div style="float: right; margin-right: 10px">
+        <div style="display:flex; flex-direction: row; gap:10px; align-items: center">
+        <span>{{ state.currentSelection.length }} Ausgewählt</span>
+        <handler-context></handler-context>
+        </div>
+      </div>
       <table ref="datatable">
         <thead>
           <tr>
@@ -133,6 +138,7 @@ import { useContextStore } from "../stores/context"
 import { useLocalStore } from "../stores/local"
 import WidgetSmall from "../dashboard/WidgetSmall.vue"
 import BoneView from "../bones/boneView.vue"
+import HandlerContext from "../main/context/HandlerContext.vue"
 
 export default defineComponent({
   props: {
@@ -151,7 +157,7 @@ export default defineComponent({
     columns: []
   },
   emits: ["currentSelection", "closeSelector"],
-  components: { WidgetSmall, FloatingBar, Loader, HandlerBar, BoneView },
+  components: { WidgetSmall, FloatingBar, Loader, HandlerBar, BoneView,HandlerContext },
   setup(props, context) {
     const dbStore = useDBStore()
     const route = useRoute()
