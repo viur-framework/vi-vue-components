@@ -161,7 +161,7 @@ export default defineComponent({
       state.loading = true
       for (let file of event.target.files) {
         let fileresult = await uploadFile(file)
-        uploadinput.value.value = null
+        // uploadinput.value.value = null
         let relDefault = null
         if (state.hasUsing) {
           relDefault = undefined
