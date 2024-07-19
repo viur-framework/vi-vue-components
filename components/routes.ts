@@ -35,7 +35,7 @@ const default_routes = [
     component: () => import("./views/hierarchy.vue")
   },
   {
-    path: "/db/:module",
+    path: "/db/:module/form",
     name: "singleton",
     props: true,
     component: () => import("./views/singleton.vue")

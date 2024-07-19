@@ -162,7 +162,7 @@ function adminTreeLayer(itemList: Array<ModuleInfo>, parent: ModuleInfo): Array<
         }
       }
     } else if (conf["handler"] === "singleton" || conf["handler"].startsWith("singleton.")) {
-      conf["url"] = { path: `/db/${conf["module"]}` }
+      conf["url"] = { path: `/db/${conf["module"]}/form` }
       conf["handlerComponent"] = "formhandler"
     }
 
