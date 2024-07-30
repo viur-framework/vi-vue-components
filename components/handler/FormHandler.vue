@@ -32,8 +32,26 @@
       <p v-html="modulesStore.state.modules[module][`help_text_${action}`]"></p>
     </sl-details>
 
+
+    <div class="scroll-content">
+    <vi-form ref="viform"
+             :module="module"
+             :action="action"
+             :group="group"
+             :skelkey="skelkey"
+             :skeltype="skeltype"
+             :values="values"
+             :secure="secure"
+             :renderer="renderer"
+    >
+
+
+    </vi-form>
+    </div>
+
+
     <div
-      v-if="!state.loading"
+      v-if="!state.loading && false"
       class="scroll-content"
     >
       <template
@@ -82,7 +100,7 @@
         </sl-details>
       </template>
 
-      <template v-if="appStore.state.debug">
+      <template v-if="!appStore.state.debug">
         <sl-details summary="DEBUG: Formdata">
           <VueJsonPretty
             :deep="1"
@@ -138,7 +156,7 @@
 
 <script lang="ts">
 //@ts-nocheck
-import { reactive, defineComponent, onBeforeMount, computed, provide, toRaw, unref, watch, onActivated } from "vue"
+import { reactive, defineComponent, onBeforeMount, computed, ref, provide, toRaw, unref, watch, onActivated } from "vue"
 import { Request } from "@viur/vue-utils"
 import { useDBStore } from "../stores/db"
 import { useLocalStore} from "../stores/local"
@@ -158,6 +176,7 @@ import "vue-json-pretty/lib/styles.css"
 import Logics from "logics-js"
 import Utils from "../utils"
 import HandlerContext from "../main/context/HandlerContext.vue";
+import ViForm from "@viur/vue-utils/forms/ViForm.vue"
 
 export default defineComponent({
   props: {
@@ -189,7 +208,7 @@ export default defineComponent({
     },
     errors: []
   },
-  components: {HandlerContext, EntryBar, bone, ...handlers, VueJsonPretty, Loader },
+  components: {HandlerContext, EntryBar, bone, ...handlers, VueJsonPretty, Loader,ViForm },
   emit: ["change"],
   setup(props, context) {
     const dbStore = useDBStore()
@@ -278,7 +297,10 @@ export default defineComponent({
       relation_opened: [],
       loading: false
     })
+
+    const viform = ref(null)
     provide("handlerState", state)
+    provide("viform",viform)
 
     function structureToDict(structure: object) {
       if (Array.isArray(structure)) {
@@ -540,7 +562,8 @@ export default defineComponent({
       getBoneWidget,
       fetchData,
       visibleIf,
-      getEditView
+      getEditView,
+      viform
     }
   }
 })

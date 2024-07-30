@@ -47,6 +47,7 @@ export default defineComponent({
     const dbStore = useDBStore()
     const contextStore = useContextStore()
     const appStore = useAppStore()
+    const viform = inject("viform")
     const state = reactive({
       loading: false
     })
@@ -54,24 +55,6 @@ export default defineComponent({
 
     function save() {
       state.loading = true
-      //Send request
-      const formData: FormData = new FormData()
-      for (const [boneName, boneValue] of Object.entries(handlerState.formValues)) {
-        if (boneValue.length > 0) {
-          for (const value of boneValue) {
-            for (const [k, v] of Object.entries(value)) {
-              formData.append(k, v)
-            }
-          }
-        } else {
-          formData.append(boneName, "")
-        }
-      }
-      let obj = {}
-      for (const key: string of formData.keys()) {
-        obj[[key]] = formData.getAll(key)
-      }
-
       let url = ""
 
       if (
@@ -110,10 +93,8 @@ export default defineComponent({
         url += `/${handlerState.skelkey}`
       }
 
-      obj = { ...obj, ...contextStore.getContext(handlerState.tabId) }
-
-      Request.securePost(url, { dataObj: obj })
-        .then(async (resp: Response) => {
+      viform.value.sendData(url, contextStore.getContext(handlerState.tabId)).then(async (resp: Response) => {
+        console.log(resp)
           let responsedata = await resp.json()
 
           if (resp.status !== 200) {
@@ -122,17 +103,13 @@ export default defineComponent({
             return 0
           }
 
-          handlerState.errors = []
-          handlerState.skel = responsedata["values"]
           if (handlerState.action === "edit") {
             if (responsedata["action"] === "edit" || responsedata["action"] === "clone") {
               //Something went wrong we must thorw (show) errors
-              handlerState.errors = responsedata["errors"]
               state.loading = false
               messageStore.addMessage("error", `Error on Save`, "Error on Save")
             } else {
               messageStore.addMessage("success", `Edit`, "Entry edited successfully")
-              state.loading = false
               dbStore.markHandlersToUpdate(handlerState.module, handlerState.group)
               if (props.close) {
                 dbStore.removeOpened(route)
@@ -142,7 +119,6 @@ export default defineComponent({
           if (handlerState.action === "add" || handlerState.action === "clone") {
             if (responsedata["action"] === "add" || responsedata["action"] === "clone") {
               //Something went wrong we must thorw (show) errors
-              handlerState.errors = responsedata["errors"]
               state.loading = false
               messageStore.addMessage("error", `Error on Save`, "Error on Save")
             } else {
@@ -164,8 +140,6 @@ export default defineComponent({
                   }else{
                     new_route = router.resolve(`/db/${handlerState.module}/edit/${handlerState.group}/${responsedata["values"]["key"]}`)
                   }
-
-
                   dbStore.addOpened(new_route, handlerState.module, handlerState.group)
                 }
               }
