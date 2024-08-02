@@ -12,7 +12,7 @@
             sprite
           ></sl-icon>
       <span v-else>
-        {{ name?.[0] }}
+        {{ name?.[0] || to.params["module"] }}
       </span>
     </div>
 

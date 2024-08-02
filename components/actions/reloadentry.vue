@@ -42,7 +42,7 @@ export default defineComponent({
   components: {},
   setup(props, context) {
     const handlerState: any = inject("handlerState")
-    const fetchData: any = inject("fetchData")
+    const viform = inject("viform")
     const router = useRouter()
     const route = useRoute()
     const dbStore = useDBStore()
@@ -52,7 +52,10 @@ export default defineComponent({
     const messageStore = useMessageStore()
 
     function handleClick() {
-      fetchData()
+      state.loading=true
+      viform.value.fetchData().then(async (resp)=>{
+        state.loading=false
+      })
     }
 
     return {

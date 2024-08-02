@@ -109,8 +109,10 @@ export default defineComponent({
               state.loading = false
               messageStore.addMessage("error", `Error on Save`, "Error on Save")
             } else {
+
               messageStore.addMessage("success", `Edit`, "Entry edited successfully")
               dbStore.markHandlersToUpdate(handlerState.module, handlerState.group)
+              state.loading = false
               if (props.close) {
                 dbStore.removeOpened(route)
               }
@@ -131,13 +133,11 @@ export default defineComponent({
                   let new_route = router.resolve(`/db/${handlerState.module}/edit/${responsedata["values"]["key"]}`)
                   if (handlerState.skeltype === "node") {
                     new_route = router.resolve(`/db/${handlerState.module}/edit/node/${responsedata["values"]["key"]}`)
-                  }
-                  if (handlerState.skeltype === "leaf") {
+                  } else if (handlerState.skeltype === "leaf") {
                     new_route = router.resolve(`/db/${handlerState.module}/edit/leaf/${responsedata["values"]["key"]}`)
-                  }
-                  if (handlerState.skel['listgroup']){
+                  } else if (handlerState.skel['listgroup']){
                     new_route = router.resolve(`/db/${handlerState.module}/edit/${handlerState.skel['listgroup']}/${responsedata["values"]["key"]}`)
-                  }else{
+                  }else if (handlerState.group) {
                     new_route = router.resolve(`/db/${handlerState.module}/edit/${handlerState.group}/${responsedata["values"]["key"]}`)
                   }
                   dbStore.addOpened(new_route, handlerState.module, handlerState.group)

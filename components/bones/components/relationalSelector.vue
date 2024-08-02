@@ -16,6 +16,7 @@
         :module="module"
         :rowselect="rowselect"
         :selector="true"
+        :filter="filter"
         @currentSelection="relationUpdateSelection($event)"
         @closeSelector="relationApplySelection()"
       >
@@ -57,6 +58,7 @@ export default defineComponent({
     handler: [Object, String],
     module: String,
     tabId: String,
+    filter:Object,
     rowselect: {
       default: 1
     }

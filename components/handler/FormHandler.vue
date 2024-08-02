@@ -229,63 +229,6 @@ export default defineComponent({
         return dbStore.getConf(props.module)
       }),
       tabId: route.query?.["_"],
-      formGroups: computed(() => {
-        let groups = { default: { name: "Allgemein", bones: [], groupVisible: false, groupOpen: true } }
-        for (const [boneName, bone] of Object.entries(state.structure)) {
-          if (props.bones.length > 0) {
-            if (!props.bones.includes(boneName)) {
-              continue
-            }
-          }
-
-          let category = "default"
-          let boneStructure = state.structure[boneName]
-          let boneValue = state.skel[boneName]
-          if (bone?.params?.category) {
-            category = bone.params.category.toLowerCase()
-          }
-
-          if (Object.keys(groups).includes(category)) {
-            groups[category]["bones"].push({
-              boneName: boneName,
-              boneStructure: boneStructure,
-              boneValue: boneValue
-            })
-          } else {
-            groups[category] = {
-              name: bone.params.category,
-              bones: [
-                {
-                  boneName: boneName,
-                  boneStructure: boneStructure,
-                  boneValue: boneValue
-                }
-              ]
-            }
-          }
-          if (boneStructure["visible"] === true) {
-            groups[category]["groupVisible"] = true
-          }
-          if (
-            (state.conf?.["collapsedCategories"] &&
-              state.conf["collapsedCategories"].map((x) => x.toLowerCase()).includes(category)) ||
-            category === "system" ||
-            state.conf?.["collapsedCategories"]?.[0] === "*"
-          ) {
-            groups[category]["groupOpen"] = false
-          } else {
-            groups[category]["groupOpen"] = true
-          }
-        }
-        let sortedGroups = {}
-        Object.keys(groups)
-          .sort()
-          .forEach(function (key) {
-            sortedGroups[key] = groups[key]
-          })
-
-        return sortedGroups
-      }),
       formValues: {},
       module: props.module,
       view: props.view,
@@ -302,111 +245,10 @@ export default defineComponent({
     provide("handlerState", state)
     provide("viform",viform)
 
-    function structureToDict(structure: object) {
-      if (Array.isArray(structure)) {
-        let struct = {}
-        for (const idx in structure) {
-          struct[structure[idx][0]] = structure[idx][1]
-        }
-        return struct
-      } else {
-        return structure
-      }
+    function fetchData(){
+      viform.value.fetchData()
     }
-
-    function fetchData() {
-      state.loading = true
-      let url = `/${props.renderer}/${props.module}/${props.action === "clone" ? "edit" : props.action}`
-
-      if (
-        props.action === "clone" ||
-        (appStore.state["core.version"] &&
-          appStore.state["core.version"]?.[0] >= 3 &&
-          appStore.state["core.version"]?.[1] >= 6)
-      ) {
-        url = `/${props.renderer}/${props.module}/${props.action}`
-      }
-
-      if (props.group) url += `/${props.group}`
-
-      if (props.action === "edit" || props.action === "clone") {
-        if (state.skeltype === "node") {
-          url += `/node`
-        } else if (state.skeltype === "leaf") {
-          url += `/leaf`
-        }
-        url += `/${props.skelkey}`
-      }
-      let dataObj = {}
-      if (state.skeltype === "node" && props.action === "add") {
-        url += `/node`
-        dataObj["node"] = props.skelkey
-      }
-
-      if (state.skeltype === "leaf" && props.action === "add") {
-        url += `/leaf`
-        dataObj["node"] = props.skelkey
-      }
-      let requestHandler = Request.post
-      if (props.secure) {
-        requestHandler = Request.securePost
-      }
-
-      dataObj = { ...dataObj, ...contextStore.getContext(state.tabId) }
-
-      requestHandler(url, { dataObj: dataObj }).then(async (resp) => {
-        let data = await resp.json()
-
-        if (data["status"] && data["status"] !== 200) {
-          let txt = data["descr"]
-          //todo sl-details format traceback
-          /*if (userStore.userAccess.includes("root")) {
-            txt += "\n" + data["traceback"]
-          }*/
-          messageStore.addMessage("error", data["title"], txt)
-          state.loading = false
-          return
-        }
-
-        if (props.values) {
-          for (const [key, val] of Object.entries(props.values)) {
-            data["values"][key] = val
-          }
-        }
-
-        for (const [key, val] of Object.entries(route.query)) {
-          if (Object.keys(data["values"]).includes(key)) {
-            data["values"][key] = val
-          } else if (key.includes(".")) {
-            let keyArr = key.split(".")
-            const bonename = keyArr[0]
-            const lastelement = keyArr.pop()
-            let newVal = { [lastelement]: val }
-            for (let element of keyArr.slice(1).reverse()) {
-              newVal = { [element]: newVal }
-            }
-            data["values"][bonename] = newVal
-          }
-        }
-
-        state.skel = data["values"]
-        state.structure = structureToDict(data["structure"])
-        state.errors = data["errors"]
-        state.loading = false
-
-        if (props.action === "edit") {
-
-          let data = {...state.conf}
-          data['key'] = state.skel['key']
-          if (Object.keys(state.skel).includes('name')){
-            data['name'] = state.skel['name']
-          }
-          data["to"] = {...route}
-          localStore.addEntries(data)
-        }
-      })
-    }
-    provide("fetchData", fetchData)
+    provide("fetchData",fetchData)
 
     function getWidget(boneName: string) {
       let widget = "base_item"
@@ -421,16 +263,6 @@ export default defineComponent({
 
     function updateValue(data) {
       state.formValues[data.name] = data.value
-      if (data.name === "name") {
-        if (data.lang) {
-          dbStore.updateActiveTabName(data.value[0][Object.keys(data.value[0])[0]])
-        } else {
-          dbStore.updateActiveTabName(data.value[0]["name"])
-        }
-      }
-
-      visibleIf(data)
-      readonlyIf(data)
       context.emit("change", state.formValues)
     }
 
@@ -465,42 +297,6 @@ export default defineComponent({
       state.relation_opened = state.relation_opened.filter((i) => i !== bone)
     }
 
-    function visibleIf(changeddata) {
-      try {
-        // we need more stable skel updates for logics
-        if (state.structure?.[changeddata["name"]]["multiple"]) {
-          state.skel[changeddata["name"]] = changeddata["value"].map((x) => x[changeddata["name"]])
-        } else {
-          state.skel[changeddata["name"]] = [changeddata["value"][0][changeddata["name"]]]
-        }
-      } catch (e) {}
-
-      for (const [boneName, bone] of Object.entries(state.structure)) {
-        if (bone?.["params"]?.["visibleIf"]) {
-          let ex = new Logics(bone?.["params"]?.["visibleIf"])
-          bone["visible"] = ex.run(state.skel).toBool()
-        }
-      }
-    }
-
-    function readonlyIf(changeddata) {
-      try {
-        // we need more stable skel updates for logics
-        if (state.structure?.[changeddata["name"]]["multiple"]) {
-          state.skel[changeddata["name"]] = changeddata["value"].map((x) => x[changeddata["name"]])
-        } else {
-          state.skel[changeddata["name"]] = [changeddata["value"][0][changeddata["name"]]]
-        }
-      } catch (e) {}
-
-      for (const [boneName, bone] of Object.entries(state.structure)) {
-        if (bone?.["params"]?.["readonlyIf"]) {
-          let ex = new Logics(bone?.["params"]?.["readonlyIf"])
-          bone["readonly"] = ex.run(state.skel).toBool()
-        }
-      }
-    }
-
     function editViewFilter(handler) {
       let filter = {}
       if (handler["filter"]) {
@@ -532,10 +328,6 @@ export default defineComponent({
       return currentModule['handlerComponent']
     }
 
-    onBeforeMount(() => {
-      fetchData()
-    })
-
     watch(
       () => props.errors,
       (newVal, oldVal) => {
@@ -560,8 +352,6 @@ export default defineComponent({
       relationApplySelection,
       relationRemoveHandler,
       getBoneWidget,
-      fetchData,
-      visibleIf,
       getEditView,
       viform
     }

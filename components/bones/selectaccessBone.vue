@@ -16,7 +16,7 @@
       <sl-button
         v-for="right in mod"
         :title="right['name']"
-        :disabled="boneState.readonly"
+        :disabled="bone.readonly"
         :variant="state.values.includes(right['key']) ? 'success' : 'default'"
         @click="toggleAccessRight(right['key'])"
       >
@@ -42,7 +42,7 @@
       <sl-button
         v-for="right in mod"
         :title="right['name']"
-        :disabled="boneState.readonly"
+        :disabled="bone.readonly"
         :variant="state.values.includes(right['key']) ? 'success' : 'default'"
         @click="toggleAccessRight(right['key'])"
       >
@@ -66,7 +66,8 @@ export default defineComponent({
     name: String,
     value: Object,
     index: Number,
-    lang: String
+    lang: String,
+    bone: Object
   },
   components: {},
   emits: ["change"],
