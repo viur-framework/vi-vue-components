@@ -56,7 +56,7 @@ export default defineComponent({
     function save() {
       state.loading = true
       let url = ""
-
+      let obj = contextStore.getContext(handlerState.tabId)
       if (
         appStore.state["core.version"] &&
         appStore.state["core.version"]?.[0] >= 3 &&
@@ -93,7 +93,7 @@ export default defineComponent({
         url += `/${handlerState.skelkey}`
       }
 
-      viform.value.sendData(url, contextStore.getContext(handlerState.tabId)).then(async (resp: Response) => {
+      viform.value.sendData(url, obj).then(async (resp: Response) => {
           let responsedata = await resp.json()
 
           if (resp.status !== 200) {
