@@ -42,6 +42,7 @@ export default defineComponent({
   components: {},
   setup(props, context) {
     const handlerState: any = inject("handlerState")
+    const reloadAction: any = inject("reloadAction")
     const viform = inject("viform")
     const router = useRouter()
     const route = useRoute()
@@ -53,7 +54,7 @@ export default defineComponent({
 
     function handleClick() {
       state.loading=true
-      viform.value.fetchData().then(async (resp)=>{
+      reloadAction().then(async (resp)=>{
         state.loading=false
       })
     }

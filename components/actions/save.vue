@@ -94,7 +94,6 @@ export default defineComponent({
       }
 
       viform.value.sendData(url, contextStore.getContext(handlerState.tabId)).then(async (resp: Response) => {
-        console.log(resp)
           let responsedata = await resp.json()
 
           if (resp.status !== 200) {

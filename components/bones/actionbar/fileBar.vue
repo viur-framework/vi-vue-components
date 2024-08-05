@@ -187,7 +187,6 @@ export default defineComponent({
     }
 
     function openSelector() {
-      console.log("GGG")
       state.openedSelection = true
     }
 

@@ -283,8 +283,10 @@ export default defineComponent({
     }
 
     function changeEventNested(data) {
-      state.selection = {...state.selection, "rel":data["value"]}
-      context.emit("change", data["name"], state.selection , data["lang"], data["index"])
+      if (state.selection?.dest){ // only send a change if we have a valid target
+        state.selection = {...state.selection, "rel":data["value"]}
+        context.emit("change", data["name"], state.selection , data["lang"], data["index"])
+      }
     }
 
     return {

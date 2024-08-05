@@ -33,20 +33,20 @@
     </sl-details>
 
 
-    <div class="scroll-content">
-    <vi-form ref="viform"
-             :module="module"
-             :action="action"
-             :group="group"
-             :skelkey="skelkey"
-             :skeltype="skeltype"
-             :values="values"
-             :secure="secure"
-             :renderer="renderer"
-    >
+    <div class="scroll-content" v-if="!state.loading">
+      <vi-form ref="viform"
+              :module="module"
+              :action="action"
+              :group="group"
+              :skelkey="skelkey"
+              :skeltype="skeltype"
+              :values="values"
+              :secure="secure"
+              :renderer="renderer"
+      >
 
 
-    </vi-form>
+      </vi-form>
     </div>
 
 
@@ -260,6 +260,19 @@ export default defineComponent({
       }
       return widget
     }
+
+    function reloadAction(){
+      state.loading = true
+      return viform.value.fetchData().then(async (resp)=>{
+        state.loading = false
+        if (resp.status !== 200) {
+            messageStore.addMessage("error", resp.statusText, resp.url)
+        }
+      }).catch(async (error)=>{
+        messageStore.addMessage("error", `${error.message}`, error.response?.url)
+      })
+    }
+    provide("reloadAction",reloadAction)
 
     function updateValue(data) {
       state.formValues[data.name] = data.value
