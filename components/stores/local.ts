@@ -11,7 +11,6 @@ export const useLocalStore = defineStore(
       lastEntries: []
     })
     function addEntries(handler) {
-      console.log(handler)
       let exists = state.lastEntries.filter( x => x['key']===handler['key'])
       if (exists.length === 0) {
         state.lastEntries.unshift(handler)

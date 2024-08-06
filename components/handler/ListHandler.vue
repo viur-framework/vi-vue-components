@@ -27,6 +27,7 @@
         <handler-context></handler-context>
         </div>
       </div>
+
       <table ref="datatable">
         <thead>
           <tr>
@@ -229,7 +230,7 @@ export default defineComponent({
     function reloadAction() {
       state.selectedBones = []
       currentlist.reset()
-      currentlist.state.params = { ...currentlist.state.params, ...contextStore.getContext() }
+      currentlist.state.params = { ...currentlist.state.params, ...contextStore.getContext(), ...props.filter  }
       return currentlist
         .fetch()
         .catch((error) => {

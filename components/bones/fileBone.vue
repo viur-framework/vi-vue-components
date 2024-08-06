@@ -127,21 +127,22 @@
   </div>
   <div class="nested_wrapper">
     <Wrapper_nested
-      v-if="boneState?.bonestructure['using'] && value?.['dest']"
+      v-if="bone['using'] && value?.['dest']"
       :value="value?.['rel']"
       :name="name"
       :index="index"
-      :disabled="boneState.bonestructure['readonly']"
+      :bone="bone"
+      :disabled="bone['readonly']"
       @change="changeEventNested"
     >
     </Wrapper_nested>
   </div>
   <relational-selector
     :open="state.openedSelection"
-    :name="boneState.bonestructure['descr']"
+    :name="bone['descr']"
     :tab-id="handlerState.tabId"
     :handler="state.moduleInfo['handlerComponent']"
-    :module="boneState?.bonestructure['module']"
+    :module="bone['module']"
     @close="relationCloseAction"
   >
   </relational-selector>
@@ -163,7 +164,8 @@ export default defineComponent({
     name: String,
     value: Object,
     index: Number,
-    lang: String
+    lang: String,
+    bone: Object
   },
   components: { relationalSelector, Wrapper_nested, ViImage },
   emits: ["change"],
@@ -280,22 +282,12 @@ export default defineComponent({
       dbStore.addOpened(route, mod)
     }
 
-    function changeEventNested(val) {
-      if (!state.selection) state.selection = {}
-      if (Object.keys(state.selection).includes("rel") && state.selection["rel"]) {
-        state.selection["rel"][val.name] = val.value
-      } else {
-        state.selection["rel"] = { [val.name]: val.value }
+    function changeEventNested(data) {
+      if (state.selection?.dest){ // only send a change if we have a valid target
+        state.selection = {...state.selection, "rel":data["value"]}
+        context.emit("change", data["name"], state.selection , data["lang"], data["index"])
       }
-      context.emit("change", props.name, state.selection, props.lang, props.index)
     }
-
-    watch(
-      () => props.value,
-      (newVal, oldVal) => {
-        state.selection = newVal
-      }
-    )
 
     return {
       state,

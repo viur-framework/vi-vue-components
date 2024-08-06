@@ -1,7 +1,7 @@
 <template>
   <div class="record">
     <div class="single-entry">
-      <sl-button-group v-if="state.selection">
+      <sl-button-group v-if="state.selection?.['dest']">
         <sl-input
           class="entry-input"
           :disabled="true"
@@ -19,7 +19,7 @@
       </sl-button-group>
       <sl-combobox
         v-else
-        :disabled="boneState.readonly"
+        :disabled="bone.readonly"
         :source="getList"
         hoist
         @sl-item-select="changeEvent"
@@ -28,15 +28,15 @@
 
       <sl-button
         class="square-btn"
-        :disabled="boneState.readonly"
+        :disabled="bone.readonly"
         @click="openRelationalSelection"
       >
         <sl-icon name="list-ul"></sl-icon>
       </sl-button>
 
       <sl-button
-        v-if="!boneState.multiple && !boneState.isEmpty"
-        :disabled="boneState.readonly"
+        v-if="!bone.multiple && !boneState.isEmpty"
+        :disabled="bone.readonly"
         variant="danger"
         outline
         :title="$t('bone.del')"
@@ -56,20 +56,22 @@
     </div>
 
     <Wrapper_nested
-      v-if="boneState?.bonestructure['using']"
+      v-if="bone['using']"
       :value="value?.['rel']"
       :name="name"
       :index="index"
-      :disabled="boneState.bonestructure['readonly']"
+      :lang="lang"
+      :bone="bone"
+      :disabled="bone['readonly']"
       @change="changeEventNested"
     >
     </Wrapper_nested>
   </div>
-
   <relational-selector
     :open="state.openedSelection"
     :name="boneState.bonestructure['descr']"
     :tab-id="handlerState.tabId"
+    :filter="state.filter"
     :handler="state.moduleInfo['handlerComponent']"
     :module="boneState?.bonestructure['module']"
     @close="relationCloseAction"
@@ -93,7 +95,8 @@ export default defineComponent({
     name: String,
     value: Object,
     index: Number,
-    lang: String
+    lang: String,
+    bone: Object
   },
   components: { Wrapper_nested, ...handlers, relationalSelector },
   emits: ["change"],
@@ -104,12 +107,14 @@ export default defineComponent({
     const route = useRoute()
     const router = useRouter()
     const dbStore = useDBStore()
+
     const state = reactive({
+      viform:null,
       format: computed(() => {
-        return boneState?.bonestructure["format"]
+        return props.bone["format"]
       }),
       openedSelection: false,
-      moduleInfo: computed(() => dbStore.getConf(boneState?.bonestructure["module"])),
+      moduleInfo: computed(() => dbStore.getConf(props.bone["module"])),
       selection: null,
       entry: computed(() => {
         if (typeof props.value !== "object") {
@@ -117,19 +122,34 @@ export default defineComponent({
         }
         return props.value
       }),
-      skellistdata: null
+      skellistdata: null,
+      filter:computed(()=>{
+        if(props.bone['params']?.['context'] && state.viform){
+          let ret = {}
+          for(const [queryparameter, fieldname] of Object.entries(props.bone["params"]["context"]) ){
+            ret[queryparameter] = state.viform.state.skel[fieldname]
+          }
+          return ret
+        }
+        return {}
+      })
     })
 
     function getList(search: String) {
       if (!search) return []
       let params = ""
-      if (boneState.bonestructure["type"] === "relational.tree.leaf.file") {
+      if (props.bone["type"] === "relational.tree.leaf.file") {
         params = "skelType=leaf&"
-      } else if (boneState.bonestructure["type"] === "relational.tree.node.file") {
+      } else if (props.bone["type"] === "relational.tree.node.file") {
         params = "skelType=node&"
       }
 
-      return Request.get(`/vi/${boneState.bonestructure["module"]}/list?${params}limit=99`).then(async (resp) => {
+      if (props.bone["context"]){
+        for(const [queryparameter, fieldname] of Object.entries(props.bone["context"]) ){
+          params+=`${queryparameter}=${fieldname}&`
+        }
+      }
+      return Request.get(`/vi/${props.bone["module"]}/list?${params}limit=99`).then(async (resp) => {
         //?viurTags$lk=${search.toLowerCase()
         const data = await resp.json()
         state.skellistdata = {}
@@ -138,45 +158,16 @@ export default defineComponent({
         }
 
         return data["skellist"]?.map((d: any) => {
-          return { text: formatString(boneState.bonestructure["format"], { dest: d }), value: d.key, data: d }
+          return { text: formatString(props.bone["format"], { dest: d }), value: d.key, data: d }
         })
       })
     }
 
-    function changeEventNested(val) {
-      if (!state.selection) state.selection = {}
-
-      if (!state.selection["rel"]?.[val.name]) {
-        if (!state.selection["rel"]) {
-          state.selection["rel"] = { [val.name]: null }
-        } else {
-          state.selection["rel"][val.name] = null
-        }
+    function changeEventNested(data) {
+      if (state.selection?.dest){ // only send a change if we have a valid target
+        state.selection = {...state.selection, "rel":data["value"]}
+        context.emit("change", data["name"], state.selection , data["lang"], data["index"])
       }
-
-      let currentBone = state.selection["rel"][val.name]
-      if (val.lang) {
-        if (currentBone === null) currentBone = {}
-        if (Object.keys(currentBone).includes(val.lang) && val.index !== null) {
-          currentBone[val.lang][val.index] = val.value
-        } else {
-          currentBone[val.lang] = val.value
-        }
-      } else if (val.index !== null) {
-        if (currentBone === null) currentBone = []
-        currentBone[val.index] = val.value
-      } else {
-        currentBone = val.value
-      }
-
-      if (Object.keys(state.selection).includes("rel") && state.selection["rel"]) {
-        state.selection["rel"][val.name] = currentBone
-      } else {
-        state.selection["rel"] = { [val.name]: currentBone }
-      }
-
-      if (!Object.keys(state.selection).includes("dest")) return
-      context.emit("change", props.name, state.selection, props.lang, props.index)
     }
 
     function changeEvent(event) {
@@ -185,6 +176,7 @@ export default defineComponent({
     }
 
     onMounted(() => {
+      state.viform = inject("viform")
       state.selection = props.value
       context.emit("change", props.name, props.value, props.lang, props.index) //init
     })
@@ -206,12 +198,12 @@ export default defineComponent({
     }
 
     function editSelection() {
-      const mod = boneState.bonestructure["module"]
+      const mod = props.bone["module"]
 
       let url = `/db/${mod}/edit`
-      if (boneState.bonestructure['type'].startsWith("relational.tree.leaf")){
+      if (props.bone['type'].startsWith("relational.tree.leaf")){
         url += "/leaf"
-      } else if (boneState.bonestrucure['type'].startsWith("relational.tree.node")){
+      } else if (props.bone['type'].startsWith("relational.tree.node")){
         url += "/node"
       }
 
@@ -219,13 +211,6 @@ export default defineComponent({
       let route = router.resolve(unref(url))
       dbStore.addOpened(route, mod)
     }
-
-    watch(
-      () => props.value,
-      (newVal, oldVal) => {
-        state.selection = newVal
-      }
-    )
 
     return {
       state,
@@ -238,7 +223,7 @@ export default defineComponent({
       getList,
       openRelationalSelection,
       relationCloseAction,
-      editSelection
+      editSelection,
     }
   }
 })
