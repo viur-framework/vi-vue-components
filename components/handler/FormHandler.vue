@@ -43,44 +43,11 @@
               :values="values"
               :secure="secure"
               :renderer="renderer"
+              :params="{ ...contextStore.getContext(state.tabId) }"
       >
 
 
       </vi-form>
-    </div>
-
-
-    <div
-      v-if="!state.loading && false"
-      class="scroll-content"
-    >
-      <template
-        v-for="(group, key) in state.formGroups"
-        :key="key"
-      >
-        <sl-details
-          v-show="group['groupVisible']"
-          :summary="group['name']"
-          :open="group['groupOpen']"
-        >
-          <template
-            v-for="bone in group['bones']"
-            :key="bone['name']"
-          >
-            <bone
-              :is="getBoneWidget(state.structure[bone['boneName']]['type'])"
-              v-show="state.structure[bone['boneName']]['visible']"
-              :name="bone['boneName']"
-              :structure="state.structure"
-              :skel="state.skel"
-              :errors="state.errors"
-              @change="updateValue"
-            >
-            </bone>
-          </template>
-        </sl-details>
-      </template>
-
       <template v-for="handler in state.conf?.['editViews']">
         <sl-details
           v-if="skelkey"
@@ -100,18 +67,8 @@
         </sl-details>
       </template>
 
-      <template v-if="!appStore.state.debug">
-        <sl-details summary="DEBUG: Formdata">
-          <VueJsonPretty
-            :deep="1"
-            :data="state.formValues"
-          ></VueJsonPretty>
-        </sl-details>
-        <sl-details summary="DEBUG: Errors">
-          {{ state.errors }}
-        </sl-details>
-      </template>
     </div>
+
     <template v-if="state.relation_opened">
       <template v-for="bone in state.relation_opened">
         <sl-dialog
@@ -356,6 +313,7 @@ export default defineComponent({
       getWidget,
       updateValue,
       modulesStore,
+      contextStore,
       appStore,
       dbStore,
       relationSelection,
