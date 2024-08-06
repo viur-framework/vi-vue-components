@@ -267,16 +267,17 @@ export const useDBStore = defineStore("db", () => {
     let groups = {}
     for (let moduleGroup in state["vi.modules.groups"]) {
       let groupconf = state["vi.modules.groups"][moduleGroup]
-      groupconf["module"] = moduleGroup
+      let prefixed_group = `moduleGroup___${moduleGroup}`
+      groupconf["module"] = prefixed_group
       groupconf['moduleGroups'] = Object.values(state["vi.modules"]).filter( i=> i['moduleGroup']===moduleGroup)
-      groups[moduleGroup] = groupconf
+      groups[prefixed_group] = groupconf
     }
     let itemList = []
 
     for (let modulename in state["vi.modules"]) {
       let moduleconf = state["vi.modules"][modulename]
       moduleconf["module"] = modulename
-      if (Object.keys(moduleconf).includes("moduleGroup") && groups[moduleconf["moduleGroup"]]) {
+      if (Object.keys(moduleconf).includes("moduleGroup") && groups[`moduleGroup___${moduleconf["moduleGroup"]}`]) {
       } else {
         itemList.push(moduleconf)
       }
