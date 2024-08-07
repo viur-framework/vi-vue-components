@@ -127,7 +127,9 @@ export default defineComponent({
         if(props.bone['params']?.['context'] && state.viform){
           let ret = {}
           for(const [queryparameter, fieldname] of Object.entries(props.bone["params"]["context"]) ){
-            ret[queryparameter] = state.viform.state.skel[fieldname]
+            //ret[queryparameter] = state.viform.state.skel[fieldname]
+            //contexts are a mess...
+            ret[queryparameter] = fieldname
           }
           return ret
         }

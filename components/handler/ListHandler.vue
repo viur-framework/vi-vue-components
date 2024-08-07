@@ -262,6 +262,11 @@ export default defineComponent({
             currentlist.state.params[key] = state.conf["filter"][key]
           }
         }
+        if(state.conf?.["context"]){
+          for (const key in state.conf["context"]) {
+            currentlist.state.params[key] = state.conf["context"][key]
+          }
+        }
       }
 
       currentlist.state.params = { ...currentlist.state.params, ...contextStore.getContext(), ...props.filter }
