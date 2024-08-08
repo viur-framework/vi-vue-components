@@ -43,6 +43,7 @@
               :values="values"
               :secure="secure"
               :renderer="renderer"
+              :collapsedCategories="state.conf?.['collapsedCategories'] || []"
               :params="{ ...contextStore.getContext(state.tabId) }"
       >
 
@@ -220,6 +221,7 @@ export default defineComponent({
 
     function reloadAction(){
       state.loading = true
+      if (!viform.value) return
       return viform.value.fetchData().then(async (resp)=>{
         state.loading = false
         if (resp.status !== 200) {
