@@ -131,6 +131,7 @@
       :value="value?.['rel']"
       :name="name"
       :index="index"
+      :lang="lang"
       :bone="bone"
       :disabled="bone['readonly']"
       @change="changeEventNested"
