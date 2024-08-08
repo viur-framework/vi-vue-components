@@ -41,6 +41,7 @@
     :tab-id="handlerState.tabId"
     :handler="state.moduleInfo?.['handlerComponent']"
     :module="boneState?.bonestructure['module']"
+    :filter="state.filter"
     :rowselect="2"
     @close="relationCloseAction"
   >
@@ -73,10 +74,23 @@ export default defineComponent({
     const formatString = inject("formatString")
     const dbStore = useDBStore()
     const state = reactive({
+      viform:null,
       skels: {},
       openedSelection: false,
       moduleInfo: computed(() => dbStore.getConf(boneState?.bonestructure["module"])),
-      hasUsing: computed(() => boneState?.bonestructure["using"])
+      hasUsing: computed(() => boneState?.bonestructure["using"]),
+      filter:computed(()=>{
+        if(boneState?.bonestructure['params']?.['context'] && state.viform){
+          let ret = {}
+          for(const [queryparameter, fieldname] of Object.entries(boneState?.bonestructure?.["params"]["context"]) ){
+            //ret[queryparameter] = state.viform.state.skel[fieldname]
+            //contexts are a mess...
+            ret[queryparameter] = fieldname
+          }
+          return ret
+        }
+        return {}
+      })
     })
 
     function getList(search: String) {
@@ -122,6 +136,7 @@ export default defineComponent({
     }
 
     onMounted(() => {
+      state.viform = inject("viform")
       if (!props.value || props.value.length === 0) {
         context.emit("change", props.name, [], props.lang) //init
       }
