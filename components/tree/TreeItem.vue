@@ -66,7 +66,7 @@ export default defineComponent({
       }),
       name: computed(() => {
         if (typeof props.name === "object" && Object.keys(props.name).includes("de")){
-          return props.name?.["de"]
+          return props.name?props.name["de"]:props.name
         }
         return props.name
       })
