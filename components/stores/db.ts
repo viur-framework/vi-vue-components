@@ -88,7 +88,7 @@ function adminTreeLayer(itemList: Array<ModuleInfo>, parent: ModuleInfo): Array<
     } else if (conf["handler"] === "list" || conf["handler"].startsWith("list.")) {
       conf["url"] = { path: `/db/${conf["module"]}/list` }
       conf["handlerComponent"] = "listhandler"
-    } else if (conf["handler"] === "tree.simple.file") {
+    } else if (conf["handler"].startsWith("tree.simple.file")) {
       conf["url"] = { path: `/db/${conf["module"]}/tree` }
       conf["handlerComponent"] = "treehandler"
 

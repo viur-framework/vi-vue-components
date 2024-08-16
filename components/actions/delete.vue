@@ -100,8 +100,13 @@ export default defineComponent({
       if (deletionSuccess) {
         messageStore.addMessage("success", `Delete`, "Entry deleted successfully")
       }
+      if(handlerState.type ==="treehandler" && handlerState.currentSelectionType==="leaf"){
+        tableReload(true)
+      }else{
+        tableReload()
+      }
 
-      tableReload()
+
     }
 
     function openDeletePopup() {

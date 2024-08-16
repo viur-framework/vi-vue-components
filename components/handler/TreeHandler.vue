@@ -278,7 +278,7 @@ export default defineComponent({
       availableRootNodes: [],
       currentRootNode: null,
       currentPath: [],
-      needUpdate: false, //performes a full update
+      needUpdate: true, //performes a full update
       structure: computed(() => handlerLogic.currentlist.structure),
       tabId: route.query?.["_"],
       storeName: computed(() => {
@@ -310,11 +310,14 @@ export default defineComponent({
     provide("currentlist", handlerLogic.currentlist)
     provide("changeRootNode", handlerLogic.changeRootNode)
 
-    function reloadAction() {
-      state.needUpdate = true
-      state.currentSelection = [state.currentRootNode]
-      state.currentSelectionType = "leaf"
-      return handlerLogic.reloadAction()
+    function reloadAction(folderUpdate=false, params={}) {
+
+      if (!folderUpdate){
+        state.needUpdate = true
+        state.currentSelection = [state.currentRootNode]
+        state.currentSelectionType = "node"
+      }
+      return handlerLogic.reloadAction(params, state.needUpdate)
     }
 
     watch(
@@ -511,7 +514,7 @@ export default defineComponent({
         if (Object.keys(mimeBaseMatch).includes(item["mimetype"])) {
           currentMeta["icon"] = mimeBaseMatch[item["mimetype"]]
           currentMeta["library"] = "default"
-        } else if (Object.keys(mimeBaseMatch).includes(item["mimetype"].split("/")[0])) {
+        } else if (Object.keys(mimeBaseMatch).includes(item["mimetype"]?.split("/")?.[0])) {
           currentMeta["icon"] = mimeBaseMatch[item["mimetype"].split("/")[0]]
           currentMeta["library"] = "default"
         } else {

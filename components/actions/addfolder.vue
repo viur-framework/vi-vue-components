@@ -49,6 +49,7 @@ import { useDBStore } from "../stores/db"
 import { useUserStore } from "@viur/vue-utils/login/stores/user"
 import { useRoute } from "vue-router"
 import { Request } from "@viur/vue-utils"
+import { useMessageStore } from "../stores/message"
 
 export default defineComponent({
   props: {},
@@ -57,6 +58,7 @@ export default defineComponent({
     const handlerState: any = inject("handlerState")
     const tableReload: any = inject("reloadAction")
     const itemMeta: any = inject("itemMeta")
+    const messageStore = useMessageStore()
     const dbStore = useDBStore()
     const userStore = useUserStore()
     const route = useRoute()
@@ -81,18 +83,20 @@ export default defineComponent({
     }
     function createNode(e) {
       state.loading = true
+
+      let targetnode = handlerState.currentPath.slice(-1)[0]?.["key"]
+
       Request.add(handlerState.module, {
         dataObj: {
           name: state.foldername,
           skelType: "node",
-          node: handlerState.currentSelection
-            ? handlerState.currentSelection[0]["key"]
-            : handlerState.currentRootNode["key"]
+          node: targetnode
         }
       }).then(() => {
         state.opened = false
         state.loading = false
-        tableReload()
+        tableReload(true)
+        messageStore.addMessage("success", `Folder`, "Entry created")
       })
     }
 

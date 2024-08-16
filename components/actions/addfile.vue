@@ -90,6 +90,7 @@ import { useDBStore } from "../stores/db"
 import { useUserStore } from "@viur/vue-utils/login/stores/user"
 import { useRoute } from "vue-router"
 import { Request } from "@viur/vue-utils"
+import { useMessageStore } from "../stores/message"
 
 export default defineComponent({
   props: {},
@@ -98,6 +99,7 @@ export default defineComponent({
     const handlerState: any = inject("handlerState")
     const tableReload: any = inject("reloadAction")
     const itemMeta: any = inject("itemMeta")
+    const messageStore = useMessageStore()
     const dbStore = useDBStore()
     const userStore = useUserStore()
     const route = useRoute()
@@ -130,12 +132,11 @@ export default defineComponent({
 
     function fileuploaded(e) {
       state.file = e.target.files
-      let targetnode = handlerState.currentSelection[0]["key"]
-      if (handlerState.currentSelectionType !== "node") {
-        targetnode = handlerState.currentSelection[0]["parententry"]
-      }
+
+      let targetnode = handlerState.currentPath.slice(-1)[0]?.["key"]
 
       state.total = state.file.length
+
       if (state.total > 0) {
         state.loading = true
       } else {
@@ -164,11 +165,13 @@ export default defineComponent({
             }).then(() => {
               state.uploaded += 1
               if (state.uploaded === state.total) {
-                tableReload()
                 fileinput.value.value = null
                 state.loading = false
+                state.uploaded = 0
+                tableReload(true)
+                messageStore.addMessage("success", `File`, "Entry created")
               }
-            })
+            }).catch((error) => {console.log(error)})
           })
         })
       }
@@ -182,11 +185,8 @@ export default defineComponent({
         return [{}, folderMap[path]]
       }
 
-      let parent = handlerState.currentSelection[0]["key"]
+      let parent = handlerState.currentPath.slice(-1)[0]?.["key"]
 
-      if (handlerState.currentSelectionType !== "node") {
-        parent = handlerState.currentSelection[0]["parententry"]
-      }
       let currentpath = []
 
       for (const p of path.split("/")) {
@@ -212,6 +212,7 @@ export default defineComponent({
       state.total = state.file.length
       let currentNodes = {}
       state.loading = true
+      let targetnode = handlerState.currentPath.slice(-1)[0]?.["key"]
       for (let f of state.file) {
         let [folderMap, parent] = await GetOrCreateFolderTree(f["webkitRelativePath"], currentNodes)
         currentNodes = { ...currentNodes, ...folderMap }
@@ -222,11 +223,12 @@ export default defineComponent({
               state.uploaded = 0
               state.total = 0
               fileinputfolders.value.value = null
-              tableReload()
               state.loading = false
+              tableReload(true)
+              messageStore.addMessage("success", `File`, "Entry created")
             }
           })
-          .catch((error) => {})
+          .catch((error) => {console.log(error)})
       }
     }
 
@@ -248,7 +250,8 @@ export default defineComponent({
       fileinputfolders,
       folderUpload,
       folderUploaded,
-      itemMeta
+      itemMeta,
+      handlerState
     }
   }
 })

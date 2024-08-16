@@ -134,7 +134,7 @@ export default defineComponent({
         if (!conf) return actions
         if (handler.startsWith("tree.node")) {
           actions = { ...hierarchyActions }
-        } else if (handler.startsWith("tree.file") || handler === "tree.simple.file") {
+        } else if (handler.startsWith("tree.file") || handler.startsWith("tree.simple.file")) {
           actions = { ...fileActions }
         } else if (handler.startsWith("tree")) {
           actions = { ...treeActions }
