@@ -63,6 +63,12 @@ export default defineComponent({
       needsRequest: true,
       currentMeta: computed(() => {
         return itemMeta(props.node, "node")
+      }),
+      name: computed(() => {
+        if (typeof props.name === "object" && Object.keys(props.name).includes("de")){
+          return props.name?.["de"]
+        }
+        return props.name
       })
     })
 
