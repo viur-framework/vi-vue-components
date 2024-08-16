@@ -50,8 +50,9 @@
 
       </vi-form>
       <template v-for="handler in state.conf?.['editViews']">
+
         <sl-details
-          v-if="skelkey"
+          v-if="skelkey && viform && Object.keys(viform?.state?.skel).length>0"
           :summary="handler['name'] || dbStore.getConf(handler['module'])?.['name'] || handler['module']"
           :open="false"
         >
@@ -274,20 +275,20 @@ export default defineComponent({
       if (handler["filter"]) {
         filter = handler["filter"]
       }
+      if (!viform.value?.state?.skel) return filter
 
       //todo set Context on routing
       if(typeof handler["context"] === 'object'){
         for (const [k, v] of Object.entries(handler["context"])) {
-          if (Object.keys(state.skel).includes(v)) {
-            contextStore.setContext(k, state.skel[v], state.tabId)
-            filter[k] = state.skel[v]
+          if (Object.keys(viform.value.state.skel).includes(v)) {
+            contextStore.setContext(k, viform.value.state.skel[v], state.tabId)
+            filter[k] = viform.value.state.skel[v]
           }
         }
       } else {
         filter[handler["context"]] = props.skelkey
         contextStore.setContext(handler["context"], props.skelkey, state.tabId)
       }
-
       return filter
     }
 
