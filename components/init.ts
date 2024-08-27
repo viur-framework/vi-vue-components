@@ -17,6 +17,13 @@ import fileBone from "./bones/fileBone.vue"
 import fileBar from "./bones/actionbar/fileBar.vue"
 import relationalBar from "./bones/actionbar/relationalBar.vue"
 
+
+import application from "./applications/scriptor/vi"
+function loadApplication(){
+  application().register()
+}
+
+
 export function useInitConnection() {
   const userStore = useUserStore()
   const appStore = useAppStore()
@@ -69,6 +76,8 @@ export function useInitConnection() {
       addBoneActionbar("relational.tree.leaf.file.file", fileBar) //add custom multiple acionbar
       addBoneActionbar("relational.", relationalBar) //add custom multiple acionbar
     }
+    //inject Apps
+    loadApplication()
 
     //check access on reactivation
     document.addEventListener("visibilitychange", () => {

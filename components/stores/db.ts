@@ -359,7 +359,7 @@ export const useDBStore = defineStore("db", () => {
     let mode = "view"
 
     let url = route.fullPath
-    if (module.includes("/")) {
+    if (module && module.includes("/")) {
       // in case of nested modules like shop/cart replace in url with . to shop.cart
       url = url.replace(module, module.replace("/", "."))
 
