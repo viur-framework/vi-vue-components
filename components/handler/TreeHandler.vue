@@ -562,9 +562,11 @@ export default defineComponent({
       }
 
       if (event.newIndex !==0){
-        preIdx = state.skellist[event.newIndex-1][state.sortindexBonename]
+        if(state.skellist[event.newIndex-1]["__skeltype"]===skeltype){
+          preIdx = state.skellist[event.newIndex-1][state.sortindexBonename]
+        }
       }
-      if (event.newIndex!==state.skellist.length-1){
+      if (event.newIndex!==state.skellist.length-1 && state.skellist[event.newIndex+1]["__skeltype"]===skeltype){
         nextIdx = state.skellist[event.newIndex+1][state.sortindexBonename]
       } else{
         nextIdx = new Date().getTime()
@@ -579,8 +581,9 @@ export default defineComponent({
         parentNode:currentEntry["parententry"]
         }}).then(async (resp)=>{
           let data = await resp.json()
-          listhandler.skellist[event.newIndex][state.sortindexBonename] = data['values'][state.sortindexBonename]
+          state.skellist[event.newIndex][state.sortindexBonename] = data['values'][state.sortindexBonename]
           state.entryUpdate=false
+
           reloadAction(true)
         }).catch((error)=>{
           state.entryUpdate=false
