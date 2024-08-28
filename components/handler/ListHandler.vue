@@ -219,7 +219,8 @@ export default defineComponent({
         }
         return false
       }),
-      sortindexBonename:null
+      sortindexBonename:null,
+      entryUpdate:false
     })
     provide("handlerState", state)
     const currentlist = ListRequest(state.storeName, {
@@ -506,6 +507,7 @@ export default defineComponent({
     }
 
     function dragChange(event){
+      state.entryUpdate = true
       let preIdx = 0
       let nextIdx = 0
       if (event.newIndex !==0){
@@ -519,13 +521,16 @@ export default defineComponent({
 
       let newsortindex = preIdx + ((nextIdx-preIdx)/2)
 
-      
+
 
       Request.edit(currentlist.state.module, event.data["key"],{dataObj:{
         [state.sortindexBonename]:newsortindex
         }}).then(async (resp)=>{
           let data = await resp.json()
           currentlist.state.skellist[event.newIndex][state.sortindexBonename] = data['values'][state.sortindexBonename]
+          state.entryUpdate = false
+        }).catch((error)=>{
+          state.entryUpdate = false
         })
     }
 

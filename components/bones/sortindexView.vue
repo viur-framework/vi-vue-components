@@ -1,13 +1,15 @@
 <template>
   <div class="wrapper drag-handler">
     <sl-icon name="list" :title="rendered"></sl-icon>
+    <sl-spinner v-if="handlerState.entryUpdate"></sl-spinner>
   </div>
 </template>
 
 <script setup>
-import { reactive } from "vue"
+import { reactive, inject } from "vue"
 import { useDBStore } from "../stores/db"
 
+const handlerState = inject("handlerState")
 
 const props = defineProps( {
   skel: Object,

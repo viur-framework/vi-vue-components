@@ -99,12 +99,13 @@
               </template>
             </tr>
           </thead>
-          <tbody>
+          <vue-draggable v-model="state.skellist" @end="dragChange" tag="tbody" handle=".drag-handler" :disabled="false" direction="vertical">
             <template
               v-for="(skel, idx) in handlerLogic.currentNodeList?.state?.renderedSkellist"
               :key="skel['key']"
             >
               <tr
+                data-skeltype="node"
                 :class="{
                   selected: state.selectedRows.includes(idx) && state.currentSelectionType === 'node',
                   'is-hidden': !handlerLogic.filterAction(skel)
@@ -144,6 +145,7 @@
               :key="skel['key']"
             >
               <tr
+                data-skeltype="leaf"
                 :class="{
                   selected: state.selectedRows.includes(idx) && state.currentSelectionType === 'leaf',
                   'is-hidden': !handlerLogic.filterAction(skel)
@@ -176,7 +178,7 @@
                 </template>
               </tr>
             </template>
-          </tbody>
+          </vue-draggable>
         </table>
         <div
           v-if="
@@ -221,7 +223,7 @@ import {
   toRaw
 } from "vue"
 import HandlerBar from "../bars/HandlerBar.vue"
-import { ListRequest, boneLogic } from "@viur/vue-utils"
+import { ListRequest, boneLogic, Request } from "@viur/vue-utils"
 import { useDBStore } from "../stores/db"
 import { useMessageStore } from "../stores/message"
 import { useModulesStore } from "../stores/modules"
@@ -236,6 +238,7 @@ import { useHandlerLogic } from "./handlerLogic"
 import treeItem from "../tree/TreeItem.vue"
 import Utils from "../utils"
 import HandlerContext from "../main/context/HandlerContext.vue"
+import { VueDraggable } from 'vue-draggable-plus'
 
 export default defineComponent({
   props: {
@@ -254,7 +257,7 @@ export default defineComponent({
     columns: []
   },
   emits: ["currentSelection", "closeSelector"],
-  components: { WidgetSmall, FloatingBar, Loader, HandlerBar, BoneView, treeItem,HandlerContext },
+  components: { WidgetSmall, FloatingBar, Loader, HandlerBar, BoneView, treeItem, HandlerContext, VueDraggable },
   setup(props, context) {
     const dbStore = useDBStore()
     const route = useRoute()
@@ -299,7 +302,10 @@ export default defineComponent({
       sticky: false,
       tableWidth: "150",
       sorting: "",
-      filter: null
+      filter: null,
+      sortindexBonename:null,
+      entryUpdate:false,
+      skellist:[]
     })
     provide("handlerState", state)
 
@@ -376,6 +382,24 @@ export default defineComponent({
         })
       }
     )
+
+    watch(()=>handlerLogic.currentlist.state.skellist, (oldVal, newVal)=>{
+      let newList = handlerLogic.currentlist.state.skellist.map(x =>{
+        x["__skeltype"] = "leaf"
+        return x
+      })
+      state.skellist = [...handlerLogic.currentNodeList.state.skellist, ...newList]
+
+    })
+
+    watch(()=>handlerLogic.currentNodeList.state.skellist, (oldVal, newVal)=>{
+      let newList = handlerLogic.currentNodeList.state.skellist.map(x =>{
+        x["__skeltype"] = "node"
+        return x
+      })
+      state.skellist = [...newList, ...handlerLogic.currentlist.state.skellist]
+    })
+
 
     onDeactivated(() => {
       state.active = false
@@ -525,6 +549,44 @@ export default defineComponent({
       return currentMeta
     }
 
+    function dragChange(event){
+      state.entryUpdate=true
+      let preIdx = 0
+      let nextIdx = 0
+      let skeltype = event.item.dataset.skeltype //inject skeltype to determ correct listhandler
+      let listhandler = handlerLogic.currentlist?.state
+
+
+      if (skeltype === "node"){
+        listhandler = handlerLogic.currentNodeList?.state
+      }
+
+      if (event.newIndex !==0){
+        preIdx = state.skellist[event.newIndex-1][state.sortindexBonename]
+      }
+      if (event.newIndex!==state.skellist.length-1){
+        nextIdx = state.skellist[event.newIndex+1][state.sortindexBonename]
+      } else{
+        nextIdx = new Date().getTime()
+      }
+
+      let newsortindex = preIdx + ((nextIdx-preIdx)/2)
+
+      let currentEntry = event.data
+
+      Request.securePost(`/vi/${listhandler.module}/move/${skeltype}/${currentEntry["key"]}`,{dataObj:{
+        [state.sortindexBonename]:newsortindex,
+        parentNode:currentEntry["parententry"]
+        }}).then(async (resp)=>{
+          let data = await resp.json()
+          listhandler.skellist[event.newIndex][state.sortindexBonename] = data['values'][state.sortindexBonename]
+          state.entryUpdate=false
+          reloadAction(true)
+        }).catch((error)=>{
+          state.entryUpdate=false
+        })
+    }
+
     return {
       state,
       entrySelected,
@@ -537,7 +599,8 @@ export default defineComponent({
       handlerLogic,
       goToPath,
       listItemMeta,
-      Utils
+      Utils,
+      dragChange
     }
   }
 })

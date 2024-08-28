@@ -106,7 +106,7 @@ export default defineComponent({
         }
 
         if (
-          handlerState.conf?.["kinds"] &&
+          handlerState.conf?.["kinds"] && (!Object.keys(handlerState.conf["kinds"]).includes(type) && !handlerState.conf["kinds"]['node']["allowedChildren"].map((x) => x.split(".")[0]).includes("node") ) &&
           !handlerState.conf["kinds"][type]["allowedChildren"].map((x) => x.split(".")[0]).includes("node")
         ) {
           return true

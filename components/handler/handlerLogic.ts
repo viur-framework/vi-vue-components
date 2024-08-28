@@ -2,6 +2,7 @@
 import { useDBStore } from "../stores/db"
 import { useContextStore } from "../stores/context"
 import { useMessageStore } from "../stores/message"
+import SortindexView from "../bones/sortindexView.vue"
 import { ListRequest, destroyStore, boneLogic, Request } from "@viur/vue-utils"
 import { onMounted, watch, onUnmounted, computed, reactive, unref } from "vue"
 import BoneView from "../bones/boneView.vue"
@@ -15,8 +16,8 @@ export function useHandlerLogic(props, handler_state) {
 
   const time = new Date().getTime()
   let currentConf = dbStore.getConf(props.module, props.view) //needed
-  let currentNodeList = null
-  let currentlist = null
+  let currentNodeList = ListRequest(props.module + "_node_handler" + time, { module: props.module })
+  let currentlist = ListRequest(props.module + "_handler" + time, { module: props.module })
   let currentHandlers = {}
 
   const state = reactive({
@@ -32,11 +33,9 @@ export function useHandlerLogic(props, handler_state) {
     })
   })
 
-  currentlist = ListRequest(props.module + "_handler" + time, { module: props.module })
   patch_listRequest(currentlist)
   currentHandlers["leaf"] = currentlist
   if (currentConf["handlerComponent"] === "treehandler") {
-    currentNodeList = ListRequest(props.module + "_node_handler" + time, { module: props.module })
     currentHandlers["node"] = currentNodeList
 
     //set some defaultparams
@@ -272,6 +271,12 @@ export function useHandlerLogic(props, handler_state) {
         }
       }
     }
+
+    if (boneType==="numeric.sortindex"){
+      handler_state.sortindexBonename = name
+      return SortindexView
+    }
+
     return BoneView
   }
 
