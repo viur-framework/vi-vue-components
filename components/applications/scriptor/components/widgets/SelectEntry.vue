@@ -20,7 +20,7 @@
         </sl-button>
     </div>
 
-    <div v-else>
+    <div v-else class="wrapper-multi-select">
       <sl-checkbox
         :disabled="state.isDisabled"
         v-for="option in Object.keys(entry.data['choices'])"
@@ -92,3 +92,9 @@ async function sendSelection(){
 
 
 </script>
+<style scoped>
+.wrapper-multi-select{
+  display: flex;
+  flex-direction: column;
+}
+</style>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="wrapper">
     <textarea ref="element"></textarea>
   </div>
 </template>
@@ -88,5 +88,13 @@ onMounted(()=>{
 
 </script>
 <style scoped>
+  .wrapper{
+    display:flex;
+    height:100%;
+    width:100%;
+  }
+  :deep(.cm-editor){
+    width:100%;
+  }
 
 </style>

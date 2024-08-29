@@ -20,7 +20,6 @@ export default function application() {
     dbStore.state["topbar.actions"].push(TopBarWidget)
   }
 
-
   function register(){
     topbar()
   }
