@@ -22,7 +22,7 @@
         @mousedown="onMouseDownDragger"
         @mouseup="onMouseUpDragger"
       >
-        <sl-icon name="draggable"></sl-icon>
+        <sl-icon name="list"></sl-icon>
       </div>
 
 
@@ -125,7 +125,7 @@
         :label="false"
         :params="{
           sortindex: calculateIndex(state.nextIdx),
-          'fluidpage.dest.key': route.params['key']
+          'fluidpage': route.params['key']
         }"
       ></add>
     </div>

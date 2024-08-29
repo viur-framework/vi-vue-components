@@ -360,7 +360,7 @@ export default defineComponent({
         let module = conf["handler"].split(".").at(-1).replace("/", ".")
         let url = `/db/${module}/fluidpage/${state.module}/${state.currentSelection[0]["key"]}`
         let route = router.resolve(unref(url))
-        contextStore.setContext("fluidpage.dest.key", state.currentSelection[0]["key"], state.tabId)
+        contextStore.setContext("fluidpage", state.currentSelection[0]["key"], state.tabId)
         dbStore.addOpened(route, module)
         return 0
       }

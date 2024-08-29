@@ -178,7 +178,6 @@ export default defineComponent({
     const messageStore = useMessageStore()
     const localStore = useLocalStore()
     const userStore = useUserStore()
-    const values = reactive({})
     const state = reactive({
       type: "formhandler",
       skel: {},
@@ -310,7 +309,6 @@ export default defineComponent({
 
     return {
       state,
-      values,
       Utils,
       editViewFilter,
       getWidget,
