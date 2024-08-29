@@ -371,12 +371,18 @@ export const useDBStore = defineStore("db", () => {
     if (!Object.keys(route.query).includes("_")) {
       route.query["_"] = new Date().getTime()
     }
-
     if (contextInheritance) {
       contextStore.copyLocalContext(currentRoute.query["_"], route.query["_"])
       if(currentConf?.["context"]){
         for(const [k,v] of Object.entries(currentConf?.["context"])){
           contextStore.setContext(k,v,route.query["_"])
+        }
+      }
+
+      //merge route on top
+      for (const [boneName, value] of Object.entries(route.query)){
+        if( !boneName.startsWith("_")){
+          contextStore.setContext(boneName,value,route.query["_"])
         }
       }
 

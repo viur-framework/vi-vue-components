@@ -63,7 +63,7 @@
             </template>
           </tr>
         </thead>
-        <tbody>
+        <vue-draggable v-model="currentlist.state.skellist" @end="dragChange" tag="tbody" handle=".drag-handler" :disabled="false" direction="vertical">
           <template v-for="(skel, idx) in state.renderedList">
             <tr
               :class="{ selected: state.selectedRows.includes(idx), 'is-hidden': !skel['_visible'] }"
@@ -73,7 +73,8 @@
               @click.shift="entrySelected(idx, 'range')"
             >
               <template v-for="name in state.selectedBones">
-                <td v-if="currentlist.structure?.[name]">
+                <td v-if="currentlist.structure?.[name]"
+                >
                   <component
                     :is="getWidget(skel, name, idx)"
                     :skel="currentlist.state.skellist[idx]"
@@ -87,7 +88,7 @@
               </template>
             </tr>
           </template>
-        </tbody>
+        </vue-draggable>
       </table>
       <div
         v-if="state.emptyList"
@@ -128,7 +129,7 @@ import {
   inject
 } from "vue"
 import HandlerBar from "../bars/HandlerBar.vue"
-import { ListRequest, boneLogic } from "@viur/vue-utils"
+import {ListRequest, boneLogic, Request} from "@viur/vue-utils"
 import { useDBStore } from "../stores/db"
 import { useMessageStore } from "../stores/message"
 import { useModulesStore } from "../stores/modules"
@@ -139,7 +140,9 @@ import { useContextStore } from "../stores/context"
 import { useLocalStore } from "../stores/local"
 import WidgetSmall from "../dashboard/WidgetSmall.vue"
 import BoneView from "../bones/boneView.vue"
+import SortindexView from "../bones/sortindexView.vue";
 import HandlerContext from "../main/context/HandlerContext.vue"
+import { VueDraggable } from 'vue-draggable-plus'
 
 export default defineComponent({
   props: {
@@ -158,7 +161,7 @@ export default defineComponent({
     columns: []
   },
   emits: ["currentSelection", "closeSelector"],
-  components: { WidgetSmall, FloatingBar, Loader, HandlerBar, BoneView,HandlerContext },
+  components: { WidgetSmall, FloatingBar, Loader, HandlerBar, BoneView,HandlerContext,VueDraggable },
   setup(props, context) {
     const dbStore = useDBStore()
     const route = useRoute()
@@ -215,7 +218,9 @@ export default defineComponent({
           return true
         }
         return false
-      })
+      }),
+      sortindexBonename:null,
+      entryUpdate:false
     })
     provide("handlerState", state)
     const currentlist = ListRequest(state.storeName, {
@@ -355,7 +360,7 @@ export default defineComponent({
         let module = conf["handler"].split(".").at(-1).replace("/", ".")
         let url = `/db/${module}/fluidpage/${state.module}/${state.currentSelection[0]["key"]}`
         let route = router.resolve(unref(url))
-        contextStore.setContext("fluidpage.dest.key", state.currentSelection[0]["key"], state.tabId)
+        contextStore.setContext("fluidpage", state.currentSelection[0]["key"], state.tabId)
         dbStore.addOpened(route, module)
         return 0
       }
@@ -471,6 +476,8 @@ export default defineComponent({
       if (!bone) return undefined
       let boneType = bone.type
 
+
+
       if (dbStore.state["bones.view"]) {
         if (Object.keys(dbStore.state["bones.view"]).includes(boneType)) {
           //exact match
@@ -490,20 +497,42 @@ export default defineComponent({
           }
         }
       }
+
+      if (boneType==="numeric.sortindex"){
+        state.sortindexBonename = name
+        return SortindexView
+      }
+
       return BoneView
     }
 
-    /*
-    computed(()=>{
-        if(state.selectedBones.length>0){
-          let val = Math.round(parseInt(datatable.value.clientWidth) / state.selectedBones.length)
-          if (val<150){
-            return "150"
-          }
-          return Math.round(parseInt(datatable.value.clientWidth) / state.selectedBones.length)
-        }
-        return "150"
-      })*/
+    function dragChange(event){
+      state.entryUpdate = true
+      let preIdx = 0
+      let nextIdx = 0
+      if (event.newIndex !==0){
+        preIdx = currentlist.state.skellist[event.newIndex-1][state.sortindexBonename]
+      }
+      if (event.newIndex!==currentlist.state.skellist.length-1){
+        nextIdx = currentlist.state.skellist[event.newIndex+1][state.sortindexBonename]
+      } else{
+        nextIdx = new Date().getTime()
+      }
+
+      let newsortindex = preIdx + ((nextIdx-preIdx)/2)
+
+
+
+      Request.edit(currentlist.state.module, event.data["key"],{dataObj:{
+        [state.sortindexBonename]:newsortindex
+        }}).then(async (resp)=>{
+          let data = await resp.json()
+          currentlist.state.skellist[event.newIndex][state.sortindexBonename] = data['values'][state.sortindexBonename]
+          state.entryUpdate = false
+        }).catch((error)=>{
+          state.entryUpdate = false
+        })
+    }
 
     return {
       state,
@@ -518,7 +547,8 @@ export default defineComponent({
       datatable,
       sorting,
       filter_update,
-      getWidget
+      getWidget,
+      dragChange
     }
   }
 })

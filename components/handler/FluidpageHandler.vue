@@ -379,8 +379,7 @@ export default defineComponent({
 }
 
 .fluid-height-100 {
-  height: 100vh;
-  overflow-y: hidden;
+  height: auto;
 }
 
 .fluid-height-1-1 {

@@ -1,7 +1,6 @@
 <template>
   <div
     class="fluid-element element"
-    style="position: relative"
     :class="{
       [state.width]: true,
       [state.height]: true,
@@ -23,10 +22,17 @@
         @mousedown="onMouseDownDragger"
         @mouseup="onMouseUpDragger"
       >
-        <sl-icon name="draggable"></sl-icon>
+        <sl-icon name="list"></sl-icon>
       </div>
 
-      <sl-button-group :class="{ 'is-selected': handlerState.currentSelection?.[0]['key'] === skel['key'] }">
+
+      <div class="header-type" :title="'Typ: ' + skel['kind'] ">
+        Typ: {{ skel["kind"] }}
+      </div>
+
+      <div :class="{ 'is-selected': handlerState.currentSelection?.[0]['key'] === skel['key'] }"
+                        class="button-group"
+      >
         <sl-button
           v-if="skel['width'] !== 'fullwidth' && skel['width'] !== '12'"
           class="size-btn expand"
@@ -47,7 +53,38 @@
         </sl-button>
         <edit></edit>
         <delete></delete>
-      </sl-button-group>
+      </div>
+
+      <sl-dropdown class="edit-dropdown">
+        <sl-button slot="trigger"
+                   size="small"
+        >
+          <sl-icon name="three-dots"
+          ></sl-icon>
+        </sl-button>
+        <sl-button
+          v-if="skel['width'] !== 'fullwidth' && skel['width'] !== '12'"
+          class="size-btn expand"
+          title="Expand"
+          size="small"
+          @click="expandContent"
+        >
+          <sl-icon name="plus-lg"></sl-icon>
+        </sl-button>
+        <sl-button
+          v-if="skel['width'] !== '1'"
+          class="size-btn shrink"
+          title="Shrink"
+          size="small"
+          @click="shrinkContent"
+        >
+          <sl-icon name="dash-lg"></sl-icon>
+        </sl-button>
+        <edit></edit>
+        <delete></delete>
+      </sl-dropdown>
+
+
     </div>
 
     <div class="content">
@@ -62,27 +99,33 @@
       </sl-avatar>
 
       <div class="column">
-        <h2 class="element-headline">
-          {{ skel["kind"] }}
-          <span v-if="skel['headline']">: {{ skel["headline"] }}</span>
-          <h2 v-else-if="skel['subline']">: {{ skel["subline"] }}</h2>
-        </h2>
-        <span
+        <h2 class="element-headline" v-if="skel['headline']">{{ skel["headline"] }}</h2>
+        <h3 class="element-headline" v-if="skel['subline']">{{ skel["subline"] }}</h3>
+
+        <div
           v-if="skel['descr']"
           class="text-desc"
           v-html="skel['descr']"
-        ></span>
-        <span v-if="skel['downloaditems']">Dateien: {{ skel["downloaditems"].length }}</span>
-        <span v-if="skel['url']">Navigation: {{ skel["url"] }}</span>
-        <span class="sortindex">sortindex: {{ skel["sortindex"] }}</span>
+        ></div>
+        <div class="info-item"
+             v-if="skel['downloaditems']">
+          <span>Dateien:</span>
+          {{ skel["downloaditems"].length }}
+        </div>
+        <div class="info-item"
+             v-if="skel['url']">
+          <span>Navigation:</span>
+          {{ skel["url"] }}
+        </div>
+        <!--<span class="sortindex">sortindex: {{ skel["sortindex"] }}</span>-->
       </div>
     </div>
-    <div class="actions_after">
+    <div class="actions-after">
       <add
         :label="false"
         :params="{
           sortindex: calculateIndex(state.nextIdx),
-          'fluidpage.dest.key': route.params['key']
+          'fluidpage': route.params['key']
         }"
       ></add>
     </div>
@@ -220,11 +263,59 @@ export default {
       color: var(--sl-color-primary-500);
     }
 
-    & .actions_after,
+    & .actions-after,
     & .actions_before {
       opacity: 1;
     }
   }
+
+  &.fluid-width-1,
+  &.fluid-width-2 {
+    .button-group{
+      display: none;
+    }
+
+    .edit-dropdown{
+      display: flex;
+    }
+
+    .content{
+      flex-direction: column;
+
+      .image{
+        margin-bottom: var(--sl-spacing-x-small);
+      }
+
+      * {
+        width: 100%;
+        max-width: 100%;
+      }
+    }
+   }
+
+
+  &.fluid-width-1,
+  &.fluid-width-2,
+  &.fluid-width-3,
+  &.fluid-width-4 {
+    .button-group{
+      display: none;
+    }
+
+    .edit-dropdown{
+      display: flex;
+    }
+  }
+
+  &.fluid-width-fullwidth {
+    .actions-after{
+      margin-right: var(--sl-spacing-small);
+
+      & :deep(sl-button){
+        transform: none;
+      }
+    }
+   }
 }
 
 sl-button {
@@ -247,6 +338,7 @@ sl-button {
 .header {
   display: flex;
   flex-direction: row;
+  align-items: center;
   flex-wrap: nowrap;
   padding-bottom: var(--sl-spacing-small);
   margin-bottom: var(--sl-spacing-small);
@@ -260,13 +352,28 @@ sl-button {
   aspect-ratio: 1;
   cursor: move;
   width: 1.9em;
+  margin-right: var(--sl-spacing-small);
+}
+
+.header-type{
   margin-right: auto;
+  font-weight: 600;
+  color: var(--sl-color-neutral-500);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .element-headline {
   font-weight: bold;
   line-height: 1.3;
-  margin-bottom: 10px;
+  margin-bottom: var(--sl-spacing-2x-small);
+  overflow-wrap: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-width: 60%;
 }
 
 .content {
@@ -276,16 +383,6 @@ sl-button {
   width: 100%;
   align-items: flex-start;
   height: calc(100% - 56px);
-
-  sl-avatar {
-    flex: 1 0 45%;
-    aspect-ratio: 1;
-
-    &::part(base) {
-      width: 100%;
-      height: 100%;
-    }
-  }
 }
 
 .column {
@@ -300,9 +397,20 @@ sl-button {
 .image {
   margin-right: var(--sl-spacing-medium);
   border: 1px solid var(--sl-color-neutral-300);
+  max-width: 200px;
+  flex: 1 0 30%;
+  aspect-ratio: 1;
+
+  &::part(base) {
+    width: 100%;
+    height: 100%;
+  }
 }
 
-sl-button-group {
+.button-group {
+  display: flex;
+  flex-direction: row;
+  gap: var(--sl-spacing-2x-small);
   opacity: 0.3;
   mix-blend-mode: luminosity;
   transition: all ease 0.3s;
@@ -319,7 +427,7 @@ sl-button-group {
   opacity: 0.7;
 }
 
-.actions_after {
+.actions-after {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -364,11 +472,43 @@ sl-button-group {
 }
 
 .text-desc {
-  width: 100%;
+  max-width: 60%;
   overflow-wrap: break-word;
   display: -webkit-box;
-  -webkit-line-clamp: 4;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.edit-dropdown{
+  display: none;
+  margin-left: var(--sl-spacing-small);
+
+  &::part(popup){
+    background-color: transparent;
+  }
+  &::part(panel){
+    box-shadow: none;
+    background-color: transparent;
+  }
+
+  *{
+    margin-top: var(--sl-spacing-2x-small);
+  }
+}
+
+.info-item{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  margin-top: var(--sl-spacing-x-small);
+  white-space: nowrap;
+  text-overflow: ellipse;
+  overflow: hidden;
+
+  span{
+    font-weight: 600;
+    margin-right: var(--sl-spacing-small);
+  }
 }
 </style>

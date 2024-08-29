@@ -181,7 +181,8 @@ export default defineComponent({
       droparea: false,
       openedSelection: false,
       moduleInfo: computed(() => dbStore.getConf(boneState?.bonestructure["module"])),
-      selection: null
+      selection: null,
+      public:computed(()=>boneState?.bonestructure?.['public'] || false)
     })
 
     onMounted(() => {
@@ -204,6 +205,10 @@ export default defineComponent({
         mimeType: file.type || "application/octet-stream",
         size: file.size.toString()
       }
+      if (state.public){
+        filedata["public"] = true
+      }
+
       return new Promise((resolve, reject) => {
         Request.securePost("/vi/file/getUploadURL", { dataObj: filedata })
           .then(async (resp) => {
