@@ -78,7 +78,8 @@ export default defineComponent({
       moduleActions: computed(() => {
         const actionmap = { add: 2, view: 0, edit: 1, delete: 3, manage: 4 }
         let mods = { flags: {}, modules: {} }
-        for (const [k, v] of boneState["bonestructure"]["values"]) {
+
+        for (const [k, v] of Object.entries(boneState["bonestructure"]["values"])) {
           let parts = k.split("-")
           let name = parts[parts.length - 1]
           let icon = "eye"
