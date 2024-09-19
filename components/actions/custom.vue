@@ -56,6 +56,31 @@
         </sl-button>
       </sl-dialog>
     </teleport>
+
+    <teleport
+      v-if="state.actionSkelPopup"
+      :to="'#view_dialogs_' + handlerState['tabId']"
+      :disabled="!state.actionSkelPopup"
+    >
+      <sl-dialog
+        :label="state.info?.['name']"
+        style="--width: 85%"
+        class="actionskel-popup"
+        open
+        @sl-after-hide="state.actionSkelPopup = false"
+      >
+        <action-handler
+          :module="state.urlInfo[0].replace('.', '/')"
+          :view="null"
+          :group="''"
+          :action="state.urlInfo[1]"
+          :skelkey="null"
+          :skeltype="''"
+        >
+        </action-handler>
+      </sl-dialog>
+    </teleport>
+
   </template>
 </template>
 
@@ -151,7 +176,9 @@ export default defineComponent({
       showLabelInfo: computed(() => {
         if (!Object.keys(state.info).includes("show_label")) return true
         return state.info["show_label"]
-      })
+      }),
+      actionSkelPopup:false,
+      urlInfo:computed(()=>state.info?.["url"].replace(/^\/+/, '').split("/"))
     })
 
     function buildUrl(url, selection) {
@@ -200,9 +227,15 @@ export default defineComponent({
           routeOpen(i)
         } else if (state.info["action"] === "component") {
           // replace the whole button with a custom component, only access with be evaluated
+        } else if (state.info["action"] === "action"){
+          // open actionSkel
+          handleAction(i)
         }
       }
       state.confirm = false
+      if (state.info["action"] === "action" && state.info["target"] === "popup"){
+        state.actionSkelPopup = true
+      }
     }
 
     function routeOpen(i) {
@@ -272,14 +305,54 @@ export default defineComponent({
       window.open(buildUrl(state.info["url"], selection), "_blank").focus()
     }
 
+    function handleAction(selection){
+      if (!state.info?.["url"]) return
+
+      let urlparts = state.info?.["url"].replace(/^\/+/, '').split("/")
+
+      if (state.info?.["target"]==="popup"){
+
+      }else{
+        let route = router.resolve(`/db/${urlparts[0]}/action/${urlparts[1]}`)
+        dbStore.addOpened(route, urlparts[0], null, state.info["name"], state.info["icon"], state.info["library"])
+      }
+
+
+    }
+
     return {
       state,
       buttonClicked,
       triggerAction,
-      dbStore
+      dbStore,
+      handlerState
     }
   }
 })
 </script>
 
-<style scoped></style>
+<style scoped>
+.actionskel-popup{
+  &::part(base) {
+    position: absolute;
+  }
+
+  &::part(panel) {
+    max-height: calc(100% - 100px);
+    margin-bottom: 40px;
+  }
+
+  &::part(body) {
+    display: contents;
+  }
+
+  &::part(footer) {
+    padding: var(--sl-spacing-small);
+  }
+
+  &::part(overlay) {
+    position: absolute;
+  }
+}
+
+</style>

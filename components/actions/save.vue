@@ -144,6 +144,18 @@ export default defineComponent({
               }
             }
           }
+          if (responsedata["action"] !== handlerState.action+"Success"){
+            state.loading = false
+            messageStore.addMessage("error", `Error on Save`, "Error on Save")
+          }else{
+            state.loading = false
+            messageStore.addMessage("success", `Add`, "Entry added successfully")
+            dbStore.markHandlersToUpdate(handlerState.module, handlerState.group)
+            if (props.close) {
+              dbStore.removeOpened(route)
+            }
+          }
+
         })
         .catch((error) => {
           console.log(error)

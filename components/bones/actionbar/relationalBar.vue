@@ -19,6 +19,7 @@
       :source="getList"
       hoist
       @sl-item-select="addMultipleEntry(lang, { dest: state.skels?.[$event.detail.item.value], rel: null })"
+      :placeholder="boneState.label==='placeholder'?boneState?.bonestructure?.descr:undefined"
     ></sl-combobox>
     <sl-button
       v-if="boneState.multiple && !readonly"
