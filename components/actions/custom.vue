@@ -178,7 +178,7 @@ export default defineComponent({
         return state.info["show_label"]
       }),
       actionSkelPopup:false,
-      urlInfo:computed(()=>state.info?.["url"].replace(/^\/+/, '').split("/"))
+      urlInfo: computed(()=>buildUrl(state.info?.["url"],null).replace(/^\/+/, '').split("/"))
     })
 
     function buildUrl(url, selection) {
@@ -307,10 +307,9 @@ export default defineComponent({
 
     function handleAction(selection){
       if (!state.info?.["url"]) return
+      let urlparts = buildUrl(state.info["url"],null).replace(/^\/+/, '').split("/")
 
-      let urlparts = state.info?.["url"].replace(/^\/+/, '').split("/")
-
-      if (state.info?.["target"]==="popup"){
+      if (state.info?.["target"] === "popup"){
 
       }else{
         let route = router.resolve(`/db/${urlparts[0]}/action/${urlparts[1]}`)
