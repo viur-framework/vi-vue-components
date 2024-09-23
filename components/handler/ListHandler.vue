@@ -274,7 +274,7 @@ export default defineComponent({
         }
       }
 
-      currentlist.state.params = { ...currentlist.state.params, ...contextStore.getContext(), ...props.filter }
+      currentlist.state.params = { ...currentlist.state.params, ...contextStore.getContext(state.tabId), ...props.filter }
       currentlist.state.params["limit"] = localStore.state.listamount
       currentlist
         .fetch()
