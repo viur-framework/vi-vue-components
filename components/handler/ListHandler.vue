@@ -376,7 +376,18 @@ export default defineComponent({
 
     function getBoneViewer(skel, boneName) {
       const { getBoneValue, bones_state } = boneLogic(skel, currentlist.structure)
-      return getBoneValue(boneName, (skel = skel))
+      let option = null
+      if (currentlist.structure[boneName]["type"] === "date"){
+        if(currentlist.structure[boneName]["date"] && !currentlist.structure[boneName]["time"]){
+          option = "date"
+        }
+
+        if(currentlist.structure[boneName]["time"] && !currentlist.structure[boneName]["date"]){
+          option = "time"
+        }
+      }
+
+      return getBoneValue(boneName, option, skel)
     }
 
     function stickyHeader(e) {
