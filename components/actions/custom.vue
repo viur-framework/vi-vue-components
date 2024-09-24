@@ -227,11 +227,14 @@ export default defineComponent({
           routeOpen(i)
         } else if (state.info["action"] === "component") {
           // replace the whole button with a custom component, only access with be evaluated
-        } else if (state.info["action"] === "action"){
-          // open actionSkel
-          handleAction(i)
         }
       }
+
+      if (state.info["action"] === "action"){
+        // open actionSkel
+        handleAction(actions)
+      }
+
       state.confirm = false
       if (state.info["action"] === "action" && state.info["target"] === "popup"){
         state.actionSkelPopup = true
@@ -308,6 +311,10 @@ export default defineComponent({
     function handleAction(selection){
       if (!state.info?.["url"]) return
       let urlparts = buildUrl(state.info["url"],null).replace(/^\/+/, '').split("/")
+      if (selection.length>0 && selection[0]!==null){
+        let selectionKeys = selection.map(x=>x['key'])
+        contextStore.setContext("@viur_selected_keys", selectionKeys, route.query["_"])
+      }
 
       if (state.info?.["target"] === "popup"){
 
@@ -315,8 +322,6 @@ export default defineComponent({
         let route = router.resolve(`/db/${urlparts[0]}/action/${urlparts[1]}`)
         dbStore.addOpened(route, urlparts[0], null, state.info["name"], state.info["icon"], state.info["library"])
       }
-
-
     }
 
     return {
