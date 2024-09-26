@@ -12,6 +12,7 @@
       </div>
       <h1 class="main-headline">
         {{ appStore.state["admin.name"] }}
+        <fun></fun>
       </h1>
     </router-link>
 
@@ -28,10 +29,12 @@
 <script lang="ts">
 import { useAppStore } from "../stores/app"
 import { useDBStore } from "../stores/db"
+import fun from './components/fun.vue'
 import { defineComponent, reactive, computed } from "vue"
 import router from "../routes"
 
 export default defineComponent({
+  components:{fun},
   setup(props, context) {
     const appStore = useAppStore()
     const dbStore = useDBStore()
