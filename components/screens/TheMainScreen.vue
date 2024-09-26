@@ -138,6 +138,7 @@ export default defineComponent({
           return obj
         }, {})
 
+        dbStore.state["vi.moduleTree"] = dbStore.modulesTree()
         if (route.path !== "/") {
           let new_route = router.resolve(unref(route))
           dbStore.addOpened(
@@ -146,7 +147,7 @@ export default defineComponent({
             new_route.query["view"]
           )
         }
-        dbStore.state["vi.moduleTree"] = dbStore.modulesTree()
+
         state.status = "ready"
       })
       Request.get("/vi/getVersion").then(async (resp: Response) => {
