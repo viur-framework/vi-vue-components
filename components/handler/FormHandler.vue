@@ -44,6 +44,7 @@
               :secure="secure"
               :renderer="renderer"
               :collapsedCategories="state.conf?.['collapsedCategories'] || []"
+              :fetchUrl="state.fetchurl"
               :params="{ ...contextStore.getContext(state.tabId) }"
       >
 
@@ -196,7 +197,32 @@ export default defineComponent({
       skeltype: props.skeltype,
       renderer: computed(() => props.renderer),
       relation_opened: [],
-      loading: false
+      loading: false,
+      fetchurl: computed(()=>{
+        let url = `/${props.renderer}/${props.module}/${props.action}`
+        if (
+          props.action === "clone" ||
+          (appStore.state["core.version"] &&
+            appStore.state["core.version"]?.[0] >= 3 &&
+            appStore.state["core.version"]?.[1] <= 5)
+        ) {
+          url = `/${props.renderer}/${props.module}/edit`
+        }
+
+        const isTree = ["node","leaf"].includes(props.skeltype)
+
+
+        if (props.group){
+          url += `/${props.group}`
+        }else if (isTree){
+          url += `/${props.skeltype}`
+        }
+
+        if (["edit","clone"].includes(props.action) || (isTree && props.action === "add")){
+          url += `/${props.skelkey}`
+        }
+        return url
+      })
     })
 
     const viform = ref(null)
@@ -204,7 +230,7 @@ export default defineComponent({
     provide("viform",viform)
 
     function fetchData(){
-      viform.value.fetchData()
+      return viform.value.fetchData(state.fetchurl)
     }
     provide("fetchData",fetchData)
 
@@ -222,7 +248,7 @@ export default defineComponent({
     function reloadAction(){
       state.loading = true
       if (!viform.value) return
-      return viform.value.fetchData().then(async (resp)=>{
+      return viform.value.fetchData(state.fetchurl).then(async (resp)=>{
         state.loading = false
         if (resp.status !== 200) {
             messageStore.addMessage("error", resp.statusText, resp.url)
