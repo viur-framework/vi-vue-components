@@ -1,4 +1,5 @@
 <template>
+  <template v-if="state.fest">
   <sl-tooltip :content="state.fest.message">
     <div style="display:inline-block;" @mouseover="state.play=true" @mouseleave="state.play=false">
     <template v-if="state.fest">
@@ -11,6 +12,7 @@
     </template>
       </div>
     </sl-tooltip>
+  </template>
 </template>
 
 <script setup>
