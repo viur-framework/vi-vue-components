@@ -40,7 +40,7 @@
           size="small"
           @click="expandContent"
         >
-          <sl-icon name="plus-lg"></sl-icon>
+          <sl-icon name="plus-lg" slot="prefix"></sl-icon>
         </sl-button>
         <sl-button
           v-if="skel['width'] !== '1'"
@@ -49,7 +49,7 @@
           size="small"
           @click="shrinkContent"
         >
-          <sl-icon name="dash-lg"></sl-icon>
+          <sl-icon name="dash-lg" slot="prefix"></sl-icon>
         </sl-button>
         <edit></edit>
         <delete></delete>
@@ -69,7 +69,7 @@
           size="small"
           @click="expandContent"
         >
-          <sl-icon name="plus-lg"></sl-icon>
+          <sl-icon name="plus-lg" slot="prefix"></sl-icon>
         </sl-button>
         <sl-button
           v-if="skel['width'] !== '1'"
@@ -78,7 +78,7 @@
           size="small"
           @click="shrinkContent"
         >
-          <sl-icon name="dash-lg"></sl-icon>
+          <sl-icon name="dash-lg" slot="prefix"></sl-icon>
         </sl-button>
         <edit></edit>
         <delete></delete>
@@ -373,7 +373,7 @@ sl-button {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  max-width: 60%;
+  max-width: 700px;
 }
 
 .content {
@@ -472,7 +472,7 @@ sl-button {
 }
 
 .text-desc {
-  max-width: 60%;
+  max-width: 700px;
   overflow-wrap: break-word;
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -495,20 +495,35 @@ sl-button {
   *{
     margin-top: var(--sl-spacing-2x-small);
   }
+
+  sl-button{
+    &:part(base){
+      aspect-ratio: 1;
+    }
+  }
 }
 
 .info-item{
   display: flex;
   flex-direction: row;
-  flex-wrap: nowrap;
+  max-width: 700px;
   margin-top: var(--sl-spacing-x-small);
-  white-space: nowrap;
-  text-overflow: ellipse;
+  text-overflow: ellipsis;
   overflow: hidden;
+  overflow-wrap: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 
   span{
     font-weight: 600;
     margin-right: var(--sl-spacing-small);
+  }
+}
+
+.size-btn{
+  &::part(base){
+    aspect-ratio: 1;
   }
 }
 </style>
