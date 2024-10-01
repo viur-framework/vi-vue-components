@@ -30,7 +30,9 @@
       </div>
 
 
-      <sl-select placeholder="Sprache" size="small" @sl-change="changeLang" class="langchooser" :value="state.lang">
+      <sl-select placeholder="Sprache" size="small" @sl-change="changeLang" class="langchooser" :value="state.lang"
+        :class="{ 'is-selected': handlerState.currentSelection?.[0]['key'] === skel['key'] }"
+      >
           <sl-option v-for="lang in state.languages" :value="lang" :key="lang">
             {{$t(lang)}}
           </sl-option>
@@ -441,7 +443,7 @@ sl-button {
   }
 }
 
-.button-group {
+.button-group, .langchooser {
   display: flex;
   flex-direction: row;
   gap: var(--sl-spacing-2x-small);
