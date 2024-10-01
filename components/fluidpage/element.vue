@@ -25,14 +25,21 @@
         <sl-icon name="list"></sl-icon>
       </div>
 
-
       <div class="header-type" :title="'Typ: ' + skel['kind'] ">
-        Typ: {{ skel["kind"] }}
+        {{ Utils.getDescr(currentlist.structure["kind"],skel["kind"])}}
       </div>
+
+
+      <sl-select placeholder="Sprache" size="small" @sl-change="changeLang" class="langchooser" :value="state.lang">
+          <sl-option v-for="lang in state.languages" :value="lang" :key="lang">
+            {{$t(lang)}}
+          </sl-option>
+        </sl-select>
 
       <div :class="{ 'is-selected': handlerState.currentSelection?.[0]['key'] === skel['key'] }"
                         class="button-group"
       >
+
         <sl-button
           v-if="skel['width'] !== 'fullwidth' && skel['width'] !== '12'"
           class="size-btn expand"
@@ -51,9 +58,12 @@
         >
           <sl-icon name="dash-lg" slot="prefix"></sl-icon>
         </sl-button>
+
         <edit></edit>
         <delete></delete>
       </div>
+
+
 
       <sl-dropdown class="edit-dropdown">
         <sl-button slot="trigger"
@@ -62,6 +72,8 @@
           <sl-icon name="three-dots"
           ></sl-icon>
         </sl-button>
+
+
         <sl-button
           v-if="skel['width'] !== 'fullwidth' && skel['width'] !== '12'"
           class="size-btn expand"
@@ -80,6 +92,7 @@
         >
           <sl-icon name="dash-lg" slot="prefix"></sl-icon>
         </sl-button>
+
         <edit></edit>
         <delete></delete>
       </sl-dropdown>
@@ -99,13 +112,13 @@
       </sl-avatar>
 
       <div class="column">
-        <h2 class="element-headline" v-if="skel['headline']">{{ skel["headline"] }}</h2>
-        <h3 class="element-headline" v-if="skel['subline']">{{ skel["subline"] }}</h3>
+        <h2 class="element-headline" v-if="skel['headline']">{{ dataValue(skel["headline"]) }}</h2>
+        <h3 class="element-headline" v-if="skel['subline']">{{ dataValue(skel["subline"]) }}</h3>
 
         <div
           v-if="skel['descr']"
           class="text-desc"
-          v-html="skel['descr']"
+          v-html="dataValue(skel['descr'])"
         ></div>
         <div class="info-item"
              v-if="skel['downloaditems']">
@@ -115,7 +128,7 @@
         <div class="info-item"
              v-if="skel['url']">
           <span>Navigation:</span>
-          {{ skel["url"] }}
+          {{ dataValue(skel['url']) }}
         </div>
         <!--<span class="sortindex">sortindex: {{ skel["sortindex"] }}</span>-->
       </div>
@@ -164,6 +177,10 @@ export default {
         } else {
           return idx
         }
+      }),
+      lang:"de",
+      languages:computed(()=>{
+        return currentlist.structure['headline']['languages']
       })
     })
     const changeOrder = inject("changeOrder")
@@ -173,6 +190,10 @@ export default {
     const handlerState = inject("handlerState")
     const calculateIndex = inject("calculateIndex")
     const currentlist = inject("currentlist")
+
+    function changeLang(e){
+      state.lang = e.target.value
+    }
 
     function startDragging(e) {
       let target = e.target
@@ -224,6 +245,15 @@ export default {
       }
     }
 
+    function dataValue(obj){
+      if (typeof obj === "string"){
+        return obj
+      }
+      return obj[state.lang]
+
+    }
+
+
     return {
       Request,
       state,
@@ -238,7 +268,10 @@ export default {
       onMouseUpDragger,
       calculateIndex,
       Utils,
-      route
+      route,
+      dataValue,
+      changeLang,
+      currentlist
     }
   }
 }
@@ -343,6 +376,7 @@ sl-button {
   padding-bottom: var(--sl-spacing-small);
   margin-bottom: var(--sl-spacing-small);
   border-bottom: 1px solid var(--sl-color-neutral-300);
+  gap:5px;
 }
 
 .dragger {
@@ -482,7 +516,6 @@ sl-button {
 
 .edit-dropdown{
   display: none;
-  margin-left: var(--sl-spacing-small);
 
   &::part(popup){
     background-color: transparent;
@@ -490,13 +523,14 @@ sl-button {
   &::part(panel){
     box-shadow: none;
     background-color: transparent;
+    display:flex;
+    flex-direction: column;
+    gap:5px;
+    margin-top:5px;
   }
 
-  *{
-    margin-top: var(--sl-spacing-2x-small);
-  }
 
-  sl-button{
+  sl-button, sl-select{
     &:part(base){
       aspect-ratio: 1;
     }
@@ -526,4 +560,9 @@ sl-button {
     aspect-ratio: 1;
   }
 }
+
+.langchooser{
+  width:110px;
+}
+
 </style>

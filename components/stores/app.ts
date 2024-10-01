@@ -7,7 +7,7 @@ export const useAppStore = defineStore("appStore", () => {
   const state = reactive({
     debug: false,
     "vi.version": [4, 0, 7],
-
+    "language":"de",
     //core section
     "core.version": null,
     "core.version.min": [3, 5, 0],
