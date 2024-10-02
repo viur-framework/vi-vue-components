@@ -201,10 +201,10 @@ export default defineComponent({
       fetchurl: computed(()=>{
         let url = `/${props.renderer}/${props.module}/${props.action}`
         if (
-          props.action === "clone" ||
-          (appStore.state["core.version"] &&
+          props.action === "clone" &&
+          appStore.state["core.version"] &&
             appStore.state["core.version"]?.[0] >= 3 &&
-            appStore.state["core.version"]?.[1] <= 5)
+            appStore.state["core.version"]?.[1] <= 5
         ) {
           url = `/${props.renderer}/${props.module}/edit`
         }
