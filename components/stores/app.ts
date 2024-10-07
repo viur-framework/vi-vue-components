@@ -15,6 +15,7 @@ export const useAppStore = defineStore("appStore", () => {
 
     //settings
     init: false,
+    failed: false,
     "admin.name": "Administration",
     "admin.logo": Utils.publicAsset("logo-cube.svg"),
     "admin.loader.logo": undefined,

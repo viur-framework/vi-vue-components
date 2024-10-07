@@ -58,6 +58,7 @@ export function useInitConnection() {
         appStore.state["init"] = true
       })
       .catch(() => {
+        appStore.state["failed"] = true
         console.log("Viur settings not Found")
       })
 
