@@ -106,19 +106,20 @@
               @sl-after-hide="state.openedTask = null"
             >
               <div style="height: 400px">
-                <form-handler
-                  :no-topbar="true"
+                <vi-form :ref="forms[`form_${item['key']}`]"
+                  :useCategories="false"
                   module="_tasks"
                   action="execute"
-                  :secure="true"
                   :group="item['key']"
-                  @change="setValues"
                 >
-                </form-handler>
+                </vi-form>
+
+                <sl-alert variant="success" :open="state.taskstarted" duration="5000">{{ item["name"] }} started... </sl-alert>
               </div>
+
               <sl-button
                 slot="footer"
-                :disabled="!state.formValues"
+                :loading="forms[`form_${item['key']}`]?.value?.[0]?.state?.loading"
                 variant="success"
                 @click="executeTask(item['key'])"
               >
@@ -170,8 +171,8 @@
       <sl-button
         slot="footer"
         variant="success"
-        :loading="userStore.state['user.loggedin'] !== 'yes'"
-        @click="userStore.logout()"
+        :loading="state.logoutloading"
+        @click="logout"
       >
         {{ $t("confirm") }}
       </sl-button>
@@ -181,7 +182,7 @@
 
 <script lang="ts">
 //@ts-nocheck
-import { reactive, defineComponent, computed, onMounted } from "vue"
+import { reactive, defineComponent, computed, onMounted, ref } from "vue"
 import { useRouter } from "vue-router"
 import { useUserStore } from "@viur/vue-utils/login/stores/user"
 import { useMessageStore } from "../../stores/message"
@@ -190,16 +191,19 @@ import { useDBStore } from "../../stores/db"
 import FormHandler from "../../handler/FormHandler.vue"
 import { Request } from "@viur/vue-utils"
 import { useEventListener } from "@vueuse/core"
+import ViForm from "@viur/vue-utils/forms/ViForm.vue"
 
 export default defineComponent({
   props: {},
-  components: { FormHandler },
+  components: { ViForm,FormHandler },
   setup(props, context) {
     const userStore = useUserStore()
     const appStore = useAppStore()
     const dbStore = useDBStore()
     const messageStore = useMessageStore()
     const router = useRouter()
+
+    let forms = {}
     const state = reactive({
       sidebarOpen: false,
       nameInitials: computed(() => {
@@ -252,7 +256,9 @@ export default defineComponent({
       }),
       openedTask: null,
       openLogout: null,
-      formValues: null
+      formValues: null,
+      taskstarted:false,
+      logoutloading:false
     })
 
     function logout() {
@@ -268,38 +274,25 @@ export default defineComponent({
       Request.get("/vi/_tasks/list").then(async (resp) => {
         let data = await resp.json()
         dbStore.state["tasks"] = data["skellist"]
+
+        for(const task of data["skellist"]){
+          forms[`form_${task["key"]}`] = ref(null)
+        }
       })
     })
     function executeTask(key) {
-      console.log(key)
-      const formData: FormData = new FormData()
-      for (const [boneName, boneValue] of Object.entries(state.formValues)) {
-        for (const value of boneValue) {
-          for (const [k, v] of Object.entries(value)) {
-            formData.append(k, v)
-          }
+      forms[`form_${key}`].value[0].sendData(`/vi/_tasks/execute/${key}`).then(async (resp)=>{
+        let data = await resp.json()
+        if (data["action"] === "addSuccess"){
+          state.taskstarted = true
         }
-      }
-      const obj = {}
-      for (const key: string of formData.keys()) {
-        obj[[key]] = formData.getAll(key)
-      }
-
-      Request.securePost(`/vi/_tasks/execute/${key}`, {
-        dataObj: obj
       })
-        .then(async (resp) => {
-          state.openedTask = nulls
-        })
-        .catch((error) => {
-          state.openedTask = null
-          messageStore.addMessage("error", `${error.message}`, error.response?.url)
-        })
     }
     function openTask(key) {
       state.openedTask = key
     }
-    function setValues(formValues) {
+    function setValues(formValues){
+      console.log(formValues)
       state.formValues = formValues
     }
 
@@ -314,6 +307,14 @@ export default defineComponent({
       window.open(url, "_blank").focus()
     }
 
+    function logout(){
+      state.logoutloading = true
+      userStore.logout().then(async (resp)=>{
+        let data = await resp.json()
+        state.logoutloading = false
+      })
+    }
+
     return {
       state,
       userStore,
@@ -323,7 +324,8 @@ export default defineComponent({
       executeTask,
       setValues,
       openUser,
-      openScriptor
+      openScriptor,
+      forms
     }
   }
 })

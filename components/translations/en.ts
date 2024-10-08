@@ -66,6 +66,7 @@ export default {
   confirm: "Confirm",
   create: "Create",
   select: "Select",
+  refresh: "Refresh",
   search: {
     local: "Search in list",
     database: "Search Online"
@@ -81,5 +82,9 @@ export default {
   noaccess: {
     title: "No access",
     descr: "This user does not have enough permissions."
+  },
+  connection:{
+    header:'Connection not found.',
+    message:'No connection to the ViUR Core could be established.'
   }
 }

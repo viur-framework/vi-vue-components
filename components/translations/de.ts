@@ -68,6 +68,7 @@ export default {
   confirm: "Bestätigen",
   create: "Erstellen",
   select: "Auswählen",
+  refresh: "Neuladen",
   search: {
     local: "Suche wird in der Liste ausgeführt",
     database: "Suche wird online ausgeführt"
@@ -83,5 +84,9 @@ export default {
   noaccess: {
     title: "Nicht genügend Berechtigungen",
     descr: "Dieser Nutzer hat nicht genügend Berechtigungen."
+  },
+  connection:{
+    header:'Verbindung unterbrochen.',
+    message:'Es konnte keine Verbindung zum ViUR Core aufgebaut werden.'
   }
 }

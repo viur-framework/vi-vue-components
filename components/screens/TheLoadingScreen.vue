@@ -9,6 +9,15 @@
         :logo="appStore.state['admin.loader.logo']"
         :color="appStore.state['admin.loader.color']"
       ></loader>
+
+
+      <sl-dialog :open="appStore.state['failed']" :label="i18n.t('connection.header')" @sl-request-close.prevent="()=>{}">
+        {{ $t('connection.message') }}
+        <div slot="footer">
+          <sl-button variant="success" outline @click="reload" :loading="state.loading">{{$t('refresh')  }}</sl-button>
+        </div>
+      </sl-dialog>
+
     </div>
   </div>
 </template>
@@ -18,21 +27,33 @@ import { reactive, computed, onBeforeMount, defineComponent, ref } from "vue"
 import { useAppStore } from "../stores/app"
 import Loader from "@viur/vue-utils/generic/Loader.vue"
 import { useInitConnection } from "../init"
+import { useI18n } from "vue-i18n"
+
 
 export default defineComponent({
   components: { Loader },
   setup() {
     const appStore = useAppStore()
+    const i18n = useI18n()
+
     useInitConnection()
 
     //@ts-ignore
     const state = reactive({
-      backgroundImage: computed(() => `url('${appStore.state["admin.login.background"]}'`)
+      backgroundImage: computed(() => `url('${appStore.state["admin.login.background"]}'`),
+      loading:false,
     })
+
+    function reload(){
+      state.loading=true
+      window.location.reload()
+    }
 
     return {
       state,
-      appStore
+      appStore,
+      i18n,
+      reload
     }
   }
 })
