@@ -377,7 +377,7 @@ export default defineComponent({
     function getBoneViewer(skel, boneName) {
       const { getBoneValue, bones_state } = boneLogic(skel, currentlist.structure)
       let option = null
-      if (currentlist.structure?.[boneName]["type"] === "date"){
+      if (currentlist.structure?.[boneName]?.["type"] === "date"){
         if(currentlist.structure[boneName]["date"] && !currentlist.structure[boneName]["time"]){
           option = "date"
         }
