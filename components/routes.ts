@@ -3,6 +3,8 @@ import view_missing from "./views/view_missing.vue"
 import { createRouter, createWebHashHistory } from "vue-router"
 import { useUserStore } from "@viur/vue-utils/login/stores/user"
 import { useContextStore } from "./stores/context"
+import { useExtensionsStore } from "./stores/extensions";
+
 import home from "./views/home.vue"
 
 const default_routes = [
@@ -20,7 +22,15 @@ const default_routes = [
     path: "/db/:module/list/:group?",
     name: "list",
     props: true,
-    component: () => import("./views/list.vue")
+    component: () => import("./views/list.vue"),
+    children:[
+      {
+        path: "test",
+        name: "testview",
+        props: true,
+        component: () => import("./views/list.vue")
+      }
+    ]
   },
   {
     path: "/db/:module/tree",
@@ -98,6 +108,7 @@ const default_routes = [
 
 function createRouterInstance(routes, replace = false) {
   let newRoutes = []
+
   if (replace) {
     newRoutes = routes
   } else {

@@ -16,15 +16,18 @@ import relationalBone from "./bones/relationalBone.vue"
 import fileBone from "./bones/fileBone.vue"
 import fileBar from "./bones/actionbar/fileBar.vue"
 import relationalBar from "./bones/actionbar/relationalBar.vue"
+import { useExtensionsStore } from "./stores/extensions"
 
 export function useInitConnection() {
   const userStore = useUserStore()
   const appStore = useAppStore()
   const colorStore = useColorStore()
+  const extensionStore = useExtensionsStore()
   useModulesStore().setmodules()
 
   onBeforeMount(() => {
     initBones() // init CustomBones
+    initExtensions() // init Extensions
     Request.get("/vi/settings")
       .then(async (resp: Response) => {
         let data = await resp.json()
@@ -69,6 +72,15 @@ export function useInitConnection() {
 
       addBoneActionbar("relational.tree.leaf.file.file", fileBar) //add custom multiple acionbar
       addBoneActionbar("relational.", relationalBar) //add custom multiple acionbar
+    }
+
+    function initExtensions() {
+      // call init extension
+      for (const [name, extension] of Object.entries(extensionStore.state.extensions)) {
+        if (extension?.["init"]) {
+          extension["init"]()
+        }
+      }
     }
 
     //check access on reactivation
