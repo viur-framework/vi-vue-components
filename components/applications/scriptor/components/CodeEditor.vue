@@ -62,6 +62,8 @@ function editorFromTextArea(textarea, extensions)
 
 	_view.dom.addEventListener("input", listener);
 	_view.dom.addEventListener("keyup", listener);
+	_view.dom.addEventListener("paste", listener);
+	_view.dom.addEventListener("cut", listener);
 	return _view;
 }
 
