@@ -51,7 +51,7 @@ const props = defineProps({
 })
 </script>
 
-<style scoped lang="less">
+<style scoped>
 .interaction-img {
   margin: -10px;
   display: flex;

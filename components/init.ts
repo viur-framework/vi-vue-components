@@ -18,13 +18,6 @@ import fileBar from "./bones/actionbar/fileBar.vue"
 import relationalBar from "./bones/actionbar/relationalBar.vue"
 import { useExtensionsStore } from "./stores/extensions"
 
-
-import application from "./applications/scriptor/vi"
-function loadApplication(){
-  application().register()
-}
-
-
 export function useInitConnection() {
   const userStore = useUserStore()
   const appStore = useAppStore()
@@ -80,10 +73,9 @@ export function useInitConnection() {
       addBoneActionbar("relational.tree.leaf.file.file", fileBar) //add custom multiple acionbar
       addBoneActionbar("relational.", relationalBar) //add custom multiple acionbar
     }
-    //inject Apps
-    loadApplication()
 
     function initExtensions() {
+      extensionStore.initExtensions()
       // call init extension
       for (const [name, extension] of Object.entries(extensionStore.state.extensions)) {
         if (extension?.["init"]) {

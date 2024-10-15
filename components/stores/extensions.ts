@@ -7,18 +7,8 @@ export const useExtensionsStore = defineStore("extensionsStore", () => {
   const router = useRouter()
 
   const state = reactive({
-    extensions: {"debug":{
-        name:"debug",
-        routes:[],
-        init:()=>console.log("debug"),
-        subhandlers:{
-            "list":{
-                name:"Debug",
-                icon:"bug-fill",
-                route:null
-            }
-        }
-    }}
+    extensions: {},
+    activeExtensions: ["debug", "scriptor"]
   })
 
   function addExtension(extension) {
@@ -30,6 +20,8 @@ export const useExtensionsStore = defineStore("extensionsStore", () => {
   }
 
   function initExtensions() {
+    loadExtensions()
+
     //register routes
     //register topbar actions
     //register subhandlers
@@ -43,9 +35,19 @@ export const useExtensionsStore = defineStore("extensionsStore", () => {
         }
       }
     }
-
-
   }
+
+  function loadExtensions() {
+    const extensions = import.meta.glob("../extensions/**/extension.js", { eager: true })
+
+    for (const [path, extension] of Object.entries(extensions)){
+      let ext = extension.default()
+      state.extensions[ext['name']] = ext
+
+    }
+  }
+
+
 
   return {
     state,

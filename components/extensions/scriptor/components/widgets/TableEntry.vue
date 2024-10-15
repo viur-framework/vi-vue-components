@@ -124,7 +124,7 @@ const state = reactive({
 })
 </script>
 
-<style scoped lang="less">
+<style scoped>
 .wrap {
   max-height: 200px; /* Set the maximum height of the wrapper */
   max-width: 100%;

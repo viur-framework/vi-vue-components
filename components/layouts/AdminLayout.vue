@@ -30,14 +30,16 @@
           <sl-tab-group class="viewtabgroup" placement="end" variant="flap"  style="height: 100%;display:flex;flex-direction:column;">
             <sl-tab slot="nav"> <sl-icon name="database-fill"></sl-icon></sl-tab>
             <template v-for="ext in extensionsStore.state.extensions">
-              <sl-tab slot="nav" v-for="handler in ext?.['subhandlers']"><sl-icon :title="handler['name']" :name="handler['icon']"></sl-icon></sl-tab>
+              <template v-for="handler in ext?.['subhandlers']" :key="handler['name']">
+                <sl-tab slot="nav"  v-if="evaluateTabs(handler)"><sl-icon :title="handler['name']" :name="handler['icon']"></sl-icon></sl-tab>
+              </template>
             </template>
 
-
-            <!--<sl-tab slot="nav" panel="default2"><sl-icon name="plus"></sl-icon></sl-tab>-->
-            <div class="viewpanel" style="height: 100%;display:flex;flex-direction:column;flex:1">
+            <sl-tab-panel name="default" class="viewpanel" style="height: 100%;display:flex;flex-direction:column;flex:1">
               <view-wrapper :component="test(Component)"></view-wrapper>
-            </div>
+            </sl-tab-panel>
+
+
           </sl-tab-group>
         </div>
       </router-view>
@@ -58,7 +60,20 @@ const dbStore = useDBStore()
 const extensionsStore = useExtensionsStore()
 const route = useRoute()
 
-
+function evaluateTabs(handler){
+  let match = true
+  console.log("FFF")
+  console.log(handler)
+  if(handler?.['routeMatches']){
+    console.log("AAA")
+    for(const [k,v] of Object.entries(handler?.['routeMatches'])){
+      if (route.params[k] !== v && route.meta[k] !== v){
+        match = false
+      }
+    }
+  }
+  return match
+}
 
 function test(c){
   console.log(c)
