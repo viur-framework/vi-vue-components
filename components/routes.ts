@@ -6,6 +6,7 @@ import { useContextStore } from "./stores/context"
 import { useExtensionsStore } from "./stores/extensions";
 
 import home from "./views/home.vue"
+import {appRoutes as scriptorRoutes} from './applications/scriptor/vi'
 
 const default_routes = [
   {
@@ -114,6 +115,8 @@ function createRouterInstance(routes, replace = false) {
   } else {
     newRoutes = routes.concat(default_routes)
   }
+  newRoutes = newRoutes.concat(scriptorRoutes)
+  console.log(newRoutes)
 
   const router = createRouter({
     // @ts-ignore
