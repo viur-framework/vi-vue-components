@@ -93,6 +93,20 @@ export default class Utils {
     return finalStrList.join(", ")
   }
 
+  static renderValue(val){
+    if (typeof val === 'object' &&
+      !Array.isArray(val) &&
+      val !== null
+    ){
+      val = Object.entries(val).filter(x=>!!x[1]).map((x)=>Utils.unescape(x[1])).join(", ")
+    }else{
+      val = Utils.unescape(val)
+    }
+
+    return val
+  }
+
+
   static publicAsset(path, prefix = "s") {
     if (import.meta.env.DEV) {
       if(path.startsWith("/")){

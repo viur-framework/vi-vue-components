@@ -24,7 +24,7 @@
             :name="listItemMeta(path, 'node').icon"
             :library="listItemMeta(path, 'node').library"
           ></sl-icon>
-          {{ Utils.unescape( path["name"]) }}</sl-breadcrumb-item
+          {{ Utils.renderValue( path["name"]) }}</sl-breadcrumb-item
         >
       </sl-breadcrumb>
       <div style="display:flex; flex-direction: row; gap:10px; align-items: center">

@@ -14,7 +14,7 @@
     >
     </sl-icon>
     <div class="name">
-      {{Utils.unescape(name) }}
+      {{Utils.renderValue(name) }}
     </div>
     <sl-tree-item v-if="!state.needsRequest && state.items.length === 0"
       ><span style="color: var(--sl-color-neutral-300); font-style: italic; font-size: 0.7em"

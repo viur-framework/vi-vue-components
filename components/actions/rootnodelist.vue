@@ -11,7 +11,7 @@
       :value="node['key']"
       :selected="handlerState['currentRootNode']?.['key'] === node['key']"
     >
-      {{ node["name"] }}
+      {{ Utils.renderValue(node["name"]) }}
     </sl-option>
   </sl-select>
 </template>
@@ -20,6 +20,7 @@
 // @ts-nocheck
 import { reactive, defineComponent, inject, computed, onMounted } from "vue"
 import { useContextStore } from "../stores/context"
+import Utils from "../utils";
 
 export default defineComponent({
   props: {},
@@ -46,7 +47,7 @@ export default defineComponent({
       }
     })
 
-    return { state, rootNodeChange, handlerState }
+    return { state, rootNodeChange, handlerState, Utils }
   }
 })
 </script>
