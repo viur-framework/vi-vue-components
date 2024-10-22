@@ -1,7 +1,15 @@
 const routes = []
 
 
+/*
 
+ "list":{
+                name:"Debug",
+                icon:"bug-fill",
+                route:null
+            }
+
+*/
 
 export default function extensionInfo(){
 
@@ -13,11 +21,7 @@ export default function extensionInfo(){
         routes:routes,
         init:init,
         subhandlers:{
-            "list":{
-                name:"Debug",
-                icon:"bug-fill",
-                route:null
-            }
+
         }
     }
 }

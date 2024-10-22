@@ -5,7 +5,12 @@
       class="bar--left"
     >
       <sl-icon name="file-earmark-code-fill"></sl-icon>
-      Scriptor || filename
+      <template v-if="filename">
+        {{ filename }}
+      </template>
+      <template v-else>
+        Scriptor
+      </template>
     </div>
 
     <div slot="center">
@@ -57,6 +62,9 @@ const scriptorStore = useScriptorStore()
 const props = defineProps({
   id: {
     required: true
+  },
+  filename:{
+    type:String
   }
 })
 
@@ -78,7 +86,8 @@ const state = reactive({
 })
 
 async function executeScript() {
-  await scriptorStore.execute(state.scriptor.scriptCode, props.id)
+  console.log(state.scriptor.scriptCode)
+  await scriptorStore.execute(state.scriptor.scriptCode.replace(/\\n/g, "\n"), props.id)
 }
 
 function reset() {

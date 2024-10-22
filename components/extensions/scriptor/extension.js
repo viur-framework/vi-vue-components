@@ -4,8 +4,11 @@ import { useRouter} from "vue-router";
 
 const routes = [
     {
-        path: "/scriptor/application",
-        name: "ScriptorApplication",
+        path: "/scriptor/app",
+        name: "ScriptorApp",
+        meta:{
+          layout:"ScriptorLayout"
+        },
         component: () => import("./ScriptorApplication.vue")
     },
     {

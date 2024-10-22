@@ -8,14 +8,13 @@
       slot="start"
       class="sidebar"
     >
-      <the-sidebar></the-sidebar>
+      <file-tree></file-tree>
     </div>
 
     <div
       slot="end"
       class="content"
     >
-      <the-main-screen-tabbar></the-main-screen-tabbar>
       <router-view v-slot="{ Component }">
         <div class="viewwrapper">
           <div class="wrap-for-popup">
@@ -57,6 +56,7 @@ import { useDBStore } from "../stores/db"
 import { useExtensionsStore } from "../stores/extensions";
 import { useRoute} from "vue-router";
 import { reactive } from "vue"
+import FileTree from "../extensions/scriptor/components/FileTree/FileTree.vue"
 
 const dbStore = useDBStore()
 const extensionsStore = useExtensionsStore()

@@ -15,6 +15,7 @@ export function getLayout(layout= null){
         if (route.meta?.layout){
             _layout = route.meta.layout
         }
+        console.log(_layout)
     }
 
   return _layout

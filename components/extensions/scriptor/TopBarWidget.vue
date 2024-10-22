@@ -21,7 +21,7 @@ const dbStore = useDBStore()
 const state = reactive({})
 
 function openScriptor() {
-  let new_route = router.resolve("/scriptor/view")
+  let new_route = router.resolve("/scriptor/app")
   dbStore.addOpened(new_route, "", null, "Scriptor","code-square")
 }
 
