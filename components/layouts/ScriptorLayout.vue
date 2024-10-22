@@ -8,7 +8,7 @@
       slot="start"
       class="sidebar"
     >
-      <file-tree></file-tree>
+
     </div>
 
     <div
@@ -56,7 +56,7 @@ import { useDBStore } from "../stores/db"
 import { useExtensionsStore } from "../stores/extensions";
 import { useRoute} from "vue-router";
 import { reactive } from "vue"
-import FileTree from "../extensions/scriptor/components/FileTree/FileTree.vue"
+
 
 const dbStore = useDBStore()
 const extensionsStore = useExtensionsStore()

@@ -26,12 +26,12 @@
               ></div>
             </template>
 
-
+          {{state.validHandlers}}
           <sl-tab-group class="viewtabgroup" placement="end" variant="flap"  style="height: 100%;display:flex;flex-direction:column;">
-            <sl-tab slot="nav" v-if="state.activeTabs!==0"> <sl-icon name="database-fill"></sl-icon></sl-tab>
+            <sl-tab slot="nav" v-if-="state.activeTabs!==0"> <sl-icon name="database-fill"></sl-icon></sl-tab>
             <template v-for="ext in extensionsStore.state.extensions">
               <template v-for="handler in ext?.['subhandlers']" :key="handler['name']">
-                <sl-tab slot="nav"  v-if="evaluateTabs(handler)"><sl-icon :title="handler['name']" :name="handler['icon']"></sl-icon></sl-tab>
+                <sl-tab slot="nav" v-if="evaluateTabs(handler)"><sl-icon :title="handler['name']" :name="handler['icon']"></sl-icon></sl-tab>
               </template>
             </template>
 
@@ -56,14 +56,38 @@ import ViewWrapper from "../main/ViewWrapper.vue"
 import { useDBStore } from "../stores/db"
 import { useExtensionsStore } from "../stores/extensions";
 import { useRoute} from "vue-router";
-import { reactive } from "vue"
+import { reactive, computed } from "vue"
 
 const dbStore = useDBStore()
 const extensionsStore = useExtensionsStore()
 const route = useRoute()
 
 const state = reactive({
-  activeTabs:0
+  activeTabs:0,
+  validHandlers:computed(()=>{
+    let validHandlers = []
+    let match = true
+
+    console.log(extensionsStore.state.extensions)
+    for(const [extname,ext] of Object.entries(extensionsStore.state.extensions)){
+      console.log(ext)
+      for (const handler in ext?.['subhandlers']){
+        if(handler?.['routeMatches']){
+          for(const [k,v] of Object.entries(handler?.['routeMatches'])){
+            if (route.params[k] !== v && route.meta[k] !== v){
+              match = false
+            }
+          }
+        }
+        if (match){
+          validHandlers.push(handler)
+        }
+      }
+    }
+    return validHandlers
+  })
+
+
 })
 
 function evaluateTabs(handler){
@@ -76,7 +100,7 @@ function evaluateTabs(handler){
     }
   }
   if (match){
-    state.activeTabs++
+    //state.activeTabs+=1
   }
 
   return match

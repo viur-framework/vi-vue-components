@@ -29,10 +29,18 @@ export interface ModuleInfo {
 }
 
 function adminTreeLayer(itemList: Array<ModuleInfo>, parent: ModuleInfo): Array<ModuleInfo> {
+  const userStore = useUserStore()
+
   let listOfNodes = []
   let i = 0
 
   for (let conf of itemList) {
+
+    if (conf['module']==="script" && userStore.userAccess.includes('scriptor')){
+      conf["display"] = "visible"
+    }
+
+
     if (!Object.keys(conf).includes("display")) {
       conf["display"] = "visible"
     }

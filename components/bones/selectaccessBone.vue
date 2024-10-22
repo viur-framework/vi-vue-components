@@ -9,7 +9,6 @@
       name="funnel"
     ></sl-icon>
   </sl-input>
-
   <template v-for="(mod, modname) in state.moduleActions['flags']">
     <sl-button-group v-if="modname.includes(state.filter)">
       <div class="access-name">{{ modname }}</div>
@@ -78,8 +77,12 @@ export default defineComponent({
       moduleActions: computed(() => {
         const actionmap = { add: 2, view: 0, edit: 1, delete: 3, manage: 4 }
         let mods = { flags: {}, modules: {} }
+        let struct = boneState["bonestructure"]["values"]
+        if (!Array.isArray(boneState["bonestructure"]["values"])){
+          struct = Object.entries(boneState["bonestructure"]["values"])
+        }
 
-        for (const [k, v] of Object.entries(boneState["bonestructure"]["values"])) {
+        for (const [k, v] of struct) {
           let parts = k.split("-")
           let name = parts[parts.length - 1]
           let icon = "eye"
