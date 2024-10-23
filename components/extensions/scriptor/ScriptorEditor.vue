@@ -1,10 +1,15 @@
 <template>
   <sl-split-panel vertical style="height: 100%;--min:50px; --max:100% " position="50">
   <div slot="start">
-    <status-bar :id="state.id"></status-bar>
+    <status-bar :id="state.id">
+      <sl-button :loading="state.saving" size="small" variant="success" style="margin-left:10px;" @click="saveCode">{{$t('actions.save')}}</sl-button>
+    </status-bar>
     <div class="wrapper-editor">
-      <code-editor :id="state.id"></code-editor>
+      <code-editor v-if="state.script" :id="state.id"></code-editor>
+      <sl-spinner v-else></sl-spinner>
     </div>
+
+
   </div>
   <div slot="end" class="wrapper-widgets">
     <widget-list :id="state.id"></widget-list>
@@ -15,19 +20,61 @@
 </template>
 
 <script setup>
-  import {reactive, onMounted, onBeforeMount} from 'vue'
+import {reactive, onMounted, onBeforeMount, computed} from 'vue'
   import WidgetList from './components/WidgetList.vue';
   import StatusBar from './components/StatusBar.vue';
   import CodeEditor from './components/CodeEditor.vue';
   import {useScriptorStore} from "./store/scriptor"
+  import {Request} from "@viur/vue-utils";
+
+  const props = defineProps({
+    module:{type:String},
+    skelkey : {type:String},
+    skeltype: {type:String}
+  })
+
+
   const scriptorStore = useScriptorStore()
   const state = reactive({
-    id:null
+    id:null,
+    scriptor:computed(()=>{
+      return scriptorStore.state.instances[state.id]
+    }),
+    script:null,
+    saving:false
   })
 
   onBeforeMount(()=>{
     state.id = scriptorStore.createNewInstance()
+    loadCode()
   })
+
+  function loadCode(){
+    console.log(props)
+    if (!props.skelkey){
+      return
+    }
+    Request.edit(props.module, props.skelkey, {group:props.skeltype
+      }).then(async (resp)=>{
+      let data = await resp.json()
+      state.script = data['values']
+
+      state.scriptor.scriptCode = data["values"]['script'].replace(/\\n/g, "\n")
+      state.scriptor.scriptKey = data["values"]['key']
+    })
+
+  }
+
+  function saveCode(){
+    state.saving = true
+    Request.securePost(`/vi/${props.module}/edit/${props.skeltype}/${props.skelkey}`,{dataObj:{
+      script: state.scriptor.scriptCode
+    }}).then(async (resp)=>{
+      let data = await resp.json()
+      state.saving = false
+    })
+  }
+
 
 </script>
 <style scoped>

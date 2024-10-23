@@ -15,7 +15,7 @@
     </div>
     <div v-for="(bone, boneName) in dbStore.state['skeldrawer.entry']">
       <span style="font-weight: bold; display: block"
-        >{{ dbStore.state["skeldrawer.structure"][boneName]["descr"] }}:</span
+        >{{ dbStore.state["skeldrawer.structure"][boneName]?.["descr"] }}:</span
       >
       <span>{{ getBoneViewer(dbStore.state["skeldrawer.entry"], boneName) }}</span>
     </div>

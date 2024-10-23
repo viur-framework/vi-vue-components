@@ -64,10 +64,24 @@ const default_routes = [
   },
   {
     path: "/db/:module/edit/:skeltype/:skelkey",
-    name: "editnode",
-    meta: { action: "edit" },
     props: true,
-    component: () => import("./views/edit.vue")
+    meta: { action: "edit" },
+    children:[
+      {
+        path: "",
+        name: "editnode",
+        meta: { action: "edit" },
+        props: true,
+        component: () => import("./views/edit.vue")
+      },
+      {
+        path: "__/scriptor/edit",
+        name: "editscriptornode",
+        meta: { action: "edit" },
+        props: true,
+        component: () => import("./extensions/scriptor/ScriptorEditor.vue")
+      }
+    ]
   },
   {
     path: "/db/:module/clone/:skeltype?/:skelkey",

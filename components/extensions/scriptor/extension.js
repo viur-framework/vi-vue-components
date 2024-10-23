@@ -11,11 +11,12 @@ const routes = [
         },
         component: () => import("./ScriptorApplication.vue")
     },
-    {
-        path: "/scriptor/edit",
+    /*{
+        path: "/db/:module/edit/leaf/:skelkey/scriptor/edit",
         name: "ScriptorEditor",
+        meta: { action: "edit" },
         component: () => import("./ScriptorEditor.vue")
-    }
+    }*/
 ]
 
 export default function extensionInfo(){
@@ -23,8 +24,8 @@ export default function extensionInfo(){
     const router = useRouter()
     function init(){
         console.log("Init Scriptor")
-        addSubRoute()
-        topbar()
+        //addSubRoute()
+        //topbar()
     }
 
     function topbar(){
@@ -35,6 +36,8 @@ export default function extensionInfo(){
         router.addRoute("editnode",{
         path: "scriptor/edit",
         name: "ScriptorEditor",
+        meta: { action: "edit" },
+        props: true,
         component: () => import("./ScriptorEditor.vue")
     })
     }
@@ -51,7 +54,7 @@ export default function extensionInfo(){
                 },
                 name:"Scriptor",
                 icon:"code-square",
-                route:null
+                route:"__/scriptor/edit"
             }
         }
     }

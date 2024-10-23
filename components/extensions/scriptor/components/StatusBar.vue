@@ -50,6 +50,7 @@
       >
         Ausführen
       </sl-button>
+      <slot></slot>
     </div>
   </sl-bar>
 </template>

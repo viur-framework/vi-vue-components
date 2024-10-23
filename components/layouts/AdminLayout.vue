@@ -16,7 +16,7 @@
       class="content"
     >
       <the-main-screen-tabbar></the-main-screen-tabbar>
-      <router-view v-slot="{ Component }">
+      <router-view v-slot="mainprops">
         <div class="viewwrapper">
           <div class="wrap-for-popup">
             <template v-for="tab in dbStore.state['handlers.opened']">
@@ -25,22 +25,19 @@
                 :id="'view_dialogs_' + tab?.['id']"
               ></div>
             </template>
+            <sl-tab-group class="viewtabgroup" placement="end" variant="flap"  style="height: 100%;display:flex;flex-direction:column;">
+              <sl-tab slot="nav" v-if="state.validHandlers.length>0" @click="navigateSubRoute()"> <sl-icon name="database-fill"></sl-icon></sl-tab>
+                <template v-for="handler in state.validHandlers" :key="handler['name']">
+                  <sl-tab slot="nav" @click="navigateSubRoute(handler['route'])"><sl-icon :title="handler['name']" :name="handler['icon']"></sl-icon></sl-tab>
+                </template>
 
-          {{state.validHandlers}}
-          <sl-tab-group class="viewtabgroup" placement="end" variant="flap"  style="height: 100%;display:flex;flex-direction:column;">
-            <sl-tab slot="nav" v-if-="state.activeTabs!==0"> <sl-icon name="database-fill"></sl-icon></sl-tab>
-            <template v-for="ext in extensionsStore.state.extensions">
-              <template v-for="handler in ext?.['subhandlers']" :key="handler['name']">
-                <sl-tab slot="nav" v-if="evaluateTabs(handler)"><sl-icon :title="handler['name']" :name="handler['icon']"></sl-icon></sl-tab>
-              </template>
-            </template>
-
-            <sl-tab-panel name="default" class="viewpanel" style="height: 100%;display:flex;flex-direction:column;flex:1">
-              <view-wrapper :component="Component"></view-wrapper>
-            </sl-tab-panel>
+              <sl-tab-panel name="default" class="viewpanel" style="height: 100%;display:flex;flex-direction:column;flex:1">
+                <view-wrapper :component="mainprops.Component">
+                </view-wrapper>
+              </sl-tab-panel>
 
 
-          </sl-tab-group>
+            </sl-tab-group>
         </div>
         </div>
       </router-view>
@@ -55,32 +52,33 @@ import TheMainScreenTabbar from "../main/TheMainScreenTabbar.vue"
 import ViewWrapper from "../main/ViewWrapper.vue"
 import { useDBStore } from "../stores/db"
 import { useExtensionsStore } from "../stores/extensions";
-import { useRoute} from "vue-router";
-import { reactive, computed } from "vue"
+import { useRoute, useRouter} from "vue-router";
+import {reactive, computed, unref, onMounted} from "vue"
 
 const dbStore = useDBStore()
 const extensionsStore = useExtensionsStore()
 const route = useRoute()
+const router = useRouter()
 
 const state = reactive({
-  activeTabs:0,
   validHandlers:computed(()=>{
     let validHandlers = []
     let match = true
 
-    console.log(extensionsStore.state.extensions)
     for(const [extname,ext] of Object.entries(extensionsStore.state.extensions)){
-      console.log(ext)
-      for (const handler in ext?.['subhandlers']){
-        if(handler?.['routeMatches']){
-          for(const [k,v] of Object.entries(handler?.['routeMatches'])){
-            if (route.params[k] !== v && route.meta[k] !== v){
-              match = false
+      if (ext?.['subhandlers']){
+        for (const [hname, handler] of Object.entries(ext['subhandlers'])){
+          if(handler?.['routeMatches']){
+            for(const [k,v] of Object.entries(handler?.['routeMatches'])){
+              if (route.params[k] !== v && route.meta[k] !== v){
+                match = false
+              }
             }
           }
-        }
-        if (match){
-          validHandlers.push(handler)
+
+          if (match){
+            validHandlers.push(handler)
+          }
         }
       }
     }
@@ -90,20 +88,18 @@ const state = reactive({
 
 })
 
-function evaluateTabs(handler){
-  let match = true
-  if(handler?.['routeMatches']){
-    for(const [k,v] of Object.entries(handler?.['routeMatches'])){
-      if (route.params[k] !== v && route.meta[k] !== v){
-        match = false
-      }
-    }
+function navigateSubRoute(subroute){
+  let org_path = route.path
+  if (!org_path.endsWith(subroute)){
+    org_path+="/"+subroute
   }
-  if (match){
-    //state.activeTabs+=1
-  }
+  org_path +="?_="+route.query["_"]
 
-  return match
+  if (!subroute){
+    org_path = route.path.split("__")[0]+"?_="+route.query["_"]
+  }
+  let new_route = router.resolve(unref(org_path))
+  router.push(new_route)
 }
 
 </script>
