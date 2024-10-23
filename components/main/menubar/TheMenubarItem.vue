@@ -91,6 +91,14 @@
               ></sl-icon>
               Bearbeiten
             </sl-menu-item>
+            <sl-menu-item @click="openInfo">
+              <sl-icon
+                slot="prefix"
+                name="info-circle"
+                sprite
+              ></sl-icon>
+              Module Info
+            </sl-menu-item>
             <sl-menu-item @click="openItem(route, true)">
               <sl-icon
                 slot="prefix"
@@ -314,6 +322,11 @@ export default defineComponent({
       dbStore.addOpened(new_route, props.moduleInfo["module"], null, "", "", "", false)
     }
 
+    function openInfo(){
+      let new_route = router.resolve(unref(`/db/${props.moduleInfo["module"]}/info`))
+      dbStore.addOpened(new_route, props.moduleInfo["module"], null, "", "", "", false)
+    }
+
     function toogleFavItem() {
       let configObj = null
       if (userStore.state.user["adminconfig"]) {
@@ -374,7 +387,8 @@ export default defineComponent({
       userStore,
       openConfig,
       handleMaxTabOpen,
-      menuState
+      menuState,
+      openInfo
     }
   }
 })

@@ -108,6 +108,13 @@ const default_routes = [
     meta: { action: "action" },
     props: true,
     component: () => import("./views/action.vue")
+  },
+  {
+    path: "/db/:module/info",
+    name: "moduleinfo",
+    meta: { action: "info" },
+    props: true,
+    component: () => import("./views/moduleInfo.vue")
   }
 ]
 
