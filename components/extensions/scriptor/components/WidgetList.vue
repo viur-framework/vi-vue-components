@@ -59,7 +59,6 @@ const state = reactive({
 })
 
 function getWidget(type) {
-  console.log("getWidget for " + type + ".")
   if (["install", "err", "stdout", "stderr", "log", "info", "error", "debug", "warning"].includes(type)) {
     return widgets.logEntry
   } else if (["alert"].includes(type)) {

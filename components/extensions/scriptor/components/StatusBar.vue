@@ -87,7 +87,6 @@ const state = reactive({
 })
 
 async function executeScript() {
-  console.log(state.scriptor.scriptCode)
   await scriptorStore.execute(state.scriptor.scriptCode.replace(/\\n/g, "\n"), props.id)
 }
 
@@ -95,6 +94,7 @@ function reset() {
   scriptorStore.state.instances[props.id].messages = []
   scriptorStore.state.instances[props.id].internalMessages = []
   scriptorStore.state.isReady = false
+  scriptorStore.state.runningActions = new Map()
 }
 </script>
 

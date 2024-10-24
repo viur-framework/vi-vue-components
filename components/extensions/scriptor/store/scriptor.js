@@ -110,9 +110,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
       createWebWorker()
       await load()
     }
-
-    code +=
-      "\nimport traceback\nimport viur.scriptor\nawait viur.scriptor._init_modules()\nfrom viur.scriptor import *\n \ntry:\n    await main()\nexcept:\n    logger.error(traceback.format_exc())\n"
+    code = `import viur.scriptor\nimport traceback\nfrom viur.scriptor import *\nawait viur.scriptor._init_modules()\n${code} \ntry:\n    await main()\nexcept:\n    logger.error(traceback.format_exc())\n`
 
     return new Promise((resolve) => {
       state.runningActions.set(currentId, resolve)
@@ -157,10 +155,10 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
   }
 
   async function handleWebWorkerMessages(id, data) {
-    console.log("Handling Webworker Message: " + data.type)
     if (!id) {
       id = state.currentInstance
     }
+
     let currentState = state.instances[id]
     switch (data.type) {
       case "installlog":
@@ -177,7 +175,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
         handleCallback(id, data)
         break
       case "err": //script error
-        addMessageEntry("exception", data)
+        addMessageEntry("error", id, data)
         handleCallback(id, data)
         break
       case "log":
