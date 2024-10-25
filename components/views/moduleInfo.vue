@@ -1,5 +1,20 @@
 <template>
-INFO
+<div class="wrapper">
+  <h1 class="headline">Funktionen</h1>
+<sl-card v-for="(method, name) in dbStore.getConf(module)['methods']">
+  <h2 class="subline">{{ name }} </h2>
+  {{ method["docs"] }}
+
+  <sl-details summary="Values">
+    <ul>
+      <li v-for="(arg,arg_name) in method['args']">
+        {{ arg_name }} : {{ arg["type"]?arg["type"]:"" }}
+      </li>
+
+    </ul>
+  </sl-details>
+</sl-card>
+</div>
 </template>
 
 <script setup>
@@ -23,7 +38,8 @@ const props = defineProps({
   skeltype: String
 })
 
-const state = reactive({})
+const state = reactive({
+})
 const dbStore = useDBStore()
 const route = useRoute()
 
@@ -42,4 +58,27 @@ watch(
 
 </script>
 
-<style scoped></style>
+<style scoped>
+
+.wrapper{
+  padding:20px;
+  display: flex;
+  flex-direction: column;
+  gap:20px;
+  overflow:visible;
+  height:1000px;
+}
+
+.headline{
+  font-weight: bold;
+  font-size: 24px;
+}
+
+.subline{
+  font-weight: bold;
+}
+
+sl-details{
+  margin-top:20px;
+}
+</style>
