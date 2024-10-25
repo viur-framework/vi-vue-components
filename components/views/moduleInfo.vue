@@ -1,19 +1,33 @@
 <template>
-<div class="wrapper">
-  <h1 class="headline">Funktionen</h1>
-<sl-card v-for="(method, name) in dbStore.getConf(module)['methods']">
-  <h2 class="subline">{{ name }} </h2>
-  {{ method["docs"] }}
+<div class="main-wrapper">
 
-  <sl-details summary="Values">
-    <ul>
-      <li v-for="(arg,arg_name) in method['args']">
-        {{ arg_name }} : {{ arg["type"]?arg["type"]:"" }}
-      </li>
-
-    </ul>
+  <div style="height:100%;padding:20px;">
+    <h1 class="headline">Modulebeschreibung {{dbStore.getConf(module)['name']}}</h1>
+  <sl-details summary="Datenmodel">
+    <div class="wrapper">
+      <sl-details :summary="name" v-for="(data, name) in state.skels">
+        <vue-json-pretty :deep="1" :data="data" />
+      </sl-details>
+    </div>
   </sl-details>
-</sl-card>
+
+  <sl-details summary="Funktionen">
+    <div class="wrapper">
+      <sl-card v-for="(method, name) in dbStore.getConf(module)['methods']">
+        <h2 class="subline">{{ name }} </h2>
+        <span class="doc" v-html="method['docs']?.replace(/(:.*?:)/g,'<br><span>$1</span>')"></span>
+        <sl-details summary="Parameter">
+          <ul>
+            <li v-for="(arg,arg_name) in method['args']">
+              {{ arg_name }} : {{ arg["type"]?arg["type"]:"" }}
+            </li>
+
+          </ul>
+        </sl-details>
+      </sl-card>
+    </div>
+  </sl-details>
+  </div>
 </div>
 </template>
 
@@ -23,7 +37,10 @@ import { reactive, watch, onBeforeMount } from "vue"
 import { useRoute } from "vue-router"
 import { useDBStore } from "../stores/db"
 import utils from "../utils"
+import {Request} from "@viur/vue-utils";
 
+import VueJsonPretty from 'vue-json-pretty';
+import 'vue-json-pretty/lib/styles.css';
 
 const props = defineProps({
   module: {
@@ -39,6 +56,7 @@ const props = defineProps({
 })
 
 const state = reactive({
+  skels:{}
 })
 const dbStore = useDBStore()
 const route = useRoute()
@@ -56,17 +74,24 @@ watch(
   }
 )
 
+onBeforeMount(()=>{
+  Request.getStructure(props.module).then(async (resp)=>{
+    let data = await resp.json()
+    state.skels = data
+  })
+})
+
+
 </script>
 
 <style scoped>
 
 .wrapper{
-  padding:20px;
+  padding:10px;
   display: flex;
   flex-direction: column;
-  gap:20px;
+  gap:10px;
   overflow:visible;
-  height:1000px;
 }
 
 .headline{
@@ -80,5 +105,21 @@ watch(
 
 sl-details{
   margin-top:20px;
+
+  &::part(summary){
+  font-weight: bold;
+  }
+}
+
+.main-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 0;
+  position: relative;
+  overflow:scroll;
+}
+:deep(span.doc) > span {
+  font-weight: bold;
 }
 </style>

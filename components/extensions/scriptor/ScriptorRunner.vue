@@ -25,10 +25,12 @@
 
       <teleport
         v-if="state.opened"
-        to="#dialogs"
+        :to="`#view_dialogs_${handlerState.tabId}`"
         :disabled="!state.opened"
       >
         <sl-dialog
+          style="--width:85%"
+          class="tabpopup"
           id="dialog-delete"
           :open="state.opened"
           :label="current['rel']['name']"
@@ -42,7 +44,7 @@
 </template>
 
 <script setup>
-  import {onBeforeMount, reactive, ref, computed} from 'vue';
+  import {onBeforeMount, reactive, ref, computed, inject} from 'vue';
   import WidgetList from './components/WidgetList.vue';
   import StatusBar from './components/StatusBar.vue';
   import Status from './components/Status.vue';
@@ -51,6 +53,8 @@
   import Utils from '../../utils';
 
   const scriptorAction = ref(null)
+
+  const handlerState = inject("handlerState")
 
   const props = defineProps({
     canAccess:{
@@ -79,7 +83,7 @@
     scriptor: computed(() => {
       return scriptorStore.state.instances[state.id]
     }),
-    scriptReady:false
+    scriptReady:false,
   })
 
   onBeforeMount(()=>{
@@ -98,3 +102,47 @@
   }
 
 </script>
+
+<style scoped>
+.tabpopup {
+  &::part(base) {
+    position: absolute;
+    height: 100%;
+  }
+
+  &::part(panel) {
+    height: 100%;
+    max-height: calc(100% - 100px);
+    margin-bottom: 40px;
+  }
+
+  &::part(body) {
+    display: contents;
+  }
+
+  &::part(footer) {
+    padding: var(--sl-spacing-small);
+  }
+
+  &::part(overlay) {
+    position: absolute;
+  }
+
+  &:deep(.bar sl-button[variant="success"]) {
+    &::part(base) {
+      background-color: transparent;
+      border: 1px solid var(--sl-color-success-500);
+      aspect-ratio: 1;
+      padding: 0;
+    }
+
+    &::part(label) {
+      display: none;
+    }
+
+    &::part(prefix) {
+      color: var(--sl-color-success-500);
+    }
+  }
+}
+</style>
