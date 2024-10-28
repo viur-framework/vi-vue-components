@@ -30,7 +30,7 @@
       </div>
 
 
-      <sl-select v-if="state.languages && self.languages.length>0" placeholder="Sprache" size="small" @sl-change="changeLang" class="langchooser" :value="state.lang"
+      <sl-select v-if="state.languages && state.languages?.length>0" placeholder="Sprache" size="small" @sl-change="changeLang" class="langchooser" :value="state.lang"
         :class="{ 'is-selected': handlerState.currentSelection?.[0]['key'] === skel['key'] }"
       >
           <sl-option v-for="lang in state.languages" :value="lang" :key="lang">
