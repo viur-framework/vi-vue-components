@@ -39,9 +39,16 @@ export default class Utils {
   }
 
   static getDescr(bone: Object, value: any) {
+    let values = bone["values"]
+    if (!Array.isArray(bone["values"])) {
+      values = []
+      for (const [k, v] of Object.entries(bone["values"])) {
+        values.push([k, v])
+      }
+    }
     try {
       //@ts-ignore
-      return bone["values"].filter((option) => option[0] === value)[0][1]
+      return values.filter((option) => option[0] === value)[0][1]
     } catch (e) {
       return "-"
     }
