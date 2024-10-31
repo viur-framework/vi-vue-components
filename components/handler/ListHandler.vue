@@ -631,6 +631,9 @@ table {
     & tr {
       cursor: pointer;
       transition: all ease 0.3s;
+      -webkit-user-select: none; /* For Safari */
+      -ms-user-select: none; /* For Internet Explorer */
+      user-select: none; /* Standard syntax */
 
       & td {
         padding: 0.4em 0.6em;
