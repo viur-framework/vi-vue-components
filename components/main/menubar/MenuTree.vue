@@ -30,6 +30,8 @@ import TheMenubarGroup from "./TheMenubarGroup.vue"
 import { defineComponent, computed } from "vue"
 import { ModuleInfo } from "../../stores/db"
 import {useUserStore} from "@viur/vue-utils/login/stores/user"
+import { useDBStore } from "../../stores/db"
+import Utils from "../../utils"
 
 
 export default defineComponent({
@@ -45,6 +47,7 @@ export default defineComponent({
   },
   setup(props, context) {
     const userStore = useUserStore()
+    const dbStore = useDBStore()
 
     function entryType(node: ModuleInfo) {
       if (node["parententry"] === node["parentrepo"]) {
@@ -89,12 +92,10 @@ export default defineComponent({
         return false
       }
 
-      let accessflag = `${node['module']}-view`
-      if (node?.group){
-        accessflag = `${node['module']}-${node['group']}-view`
-      }
-
-      if (node?.['handlerComponent'] && node["display"]!== "group" && !userStore.userAccess.includes('root') && !userStore.userAccess.includes(accessflag)){
+      if (node?.['handlerComponent'] && node["display"]!== "group" && !userStore.userAccess.includes('root')){
+        if(dbStore.module_access(node['module'],node['group'])){
+          return true
+        }
         return false
       }
       return true

@@ -1,6 +1,6 @@
 <template>
   <template
-    v-if="dbStore.module_access(moduleInfo['module']) &&(menuState.search === '' || name.toLowerCase().includes(menuState.search.toLowerCase()) || state.slotitems > 0)"
+    v-if="menuState.search === '' || name.toLowerCase().includes(menuState.search.toLowerCase()) || state.slotitems > 0"
   >
     <router-link
       v-if="to"
@@ -388,8 +388,7 @@ export default defineComponent({
       openConfig,
       handleMaxTabOpen,
       menuState,
-      openInfo,
-      dbStore
+      openInfo
     }
   }
 })
