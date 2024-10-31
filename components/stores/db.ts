@@ -271,13 +271,28 @@ export const useDBStore = defineStore("db", () => {
     //Tasks
     tasks: []
   })
+
+
+  function module_access(modulename, group=null){
+    const userStore = useUserStore()
+    if (userStore.userAccess.includes("root")) {
+      return true
+    }
+    if (group) {
+      return userStore.userAccess.includes(`${modulename}-${group}-add`) || userStore.userAccess.includes(`${modulename}-${group}-edit`) || userStore.userAccess.includes(`${modulename}-${group}-delete`)
+    } else {
+      return userStore.userAccess.includes(`${modulename}-add`) || userStore.userAccess.includes(`${modulename}-edit`) || userStore.userAccess.includes(`${modulename}-delete`)
+    }
+  }
+
   function modulesTree() {
+
     let groups = {}
     for (let moduleGroup in state["vi.modules.groups"]) {
       let groupconf = state["vi.modules.groups"][moduleGroup]
       let prefixed_group = `moduleGroup___${moduleGroup}`
       groupconf["module"] = prefixed_group
-      groupconf['moduleGroups'] = Object.values(state["vi.modules"]).filter( i=> i['moduleGroup']===moduleGroup)
+      groupconf['moduleGroups'] = Object.values(state["vi.modules"]).filter((i)=>i['moduleGroup']===moduleGroup )
       groups[prefixed_group] = groupconf
     }
     let itemList = []
@@ -454,7 +469,12 @@ export const useDBStore = defineStore("db", () => {
 
   function removeOpened(route) {
     let url = route.fullPath
+
     let idx = state["handlers.opened"].findIndex((e) => e["url"] === url)
+    if (idx === -1){
+      idx = state["handlers.opened"].findIndex((e) => e["id"] === parseInt(route.query?.["_"])) //use id fallback
+      if (idx === -1) return
+    }
     if (idx === 0){
       return 0
     } else if (idx === state["handlers.active"]) {
@@ -561,6 +581,7 @@ export const useDBStore = defineStore("db", () => {
     getTabs,
     getTabByRoute,
     updateActiveTabName,
-    markHandlersToUpdate
+    markHandlersToUpdate,
+    module_access
   }
 })
