@@ -81,22 +81,10 @@ export default defineComponent({
     }
 
     function isVisible(node: ModuleInfo){
-      let ret = node['display'] !== 'hidden'
-
-      if (!ret){
-        return false
-      }
-
-      //hide empty moduleGroups
-      if (!node?.['handlerComponent'] && node['children'].length===0){
-        return false
-      }
-
-      if (node?.['handlerComponent'] && node["display"]!== "group" && !userStore.userAccess.includes('root')){
-        if(dbStore.module_access(node['module'],node['group'])){
-          return true
-        }
-        return false
+      console.log(node)
+      if (node['display'] === 'hidden') return false
+      if (Object.keys(node).includes("hasAccess")){
+        return node['hasAccess']
       }
       return true
     }

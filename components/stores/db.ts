@@ -31,6 +31,19 @@ export interface ModuleInfo {
 function adminTreeLayer(itemList: Array<ModuleInfo>, parent: ModuleInfo): Array<ModuleInfo> {
   const userStore = useUserStore()
 
+  function module_access(modulename, group=null){
+    const userStore = useUserStore()
+    if (userStore.userAccess.includes("root")) {
+      return true
+    }
+    if (group) {
+      return userStore.userAccess.includes(`${modulename}-${group}-add`) || userStore.userAccess.includes(`${modulename}-${group}-edit`) || userStore.userAccess.includes(`${modulename}-${group}-delete`)
+    } else {
+      return userStore.userAccess.includes(`${modulename}-add`) || userStore.userAccess.includes(`${modulename}-edit`) || userStore.userAccess.includes(`${modulename}-delete`)
+    }
+  }
+
+
   let listOfNodes = []
   let i = 0
 
@@ -44,6 +57,18 @@ function adminTreeLayer(itemList: Array<ModuleInfo>, parent: ModuleInfo): Array<
     if (!Object.keys(conf).includes("display")) {
       conf["display"] = "visible"
     }
+    if (conf['handler']){
+      if (module_access(conf['module'],conf["group"])){
+        conf["hasAccess"] = true
+      }else{
+        conf["hasAccess"] = false
+      }
+    }
+
+    if(conf['nodeType'] === "group" && conf["moduleGroups"]?.length === 0){
+      conf["display"] = "hidden"
+    }
+    
 
     // set index as sortindex if missing
     if (!Object.keys(conf).includes("sortIndex") || conf["sortIndex"] === 0) {
@@ -186,6 +211,14 @@ function adminTreeLayer(itemList: Array<ModuleInfo>, parent: ModuleInfo): Array<
     // append children (moduleGroups)
     if (conf["moduleGroups"]?.length > 0) {
       conf["children"] = conf["children"].concat(adminTreeLayer(conf["moduleGroups"], conf))
+      let groupVisible = false
+      for (let m of conf["children"]){
+        if (m["hasAccess"]){
+          groupVisible = true
+          break
+        }
+      }
+      conf["display"] = groupVisible?"visible":"hidden"
     }
 
     //append children (views)
@@ -292,6 +325,7 @@ export const useDBStore = defineStore("db", () => {
       let groupconf = state["vi.modules.groups"][moduleGroup]
       let prefixed_group = `moduleGroup___${moduleGroup}`
       groupconf["module"] = prefixed_group
+      groupconf['nodeType'] = "group"
       groupconf['moduleGroups'] = Object.values(state["vi.modules"]).filter((i)=>i['moduleGroup']===moduleGroup )
       groups[prefixed_group] = groupconf
     }
@@ -300,6 +334,7 @@ export const useDBStore = defineStore("db", () => {
     for (let modulename in state["vi.modules"]) {
       let moduleconf = state["vi.modules"][modulename]
       moduleconf["module"] = modulename
+      moduleconf["nodeType"] = 'module'
       if (Object.keys(moduleconf).includes("moduleGroup") && groups[`moduleGroup___${moduleconf["moduleGroup"]}`]) {
       } else {
         itemList.push(moduleconf)
