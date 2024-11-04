@@ -158,7 +158,9 @@ export default defineComponent({
     selector: false,
     filter: {},
     noTopbar: false,
-    columns: []
+    columns: {
+      default:undefined
+    }
   },
   emits: ["currentSelection", "closeSelector"],
   components: { WidgetSmall, FloatingBar, Loader, HandlerBar, BoneView,HandlerContext,VueDraggable },
