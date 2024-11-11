@@ -390,7 +390,8 @@ sl-button {
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-  width: 100%;
+  width: 1px;
+  flex: 1 1 70%;
   height: 100%;
 }
 
@@ -398,7 +399,8 @@ sl-button {
   margin-right: var(--sl-spacing-medium);
   border: 1px solid var(--sl-color-neutral-300);
   max-width: 200px;
-  flex: 1 0 30%;
+  min-width: 60px;
+  flex: 1 1 30%;
   aspect-ratio: 1;
 
   &::part(base) {
@@ -478,6 +480,8 @@ sl-button {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
 }
 
 .edit-dropdown{
