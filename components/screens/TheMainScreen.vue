@@ -69,7 +69,6 @@ const state = reactive({
 function collectViurConfig() {
   Request.get("/vi/config").then(async (resp) => {
     let data = await resp.json()
-    console.log(data["configuration"])
     dbStore.state["vi.name"] = data["configuration"]["vi.name"]
 
     for (const group of ["admin.module.groups", "module.groups", "module_groups", "moduleGroups"]) {

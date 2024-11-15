@@ -289,8 +289,6 @@ export const useDBStore = defineStore("db", () => {
         id: 0
       }
     ], // {'url','name','library'}
-    "handlers.opened.max": 1,
-    "handlers.opened.max.modules": {},
     "handlers.active": 0, //current active index
 
     //drawer
@@ -476,6 +474,7 @@ export const useDBStore = defineStore("db", () => {
       _name: name,
       module: module,
       group: group,
+      view: view,
       mode: mode,
       moduleDescr: currentConf?.["name"],
       currentConf: currentConf,
@@ -484,18 +483,18 @@ export const useDBStore = defineStore("db", () => {
       keep: keep //always render and keep open, use v-show while navigation
     }
 
-    let tabNames = state["handlers.opened"].map((e) => e["url"]).filter((name) => name.startsWith(url))
-    if (!Object.keys(state["handlers.opened.max.modules"]).includes(module)) {
-      state["handlers.opened.max.modules"][module] = state["handlers.opened.max"]
+    function uniqueTabname(url,view){
+      if (!view) return url
+      return `${url}___${view}`
     }
-    if (state["handlers.opened.max.modules"][module] > tabNames.length || force) {
-      state["handlers.opened"].push(entry)
 
-      state["handlers.active"] = state["handlers.opened"].indexOf(entry)
-
-      router.push(entry["to"])
+    let tabNames = state["handlers.opened"].map((e) => uniqueTabname(e["url"],e['view'])).filter((name) => name === uniqueTabname(entry['url'],entry['view']))
+    if (tabNames.length===0 || force){
+      state["handlers.opened"].push(entry) //add to tablist
+      state["handlers.active"] = state["handlers.opened"].indexOf(entry) //mark as active
+      router.push(entry["to"]) //change route
     } else {
-      state["handlers.active"] = state["handlers.opened"].map((e) => e["url"]).indexOf(url)
+      state["handlers.active"] = state["handlers.opened"].map((e) => uniqueTabname(e["url"],e['view'])).indexOf(uniqueTabname(entry['url'],entry['view']))
       router.push(state["handlers.opened"][state["handlers.active"]]["to"])
       return false
     }

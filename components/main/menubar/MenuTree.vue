@@ -81,7 +81,6 @@ export default defineComponent({
     }
 
     function isVisible(node: ModuleInfo){
-      console.log(node)
       if (node['display'] === 'hidden') return false
       if (Object.keys(node).includes("hasAccess")){
         return node['hasAccess']
