@@ -33,10 +33,7 @@
         class="access-name"
         :title="modname"
       >
-        {{ dbStore.getConf(modname.split("-")[0])?.name }}
-        <template v-if="modname.split('-')?.[1]">
-          / {{ dbStore.getConf(modname.split("-")[0], modname.split("-")?.[1])?.name }}
-        </template>
+        {{ renderModuleName(modname)}}
       </div>
       <sl-button
         v-for="right in mod"
@@ -100,10 +97,16 @@ export default defineComponent({
 
           let element = { key: k, icon: icon, name: name, module: parts[0], view: parts?.[1] }
           let namegroup = parts.slice(0, -1).join("-")
+
           if (Object.keys(mods["modules"]).includes(namegroup)) {
             mods["modules"][namegroup] = { ...mods["modules"][namegroup], ...{ [actionmap[name]]: element } }
           } else {
-            if (!actionmap[name] && actionmap[name] !== 0) {
+            if ((!actionmap[name] && actionmap[name] !== 0) || 
+              (
+                !Object.keys(dbStore.state['vi.modules']).includes(namegroup) &&
+                !Object.entries(dbStore.state['vi.modules']).map(x=>x[1]['baseModule']).includes(namegroup)
+              )
+            ) {
               //flags
               element["icon"] = "check"
               mods["flags"][k] = { [k]: element }
@@ -132,10 +135,26 @@ export default defineComponent({
       context.emit("change", props.name, state.values, props.lang, props.index)
     }
 
+    function renderModuleName(modname){
+      if (dbStore.getConf(modname)){
+        return dbStore.getConf(modname).name // module found
+      }
+      if (Object.entries(dbStore.state['vi.modules']).map(x=>x[1]['baseModule']).includes(modname)){
+        let newModule = Object.entries(dbStore.state['vi.modules']).filter(x=>x[1]['baseModule']===modname)[0]
+        return newModule[1].name // basemodule found, needed for shop module
+      }
+      let moduleName = dbStore.getConf(modname.split("-")[0])?.name // split and try to find
+      if (modname.split('-')?.[1]){ //try to append group
+        moduleName +=` / ${dbStore.getConf(modname.split("-")[0], modname.split("-")?.[1])?.name}`
+      }
+      return moduleName
+    }
+
     return {
       state,
       boneState,
       toggleAccessRight,
+      renderModuleName,
       dbStore
     }
   }

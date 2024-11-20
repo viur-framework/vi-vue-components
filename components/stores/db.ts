@@ -332,6 +332,7 @@ export const useDBStore = defineStore("db", () => {
     for (let modulename in state["vi.modules"]) {
       let moduleconf = state["vi.modules"][modulename]
       moduleconf["module"] = modulename
+      moduleconf["baseModule"] = modulename.split("/").length>1?modulename.split("/")[modulename.split("/").length-1]:modulename
       moduleconf["nodeType"] = 'module'
       if (Object.keys(moduleconf).includes("moduleGroup") && groups[`moduleGroup___${moduleconf["moduleGroup"]}`]) {
       } else {
