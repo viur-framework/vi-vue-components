@@ -5,7 +5,7 @@ import { computedAsync, useWebWorker, useBrowserLocation, unrefElement } from "@
 
 export const useScriptorStore = defineStore("scriptorStore", () => {
   const scriptor_api = new URL(
-    useBrowserLocation().value.pathname + "/scriptor/public/viur_scriptor_api-0.0.3-py3-none-any.whl",
+    useBrowserLocation().value.pathname.replace("/main.html","") + "/scriptor/public/viur_scriptor_api-0.0.3-py3-none-any.whl",
     useBrowserLocation().value.origin
   ).href
 
