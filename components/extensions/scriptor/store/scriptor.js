@@ -66,7 +66,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     if (state.workerObject) {
       state.workerObject.terminate()
     }
-    state.workerObject = useWebWorker(`${useBrowserLocation().value.pathname}/scriptor/public/webworker.js`)
+    state.workerObject = useWebWorker(`${useBrowserLocation().value.pathname.replace("/main.html","")}/scriptor/public/webworker.js`)
     const nativWorker = state.workerObject.worker
     nativWorker.onmessage = async (event) => {
       const { id, ...data } = event.data
