@@ -213,7 +213,7 @@ function adminTreeLayer(itemList: Array<ModuleInfo>, parent: ModuleInfo): Array<
       conf["children"] = conf["children"].concat(adminTreeLayer(conf["moduleGroups"], conf))
       let groupVisible = false
       for (let m of conf["children"]){
-        if (m["hasAccess"]){
+        if (m["hasAccess"] || m['nodeType']==="group"){
           groupVisible = true
           break
         }
@@ -319,14 +319,21 @@ export const useDBStore = defineStore("db", () => {
   function modulesTree() {
 
     let groups = {}
+    let nestedGroups = []
     for (let moduleGroup in state["vi.modules.groups"]) {
       let groupconf = state["vi.modules.groups"][moduleGroup]
       let prefixed_group = `moduleGroup___${moduleGroup}`
       groupconf["module"] = prefixed_group
       groupconf['nodeType'] = "group"
-      groupconf['moduleGroups'] = Object.values(state["vi.modules"]).filter((i)=>i['moduleGroup']===moduleGroup )
-      groups[prefixed_group] = groupconf
+      groupconf['moduleGroups'] = [...Object.values(state["vi.modules.groups"]).filter((i)=>i['moduleGroup']===moduleGroup ), ...Object.values(state["vi.modules"]).filter((i)=>i['moduleGroup']===moduleGroup )]
+      if(!groupconf['moduleGroup']){
+        groups[prefixed_group] = groupconf
+      }else{
+        nestedGroups.push(prefixed_group)
+      }
+      
     }
+
     let itemList = []
 
     for (let modulename in state["vi.modules"]) {
@@ -334,7 +341,9 @@ export const useDBStore = defineStore("db", () => {
       moduleconf["module"] = modulename
       moduleconf["baseModule"] = modulename.split("/").length>1?modulename.split("/")[modulename.split("/").length-1]:modulename
       moduleconf["nodeType"] = 'module'
-      if (Object.keys(moduleconf).includes("moduleGroup") && groups[`moduleGroup___${moduleconf["moduleGroup"]}`]) {
+
+      if (Object.keys(moduleconf).includes("moduleGroup") && (groups[`moduleGroup___${moduleconf["moduleGroup"]}`])) {
+      }else if (nestedGroups.includes(`moduleGroup___${moduleconf["moduleGroup"]}`) ){
       } else {
         itemList.push(moduleconf)
       }
