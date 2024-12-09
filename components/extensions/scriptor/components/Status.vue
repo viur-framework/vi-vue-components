@@ -43,7 +43,7 @@ const state = reactive({
 })
 
 async function executeScript() {
-  await scriptorStore.execute(state.scriptor.scriptCode.replace(/\\n/g, "\n"), props.id)
+  await scriptorStore.execute(state.scriptor.scriptCode, props.id)
 }
 
 function reset() {

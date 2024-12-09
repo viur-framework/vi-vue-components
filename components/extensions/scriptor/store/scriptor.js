@@ -4,14 +4,9 @@ import { defineStore } from "pinia"
 import { computedAsync, useWebWorker, useBrowserLocation, unrefElement } from "@vueuse/core"
 
 export const useScriptorStore = defineStore("scriptorStore", () => {
-  const scriptor_api = new URL(
-    useBrowserLocation().value.pathname.replace("/main.html","") + "/scriptor/public/viur_scriptor_api-0.0.3-py3-none-any.whl",
-    useBrowserLocation().value.origin
-  ).href
-
   const instanceTemplate = {
     scriptKey: null,
-    scriptCode: "#### scriptor ####\n\nasync def main():\n    logger.info('Hello World')",
+    scriptCode: "#### scriptor ####\nfrom viur.scriptor import *\n\nasync def main():\n    logger.info('Hello World')",
     messages: [],
     internalMessages: [],
     hideInternalMessages: false
@@ -78,8 +73,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
   }
 
   async function load(pyoPackages = [], packages = [], initCode = "") {
-    pyoPackages.unshift(scriptor_api) //inject viur_scriptor package
-    packages.unshift("requests", "chardet", "python-magic", "openpyxl") // inject scriptor dependencies
+    packages.unshift("viur-scriptor-api")
 
     initCode = `with open("config.py", "w") as f:\n\tf.write("BASE_URL='${state.apiUrl}'")` + initCode
 
@@ -110,7 +104,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
       createWebWorker()
       await load()
     }
-    code = `import viur.scriptor\nimport traceback\nfrom viur.scriptor import *\nawait viur.scriptor._init_modules()\n${code} \ntry:\n    await main()\nexcept:\n    logger.error(traceback.format_exc())\n`
+    code = `${code}\nimport viur.scriptor\nimport traceback\nfrom viur.scriptor import *\nawait viur.scriptor._init_modules()\ntry:\n    await main()\nexcept:\n    logger.error(traceback.format_exc())\n`
 
     return new Promise((resolve) => {
       state.runningActions.set(currentId, resolve)
@@ -150,7 +144,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#039;")
-      .replace(/\ /g, " ")
+      .replace(/\ /g, "&nbsp;")
       .replace(/\n/g, "<br />")
   }
 
