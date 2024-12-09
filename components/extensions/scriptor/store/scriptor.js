@@ -104,7 +104,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
       createWebWorker()
       await load()
     }
-    code = `${code}\nimport viur.scriptor\nimport traceback\nfrom viur.scriptor import *\nawait viur.scriptor._init_modules()\ntry:\n    await main()\nexcept:\n    logger.error(traceback.format_exc())\n`
+    code = `${code}\nimport viur.scriptor\nimport traceback\nawait viur.scriptor._init_modules()\nfrom viur.scriptor import *\n\ntry:\n    await main()\nexcept:\n    logger.error(traceback.format_exc())\n`
 
     return new Promise((resolve) => {
       state.runningActions.set(currentId, resolve)
