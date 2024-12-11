@@ -27,14 +27,14 @@
 </template>
 
 <script setup>
-import { reactive, computed } from "vue"
+import {reactive, computed, onMounted} from "vue"
 import { useScriptorStore } from "../../store/scriptor"
 
 const scriptorStore = useScriptorStore()
 
 onMounted(() => {
       state.text = props.entry.data.default_value ?? ""
-}) 
+})
 
 const props = defineProps({
   entry: {
