@@ -143,13 +143,18 @@ export default defineComponent({
         state.loading = false
       }
       for (let f of state.file) {
+        let dataObj = {
+          fileName: f["name"],
+          mimeType: f["type"],
+          size: f["size"].toString(),
+          node: targetnode
+        }
+        if (handlerState.currentPath.slice(-1)[0]?.["public"]){
+          dataObj["public"] = true
+        }
+
         Request.securePost(`/vi/${handlerState.module}/getUploadURL`, {
-          dataObj: {
-            fileName: f["name"],
-            mimeType: f["type"],
-            size: f["size"].toString(),
-            node: targetnode
-          }
+          dataObj: dataObj
         }).then(async (resp) => {
           let data = await resp.json()
           fetch(data["values"]["uploadUrl"], {
@@ -213,10 +218,15 @@ export default defineComponent({
       let currentNodes = {}
       state.loading = true
       let targetnode = handlerState.currentPath.slice(-1)[0]?.["key"]
+
+      let publicupload = false
+      if (handlerState.currentPath.slice(-1)[0]?.["public"]){
+          publicupload = true
+      }
       for (let f of state.file) {
         let [folderMap, parent] = await GetOrCreateFolderTree(f["webkitRelativePath"], currentNodes)
         currentNodes = { ...currentNodes, ...folderMap }
-        Request.uploadFile(f, parent)
+        Request.uploadFile(f, parent, publicupload)
           .then((resp) => {
             state.uploaded += 1
             if (state.uploaded === state.total) {
