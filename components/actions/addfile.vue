@@ -149,7 +149,7 @@ export default defineComponent({
           size: f["size"].toString(),
           node: targetnode
         }
-        if (handlerState.currentPath.slice(-1)[0]?.["public"]){
+        if (handlerState.currentRootNode?.["public"]){
           dataObj["public"] = true
         }
 
@@ -220,7 +220,7 @@ export default defineComponent({
       let targetnode = handlerState.currentPath.slice(-1)[0]?.["key"]
 
       let publicupload = false
-      if (handlerState.currentPath.slice(-1)[0]?.["public"]){
+      if (handlerState.currentRootNode?.["public"]){
           publicupload = true
       }
       for (let f of state.file) {
