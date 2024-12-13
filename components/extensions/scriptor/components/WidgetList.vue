@@ -35,6 +35,7 @@ import { reactive, computed, ref, watch } from "vue"
 import { useScriptorStore } from "../store/scriptor"
 import { computedAsync } from "@vueuse/core"
 import widgets from "./widgets/index"
+import multipleImputs from "./widgets/MultipleImputs.vue";
 
 const scriptorStore = useScriptorStore()
 const wrapper = ref(null)
@@ -71,6 +72,8 @@ function getWidget(type) {
     return widgets.diffCompare
   } else if (["table"].includes(type)) {
     return widgets.tableEntry
+  } else if (["multiple-dialog"].includes(type)) {
+    return widgets.multipleInputs
   }
 
   return widgets.debugEntry

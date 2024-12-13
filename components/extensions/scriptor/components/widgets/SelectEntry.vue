@@ -9,7 +9,7 @@
 
     <div v-if="!state.isMultiple">
       <sl-button
-        :variant="state.selectedOptions.includes(option) ? 'success' : 'default'"
+        :variant="state.selectedOptions.includes(option.key) ? 'success' : 'default'"
         :disabled="state.isDisabled"
         v-for="option in state.options"
         :key="option.key"
@@ -48,24 +48,26 @@
       </sl-button>
     </div>
   </sl-card>
+
 </template>
 
 <script setup>
-import { reactive, computed, onMounted } from "vue"
-import { useScriptorStore } from "../../store/scriptor"
+import {computed, onMounted, reactive} from "vue"
+import {useScriptorStore} from "../../store/scriptor"
 
 const scriptorStore = useScriptorStore()
 
 const props = defineProps({
   entry: {
     type: Object
-  }
+  },
+  inMultiple: {type: Boolean, default: false},
 })
 
 onMounted(() => {
   let opts = []
   for (const [key, value] of Object.entries(props.entry.data.choices)) {
-    let nopt = { key: key, selected: false }
+    let nopt = {key: key, selected: false}
     opts.push(nopt)
   }
   state.options = opts
@@ -75,7 +77,11 @@ const state = reactive({
   selectedOptions: [],
   isMultiple: computed(() => props.entry.data["multiple"]),
   isDisabled: false,
-  options: {}
+  options: {},
+  value: [],
+  sendable: computed(() => {
+    return state.value !==[]
+  })
 })
 
 function toggleSelection(option) {
@@ -83,8 +89,14 @@ function toggleSelection(option) {
 }
 
 async function selectSingleOption(option) {
-  await scriptorStore.sendResult("selectResult", option.key)
-  state.isDisabled = true
+  if (!props.inMultiple) {
+    await scriptorStore.sendResult("selectResult", option.key)
+    state.isDisabled = true
+  } else {
+    state.value = option.key
+    state.selectedOptions = []
+    state.selectedOptions.push(option.key)
+  }
 }
 
 async function sendMultipleOptions() {
@@ -97,6 +109,8 @@ async function sendMultipleOptions() {
   await scriptorStore.sendResult("selectResult", res)
   state.isDisabled = true
 }
+
+defineExpose({state})
 </script>
 <style scoped>
 .wrapper-multi-select {
