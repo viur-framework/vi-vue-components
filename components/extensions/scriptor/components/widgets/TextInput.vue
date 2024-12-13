@@ -1,5 +1,5 @@
 <template>
-  <sl-alert
+  <sl-alert v-if="!inMultiple"
     variant="neutral"
     open
   >
@@ -7,14 +7,14 @@
     <br />
     <sl-input
       v-if="!state.multiline"
-      v-model="state.text"
+      v-model="state.value"
       :disabled="state.buttonDisabled"
       :type="state.inputType"
     ></sl-input>
     <sl-textarea
       v-if="state.multiline"
       :disabled="state.buttonDisabled"
-      v-model="state.text"
+      v-model="state.value"
     ></sl-textarea>
     <br />
     <sl-button
@@ -24,6 +24,20 @@
       send
     </sl-button>
   </sl-alert>
+  <div v-else><!--pack in one -->
+     {{ entry.data.text }}
+    <sl-input
+      v-if="!state.multiline"
+      v-model="state.value"
+      :disabled="state.buttonDisabled"
+      :type="state.inputType"
+    ></sl-input>
+    <sl-textarea
+      v-if="state.multiline"
+      :disabled="state.buttonDisabled"
+      v-model="state.value"
+    ></sl-textarea>
+  </div>
 </template>
 
 <script setup>
@@ -33,23 +47,25 @@ import { useScriptorStore } from "../../store/scriptor"
 const scriptorStore = useScriptorStore()
 
 onMounted(() => {
-      state.text = props.entry.data.default_value ?? ""
-}) 
+      state.value = props.entry.data.default_value ?? ""
+})
+
 
 const props = defineProps({
-  entry: {
-    type: Object
-  }
+  entry: {type: Object},
+  inMultiple:{type:Boolean,default:false}
 })
 
 async function buttonCallback(event, option) {
   state.buttonDisabled = true
-  await scriptorStore.sendResult("textResult", state.text)
+  await scriptorStore.sendResult("textResult", state.value)
 }
 
 const state = reactive({
-  sendable: computed(() => state.text != ""),
-  text: "",
+  sendable: computed(() => {
+    return state.value !== ""
+  }),
+  value: "",
   multiline: computed(() => props.entry.data.input_type === "text"),
   buttonDisabled: false,
   inputType: computed(() => {
@@ -60,4 +76,5 @@ const state = reactive({
     }
   })
 })
+defineExpose({state})
 </script>

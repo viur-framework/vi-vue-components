@@ -71,6 +71,8 @@ function getWidget(type) {
     return widgets.diffCompare
   } else if (["table"].includes(type)) {
     return widgets.tableEntry
+  } else if (["multiple-dialog"].includes(type)) {
+    return widgets.multipleInputs
   }
 
   return widgets.debugEntry
