@@ -41,7 +41,7 @@
 </template>
 
 <script setup>
-import { reactive, computed } from "vue"
+import {reactive, computed, onMounted} from "vue"
 import { useScriptorStore } from "../../store/scriptor"
 
 const scriptorStore = useScriptorStore()
