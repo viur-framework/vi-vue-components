@@ -73,12 +73,8 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
   }
 
   async function load(pyoPackages = [], packages = [], initCode = "") {
-    //todo muss raus
-    const scriptor_api = new URL("http://localhost:8082/vi/s/@fs/home/arneg/Schreibtisch/work/spanginformationssystem/viur-scriptor-api/dist/viur_scriptor_api-1.0.1-py3-none-any.whl").href
-    console.log("api",scriptor_api)
-    pyoPackages.unshift(scriptor_api)
-    packages.unshift("requests", "chardet", "python-magic", "openpyxl")
-    //packages.unshift("viur-scriptor-api")
+
+    packages.unshift("viur-scriptor-api")
 
     initCode = `with open("config.py", "w") as f:\n\tf.write("BASE_URL='${state.apiUrl}'")` + initCode
 
