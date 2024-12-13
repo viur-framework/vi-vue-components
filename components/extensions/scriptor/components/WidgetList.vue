@@ -35,7 +35,6 @@ import { reactive, computed, ref, watch } from "vue"
 import { useScriptorStore } from "../store/scriptor"
 import { computedAsync } from "@vueuse/core"
 import widgets from "./widgets/index"
-import multipleImputs from "./widgets/MultipleImputs.vue";
 
 const scriptorStore = useScriptorStore()
 const wrapper = ref(null)
