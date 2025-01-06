@@ -284,7 +284,7 @@ export default defineComponent({
           setSelectedBones()
         })
         .catch((error) => {
-          if (error.statusCode !== 20){
+          if (error.code !== 20 && typeof(error)!=='string'){
             messageStore.addMessage("error", `${error.message}`, error.response.url)
           }
         })
