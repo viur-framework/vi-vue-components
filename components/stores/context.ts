@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { reactive, unref } from "vue"
+import { reactive, unref, toRaw } from "vue"
 import { defineStore } from "pinia"
 import { useRoute } from "vue-router"
 
@@ -24,13 +24,13 @@ export const useContextStore = defineStore("contextStore", () => {
 
   function copyLocalContext(oldHandlerId, newHandlerId) {
     let old = getLocalContext(oldHandlerId)
-    state.localContext[newHandlerId] = old
+    state.localContext[newHandlerId] = structuredClone(old)
   }
 
   function getLocalContext(handlerId) {
     let context = {}
     if (Object.keys(state.localContext).includes(handlerId)) {
-      context = unref(state.localContext[handlerId])
+      context = toRaw(state.localContext[handlerId])
     }
     return context
   }
