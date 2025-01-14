@@ -44,7 +44,7 @@
 
         <sl-button
           v-if="skel['width'] !== 'fullwidth' && skel['width'] !== '12'"
-          class="size-btn expand"
+          class="square-btn expand"
           title="Expand"
           size="small"
           @click="expandContent"
@@ -53,7 +53,7 @@
         </sl-button>
         <sl-button
           v-if="skel['width'] !== '1'"
-          class="size-btn shrink"
+          class="square-btn shrink"
           title="Shrink"
           size="small"
           @click="shrinkContent"
@@ -69,16 +69,17 @@
 
       <sl-dropdown class="edit-dropdown">
         <sl-button slot="trigger"
+                    class="square-btn"
                    size="small"
         >
-          <sl-icon name="three-dots"
+          <sl-icon slot="prefix" name="three-dots"
           ></sl-icon>
         </sl-button>
 
 
         <sl-button
           v-if="skel['width'] !== 'fullwidth' && skel['width'] !== '12'"
-          class="size-btn expand"
+          class="square-btn expand"
           title="Expand"
           size="small"
           @click="expandContent"
@@ -87,7 +88,7 @@
         </sl-button>
         <sl-button
           v-if="skel['width'] !== '1'"
-          class="size-btn shrink"
+          class="square-btn shrink"
           title="Shrink"
           size="small"
           @click="shrinkContent"
@@ -288,6 +289,7 @@ export default {
   cursor: pointer;
   background-color: #fff;
   z-index: 1;
+  min-height: 195px;
 
   &.is-selected {
     cursor: initial;
@@ -359,7 +361,7 @@ sl-button {
   }
 }
 
-:deep(.sl-button-group__button):not(.size-btn) {
+:deep(.sl-button-group__button):not(.square-btn) {
   &::part(base) {
     aspect-ratio: 1;
     padding-left: 0;
@@ -561,7 +563,7 @@ sl-button {
   }
 }
 
-.size-btn{
+.square-btn{
   &::part(base){
     aspect-ratio: 1;
   }
