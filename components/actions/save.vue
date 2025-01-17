@@ -159,6 +159,7 @@ export default defineComponent({
         })
         .catch((error) => {
           console.log(error)
+          state.loading = false
           messageStore.addMessage("error", `Error on Save`, "Error on Save")
         })
     }

@@ -566,7 +566,7 @@ sl-select::part(base) {
   box-shadow: none;
   color: var(--vi-foreground-color);
   background-color: var(--vi-background-color);
-  border-color: var(--vi-border-color) !important;
+  border-color: var(--vi-border-color);
 }
 sl-input::part(input),
 sl-select::part(input) {
