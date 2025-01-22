@@ -241,6 +241,7 @@ export default defineComponent({
       return currentlist
         .fetch()
         .catch((error) => {
+          setSelectedBones()
           messageStore.addMessage("error", `${error.message}`, error.response?.url)
         })
         .then((resp) => {
@@ -284,6 +285,7 @@ export default defineComponent({
           setSelectedBones()
         })
         .catch((error) => {
+          setSelectedBones()
           if (error.code !== 20 && typeof(error)!=='string'){
             messageStore.addMessage("error", `${error.message}`, error.response.url)
           }
