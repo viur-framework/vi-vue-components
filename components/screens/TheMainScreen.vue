@@ -68,6 +68,16 @@ const state = reactive({
 
 function collectViurConfig() {
   Request.get("/vi/config").then(async (resp) => {
+
+    //preflight check
+    try{
+      await Request.view("user","self",{headers:{"x-viur-bonelist":"check"}})
+      appStore.state.preflights = true
+    }catch (error){
+      appStore.state.preflights = false
+    }
+
+
     let data = await resp.json()
     dbStore.state["vi.name"] = data["configuration"]["vi.name"]
 

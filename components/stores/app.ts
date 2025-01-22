@@ -37,7 +37,8 @@ export const useAppStore = defineStore("appStore", () => {
       "icon-settings": "gear-fill",
       "icon-hashtag": "hash",
       "icon-list": "list-ul"
-    }
+    },
+    preflights:false //allow headers for requests (currently only lists use this feature: x-viur-bonelist)
   })
 
   return { state }

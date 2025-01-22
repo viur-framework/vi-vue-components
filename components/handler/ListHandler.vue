@@ -131,6 +131,7 @@ import {
 import HandlerBar from "../bars/HandlerBar.vue"
 import {ListRequest, boneLogic, Request} from "@viur/vue-utils"
 import { useDBStore } from "../stores/db"
+import { useAppStore } from "../stores/app"
 import { useMessageStore } from "../stores/message"
 import { useModulesStore } from "../stores/modules"
 import { useRoute, useRouter } from "vue-router"
@@ -172,6 +173,8 @@ export default defineComponent({
     const modulesStore = useModulesStore()
     const contextStore = useContextStore()
     const localStore = useLocalStore()
+    const appStore = useAppStore()
+
     const datatable = ref(null)
 
     const state = reactive({
@@ -258,6 +261,10 @@ export default defineComponent({
       currentlist.fetch()
     }
     provide("setLimit", setLimit)
+
+    onBeforeMount(()=>{
+      setSelectedBones()
+    })
 
     onMounted(() => {
       if (props.columns && props.columns.length > 0) {
@@ -405,11 +412,18 @@ export default defineComponent({
     function setSelectedBones() {
       if (props.columns && props.columns.length > 0) {
         state.selectedBones = props.columns
+        if (appStore.state.preflights){
+          currentlist.state.headers = {"x-viur-bonelist": state.selectedBones.join(",")}
+        }
+        
         return 0
       }
       state.conf = dbStore.getConf(props.module, props.view)
       if (state.conf && state.conf?.["columns"] && state.conf?.["columns"].length > 0) {
         state.selectedBones = state.conf["columns"]
+        if (appStore.state.preflights){
+          currentlist.state.headers = {"x-viur-bonelist": state.selectedBones.join(",")}
+        }
       } else {
         let bones = []
         for (const [k, v] of Object.entries(currentlist.structure)) {
