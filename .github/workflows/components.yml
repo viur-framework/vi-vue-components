@@ -21,6 +21,7 @@ jobs:
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
+        cache-dependency-path: components/package-lock.json
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm install --prefix=components
