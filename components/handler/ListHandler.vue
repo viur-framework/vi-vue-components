@@ -237,7 +237,13 @@ export default defineComponent({
 
     dbStore.setListStore(currentlist) //backup access
 
-    function reloadAction() {
+    function reloadAction(existsCheck=false) {
+
+      if (existsCheck){
+        checkBoneExists()
+        return 0
+      }
+
       state.selectedBones = []
       currentlist.reset()
       currentlist.state.params = { ...currentlist.state.params, ...contextStore.getContext(), ...props.filter  }
@@ -409,11 +415,23 @@ export default defineComponent({
       }
     }
 
+    function checkBoneExists(){
+      for(const b of state.selectedBones){
+        if (currentlist.state.skellist.length>0 && !Object.keys(currentlist.state.skellist[0]).includes(b)){
+          reloadAction()
+          break;
+        }
+      }
+    }
+
+
+
     function setSelectedBones() {
       if (props.columns && props.columns.length > 0) {
         state.selectedBones = props.columns
         if (appStore.state.preflights){
           currentlist.state.headers = {"x-viur-bonelist": state.selectedBones.join(",")}
+          checkBoneExists()
         }
         
         return 0
@@ -423,6 +441,7 @@ export default defineComponent({
         state.selectedBones = state.conf["columns"]
         if (appStore.state.preflights){
           currentlist.state.headers = {"x-viur-bonelist": state.selectedBones.join(",")}
+          checkBoneExists()
         }
       } else {
         let bones = []

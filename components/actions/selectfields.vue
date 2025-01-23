@@ -58,6 +58,7 @@ export default defineComponent({
   setup(props, context) {
     const handlerState: any = inject("handlerState")
     const currentlist: any = inject("currentlist")
+    const reloadAction = inject("reloadAction")
     const state = reactive({
       structure: {},
       active: []
@@ -121,7 +122,7 @@ export default defineComponent({
     {
       const conf = dbStore.getConf(handlerState.module);
       conf["columns"]=handlerState.selectedBones;
-
+      reloadAction(true)
     }
 
     return { state, openSelectDialog, visibleChange, selectall, unselectall, invertselect,saveConfig}
