@@ -24,7 +24,7 @@ jobs:
         cache-dependency-path: components/package-lock.json
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm install --prefix=components
+    - run: npm ci --prefix=components
     #- run: npm run build
     - uses: JS-DevTools/npm-publish@v3
       with:
