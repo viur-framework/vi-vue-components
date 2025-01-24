@@ -78,14 +78,6 @@ function getWidget(type) {
   return widgets.debugEntry
 }
 
-watch(
-  () => state.scriptor?.messages.length,
-  (newVal, oldVal) => {
-    wrapper.value.scrollTop = 99999 //fixme
-  }
-)
-
-//wrapper
 </script>
 
 <style scoped>
@@ -95,7 +87,6 @@ watch(
   gap: 10px;
   overflow-y: auto;
   padding: 10px;
-  height: 100%;
 }
 
 .wrapper-empty {

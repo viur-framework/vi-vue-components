@@ -11,7 +11,7 @@
 
 
   </div>
-  <div slot="end" class="wrapper-widgets">
+  <div slot="end" class="wrapper-widgets" ref="messagewrapper">
     <widget-list :id="state.id"></widget-list>
   </div>
 </sl-split-panel>
@@ -20,12 +20,15 @@
 </template>
 
 <script setup>
-import {reactive, onMounted, onBeforeMount, computed} from 'vue'
+import {reactive, onMounted, onBeforeMount, computed, watch, ref} from 'vue'
   import WidgetList from './components/WidgetList.vue';
   import StatusBar from './components/StatusBar.vue';
   import CodeEditor from './components/CodeEditor.vue';
   import {useScriptorStore} from "./store/scriptor"
   import {Request} from "@viur/vue-utils";
+  import {useDebounceFn} from "@vueuse/core/index";
+
+const messagewrapper = ref(null)
 
   const props = defineProps({
     module:{type:String},
@@ -75,6 +78,19 @@ import {reactive, onMounted, onBeforeMount, computed} from 'vue'
     })
   }
 
+
+  watch(
+    () => state.scriptor?.messages.length,
+    (newVal, oldVal) => {
+      if (messagewrapper.value){
+        const scroller = useDebounceFn((event) => {
+          messagewrapper.value.scrollTop = 999999
+        }, 1)
+        scroller()
+      }
+
+    }
+  )
 
 </script>
 <style scoped>
