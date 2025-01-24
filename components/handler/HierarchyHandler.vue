@@ -3,7 +3,7 @@
     <handler-bar :module="module"></handler-bar>
 
     <sl-details
-      v-if="modulesStore.state.loaded && modulesStore.state.modules[module]['help_text']"
+      v-if="modulesStore.state.loaded && modulesStore.state.modules[module]?.['help_text']"
       open
       summary="Modul Info"
     >
