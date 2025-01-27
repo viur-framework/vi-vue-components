@@ -333,6 +333,15 @@ export default defineComponent({
         state.errors = props.errors
       }
     )
+    
+    onActivated(() => {
+      let tabData = dbStore.getTabById(route.query["_"])
+
+      if (tabData?.["update"]) {
+        reloadAction()
+        tabData["update"] = false
+      }
+    })
 
     return {
       state,
