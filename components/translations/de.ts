@@ -35,7 +35,9 @@ export default {
     open: "Öffnen",
     sortasc: "Aufsteigend Sortieren",
     sortdesc: "Absteigend Sortieren",
-    move: "verschieben"
+    move: "verschieben",
+    clear_log:"Log löschen",
+    clear_cache:"Zwischenspeicher löschen"
   },
   sidebar: {
     workspace: "Arbeitsbereich",
@@ -88,5 +90,8 @@ export default {
   connection:{
     header:'Verbindung unterbrochen.',
     message:'Es konnte keine Verbindung zum ViUR Core aufgebaut werden.'
+  },
+  scriptor:{
+    no_messages:"Keine Nachrichten"
   }
 }

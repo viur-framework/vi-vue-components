@@ -1,7 +1,10 @@
 <template>
   <sl-split-panel vertical style="height: 100%;--min:50px; --max:100% " position="50">
   <div slot="start">
-    <status-bar :id="state.id">
+    <status-bar :id="state.id" :filename="state.script?.name">
+      <template #startRight>
+        <sl-button size="small" variant="info" outline style="margin-right:10px;" @click="clearlog">{{$t('actions.clear_log')}}</sl-button>
+      </template>
       <sl-button :loading="state.saving" size="small" variant="success" style="margin-left:10px;" @click="saveCode">{{$t('actions.save')}}</sl-button>
     </status-bar>
     <div class="wrapper-editor">
@@ -27,7 +30,9 @@ import {reactive, onMounted, onBeforeMount, computed, watch, ref} from 'vue'
   import {useScriptorStore} from "./store/scriptor"
   import {Request} from "@viur/vue-utils";
   import {useDebounceFn} from "@vueuse/core/index";
+  import { useDBStore } from '../../stores/db';
 
+  const dbStore = useDBStore()
 const messagewrapper = ref(null)
 
   const props = defineProps({
@@ -76,8 +81,14 @@ const messagewrapper = ref(null)
       let data = await resp.json()
       state.saving = false
     })
+    let currentTab = dbStore.getActiveTab()
+    currentTab["update"] = true
+
   }
 
+  function clearlog(){
+    state.scriptor.messages = []
+  }
 
   watch(
     () => state.scriptor?.messages.length,

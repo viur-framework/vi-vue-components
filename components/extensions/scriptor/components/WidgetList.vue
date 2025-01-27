@@ -25,7 +25,7 @@
       v-if="state.isEmpty"
       class="wrapper-empty"
     >
-      no Messages
+      {{ $t('scriptor.no_messages') }}
     </div>
   </div>
 </template>

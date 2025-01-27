@@ -31,6 +31,7 @@
     </div>
 
     <div slot="right">
+      
       <sl-badge
         :variant="state.userStatus['variant']"
         pill
@@ -41,6 +42,7 @@
         <span v-if="scriptorStore.state.isReady">&nbsp;&nbsp;</span>
         <span v-else>&nbsp;&nbsp;</span>
       </sl-badge>
+      <slot name="startRight"></slot>
       <sl-button
         size="small"
         variant="success"
@@ -119,6 +121,7 @@ sl-bar {
 }
 sl-badge {
   margin-right: 5px;
+  margin-left: 5px;
 }
 .scriptorprogressbar {
   width: 100%;

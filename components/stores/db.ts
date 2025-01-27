@@ -163,13 +163,24 @@ function adminTreeLayer(itemList: Array<ModuleInfo>, parent: ModuleInfo): Array<
       conf["url"] = { path: `/db/${conf["module"]}/tree` }
       conf["handlerComponent"] = "treehandler"
       if (!Object.keys(conf).includes("kinds")) {
-        conf["kinds"] = {
-          node: { icon: "archive-fill", name: "Gruppe", library: "default", allowedChildren: ["leaf", "node"] },
-          leaf: {
-            icon: "card-heading",
-            name: "Eintrag",
-            library: "default",
-            allowedChildren: null
+        if (conf['module']==="script"){
+          conf["kinds"] = {
+            node: { icon: "folder", name: "Ordner", allowedChildren: ["leaf", "node"] },
+            leaf: {
+              icon: "file-earmark",
+              name: "Skript",
+              allowedChildren: null
+            }
+          }
+        }else{
+          conf["kinds"] = {
+            node: { icon: "archive-fill", name: "Gruppe", library: "default", allowedChildren: ["leaf", "node"] },
+            leaf: {
+              icon: "card-heading",
+              name: "Eintrag",
+              library: "default",
+              allowedChildren: null
+            }
           }
         }
       }
