@@ -16,8 +16,8 @@ export function useHandlerLogic(props, handler_state) {
 
   const time = new Date().getTime()
   let currentConf = dbStore.getConf(props.module, props.view) //needed
-  let currentNodeList = ListRequest(props.module + "_node_handler" + time, { module: props.module })
-  let currentlist = ListRequest(props.module + "_handler" + time, { module: props.module })
+  let currentNodeList = ListRequest(props.module + "_node_handler" + time, { module: props.module,cached:true })
+  let currentlist = ListRequest(props.module + "_handler" + time, { module: props.module,cached:true  })
   let currentHandlers = {}
 
   const state = reactive({
@@ -64,7 +64,7 @@ export function useHandlerLogic(props, handler_state) {
 
   function fetchRoots(update = true) {
     let context = contextStore.getCurrentContext()
-    return Request.get(`/vi/${props.module}/listRootNodes`)
+    return Request.get(`/vi/${props.module}/listRootNodes`, {cached:true})
       .then(async (resp) => {
         let data = await resp.json()
         handler_state.availableRootNodes = data

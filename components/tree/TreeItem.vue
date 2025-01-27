@@ -105,7 +105,8 @@ export default defineComponent({
           orderby: "sortindex",
           limit: 99,
           parententry: props.skelkey
-        }
+        },
+        cached:true
       })
         .then(async (resp) => {
           let data = await resp.json()

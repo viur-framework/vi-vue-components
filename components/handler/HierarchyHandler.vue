@@ -245,7 +245,7 @@ export default defineComponent({
       if (item?.["kind"] && item?.["kind"] !== "-") {
         currentType += `.${item["kind"]}`
       }
-      console.log(state.conf)
+
       let currentMeta = toRaw(state.conf?.["kinds"]?.[currentType])
       if (!currentMeta) return 0
       if (Object.keys(state.conf?.["kinds"]).includes(currentType)) {

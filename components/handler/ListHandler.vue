@@ -144,6 +144,7 @@ import BoneView from "../bones/boneView.vue"
 import SortindexView from "../bones/sortindexView.vue";
 import HandlerContext from "../main/context/HandlerContext.vue"
 import { VueDraggable } from 'vue-draggable-plus'
+import { useCachedRequestsStore} from '@viur/vue-utils/utils/request'
 
 export default defineComponent({
   props: {
@@ -174,6 +175,8 @@ export default defineComponent({
     const contextStore = useContextStore()
     const localStore = useLocalStore()
     const appStore = useAppStore()
+
+    const cachedRequestsStore = useCachedRequestsStore()
 
     const datatable = ref(null)
 
@@ -232,7 +235,8 @@ export default defineComponent({
       module: props.module,
       params: {},
       group: props.group,
-      renderer: "vi"
+      renderer: "vi",
+      cached:true
     })
 
     dbStore.setListStore(currentlist) //backup access
@@ -577,6 +581,7 @@ export default defineComponent({
           let data = await resp.json()
           currentlist.state.skellist[event.newIndex][state.sortindexBonename] = data['values'][state.sortindexBonename]
           state.entryUpdate = false
+          cachedRequestsStore.clearCache(Request.buildUrl(`/${currentlist.state.renderer}/${currentlist.state.module}`))
         }).catch((error)=>{
           state.entryUpdate = false
         })

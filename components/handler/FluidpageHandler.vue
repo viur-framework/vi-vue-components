@@ -165,7 +165,8 @@ export default defineComponent({
         "fluidpage.dest.key": route.params["key"]
       },
       group: props.group,
-      renderer: "vi"
+      renderer: "vi",
+      cached:true
     })
     dbStore.setListStore(currentlist) //backup access
     provide("currentlist", currentlist)
