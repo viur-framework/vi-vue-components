@@ -106,10 +106,10 @@ export default defineComponent({
             if (responsedata["action"] === "edit" || responsedata["action"] === "clone") {
               //Something went wrong we must thorw (show) errors
               state.loading = false
-              messageStore.addMessage("error", `Error on Save`, "Error on Save")
+              //messageStore.addMessage("error", `Error on Save`, "Error on Save")
             } else {
 
-              messageStore.addMessage("success", `Edit`, "Entry edited successfully")
+              //messageStore.addMessage("success", `Edit`, "Entry edited successfully")
               dbStore.markHandlersToUpdate(handlerState.module, handlerState.group)
               state.loading = false
               if (props.close) {
@@ -121,9 +121,9 @@ export default defineComponent({
             if (responsedata["action"] === "add" || responsedata["action"] === "clone") {
               //Something went wrong we must thorw (show) errors
               state.loading = false
-              messageStore.addMessage("error", `Error on Save`, "Error on Save")
+              //messageStore.addMessage("error", `Error on Save`, "Error on Save")
             } else {
-              messageStore.addMessage("success", `Add`, "Entry added successfully")
+              //messageStore.addMessage("success", `Add`, "Entry added successfully")
               state.loading = false
               dbStore.markHandlersToUpdate(handlerState.module, handlerState.group)
               if (props.name !== "actions.save_next") {
@@ -139,7 +139,11 @@ export default defineComponent({
                   }else if (handlerState.group) {
                     new_route = router.resolve(`/db/${handlerState.module}/edit/${handlerState.group}/${responsedata["values"]["key"]}`)
                   }
-                  dbStore.addOpened(new_route, handlerState.module, handlerState.group)
+                  let currentview = null
+                  if (handlerState.group){
+                    currentview = handlerState.group
+                  }
+                  dbStore.addOpened(new_route, handlerState.module, currentview)
                 }
               }
             }
@@ -149,7 +153,12 @@ export default defineComponent({
             messageStore.addMessage("error", `Error on Save`, "Error on Save")
           }else{
             state.loading = false
-            messageStore.addMessage("success", `Add`, "Entry added successfully")
+            if (handlerState.action ==="add" ||handlerState.action ==="clone"){
+              messageStore.addMessage("success", handlerState.action, "Eintrag erfolgreich erstellt")
+            }else{
+              messageStore.addMessage("success", handlerState.action, "Eintrag erfolgreich aktualisiert")
+            }
+            
             dbStore.markHandlersToUpdate(handlerState.module, handlerState.group)
             if (props.close) {
               dbStore.removeOpened(route)
