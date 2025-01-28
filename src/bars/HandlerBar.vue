@@ -90,14 +90,14 @@ import script_action from "../actions/script.vue"
       actions: computed(() => {
         let listActions = {
           ":options": [["selectfields", "overlay"]],
-          default: [["selectfields"], ["search", "delete", "clone", "preview", "edit", "add"]] //":options"
+          default: [["selectfields"], ["search", "preview", "delete", "clone", "edit", "add"]] //":options"
         }
 
         const hierarchyActions = {
           ":options": [["selectfields", "overlay"]],
           default: [
             ["selectfields", "rootnodelist"],
-            ["delete", "clone", "preview", "edit", "addnode"]
+            ["preview", "delete", "clone", "edit", "addnode"]
           ]
         }
 
@@ -105,7 +105,7 @@ import script_action from "../actions/script.vue"
           ":options": [["selectfields", "overlay"]],
           default: [
             ["selectfields", "rootnodelist", "reload"],
-            ["overlay", "delete", "clone", "preview", "edit", "move", "addfolder", "addfile"]
+            ["overlay", "preview", "delete", "clone", "edit", "move", "addfolder", "addfile"]
           ]
         }
 
@@ -113,18 +113,18 @@ import script_action from "../actions/script.vue"
           ":options": [["selectfields", "overlay"]],
           default: [
             ["selectfields", "rootnodelist", "reload"],
-            ["delete", "clone", "preview", "edit", "move", "addnode", "addleaf"]
+            ["preview", "delete", "clone", "edit", "move", "addnode", "addleaf"]
           ]
         }
 
         let fluidpageActions = {
           ":options": [["selectfields", "overlay"]],
-          default: [["selectfields"], ["search", "fluidpage", "delete", "clone", "preview", "edit", "add"]]
+          default: [["selectfields"], ["search", "preview", "fluidpage", "delete", "clone", "edit", "add"]]
         }
 
         let fluidpagecontentActions = {
           ":options": [],
-          default: [["reload"], ["add"]]
+          default: [["reload"], ["fluidpagepreview","preview","add"]]
         }
 
         //given props overrides calculation

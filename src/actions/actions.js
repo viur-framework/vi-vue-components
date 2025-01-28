@@ -23,6 +23,7 @@ import groupdivider_action from "./group-divider.vue"
 import search_action from "./search.vue"
 import script_action from "./script.vue"
 import move_action from "./move.vue"
+import fluidpagepreview_action from "./fluidpagepreview.vue"
 
 export default {
   add_action,
@@ -49,5 +50,6 @@ export default {
   groupdivider_action,
   search_action,
   script_action,
-  move_action
+  move_action,
+  fluidpagepreview_action
 }

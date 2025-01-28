@@ -4,7 +4,7 @@
     <sl-icon slot="prefix" name="eye"></sl-icon>
   </sl-button>
 
-  <sl-select v-else-if="state.conf?.['preview']" placeholder="Vorschau" size="small" @sl-change="openPreview">
+  <sl-select v-else-if="state.conf?.['preview']" placeholder="Vorschau" size="small" @sl-change="openPreview" :disabled="!state.active">
     <sl-option v-for="(k, v) in state.conf?.['preview']" :value="k">{{ v }}</sl-option>
   </sl-select>
 </template>
@@ -43,11 +43,12 @@ import { useRoute } from "vue-router"
     }
 
     function openPreview(e) {
+      console.log("GGG")
       let url = state.conf["preview"]
       if (e["type"] === "sl-change") {
         url = e.target.value
       }
-
+      console.log(url)
       for (let selection of handlerState.currentSelection) {
         window.open(import.meta.env.VITE_API_URL + buildUrl(url, selection), "_blank").focus()
       }
