@@ -43,7 +43,7 @@
       >
 
         <sl-button
-          v-if="skel['width'] !== 'fullwidth' && skel['width'] !== '12'"
+          v-if="skel['width'] !== 'fullwidth' "
           class="square-btn expand"
           title="Expand"
           size="small"
@@ -75,10 +75,8 @@
           <sl-icon slot="prefix" name="three-dots"
           ></sl-icon>
         </sl-button>
-
-
         <sl-button
-          v-if="skel['width'] !== 'fullwidth' && skel['width'] !== '12'"
+          v-if="skel['width'] !== 'fullwidth'"
           class="square-btn expand"
           title="Expand"
           size="small"
@@ -235,7 +233,12 @@ import { useRoute } from "vue-router"
     }
 
     function expandContent() {
-      updateWidth(props.skel["key"], parseInt(props.skel["width"]) + 1 + "")
+      if (parseInt(props.skel["width"])===12){
+        updateWidth(props.skel["key"], "fullwidth")
+      }else{
+        updateWidth(props.skel["key"], parseInt(props.skel["width"]) + 1 + "")
+      }
+      
     }
 
     function shrinkContent() {
