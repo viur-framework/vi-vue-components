@@ -209,4 +209,29 @@ export default class Utils {
       .replace(/&#041;/g, ")")
       .replace(/&#061;/g, "=")
   }
+
+  static extractNamefromSkel(skel){
+    if (Object.keys(skel).includes('name')){
+      if (typeof skel['name'] === 'string'){
+        return skel['name']
+      }
+      if (Array.isArray(skel['name'])){
+        if (typeof skel['name'][0] === 'string'){
+          return skel['name'][0]
+        }
+        try{
+          let keys = Object.keys(skel['name'][0])
+          return skel['name'][0][keys[0]]
+        }catch(error){}
+      }else{
+        try{
+          let keys = Object.keys(skel['name'])
+          return skel['name'][keys[0]]
+        }catch(error){}
+      }
+    }
+
+    return null
+  }
+
 }

@@ -19,6 +19,7 @@ import { reactive, defineComponent, inject, computed } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useDBStore } from "../stores/db"
 import { useUserStore } from "@viur/vue-utils/login/stores/user"
+import Utils from '../utils'
 
 export default defineComponent({
   props: {},
@@ -34,26 +35,29 @@ export default defineComponent({
         return handlerState.currentSelection && handlerState.currentSelection.length > 0
       }),
       urls: computed(() => {
-        let urls = []
-        if (!state.active) return urls
+        let entries = []
+        if (!state.active) return entries
 
         for (let selection of handlerState.currentSelection) {
+          let entry = {name:Utils.extractNamefromSkel(selection), url:""}
+
           if (handlerState.type === "hierarchyhandler") {
-            urls.push(`/db/${handlerState.module}/edit/node/${selection["key"]}`)
+            entry['url'] = `/db/${handlerState.module}/edit/node/${selection["key"]}`
             continue
           }
 
           if (handlerState.type === "treehandler") {
-            urls.push(`/db/${handlerState.module}/edit/${handlerState?.currentSelectionType}/${selection["key"]}`)
+            entry['url'] = `/db/${handlerState.module}/edit/${handlerState?.currentSelectionType}/${selection["key"]}`
             continue
           }
           if (handlerState.group) {
-            urls.push(`/db/${handlerState.module}/edit/${selection["listgroup"]}/${selection["key"]}`)
+            entry['url'] = `/db/${handlerState.module}/edit/${selection["listgroup"]}/${selection["key"]}`
           } else {
-            urls.push(`/db/${handlerState.module}/edit/${selection["key"]}`)
+            entry['url'] = `/db/${handlerState.module}/edit/${selection["key"]}`
           }
+          entries.push(entry)
         }
-        return urls
+        return entries
       }),
       canEdit: computed(() => {
         if (userStore.state.user.access.indexOf("root") !== -1) {
@@ -68,9 +72,9 @@ export default defineComponent({
     })
 
     function createAndNavigate() {
-      for (let url of state.urls) {
-        let new_route = router.resolve(url)
-        dbStore.addOpened(new_route, handlerState["module"], handlerState["view"])
+      for (let entry of state.urls) {
+        let new_route = router.resolve(entry['url'])
+        dbStore.addOpened(new_route, handlerState["module"], handlerState["view"], entry['name'])
       }
     }
 

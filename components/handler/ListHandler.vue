@@ -145,6 +145,7 @@ import SortindexView from "../bones/sortindexView.vue";
 import HandlerContext from "../main/context/HandlerContext.vue"
 import { VueDraggable } from 'vue-draggable-plus'
 import { useCachedRequestsStore} from '@viur/vue-utils/utils/request'
+import Utils from '../utils'
 
 export default defineComponent({
   props: {
@@ -372,7 +373,7 @@ export default defineComponent({
         url = `/db/${state.module}/edit/${state.group}/${state.currentSelection[0]["key"]}`
       }
       let route = router.resolve(unref(url))
-      dbStore.addOpened(route, state.module, state.view)
+      dbStore.addOpened(route, state.module, state.view, Utils.extractNamefromSkel(state.currentSelection[0]))
     }
 
     function primaryAction(e: Event) {
