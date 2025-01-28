@@ -90,7 +90,7 @@ import script_action from "../actions/script.vue"
       actions: computed(() => {
         let listActions = {
           ":options": [["selectfields", "overlay"]],
-          default: [["selectfields"], ["search", "filter", "delete", "clone", "preview", "edit", "add"]] //":options"
+          default: [["selectfields"], ["search", "delete", "clone", "preview", "edit", "add"]] //":options"
         }
 
         const hierarchyActions = {
