@@ -380,7 +380,7 @@ import Utils from '../utils'
         let url = `/db/${module}/fluidpage/${state.module}/${state.currentSelection[0]["key"]}`
         let route = router.resolve(unref(url))
         contextStore.setContext("fluidpage", state.currentSelection[0]["key"], state.tabId)
-        dbStore.addOpened(route, module)
+        dbStore.addOpened(route, module, null,state.currentSelection[0]["name"])
         return 0
       }
 
