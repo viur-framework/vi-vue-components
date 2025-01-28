@@ -13,6 +13,7 @@
   >
   </loader>
   <div class="fluid-wrap">
+
     <template
       v-for="grid in state.grids"
       v-if="state.grids.length"
@@ -153,7 +154,12 @@ import FluidpageElement from "../fluidpage/element.vue"
       dragCurrentElement: null,
       draggedKeys: [],
       debounceSave: null,
-      fluidpageElement: computed(() => dbStore.state["fluidpage.element"])
+      fluidpageElement: computed(() => {
+        if (dbStore.state["fluidpage.element"] === "FluidpageElement"){
+          return FluidpageElement
+        }
+        return dbStore.state["fluidpage.element"] 
+      })
     })
     provide("handlerState", state)
     const currentlist = ListRequest(state.storeName, {
