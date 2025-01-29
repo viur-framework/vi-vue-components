@@ -62,6 +62,7 @@ const state = reactive({
 .iframe-wrapper{
     height: 100%;
     display:flex;
+    justify-content: center;
 
 }
 .aframe{
