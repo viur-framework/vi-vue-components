@@ -5,6 +5,7 @@ on:
     tags:
       - "v0.*"
       - "v1.*"
+      - "v2.*"
 
 jobs:
   build:
