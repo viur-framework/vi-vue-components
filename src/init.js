@@ -4,6 +4,7 @@ import { useUserStore } from "@viur/vue-utils/login/stores/user"
 import { useAppStore } from "./stores/app"
 import { useColorStore } from "./stores/color"
 import { useModulesStore } from "./stores/modules"
+import { useRoute } from "vue-router"
 import Utils from "./utils"
 // custom Bones
 
@@ -21,6 +22,7 @@ export function useInitConnection() {
   const appStore = useAppStore()
   const colorStore = useColorStore()
   const extensionStore = useExtensionsStore()
+  const route = useRoute()
   useModulesStore().setmodules()
 
   onBeforeMount(() => {
@@ -55,7 +57,9 @@ export function useInitConnection() {
             throw new Error("clientId is required since the plugin is not initialized with a Client Id")
           })
         }
-
+        if (route.query?.debug){
+          appStore.state["debug"] = true
+        }
         appStore.state["init"] = true
       })
       .catch(() => {

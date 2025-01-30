@@ -1,6 +1,13 @@
 <template>
   <sl-button-group v-if="!state.disable">
     <sl-button
+      size="small"
+      disabled
+      class=""
+    >
+      {{ $t("actions.nextpage_stats", {n:handlerState.currentSelection.length, amount: currentlist?.state.skellist.length, selection: handlerState.currentSelection.length}) }}
+    </sl-button>
+    <sl-button
       :loading="state.loading"
       :disabled="state.disable"
       size="small"
@@ -27,12 +34,12 @@
   </sl-button-group>
   <sl-button
     v-else
-    size="small"
-    disabled
-    class=""
-  >
-    {{ $t("actions.nextpage_finish", { amount: currentlist?.state.skellist.length }) }}
-  </sl-button>
+      size="small"
+      disabled
+      class=""
+    >
+      {{ $t("actions.nextpage_stats", {n:handlerState.currentSelection.length, amount: currentlist?.state.skellist.length, selection: handlerState.currentSelection.length}) }}
+    </sl-button>
 </template>
 
 <script setup>
@@ -51,6 +58,7 @@ import { reactive, defineComponent, inject, computed } from "vue"
 
     const nextpage = inject("nextpage")
     const currentlist = inject("currentlist")
+    const handlerState = inject("handlerState")
 
     function loadnextpage() {
       state.loading = true

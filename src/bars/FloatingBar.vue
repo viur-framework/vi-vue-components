@@ -8,7 +8,7 @@
       </component>
     </template>
 
-    <next-page v-if="['listhandler'].includes(handerState['type'])"></next-page>
+    <next-page v-if="['listhandler', 'treehandler'].includes(handerState['type'])"></next-page>
     <set-amount v-if="['listhandler'].includes(handerState['type'])"></set-amount>
     <reload></reload>
   </div>

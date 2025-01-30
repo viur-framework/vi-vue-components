@@ -25,8 +25,8 @@ export default {
       nofilter: "Für dieses Modul sind keine Filter vorhanden"
     },
     reset: "Zurücksetzen",
-    nextpage: "weitere Einträge ({amount})",
-    nextpage_finish: "Einträge: {amount}",
+    nextpage: "weitere Einträge",
+    nextpage_stats:"{amount} Einträge | {selection}/{amount} ausgewählt | {selection}/{amount} ausgewählt",
     fluidpage: {
       edit: "Inhalt bearbeiten",
       emptyheadline: "Diese Fluidpage ist noch leer",

@@ -1,5 +1,5 @@
 <template>
-  <sl-tooltip placement="bottom-end" :open="state.open" style="--max-width: 700px;" hoist trigger="manual">
+  <sl-tooltip v-if="appStore.state.debug" placement="bottom-end" :open="state.open" style="--max-width: 700px;" hoist trigger="manual">
     <sl-icon name="info-circle" @click="state.open =!state.open"></sl-icon>
     <div slot="content" style="display:flex; flex-direction:column; gap:10px;">
       <div v-if="Object.keys(contextStore.state.globalContext).length>0">

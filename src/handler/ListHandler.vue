@@ -23,8 +23,7 @@
       ></loader>
       <div style="float: right; margin-right: 10px">
         <div style="display:flex; flex-direction: row; gap:10px; align-items: center">
-        <span>{{ state.currentSelection.length }} Ausgewählt</span>
-        <handler-context></handler-context>
+          <handler-context></handler-context>
         </div>
       </div>
 
