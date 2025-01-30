@@ -208,26 +208,27 @@ export default class Utils {
   }
 
   static extractNamefromSkel(skel){
-    if (Object.keys(skel).includes('name')){
-      if (typeof skel['name'] === 'string'){
-        return skel['name']
-      }
-      if (Array.isArray(skel['name'])){
-        if (typeof skel['name'][0] === 'string'){
-          return skel['name'][0]
+    for (const fname of ['name', 'headline']){
+      if (Object.keys(skel).includes(fname)){
+        if (typeof skel[fname] === 'string'){
+          return skel[fname]
         }
-        try{
-          let keys = Object.keys(skel['name'][0])
-          return skel['name'][0][keys[0]]
-        }catch(error){}
-      }else{
-        try{
-          let keys = Object.keys(skel['name'])
-          return skel['name'][keys[0]]
-        }catch(error){}
+        if (Array.isArray(skel[fname])){
+          if (typeof skel[fname][0] === 'string'){
+            return skel[fname][0]
+          }
+          try{
+            let keys = Object.keys(skel[fname][0])
+            return skel[fname][0][keys[0]]
+          }catch(error){}
+        }else{
+          try{
+            let keys = Object.keys(skel[fname])
+            return skel[fname][keys[0]]
+          }catch(error){}
+        }
       }
     }
-
     return null
   }
 
