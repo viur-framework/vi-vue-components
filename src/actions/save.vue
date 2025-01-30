@@ -23,6 +23,7 @@ import { useAppStore } from "../stores/app"
 import { Request } from "@viur/vue-utils"
 import { useMessageStore } from "../stores/message"
 import { useContextStore } from "../stores/context"
+import {useTimeoutFn} from '@vueuse/core'
 
   const props = defineProps({
     close: {
@@ -141,7 +142,12 @@ import { useContextStore } from "../stores/context"
                   if (handlerState.group){
                     currentview = handlerState.group
                   }
-                  dbStore.addOpened(new_route, handlerState.module, currentview)
+
+                  const { isPending, start, stop } = useTimeoutFn(() => {
+                    dbStore.addOpened(new_route, handlerState.module, currentview)
+                  }, 1)
+                  start()
+                  
                 }
               }
             }
