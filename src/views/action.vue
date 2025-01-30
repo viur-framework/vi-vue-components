@@ -11,7 +11,6 @@
 </template>
 
 <script setup>
-//@ts-nocheck
 import { reactive, defineComponent, onDeactivated, watch, getCurrentInstance, computed } from "vue"
 import ActionHandler from "../handler/ActionHandler.vue"
 import { useRoute } from "vue-router"

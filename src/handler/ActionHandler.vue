@@ -38,7 +38,7 @@
         >
           <div class="embeded-list">
             <component
-              :is="getEditView(handler)"
+              :is="currentHandler(getEditView(handler))"
               :module="handler['module']"
               :group="handler?.['group']"
               :columns="handler?.['columns'] ? handler['columns'] : []"
@@ -61,7 +61,7 @@
           @sl-request-close="relationCloseAction($event)"
         >
           <component
-            :is="bone['bone_conf']['handlerComponent']"
+            :is="currentHandler(bone['bone_conf']['handlerComponent'])"
             :rowselect="1"
             :module="bone['boneStructure']['module']"
             @currentSelection="relationUpdateSelection($event, bone)"
@@ -96,7 +96,6 @@
 </template>
 
 <script setup>
-//@ts-nocheck
 import { reactive, defineComponent, onBeforeMount, computed, ref, provide, toRaw, unref, watch, onActivated } from "vue"
 import { Request } from "@viur/vue-utils"
 import { useDBStore } from "../stores/db"
@@ -118,6 +117,10 @@ import Logics from "logics-js"
 import Utils from "../utils"
 import HandlerContext from "../main/context/HandlerContext.vue";
 import ViForm from "@viur/vue-utils/forms/ViForm.vue"
+
+function currentHandler(name){
+  return handlers?.[name]?handlers[name]:name
+}
 
   const props = defineProps({
     module: {

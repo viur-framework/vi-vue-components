@@ -12,7 +12,7 @@
       @sl-after-hide="relationCloseAction()"
     >
       <component
-        :is="handler"
+        :is="currentHandler(handler)"
         :module="module"
         :rowselect="rowselect"
         :selector="true"
@@ -50,6 +50,10 @@
 import { reactive, defineComponent, onMounted, inject } from "vue"
 import { Request } from "@viur/vue-utils"
 import handlers from "../../handler/handlers"
+
+function currentHandler(name){
+  return handlers?.[name]?handlers[name]:name
+}
 
 const props = defineProps({
     open: Boolean,
