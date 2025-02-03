@@ -29,7 +29,7 @@ const aframe = useTemplateRef('aframe')
 const route = useRoute()
 const state = reactive({
     url: computed(()=>{
-        return `${import.meta.env.VITE_API_URL}/${route.params.module}/view/${route.params.key}`
+        return `${import.meta.env.VITE_API_URL}/${route.params.parentmodule}/view/${route.params.key}`
     }),
     currentWidth:"100%",
     opened:false
