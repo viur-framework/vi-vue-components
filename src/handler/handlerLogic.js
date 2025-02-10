@@ -1,6 +1,7 @@
 import { useDBStore } from "../stores/db"
 import { useContextStore } from "../stores/context"
 import { useMessageStore } from "../stores/message"
+import { useLocalStore } from "../stores/local"
 import SortindexView from "../bones/sortindexView.vue"
 import { ListRequest, destroyStore, boneLogic, Request } from "@viur/vue-utils"
 import { onMounted, watch, onUnmounted, computed, reactive, unref } from "vue"
@@ -11,12 +12,13 @@ export function useHandlerLogic(props, handler_state) {
   const dbStore = useDBStore()
   const contextStore = useContextStore()
   const messageStore = useMessageStore()
+  const localStore = useLocalStore()
   const router = useRouter()
 
   const time = new Date().getTime()
   let currentConf = dbStore.getConf(props.module, props.view) //needed
-  let currentNodeList = ListRequest(props.module + "_node_handler" + time, { module: props.module,cached:true })
-  let currentlist = ListRequest(props.module + "_handler" + time, { module: props.module,cached:true  })
+  let currentNodeList = ListRequest(props.module + "_node_handler" + time, { module: props.module,cached:localStore.state.cache })
+  let currentlist = ListRequest(props.module + "_handler" + time, { module: props.module,cached:localStore.state.cache  })
   let currentHandlers = {}
 
   const state = reactive({
@@ -63,7 +65,7 @@ export function useHandlerLogic(props, handler_state) {
 
   function fetchRoots(update = true) {
     let context = contextStore.getCurrentContext()
-    return Request.get(`/vi/${props.module}/listRootNodes`, {cached:true})
+    return Request.get(`/vi/${props.module}/listRootNodes`, {cached:localStore.state.cache})
       .then(async (resp) => {
         let data = await resp.json()
         handler_state.availableRootNodes = data
@@ -110,6 +112,7 @@ export function useHandlerLogic(props, handler_state) {
 
           for (const [type, handler] of Object.entries(currentHandlers)) {
             let aPromise = new Promise((resolve, reject) => {
+              handler.state.cached = localStore.state.cache
               handler.reset()
               handler
                 .filter({

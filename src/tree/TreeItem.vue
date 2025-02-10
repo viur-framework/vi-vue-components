@@ -40,7 +40,8 @@ import { Request } from "@viur/vue-utils"
 import useTree from "./tree.js"
 import { isNavigationFailure } from "vue-router"
 import Utils from "../utils.js"
-
+import {useLocalStore} from '../stores/local'
+  const localStore = useLocalStore()
   const props = defineProps({
     name: String,
     skelkey: String,
@@ -103,7 +104,7 @@ import Utils from "../utils.js"
           limit: 99,
           parententry: props.skelkey
         },
-        cached:true
+        cached:localStore.state.cache
       })
         .then(async (resp) => {
           let data = await resp.json()

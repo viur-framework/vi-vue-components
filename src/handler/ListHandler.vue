@@ -233,7 +233,7 @@ import Utils from '../utils'
       params: {},
       group: props.group,
       renderer: "vi",
-      cached:true
+      cached:localStore.state.cache
     })
 
     dbStore.setListStore(currentlist) //backup access
@@ -244,8 +244,9 @@ import Utils from '../utils'
         checkBoneExists()
         return 0
       }
-
+      
       state.selectedBones = []
+      currentlist.state.cached = localStore.state.cache
       currentlist.reset()
       currentlist.state.params = { ...currentlist.state.params, ...contextStore.getContext(), ...props.filter  }
       return currentlist

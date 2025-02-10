@@ -90,6 +90,7 @@ import { useDBStore } from "../stores/db"
 import { useMessageStore } from "../stores/message"
 import router from "../routes"
 import { useModulesStore } from "../stores/modules"
+import { useLocalStore } from "../stores/local"
 import { useRoute } from "vue-router"
 import Loader from "@viur/vue-utils/generic/Loader.vue"
 import FluidpageElement from "../fluidpage/element.vue"
@@ -111,6 +112,7 @@ import FluidpageElement from "../fluidpage/element.vue"
     const route = useRoute()
     const messageStore = useMessageStore()
     const modulesStore = useModulesStore()
+    const localStore = useLocalStore()
 
     const tableInst = ref(null)
 
@@ -170,7 +172,7 @@ import FluidpageElement from "../fluidpage/element.vue"
       },
       group: props.group,
       renderer: "vi",
-      cached:true
+      cached:localStore.state.cache
     })
     dbStore.setListStore(currentlist) //backup access
     provide("currentlist", currentlist)
@@ -259,6 +261,7 @@ import FluidpageElement from "../fluidpage/element.vue"
     provide("updateWidth", updateWidth)
 
     function reloadAction() {
+      currentlist.state.cached = localStore.state.cache
       return currentlist
         .fetch()
         .catch((error) => {

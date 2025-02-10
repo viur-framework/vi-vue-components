@@ -7,7 +7,8 @@ export const useLocalStore = defineStore(
   () => {
     const state = reactive({
       listamount: "30",
-      lastEntries: []
+      lastEntries: [],
+      cache:true
     })
     function addEntries(handler) {
       let exists = state.lastEntries.filter( x => x['key']===handler['key'])

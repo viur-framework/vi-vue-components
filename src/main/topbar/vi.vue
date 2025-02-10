@@ -70,13 +70,7 @@
           <div class="group-headline">
             {{ $t("sidebar.section_tools") }}
           </div>
-          <sl-button
-            size="medium"
-            @click="openScriptor"
-          >
-            <sl-icon name="code-slash"></sl-icon>
-            Scriptor
-          </sl-button>
+          <sl-switch :checked="local.state.cache" @sl-change="changeCaching">Cache {{ local.state.cache?'aktiviert':'deaktiviert' }}</sl-switch>
         </template>
 
         <div class="group-headline">
@@ -191,12 +185,14 @@ import FormHandler from "../../handler/FormHandler.vue"
 import { Request } from "@viur/vue-utils"
 import { useEventListener } from "@vueuse/core"
 import ViForm from "@viur/vue-utils/forms/ViForm.vue"
+import { useLocalStore} from "../../stores/local"
 
     const userStore = useUserStore()
     const appStore = useAppStore()
     const dbStore = useDBStore()
     const messageStore = useMessageStore()
     const router = useRouter()
+    const local = useLocalStore()
 
     let forms = {}
     const state = reactive({
@@ -306,6 +302,11 @@ import ViForm from "@viur/vue-utils/forms/ViForm.vue"
         state.logoutloading = false
       })
     }
+
+    function changeCaching(){
+      local.state.cache=!local.state.cache
+    }
+
 </script>
 
 <style scoped>
@@ -376,6 +377,7 @@ sl-drawer {
   display: flex;
   flex-direction: column;
   margin-bottom: 10px;
+  align-items: flex-start;
   color: var(--vi-foreground-color);
 
   & sl-button {
