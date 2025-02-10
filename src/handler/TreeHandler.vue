@@ -267,7 +267,7 @@ import { VueDraggable } from 'vue-draggable-plus'
 
     const state = reactive({
       type: "treehandler",
-      currentSelectionType: "leaf",
+      currentSelectionType: "node",
       currentSelection: [],
       selectedRows: [],
 

@@ -39,11 +39,13 @@ import Utils from '../utils'
 
           if (handlerState.type === "hierarchyhandler") {
             entry['url'] = `/db/${handlerState.module}/edit/node/${selection["key"]}`
+            entries.push(entry)
             continue
           }
 
           if (handlerState.type === "treehandler") {
             entry['url'] = `/db/${handlerState.module}/edit/${handlerState?.currentSelectionType}/${selection["key"]}`
+            entries.push(entry)
             continue
           }
           if (handlerState.group) {
