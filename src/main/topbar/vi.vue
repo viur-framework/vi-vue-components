@@ -70,7 +70,7 @@
           <div class="group-headline">
             {{ $t("sidebar.section_tools") }}
           </div>
-          <sl-switch :checked="local.state.cache" @sl-change="changeCaching">Cache {{ local.state.cache?'aktiviert':'deaktiviert' }}</sl-switch>
+          <sl-switch :checked="local.state.cache" @sl-change="changeCaching">Admin-Cache {{ local.state.cache?'aktiviert':'deaktiviert' }}</sl-switch>
         </template>
 
         <div class="group-headline">
