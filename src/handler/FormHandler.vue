@@ -309,14 +309,18 @@ function currentHandler(name){
       if(typeof handler["context"] === 'object'){
         for (const [k, v] of Object.entries(handler["context"])) {
           if (Object.keys(viform.value.state.skel).includes(v)) {
-            //contextStore.setContext(k, viform.value.state.skel[v], state.tabId) //recursion error ,we need a tabid rework
+            if (k.startsWith("@")){
+              contextStore.setContext(k, viform.value.state.skel[v], state.tabId) //recursion error ,we need a tabid rework
+            }
             filter[k] = viform.value.state.skel[v]
           }
         }
       } else {
         filter[handler["context"]] = props.skelkey
-        //contextStore.setContext(handler["context"], props.skelkey, state.tabId) //recursion error ,we need a tabid rework
-      }
+        if (handler["context"].startsWith('@')){
+          contextStore.setContext(handler["context"], props.skelkey, state.tabId) //recursion error ,we need a tabid rework
+        }
+        }
       return filter
     }
 
