@@ -66,13 +66,11 @@
       </div> -->
 
       <div class="group">
-        <template v-if="userStore.userAccess.includes('scriptor')">
           <div class="group-headline">
             {{ $t("sidebar.section_tools") }}
           </div>
           <sl-switch :checked="local.state.cache" @sl-change="changeCaching">Admin-Cache {{ local.state.cache?'aktiviert':'deaktiviert' }}</sl-switch>
-        </template>
-
+          <br>
         <div class="group-headline">
           {{ $t("sidebar.section_system_name") }}
         </div>
@@ -298,7 +296,6 @@ import { useLocalStore} from "../../stores/local"
     function logout(){
       state.logoutloading = true
       userStore.logout().then(async (resp)=>{
-        let data = await resp.json()
         state.logoutloading = false
       })
     }
