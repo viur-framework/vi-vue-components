@@ -80,8 +80,12 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
   }
 
   async function load(pyoPackages = [], packages = [], initCode = "") {
+    if (import.meta.env.DEV && import.meta.env.VITE_SCRIPTOR_URL) {
+      packages.unshift(import.meta.env.VITE_SCRIPTOR_URL,"chardet", "python-magic", "openpyxl")
+    } else {
+      packages.unshift("viur-scriptor-api")
+    }
 
-    packages.unshift("viur-scriptor-api")
 
     initCode = `with open("config.py", "w") as f:\n\tf.write("BASE_URL='${state.apiUrl}'")` + initCode
 

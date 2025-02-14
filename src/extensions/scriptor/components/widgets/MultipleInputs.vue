@@ -4,15 +4,17 @@
     open
   >
 
-    <component
-      :is="getWidget(entry['type'])"
-      v-for="entry in entry.data.components"
-      ref="elements"
-      :key="makeid()"
-      :entry="{data:entry}"
-      :inMultiple="true"
-    >
-    </component>
+    <div  v-for="_entry in props.entry.data.components">
+
+
+      <component
+        :is="getWidget(_entry['type'])"
+        ref="elements"
+        :entry="{data:_entry}"
+        :inMultiple="true"
+      ></component>
+    </div>
+
     <sl-button
       @click="buttonCallback"
       :disabled="state.buttonDisabled || !state.sendable"
@@ -25,7 +27,8 @@
 <script setup>
 import {computed, reactive, ref} from "vue"
 import {useScriptorStore} from "../../store/scriptor"
-import widgets from "./index";
+import widgets from "./index"
+
 
 const elements = ref([]);
 const scriptorStore = useScriptorStore()
@@ -36,6 +39,7 @@ const props = defineProps({
     type: Object
   }
 })
+
 
 const state = reactive({
   buttonDisabled: false,
@@ -71,8 +75,6 @@ function getWidget(type) {
     return widgets.diffCompare
   } else if (["table"].includes(type)) {
     return widgets.tableEntry
-  } else if (["multiple-dialog"].includes(type)) {
-    return widgets.multipleImputs
   }
 
   return widgets.debugEntry
@@ -83,9 +85,10 @@ function makeid(length = 10) {
   let result = ""
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
   for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * chars.length));
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
   }
   return result
 }
+
 
 </script>
