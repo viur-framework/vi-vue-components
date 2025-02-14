@@ -86,10 +86,10 @@
             >
               <sl-icon
                 slot="prefix"
-                name="pencil-fill"
+                name="gear"
                 sprite
               ></sl-icon>
-              Bearbeiten
+              Einstellungen
             </sl-menu-item>
             <sl-menu-item @click="openInfo">
               <sl-icon
@@ -97,7 +97,7 @@
                 name="info-circle"
                 sprite
               ></sl-icon>
-              Module Info
+              Informationen
             </sl-menu-item>
             <sl-menu-item @click="openItem(route, true)">
               <sl-icon
