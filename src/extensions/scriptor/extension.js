@@ -23,7 +23,7 @@ export default function extensionInfo(){
     const dbStore = useDBStore()
     const router = useRouter()
     function init(){
-        console.log("Init Scriptor")
+        //console.log("Init Scriptor")
         //addSubRoute()
         //topbar()
     }

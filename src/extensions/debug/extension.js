@@ -14,7 +14,7 @@ const routes = []
 export default function extensionInfo(){
 
     function init(){
-        console.log("Init Debug")
+       // console.log("Init Debug")
     }
     return {
         name:"debug",
