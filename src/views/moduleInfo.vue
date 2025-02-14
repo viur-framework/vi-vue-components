@@ -5,21 +5,38 @@
     <h1 class="headline">Modulebeschreibung {{dbStore.getConf(module)['name']}}</h1>
   <sl-details summary="Datenmodel">
     <div class="wrapper">
-      <sl-details :summary="name" v-for="(data, name) in state.skels">
+
+        <div class="model-wrap" v-for="bone, boneName in state.skels[Object.keys(state.skels)[0]]" >
+          <div class="model-entry">
+            <span>{{bone['descr']}} ( {{boneName}} )</span>
+            <span>Typ: {{bone['type']}} </span>
+          </div>
+          <vue-json-pretty :deep="2" :data="bone" />
+        </div>
+
+
+
+      <sl-details :summary="'Model: '+name" v-for="(data, name) in state.skels">
         <vue-json-pretty :deep="1" :data="data" />
       </sl-details>
     </div>
   </sl-details>
 
-  <sl-details summary="Funktionen">
+  <sl-details summary="Funktionen" open>
     <div class="wrapper">
       <sl-card v-for="(method, name) in dbStore.getConf(module)['methods']">
-        <h2 class="subline">{{ name }} </h2>
-        <span class="doc" v-html="method['docs']?.replace(/(:.*?:)/g,'<br><span>$1</span>')"></span>
-        <sl-details summary="Parameter">
+        <h2 class="subline">Endpunkt: {{ name }}</h2>
+        <span class="doc" v-html="optimizeText(method['docs'])"></span>
+        <sl-details summary="Parameter" open>
           <ul>
             <li v-for="(arg,arg_name) in method['args']">
-              {{ arg_name }} : {{ arg["type"]?arg["type"]:"" }}
+              <template v-if="!arg['type']">
+                <b>{{ arg_name }}</b>
+              </template>
+              <template v-else>
+                <b>{{ arg_name }}</b> : {{ arg["type"]}}
+              </template>
+
             </li>
 
           </ul>
@@ -74,6 +91,16 @@ watch(
   }
 )
 
+function optimizeText(txt){
+  if (!txt) return txt
+  txt = txt.replace(/(exc)/g,'&nbsp;&nbsp;$1')
+  txt = txt.replace(/`(.*?)`/g,'<i>$1</i>')
+  txt = txt.replace(/::/,"<hr>")
+  txt = txt.replace(/:(.*?):/g,'<br><span>$1: </span>')
+
+  return txt
+}
+
 onBeforeMount(()=>{
   Request.getStructure(props.module).then(async (resp)=>{
     let data = await resp.json()
@@ -101,6 +128,8 @@ onBeforeMount(()=>{
 
 .subline{
   font-weight: bold;
+  color:var(--sl-color-neutral-800);
+  font-size:24px;
 }
 
 sl-details{
@@ -121,5 +150,21 @@ sl-details{
 }
 :deep(span.doc) > span {
   font-weight: bold;
+}
+
+.model-wrap{
+  margin-bottom:20px;
+  background-color:var(--sl-color-neutral-200);
+  padding:10px;
+  border-radius:10px;
+}
+
+.model-entry{
+  font-size:18px;
+  display:flex;
+  justify-content: space-between;
+  border-bottom:1px solid var(--sl-color-neutral-700);
+  font-weight:bold;
+  margin-bottom:10px;
 }
 </style>
