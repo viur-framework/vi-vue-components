@@ -12,14 +12,15 @@
     <router-link
       class="link-wrap"
       :to="to"
-      :title="title ? title : name"
+      :title="state.title"
     >
-      <sl-avatar label="Rounded avatar">
+      <sl-avatar label="Rounded avatar" :initials="state.modeIcon||icon ? '' : name[0]">
         <sl-icon
           v-if="mode !== 'view'"
           slot="icon"
           class="mode-icon"
           :name="state.modeIcon"
+
           sprite
         ></sl-icon>
         <sl-icon
@@ -88,6 +89,17 @@ import { useRouter } from "vue-router"
         if (props.mode === "add") return "plus-lg"
         if (props.mode === "edit") return "pencil-fill"
         if (props.mode === "clone") return "copy"
+        return false
+      }),
+      title:computed(()=>{
+        let title = ""
+        if (props.to?.params?.module){
+          title = props.to.params.module + ": "
+        }
+
+        title += props.title ? props.title : props.name
+
+        return title
       })
     })
     function onIconError() {
