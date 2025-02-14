@@ -1,11 +1,10 @@
 import { useRoute} from "vue-router";
+import AdminLayout from "./AdminLayout.vue";
+import ScriptorLayout from "./ScriptorLayout.vue";
 
 export function registerLayouts(app){
-    const layouts = import.meta.glob("./*.vue", { eager: true })
-    Object.entries(layouts).forEach(([path,layout])=>{
-        const componentName = path.split("/").pop().replace(/\.\w+$/, "")
-        app.component(componentName, layout?.default)
-    })
+    app.component("AdminLayout",AdminLayout)
+    app.component("ScriptorLayout",ScriptorLayout)
 }
 
 export function getLayout(layout= null){
@@ -15,7 +14,6 @@ export function getLayout(layout= null){
         if (route.meta?.layout){
             _layout = route.meta.layout
         }
-        console.log(_layout)
     }
 
   return _layout
