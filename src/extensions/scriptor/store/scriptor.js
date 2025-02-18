@@ -230,6 +230,9 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
         data["components"] = JSON.parse(data["components"])
         addMessageEntry(data.type, id, data)
         break
+      case "clear":
+        currentState.messages.length=0;
+        break
       default:
         if (["select", "input", "diffcmp", "table", "stdout", "stderr"].includes(data.type)) {
           addMessageEntry(data.type, id, data)
