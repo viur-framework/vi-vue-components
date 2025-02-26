@@ -40,7 +40,7 @@ function adminTreeLayer(itemList, parent) {
     if (!Object.keys(conf).includes("display")) {
       conf["display"] = "visible"
     }
-    if (conf['handler']){
+    if (conf['handler'] && conf["display"] !="group"){
       if (module_access(conf['module'],conf["group"])){
         conf["hasAccess"] = true
       }else{
