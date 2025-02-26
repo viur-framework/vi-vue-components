@@ -78,7 +78,7 @@ const state = reactive({
   isMultiple: computed(() => props.entry.data["multiple"]),
   isDisabled: false,
   options: {},
-  value: props.entry.data["multiple"]?props.entry.data["default_value"]:props.entry.data["default_value"][0],
+  value: props.entry.data["default_value"],
   sendable: computed(() => {
     return state.value.length !==0
   })

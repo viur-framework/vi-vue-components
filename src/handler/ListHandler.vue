@@ -244,7 +244,7 @@ import Utils from '../utils'
         checkBoneExists()
         return 0
       }
-      
+
       state.selectedBones = []
       currentlist.state.cached = localStore.state.cache
       currentlist.reset()
@@ -352,6 +352,7 @@ import Utils from '../utils'
       state.selectedRows = [...new Set(state.selectedRows)] // remove duplicates and sort
 
       state.currentSelection = currentlist.state.skellist.filter((entry, idx) => state.selectedRows.includes(idx))
+      contextStore.setContext("__selectedEntries__",state.currentSelection,state.tabId);
       if (state.currentSelection.length > 0) {
         dbStore.state["skeldrawer.entry"] = state.currentSelection[0]
         dbStore.state["skeldrawer.structure"] = currentlist.structure
@@ -435,7 +436,7 @@ import Utils from '../utils'
           currentlist.state.headers = {"x-viur-bonelist": state.selectedBones.join(",")}
           checkBoneExists()
         }
-        
+
         return 0
       }
       state.conf = dbStore.getConf(props.module, props.view)
