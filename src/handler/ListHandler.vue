@@ -124,7 +124,7 @@ import {
   onActivated,
   onDeactivated,
   unref,
-  inject
+  inject, toRaw
 } from "vue"
 import HandlerBar from "../bars/HandlerBar.vue"
 import {ListRequest, boneLogic, Request} from "@viur/vue-utils"
@@ -352,7 +352,12 @@ import Utils from '../utils'
       state.selectedRows = [...new Set(state.selectedRows)] // remove duplicates and sort
 
       state.currentSelection = currentlist.state.skellist.filter((entry, idx) => state.selectedRows.includes(idx))
-      contextStore.setContext("__selectedEntries__",state.currentSelection,state.tabId);
+      const currentSelection = [];
+      for(const selection of state.currentSelection)
+      {
+        currentSelection.push(toRaw(selection))
+      }
+      contextStore.setContext("__selectedEntries__", currentSelection,state.tabId);
       if (state.currentSelection.length > 0) {
         dbStore.state["skeldrawer.entry"] = state.currentSelection[0]
         dbStore.state["skeldrawer.structure"] = currentlist.structure
