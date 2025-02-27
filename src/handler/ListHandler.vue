@@ -160,7 +160,8 @@ import Utils from '../utils'
     noTopbar: false,
     columns: {
       default:undefined
-    }
+    },
+    inheritContext:true
   })
   const emit = defineEmits(["currentSelection", "closeSelector"])
 
@@ -248,7 +249,12 @@ import Utils from '../utils'
       state.selectedBones = []
       currentlist.state.cached = localStore.state.cache
       currentlist.reset()
-      currentlist.state.params = { ...currentlist.state.params, ...contextStore.getContext(), ...props.filter  }
+      let ctx = {}
+      if (props.inheritContext){
+        ctx=contextStore.getContext()
+      }
+
+      currentlist.state.params = { ...currentlist.state.params, ...ctx, ...props.filter  }
       return currentlist
         .fetch()
         .catch((error) => {
@@ -292,7 +298,12 @@ import Utils from '../utils'
         }
       }
 
-      currentlist.state.params = { ...currentlist.state.params, ...contextStore.getContext(state.tabId), ...props.filter }
+      let ctx = {}
+      if (props.inheritContext){
+        ctx=contextStore.getContext(state.tabId)
+      }
+
+      currentlist.state.params = { ...currentlist.state.params, ...ctx, ...props.filter }
       currentlist.state.params["limit"] = localStore.state.listamount
       currentlist
         .fetch()
