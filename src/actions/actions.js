@@ -24,6 +24,7 @@ import search_action from "./search.vue"
 import script_action from "./script.vue"
 import move_action from "./move.vue"
 import fluidpagepreview_action from "./fluidpagepreview.vue"
+import formutils_action from "./formutils.vue"
 
 export default {
   add_action,
@@ -51,5 +52,6 @@ export default {
   search_action,
   script_action,
   move_action,
-  fluidpagepreview_action
+  fluidpagepreview_action,
+  formutils_action
 }

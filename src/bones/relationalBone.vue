@@ -73,7 +73,7 @@
     :name="boneState.bonestructure['descr']"
     :tab-id="handlerState.tabId"
     :filter="state.filter"
-    :handler="state.moduleInfo['handlerComponent']"
+    :handler="state.moduleInfo?.['handlerComponent']"
     :module="boneState?.bonestructure['module']"
     @close="relationCloseAction"
   >
