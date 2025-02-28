@@ -76,18 +76,7 @@ function getWidget(type) {
   } else if (["table"].includes(type)) {
     return widgets.tableEntry
   }
-
   return widgets.debugEntry
-}
-
-//todo find better solution
-function makeid(length = 10) {
-  let result = ""
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-  for (let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result
 }
 
 
