@@ -622,7 +622,7 @@ sl-breadcrumb {
   cursor: pointer;
   width: 100%;
   height: 100%;
-  padding: 33%;
+  padding: 25%;
   opacity: 0;
 
   &.sort-down {
