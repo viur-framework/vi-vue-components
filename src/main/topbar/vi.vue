@@ -419,6 +419,7 @@ sl-drawer {
 .dialog-btn-footer{
   display: flex;
   justify-content: space-between;
+  gap: var(--sl-spacing-large);
 }
 
 .group-headline {
