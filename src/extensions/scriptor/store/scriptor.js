@@ -110,7 +110,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     const contextStore = useContextStore();
     //Use window object, because useRoute not work outside module.
     const tabId = (window.location.hash || '').replace(/^#/, '').split("_")[1].replace("=","")
-    let params =contextStore.getLocalContext(tabId)["__selectedEntries__"];
+    let params = contextStore.getLocalContext(tabId,true)["_selectedEntries"];
     if (!params)
     {
       return

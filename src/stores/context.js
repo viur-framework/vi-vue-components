@@ -5,16 +5,26 @@ import { useRoute } from "vue-router"
 export const useContextStore = defineStore("contextStore", () => {
   const state = reactive({
     globalContext: {},
-    localContext: {}
+    localContext: {},
+    localPrivateContext:{} // keys that start with _ are private, private contexts are not cloned!
   })
 
   function setContext(key, value, handlerId = null) {
     if (handlerId) {
 
       if (Object.keys(state.localContext).includes(''+ handlerId)) {
-        state.localContext[handlerId][key] = value
+        if (key.startsWith("_")){
+          state.localPrivateContext[handlerId][key] = value
+        }else{
+          state.localContext[handlerId][key] = value
+        }
       } else {
-        state.localContext[handlerId] = { [key]: value }
+        if (key.startsWith("_")){
+          state.localPrivateContext[handlerId][key] = value
+        }else{
+          state.localContext[handlerId] = { [key]: value }
+        }
+        
       }
     } else {
       state.globalContext[key] = value
@@ -26,22 +36,25 @@ export const useContextStore = defineStore("contextStore", () => {
     state.localContext[newHandlerId] = structuredClone(old)
   }
 
-  function getLocalContext(handlerId) {
+  function getLocalContext(handlerId, includePrivate=false) {
     let context = {}
     if (Object.keys(state.localContext).includes(handlerId)) {
       context = toRaw(state.localContext[handlerId])
+      if (includePrivate && Object.keys(state.localPrivateContext).includes(handlerId)){
+        context = {...context, ... toRaw(state.localPrivateContext[handlerId])}
+      }
     }
     return context
   }
 
-  function getCurrentContext() {
+  function getCurrentContext(includePrivate=false) {
     let route = useRoute()
     let handlerId = route?.query?.["_"]
-    return getContext(handlerId)
+    return getContext(handlerId,includePrivate)
   }
 
-  function getContext(handlerId) {
-    return { ...unref(state.globalContext), ...getLocalContext(handlerId) }
+  function getContext(handlerId, includePrivate=false) {
+    return { ...unref(state.globalContext), ...getLocalContext(handlerId, includePrivate) }
   }
 
   return {

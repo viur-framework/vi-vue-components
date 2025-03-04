@@ -368,7 +368,7 @@ import Utils from '../utils'
       {
         currentSelection.push(toRaw(selection))
       }
-      contextStore.setContext("__selectedEntries__", currentSelection,state.tabId);
+      contextStore.setContext("_selectedEntries", currentSelection,state.tabId) //set private Context for scriptor
       if (state.currentSelection.length > 0) {
         dbStore.state["skeldrawer.entry"] = state.currentSelection[0]
         dbStore.state["skeldrawer.structure"] = currentlist.structure
