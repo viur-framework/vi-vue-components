@@ -245,7 +245,7 @@ import Utils from '../utils'
         checkBoneExists()
         return 0
       }
-      
+
       state.selectedBones = []
       currentlist.state.cached = localStore.state.cache
       currentlist.reset()
@@ -446,7 +446,7 @@ import Utils from '../utils'
           currentlist.state.headers = {"x-viur-bonelist": state.selectedBones.join(",")}
           checkBoneExists()
         }
-        
+
         return 0
       }
       state.conf = dbStore.getConf(props.module, props.view)
@@ -629,7 +629,7 @@ import Utils from '../utils'
   cursor: pointer;
   width: 100%;
   height: 100%;
-  padding: 33%;
+  padding:25%;
   opacity: 0;
 
   &.sort-down {
