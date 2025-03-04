@@ -74,11 +74,11 @@ onMounted(() => {
 })
 
 const state = reactive({
-  selectedOptions: props.entry.data["default_value"],
+  selectedOptions: props.entry.data?.default_value || [],
   isMultiple: computed(() => props.entry.data["multiple"]),
   isDisabled: false,
   options: {},
-  value: props.entry.data["default_value"],
+  value: props.entry.data?.default_value || [],
   sendable: computed(() => {
     return state.value.length !==0
   })

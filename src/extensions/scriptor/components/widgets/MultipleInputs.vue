@@ -4,7 +4,7 @@
     open
   >
 
-    <div  v-for="_entry in props.entry.data.components">
+    <div  v-for="_entry in entry.data.components">
 
 
       <component
