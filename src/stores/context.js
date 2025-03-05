@@ -11,20 +11,18 @@ export const useContextStore = defineStore("contextStore", () => {
 
   function setContext(key, value, handlerId = null) {
     if (handlerId) {
-
-      if (Object.keys(state.localContext).includes(''+ handlerId)) {
-        if (key.startsWith("_")){
+      if (key.startsWith("_")) {
+        if (Object.keys(state.localPrivateContext).includes('' + handlerId)) {
           state.localPrivateContext[handlerId][key] = value
-        }else{
-          state.localContext[handlerId][key] = value
+        } else {
+          state.localPrivateContext[handlerId] = {[key]: value}
         }
       } else {
-        if (key.startsWith("_")){
-          state.localPrivateContext[handlerId][key] = value
-        }else{
-          state.localContext[handlerId] = { [key]: value }
+        if (Object.keys(state.localContext).includes('' + handlerId)) {
+          state.localContext[handlerId][key] = value
+        } else {
+          state.localContext[handlerId] = {[key]: value}
         }
-        
       }
     } else {
       state.globalContext[key] = value
