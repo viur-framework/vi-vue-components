@@ -463,9 +463,10 @@ export const useDBStore = defineStore("db", () => {
         name = `${currentModuleConf["name"]} / ${currentConf?.["name"]}`
       }
       //If not found a name we set it to an empty string
-      if (name === undefined) {
-        name = "";
+      if (!name) {
+        name = route["name"] ? route["name"] : "";
       }
+
     }
     let group = currentConf?.["group"]
     if (!group && route.params['group']) {
