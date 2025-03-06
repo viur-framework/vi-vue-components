@@ -51,7 +51,7 @@ function adminTreeLayer(itemList, parent) {
     if(conf['nodeType'] === "group" && conf["moduleGroups"]?.length === 0){
       conf["display"] = "hidden"
     }
-    
+
 
     // set index as sortindex if missing
     if (!Object.keys(conf).includes("sortIndex") || conf["sortIndex"] === 0) {
@@ -325,7 +325,7 @@ export const useDBStore = defineStore("db", () => {
       }else{
         nestedGroups.push(prefixed_group)
       }
-      
+
     }
 
     let itemList = []
@@ -461,6 +461,10 @@ export const useDBStore = defineStore("db", () => {
       name = currentConf?.["name"]
       if (currentConf?.["name"] !== currentModuleConf?.["name"]) {
         name = `${currentModuleConf["name"]} / ${currentConf?.["name"]}`
+      }
+      //If not found a name we set it to an empty string
+      if (name === undefined) {
+        name = "";
       }
     }
     let group = currentConf?.["group"]
