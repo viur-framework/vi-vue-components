@@ -73,7 +73,7 @@
             Admin-Cache {{ local.state.cache?'aktiviert':'deaktiviert' }}
           </sl-switch>
           <br>
-        <div class="group-headline">
+        <div class="group-headline" v-if="dbStore.state['tasks']?.length>0">
           {{ $t("sidebar.section_system_name") }}
         </div>
         <template
