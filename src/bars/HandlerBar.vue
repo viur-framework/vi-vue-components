@@ -153,7 +153,7 @@ import script_action from "../actions/script.vue"
         }
 
         //remove disabledActions from all objects
-        if (Object.keys(conf).includes("disabledActions") && conf["disabledActions"].length > 0) {
+        if (Object.keys(conf).includes("disabledActions") && conf["disabledActions"]?.length > 0) {
           // remove actions
           for (let rmAction of conf["disabledActions"]) {
             for (let actiongroup in actions) {
