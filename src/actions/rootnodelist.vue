@@ -14,6 +14,9 @@
       {{ Utils.renderValue(node["name"]) }}
     </sl-option>
   </sl-select>
+  <span class="reponame" v-else>
+    {{Utils.renderValue(handlerState['availableRootNodes'].filter(x=>x['key']===handlerState['currentRootNode']?.['key'])?.[0]['name'])}}
+  </span>
 </template>
 
 <script setup>
@@ -54,5 +57,12 @@ sl-select {
     margin-right: 7px;
     margin-bottom: 0;
   }
+}
+
+.reponame{
+  font-style: italic;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
 }
 </style>
