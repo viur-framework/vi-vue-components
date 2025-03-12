@@ -32,7 +32,8 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
       return useBrowserLocation().value.origin
     }),
     currentInstance: null,
-    instances: reactive({})
+    instances: reactive({}),
+    scriptorVersion:"latest"
   })
 
   const progress = reactive({
@@ -84,7 +85,11 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     if (import.meta.env.DEV && import.meta.env.VITE_SCRIPTOR_URL) {
       packages.unshift(import.meta.env.VITE_SCRIPTOR_URL)
     } else {
-      packages.unshift("viur-scriptor-api")
+      if (state.scriptorVersion==="latest"){
+        packages.unshift("viur-scriptor-api")
+      }else{
+        packages.unshift(`viur-scriptor-api${state.scriptorVersion}`)
+      }
     }
 
 
@@ -291,11 +296,32 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     })
   }
 
+  function fetchScriptorVersions(){
+    async function get(){
+      try {
+          const response = await fetch(`https://pypi.org/pypi/viur-scriptor-api/json`);
+          if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
+          const versions = Object.keys(data.releases);
+          versions.sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
+          return versions.filter(x=>x.startsWith("1."));
+      } catch (error) {
+          console.error("Fehler beim Abrufen der Daten:", error);
+          return [];
+      }
+    }
+    return get()
+  }
+
   return {
     state,
     progress,
     execute,
     sendResult,
-    createNewInstance
+    createNewInstance,
+    fetchScriptorVersions
   }
 })

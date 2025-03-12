@@ -27,28 +27,3 @@ export default function application() {
     register
   }
 }
-
-
-
-/*
-
-#### scriptor ####
-
-async def main():
-    Dialog.print("This a a simple print...")
-    print("... and this is the same print:")
-    print(f"""{(Dialog.print == print) = }""")
-
-    await Dialog.alert("This a an alert.")
-
-    options = {
-        "Option A": 1,
-        "Option B": 2,
-        "Option C": "ein string..."
-    }
-    select = await Dialog.select(options)
-    print(f"""{select = }""")
-    print(f"""{type(select) = }""")
-    print(f"""{repr(select) = }""")
-
-*/
