@@ -356,7 +356,6 @@ table {
   flex-direction: column;
   height: 0;
   position: relative;
-  min-height: 170px;
 }
 
 .more-entries {
