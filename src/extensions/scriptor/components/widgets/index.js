@@ -5,6 +5,7 @@ import textInput from "./TextInput.vue"
 import diffCompare from "./DiffCompare.vue"
 import tableEntry from "./TableEntry.vue"
 import multipleInputs from "./MultipleInputs.vue"
+import rawHtml from "./RawHtml.vue"
 
 export default {
   logEntry,
@@ -13,5 +14,6 @@ export default {
   textInput,
   diffCompare,
   tableEntry,
-  multipleInputs
+  multipleInputs,
+  rawHtml
 }

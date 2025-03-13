@@ -73,6 +73,8 @@ function getWidget(type) {
     return widgets.tableEntry
   } else if (["multiple-dialog"].includes(type)) {
     return widgets.multipleInputs
+  } else if (["raw_html"].includes(type)) {
+    return widgets.rawHtml
   }
 
   return widgets.debugEntry
