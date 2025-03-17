@@ -16,10 +16,6 @@
           {{ current["rel"]["name"] }}
 
         </template>
-
-        <div v-show="state.scriptStatus">
-          <status :id="state.id" ref="scriptorAction"></status>
-        </div>
       </sl-button>
 
 
