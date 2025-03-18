@@ -2,7 +2,7 @@
   <sl-button
         v-if="canAccess"
         size="small"
-        :disabled="!active && !state.scriptReady"
+        :disabled="(!active && !state.scriptReady) || disabled"
         :title="current['rel']['name']"
         @click="startScriptor"
       >
@@ -71,6 +71,9 @@ const messagewrapper = ref(null)
       type:Array
     },
     active:{
+      type:Boolean
+    },
+    disabled:{
       type:Boolean
     }
   })
