@@ -12,9 +12,8 @@
           :name="iconInfo[1]"
           :library="iconInfo[0]"
         ></sl-icon>
-        <template v-else>
+        <template v-if="!iconOnly">
           {{ current["rel"]["name"] }}
-
         </template>
 
         <div v-show="state.scriptStatus">
@@ -72,6 +71,9 @@ const messagewrapper = ref(null)
     },
     active:{
       type:Boolean
+    },
+    iconOnly:{
+      type:Boolean,
     }
   })
 
