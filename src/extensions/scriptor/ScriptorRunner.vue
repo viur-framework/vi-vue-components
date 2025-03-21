@@ -17,7 +17,7 @@
 
         </template>
 
-        <div v-show="state.scriptStatus">
+        <div v-show="state.scriptStatus && state.opened">
           <status :id="state.id" ref="scriptorAction"></status>
         </div>
       </sl-button>
