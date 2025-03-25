@@ -4,11 +4,11 @@
       class="init-spinner"
       style="position: relative; height: 100%; width: 100%"
     >
-      <loader
+      <vi-loader
         size="8"
         :logo="appStore.state['admin.loader.logo']"
         :color="appStore.state['admin.loader.color']"
-      ></loader>
+      ></vi-loader>
 
 
       <sl-dialog :open="appStore.state['failed']" :label="i18n.t('connection.header')" @sl-request-close.prevent="()=>{}">
@@ -25,7 +25,7 @@
 <script setup>
 import { reactive, computed, onBeforeMount, defineComponent, ref } from "vue"
 import { useAppStore } from "../stores/app"
-import Loader from "@viur/vue-utils/generic/Loader.vue"
+import {ViLoader} from "@viur/vue-utils"
 import { useInitConnection } from "../init"
 import { useI18n } from "vue-i18n"
 

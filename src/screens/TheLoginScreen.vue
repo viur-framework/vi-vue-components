@@ -26,7 +26,7 @@
         class="init-spinner"
         style="position: relative; height: 40px"
       >
-        <loader></loader>
+        <vi-loader></vi-loader>
       </div>
 
       <form
@@ -119,13 +119,10 @@
 
 <script setup>
 
-import { useUserStore } from "@viur/vue-utils/login/stores/user"
+import { useUserStore, ViLoader,getBoneWidget } from "@viur/vue-utils"
 import { reactive, computed, onBeforeMount, defineComponent } from "vue"
 import { useAppStore } from "../stores/app"
-import Loader from "@viur/vue-utils/generic/Loader.vue"
 import Utils from "../utils"
-
-import { getBoneWidget } from "@viur/vue-utils/bones/edit/index"
 
     const userStore = useUserStore()
     const appStore = useAppStore()

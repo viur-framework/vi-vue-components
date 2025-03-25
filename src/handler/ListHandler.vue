@@ -17,10 +17,10 @@
       class="table-wrapper"
       @scroll="stickyHeader"
     >
-      <loader
+      <vi-loader
         v-if="currentlist.state.state === 0"
         size="3"
-      ></loader>
+      ></vi-loader>
       <div style="float: right; margin-right: 10px">
         <div style="display:flex; flex-direction: row; gap:10px; align-items: center">
           <handler-context></handler-context>
@@ -127,13 +127,12 @@ import {
   inject, toRaw
 } from "vue"
 import HandlerBar from "../bars/HandlerBar.vue"
-import {ListRequest, boneLogic, Request} from "@viur/vue-utils"
+import {ListRequest, boneLogic, Request, ViLoader, useCachedRequestsStore} from "@viur/vue-utils"
 import { useDBStore } from "../stores/db"
 import { useAppStore } from "../stores/app"
 import { useMessageStore } from "../stores/message"
 import { useModulesStore } from "../stores/modules"
 import { useRoute, useRouter } from "vue-router"
-import Loader from "@viur/vue-utils/generic/Loader.vue"
 import FloatingBar from "../bars/FloatingBar.vue"
 import { useContextStore } from "../stores/context"
 import { useLocalStore } from "../stores/local"
@@ -142,7 +141,6 @@ import BoneView from "../bones/boneView.vue"
 import SortindexView from "../bones/sortindexView.vue";
 import HandlerContext from "../main/context/HandlerContext.vue"
 import { VueDraggable } from 'vue-draggable-plus'
-import { useCachedRequestsStore} from '@viur/vue-utils/utils/request'
 import Utils from '../utils'
 
   const props = defineProps({

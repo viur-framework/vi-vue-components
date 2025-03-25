@@ -28,7 +28,7 @@
 import TheMenubarItem from "./TheMenubarItem.vue"
 import TheMenubarGroup from "./TheMenubarGroup.vue"
 import { defineComponent, computed } from "vue"
-import {useUserStore} from "@viur/vue-utils/login/stores/user"
+import {useUserStore} from "@viur/vue-utils"
 import { useDBStore } from "../../stores/db"
 import Utils from "../../utils"
 

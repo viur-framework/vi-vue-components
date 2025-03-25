@@ -13,7 +13,7 @@
       v-if="dbStore.state['vi.moduleTree'].length === 0"
       class="loader"
     >
-      <loader></loader>
+      <vi-loader></vi-loader>
     </div>
   </nav>
 </template>
@@ -24,9 +24,7 @@ import { useDBStore } from "../stores/db"
 import { computed, defineComponent, reactive, provide } from "vue"
 import TheMenubarGroup from "./menubar/TheMenubarGroup.vue"
 import TheMenubarItem from "./menubar/TheMenubarItem.vue"
-import { useUserStore } from "@viur/vue-utils/login/stores/user"
-import Loader from "@viur/vue-utils/generic/Loader.vue"
-
+import { useUserStore, ViLoader } from "@viur/vue-utils"
     const dbStore = useDBStore()
     const userStore = useUserStore()
     const state = reactive({

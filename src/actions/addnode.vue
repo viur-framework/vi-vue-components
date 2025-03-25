@@ -59,7 +59,7 @@
 import { reactive, defineComponent, inject, computed } from "vue"
 import { useDBStore } from "../stores/db"
 import { useContextStore } from "../stores/context"
-import { useUserStore } from "@viur/vue-utils/login/stores/user"
+import { useUserStore } from "@viur/vue-utils"
 import { useRoute, useRouter } from "vue-router"
 
     const handlerState = inject("handlerState")

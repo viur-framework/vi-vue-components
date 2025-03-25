@@ -5,9 +5,8 @@ import { defineStore } from "pinia"
 import { useRoute, useRouter } from "vue-router"
 import { useViewStore } from "./views"
 import { useLocalStore } from "./local"
-import { useUserStore } from "@viur/vue-utils/login/stores/user"
+import { useUserStore,destroyStore } from "@viur/vue-utils"
 import { useContextStore } from "./context"
-import { destroyStore } from "@viur/vue-utils/utils/handlers"
 import Utils from "../utils"
 
 

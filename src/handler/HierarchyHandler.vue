@@ -14,10 +14,10 @@
       class="table-wrapper"
       @scroll="stickyHeader"
     >
-      <loader
+      <vi-loader
         v-if="!state.ready"
         size="3"
-      ></loader>
+      ></vi-loader>
       <table>
         <thead>
           <tr>
@@ -65,15 +65,13 @@ import {
   onDeactivated
 } from "vue"
 import HandlerBar from "../bars/HandlerBar.vue"
-import { Request } from "@viur/vue-utils"
+import { Request, ViLoader,useUserStore } from "@viur/vue-utils"
 import { useDBStore } from "../stores/db"
 import { useModulesStore } from "../stores/modules"
 import { useRoute } from "vue-router"
-import { useUserStore } from "@viur/vue-utils/login/stores/user"
 import TableNodeItem from "../tree/TableNodeItem.vue"
 import FloatingBar from "../bars/FloatingBar.vue"
 import useTree from "../tree/tree.js"
-import Loader from "@viur/vue-utils/generic/Loader.vue"
 import HandlerContext from "../main/context/HandlerContext.vue";
 import { useContextStore } from "../stores/context"
 

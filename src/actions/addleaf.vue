@@ -24,7 +24,7 @@
 <script setup>
 import { reactive, defineComponent, inject, computed } from "vue"
 import { useDBStore } from "../stores/db"
-import { useUserStore } from "@viur/vue-utils/login/stores/user"
+import { useUserStore } from "@viur/vue-utils"
 import { useRoute } from "vue-router"
 
 

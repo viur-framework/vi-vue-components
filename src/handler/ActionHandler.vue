@@ -97,26 +97,21 @@
 
 <script setup>
 import { reactive, defineComponent, onBeforeMount, computed, ref, provide, toRaw, unref, watch, onActivated } from "vue"
-import { Request } from "@viur/vue-utils"
+import { Request,useUserStore,bone,getBoneWidget, ViForm } from "@viur/vue-utils"
 import { useDBStore } from "../stores/db"
 import { useLocalStore} from "../stores/local"
 import { useContextStore } from "../stores/context"
 import { useRoute } from "vue-router"
 import { useMessageStore } from "../stores/message"
-import { useUserStore } from "@viur/vue-utils/login/stores/user"
 import ActionEntryBar from "../bars/ActionEntryBar.vue"
 import { useModulesStore } from "../stores/modules"
 import handlers from "../handler/handlers"
-import bone from "@viur/vue-utils/bones/edit/bone.vue"
-import { getBoneWidget } from "@viur/vue-utils/bones/edit/index"
-import Loader from "@viur/vue-utils/generic/Loader.vue"
 import { useAppStore } from "../stores/app"
 import VueJsonPretty from "vue-json-pretty"
 import "vue-json-pretty/lib/styles.css"
 import Logics from "logics-js"
 import Utils from "../utils"
 import HandlerContext from "../main/context/HandlerContext.vue";
-import ViForm from "@viur/vue-utils/forms/ViForm.vue"
 
 function currentHandler(name){
   return handlers?.[name]?handlers[name]:name

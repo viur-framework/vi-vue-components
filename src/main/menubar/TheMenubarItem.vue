@@ -218,8 +218,7 @@ import { computed, reactive, onMounted, onUpdated, defineComponent, unref, injec
 import Utils from "../../utils"
 import { useDBStore } from "../../stores/db"
 import { useRoute, useRouter } from "vue-router"
-import { useUserStore } from "@viur/vue-utils/login/stores/user"
-import { Request } from "@viur/vue-utils"
+import { Request, useUserStore } from "@viur/vue-utils"
 
   const props = defineProps({
     to: {

@@ -55,10 +55,10 @@
         class="table-wrapper"
         @scroll="stickyHeader"
       >
-        <loader
+        <vi-loader
           v-if="handlerLogic.state.state === 0"
           size="3"
-        ></loader>
+        ></vi-loader>
         <table ref="datatable">
           <thead>
             <tr>
@@ -222,12 +222,11 @@ import {
   toRaw
 } from "vue"
 import HandlerBar from "../bars/HandlerBar.vue"
-import { ListRequest, boneLogic, Request } from "@viur/vue-utils"
+import { ListRequest, boneLogic, Request, ViLoader } from "@viur/vue-utils"
 import { useDBStore } from "../stores/db"
 import { useMessageStore } from "../stores/message"
 import { useModulesStore } from "../stores/modules"
 import { useRoute, useRouter } from "vue-router"
-import Loader from "@viur/vue-utils/generic/Loader.vue"
 import FloatingBar from "../bars/FloatingBar.vue"
 import { useContextStore } from "../stores/context"
 import { useLocalStore } from "../stores/local"

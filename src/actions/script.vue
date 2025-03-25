@@ -11,10 +11,9 @@
 
 <script setup>
 import { reactive, defineComponent, inject, computed } from "vue"
-import { Request } from "@viur/vue-utils"
+import { Request, useUserStore } from "@viur/vue-utils"
 import { useMessageStore } from "../stores/message"
 import { useRoute } from "vue-router"
-import { useUserStore } from "@viur/vue-utils/login/stores/user"
 import { useModulesStore } from "../stores/modules"
 import { useAppStore } from "../stores/app"
 import { useDBStore } from "../stores/db"

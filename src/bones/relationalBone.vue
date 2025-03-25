@@ -82,8 +82,7 @@
 
 <script setup>
 import { reactive, defineComponent, onMounted, inject, computed, unref, watch } from "vue"
-import { Request } from "@viur/vue-utils"
-import Wrapper_nested from "@viur/vue-utils/bones/edit/wrapper_nested.vue"
+import { Request, Wrapper_nested } from "@viur/vue-utils"
 import { useRoute, useRouter } from "vue-router"
 import { useDBStore } from "../stores/db"
 import handlers from "../handler/handlers"

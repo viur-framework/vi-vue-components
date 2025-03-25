@@ -27,8 +27,7 @@
 import { reactive, defineComponent, inject } from "vue"
 import { useDBStore } from "../stores/db"
 
-import { useCachedRequestsStore} from '@viur/vue-utils/utils/request'
-import {Request} from '@viur/vue-utils'
+import { useCachedRequestsStore, Request} from '@viur/vue-utils'
 
 const cachedRequestsStore = useCachedRequestsStore()
 

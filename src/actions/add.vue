@@ -24,7 +24,7 @@
 import { reactive, defineComponent, inject, computed, h } from "vue"
 import { useRoute } from "vue-router"
 import { useDBStore } from "../stores/db"
-import { useUserStore } from "@viur/vue-utils/login/stores/user"
+import { useUserStore } from "@viur/vue-utils"
 
 
   const props = defineProps({

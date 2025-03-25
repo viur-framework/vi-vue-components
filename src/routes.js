@@ -1,6 +1,6 @@
 import view_missing from "./views/view_missing.vue"
 import { createRouter, createWebHashHistory } from "vue-router"
-import { useUserStore } from "@viur/vue-utils/login/stores/user"
+import { useUserStore } from "@viur/vue-utils"
 import { useContextStore } from "./stores/context"
 import { useExtensionsStore } from "./stores/extensions";
 import home from "./views/home.vue"

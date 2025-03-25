@@ -1,14 +1,10 @@
 import { onBeforeMount } from "vue"
-import { Request } from "@viur/vue-utils"
-import { useUserStore } from "@viur/vue-utils/login/stores/user"
+import { Request,useUserStore,addBoneWidget, addBoneActionbar} from "@viur/vue-utils"
 import { useAppStore } from "./stores/app"
 import { useColorStore } from "./stores/color"
 import { useModulesStore } from "./stores/modules"
 import { useRoute } from "vue-router"
 import Utils from "./utils"
-// custom Bones
-
-import { addBoneWidget, addBoneActionbar } from "@viur/vue-utils/bones/edit/index"
 
 import selectaccessBone from "./bones/selectaccessBone.vue"
 import relationalBone from "./bones/relationalBone.vue"

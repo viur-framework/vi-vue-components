@@ -89,10 +89,9 @@ import { reactive, defineComponent, computed, inject, unref } from "vue"
 import { useDBStore } from "../stores/db"
 import { useAppStore } from "../stores/app"
 import { useRoute, useRouter } from "vue-router"
-import { useUserStore } from "@viur/vue-utils/login/stores/user"
+import { useUserStore, Request } from "@viur/vue-utils"
 import { useContextStore } from "../stores/context"
 import Logics from "logics-js"
-import { Request } from "@viur/vue-utils"
 import Utils from "../utils"
 
 

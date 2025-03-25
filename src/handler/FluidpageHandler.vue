@@ -7,11 +7,11 @@
   >
     {{ modulesStore.state.modules[module]["help_text"] }}
   </sl-details>
-  <loader
+  <vi-loader
     v-if="currentlist.state.state === 0"
     size="3"
   >
-  </loader>
+  </vi-loader>
   <div class="fluid-wrap">
 
     <template
@@ -85,14 +85,13 @@ import {
   unref
 } from "vue"
 import HandlerBar from "../bars/HandlerBar.vue"
-import { ListRequest, Request } from "@viur/vue-utils"
+import { ListRequest, Request, ViLoader } from "@viur/vue-utils"
 import { useDBStore } from "../stores/db"
 import { useMessageStore } from "../stores/message"
 import router from "../routes"
 import { useModulesStore } from "../stores/modules"
 import { useLocalStore } from "../stores/local"
 import { useRoute } from "vue-router"
-import Loader from "@viur/vue-utils/generic/Loader.vue"
 import FluidpageElement from "../fluidpage/element.vue"
 
   const props = defineProps({

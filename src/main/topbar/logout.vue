@@ -16,7 +16,7 @@
 
 <script setup>
 import { reactive, defineComponent } from "vue"
-import { useUserStore } from "@viur/vue-utils/login/stores/user"
+import { useUserStore } from "@viur/vue-utils"
 
     const state = reactive({})
     const userStore = useUserStore()

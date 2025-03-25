@@ -33,7 +33,7 @@
 <script setup>
 import TheTopbar from "../main/TheMainScreenTopbar.vue"
 import { useRoute, useRouter } from "vue-router"
-import { Request } from "@viur/vue-utils"
+import { Request,useUserStore } from "@viur/vue-utils"
 import { onBeforeMount, unref, h, reactive, computed } from "vue"
 import { useDBStore } from "../stores/db"
 import { useAppStore } from "../stores/app"
@@ -43,7 +43,6 @@ import { getLayout } from "../layouts/layouts";
 import ViAction from "../main/topbar/vi.vue"
 import LogAction from "../main/topbar/log.vue"
 import MessageDrawer from "../main/messages/MessageDrawer.vue"
-import { useUserStore } from "@viur/vue-utils/login/stores/user"
 
 const route = useRoute()
 const router = useRouter()

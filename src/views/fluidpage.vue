@@ -11,7 +11,7 @@
 import { reactive, defineComponent, computed } from "vue"
 import { onBeforeRouteUpdate, useRoute } from "vue-router"
 import FluidpageHandler from "../handler/FluidpageHandler.vue"
-import { useUserStore } from "@viur/vue-utils/login/stores/user"
+import { useUserStore } from "@viur/vue-utils"
 
   const props = defineProps({
     module: {

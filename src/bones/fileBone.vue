@@ -152,11 +152,9 @@
 <script setup>
 import { reactive, defineComponent, onMounted, inject, ref, computed, unref, watch } from "vue"
 import { useRouter } from "vue-router"
-import { Request } from "@viur/vue-utils"
+import { Request, Wrapper_nested,ViImage } from "@viur/vue-utils"
 import relationalSelector from "./components/relationalSelector.vue"
-import Wrapper_nested from "@viur/vue-utils/bones/edit/wrapper_nested.vue"
 import { useDBStore } from "../stores/db"
-import ViImage from "@viur/vue-utils/generic/Image.vue"
 defineOptions({
     inheritAttrs: false
   })

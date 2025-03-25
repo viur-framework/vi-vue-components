@@ -178,14 +178,12 @@
 <script setup>
 import { reactive, defineComponent, computed, onMounted, ref } from "vue"
 import { useRouter } from "vue-router"
-import { useUserStore } from "@viur/vue-utils/login/stores/user"
 import { useMessageStore } from "../../stores/message"
 import { useAppStore } from "../../stores/app"
 import { useDBStore } from "../../stores/db"
 import FormHandler from "../../handler/FormHandler.vue"
-import { Request } from "@viur/vue-utils"
+import { Request,ViForm,useUserStore } from "@viur/vue-utils"
 import { useEventListener } from "@vueuse/core"
-import ViForm from "@viur/vue-utils/forms/ViForm.vue"
 import { useLocalStore} from "../../stores/local"
 
     const userStore = useUserStore()

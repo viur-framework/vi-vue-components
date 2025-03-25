@@ -33,7 +33,7 @@
 import { reactive, defineComponent, inject, computed } from "vue"
 import { useRoute } from "vue-router"
 import { useDBStore } from "../stores/db"
-import { useUserStore } from "@viur/vue-utils/login/stores/user"
+import { useUserStore } from "@viur/vue-utils"
 //import VueJsonPretty from "vue-json-pretty"
 import "vue-json-pretty/lib/styles.css"
 
