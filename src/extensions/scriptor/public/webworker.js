@@ -74,8 +74,11 @@ async function loadPyodideAndPackages(id, pyoPackages, packages, initCode, trans
   `);
 
   installLog(id, 4, `Initializing environment`);
-  await self.pyodide.unpackArchive(importable, "zip"); // by default, unpacks to the current dir
-  self.pyodide.pyimport("importable");
+  if (importable !== undefined) {
+    await self.pyodide.unpackArchive(importable, "zip");
+    self.pyodide.pyimport("importable");
+  }
+
   self.parray = undefined;
   const src = `from pyodide.code import eval_code_async
 from pyodide.ffi import to_js

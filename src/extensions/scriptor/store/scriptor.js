@@ -96,7 +96,11 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
 
     initCode = `with open("config.py", "w") as f:\n\tf.write("BASE_URL='${state.apiUrl}'")` + initCode
     const response = await Request.get("/json/script/get_importable");
-    const importable = await response.arrayBuffer();
+    let importable = undefined
+    if (response.status === 200) {
+      importable = await response.arrayBuffer();
+    }
+
     if (state.workerObject) {
       return new Promise((resolve) => {
         state.runningActions.set("_pyinstaller", resolve)
