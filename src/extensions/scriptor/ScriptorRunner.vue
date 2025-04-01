@@ -107,12 +107,7 @@ const messagewrapper = ref(null)
 
   function startScriptor(){
     state.opened = true
-    Request.view("script",props.current?.['dest']?.['key'],{group:"leaf"}).then(async(resp)=>{
-      let data = await resp.json()
-      state.scriptor.scriptCode = data["values"]["script"].replace(/\/\/n/g, "\n")
-      state.scriptReady = true
-        scriptorAction.value.executeScript()
-    })
+    scriptorAction.value.executeScript()
 
   }
 
