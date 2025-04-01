@@ -54,7 +54,7 @@ let manager = {
 	}
 }
 
-async function loadPyodideAndPackages(id, pyoPackages, packages, initCode, transformCode) {
+async function loadPyodideAndPackages(id, pyoPackages, packages, initCode, transformCode, importable) {
   installLog(id, 1, "Loading python runtime")
   self.pyodide = await loadPyodide({
     stdout: stdout,
@@ -74,6 +74,8 @@ async function loadPyodideAndPackages(id, pyoPackages, packages, initCode, trans
   `);
 
   installLog(id, 4, `Initializing environment`);
+  await self.pyodide.unpackArchive(importable, "zip"); // by default, unpacks to the current dir
+  self.pyodide.pyimport("importable");
   self.parray = undefined;
   const src = `from pyodide.code import eval_code_async
 from pyodide.ffi import to_js
@@ -145,7 +147,13 @@ self.onmessageerror = e => {
 self.onmessage = async (event) => {
   const { id, python, ...context } = event.data;
 	if (id === "_pyinstaller") {
-		await loadPyodideAndPackages(id, context.pyoPackages, context.packages, context.initCode, context.transformCode);
+    await loadPyodideAndPackages(
+      id,
+      context.pyoPackages,
+      context.packages,
+      context.initCode,
+      context.transformCode,
+      context.importable);
 		run_end(id)
 	}
 	else if (id === "_write")
