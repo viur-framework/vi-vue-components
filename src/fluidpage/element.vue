@@ -238,7 +238,7 @@ import { useRoute } from "vue-router"
       }else{
         updateWidth(props.skel["key"], parseInt(props.skel["width"]) + 1 + "")
       }
-      
+
     }
 
     function shrinkContent() {
@@ -267,7 +267,6 @@ import { useRoute } from "vue-router"
   cursor: pointer;
   background-color: #fff;
   z-index: 1;
-  min-height: 195px;
 
   &.is-selected {
     cursor: initial;
@@ -286,7 +285,16 @@ import { useRoute } from "vue-router"
 
   &.fluid-width-1,
   &.fluid-width-2 {
+
+    .header{
+      flex-direction: column;
+    }
+
     .button-group{
+      display: none;
+    }
+
+    .header-type{
       display: none;
     }
 
@@ -398,7 +406,7 @@ sl-button {
   flex-wrap: nowrap;
   width: 100%;
   align-items: flex-start;
-  height: calc(100% - 56px);
+  min-height: 175px;
 }
 
 .column {
@@ -548,7 +556,7 @@ sl-button {
 }
 
 .langchooser{
-  width:110px;
+  width:70px;
 }
 
 </style>
