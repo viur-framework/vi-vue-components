@@ -253,7 +253,9 @@ import Utils from '../utils'
         .fetch()
         .catch((error) => {
           setSelectedBones()
-          messageStore.addMessage("error", `${error.message}`, error.response?.url)
+          if (error.statusCode !== 20){
+            messageStore.addMessage("error", `${error.message}`, error.response?.url)
+          }
         })
         .then((resp) => {
           setSelectedBones()
