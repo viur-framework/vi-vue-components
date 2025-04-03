@@ -1,7 +1,8 @@
 // @ts-nocheck
-import { reactive, ref, computed, unref } from "vue"
-import { defineStore } from "pinia"
-import { computedAsync, useWebWorker, useBrowserLocation, unrefElement } from "@vueuse/core"
+import {computed, reactive} from "vue"
+import {defineStore} from "pinia"
+import {useBrowserLocation, useWebWorker, useUrlSearchParams} from "@vueuse/core"
+import {useContextStore} from "../../../stores/context";
 
 export const useScriptorStore = defineStore("scriptorStore", () => {
   const instanceTemplate = {
@@ -31,7 +32,8 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
       return useBrowserLocation().value.origin
     }),
     currentInstance: null,
-    instances: reactive({})
+    instances: reactive({}),
+    scriptorVersion:"latest"
   })
 
   const progress = reactive({
@@ -51,7 +53,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
   function createNewInstance(id = null) {
     const instanceId = id || new Date().getTime().toString()
     if (!Object.keys(state.instances).includes(instanceId)) {
-      state.instances[instanceId] = reactive({ ...instanceTemplate })
+      state.instances[instanceId] = reactive({...instanceTemplate})
     }
 
     return instanceId
@@ -71,7 +73,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
 
     const nativWorker = state.workerObject.worker
     nativWorker.onmessage = async (event) => {
-      const { id, ...data } = event.data
+      const {id, ...data} = event.data
       handleWebWorkerMessages(id, data)
     }
     nativWorker.onmessageerror = async (error) => {
@@ -80,8 +82,16 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
   }
 
   async function load(pyoPackages = [], packages = [], initCode = "") {
+    if (import.meta.env.DEV && import.meta.env.VITE_SCRIPTOR_URL) {
+      packages.unshift(import.meta.env.VITE_SCRIPTOR_URL)
+    } else {
+      if (state.scriptorVersion==="latest"){
+        packages.unshift("viur-scriptor-api")
+      }else{
+        packages.unshift(`viur-scriptor-api${state.scriptorVersion}`)
+      }
+    }
 
-    packages.unshift("viur-scriptor-api")
 
     initCode = `with open("config.py", "w") as f:\n\tf.write("BASE_URL='${state.apiUrl}'")` + initCode
 
@@ -101,6 +111,28 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     }
   }
 
+  async function setParams() {
+    const contextStore = useContextStore();
+    //Use window object, because useRoute not work outside module.
+    const tabId = (window.location.hash || '').replace(/^#/, '').split("_")[1].replace("=","")
+    let params = contextStore.getLocalContext(tabId,true)["_selectedEntries"];
+    if (!params)
+    {
+      return
+    }
+    if (state.workerObject) {
+      return new Promise((resolve) => {
+        state.runningActions.set("setParams", resolve)
+
+        state.workerObject.post({
+          id: "setParams",
+          python: "",
+          params: JSON.parse(JSON.stringify(params))
+        })
+      })
+    }
+  }
+
   async function execute(code, id = null, context = {}) {
     let currentId = createNewInstance(id) // create needed Instance Object
     state.currentInstance = currentId
@@ -112,6 +144,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
       createWebWorker()
       await load()
     }
+    await setParams();
     code = `${code}\nimport viur.scriptor\nimport traceback\nawait viur.scriptor._init_modules()\nfrom viur.scriptor import *\n\ntry:\n    await main()\nexcept:\n    logger.error(traceback.format_exc())\n`
 
     return new Promise((resolve) => {
@@ -128,7 +161,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
   function handleCallback(id, data) {
     let callback = state.runningActions.get(id)
     if (callback) {
-      callback({ results: data.res, error: null })
+      callback({results: data.res, error: null})
       state.runningActions.delete(id)
     }
   }
@@ -136,7 +169,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
   function addMessageEntry(type, id, data) {
     let currentState = state.instances[id]
     data["unique_id"] = new Date().getTime().toString()
-    currentState.messages.push({ type: type, data: data })
+    currentState.messages.push({type: type, data: data})
   }
 
   function addInternalMessageEntry(type, id, data) {
@@ -200,14 +233,16 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
           openhandle = await window.showOpenFilePicker({
             multiple: false
           })
-        } catch (e) {}
+        } catch (e) {
+        }
         await sendResult("showOpenFilePickerResult", openhandle)
         break
       case "showSaveFilePicker":
         let savehandle = -1
         try {
           savehandle = await window.showSaveFilePicker()
-        } catch (e) {}
+        } catch (e) {
+        }
         await sendResult("showSaveFilePickerResult", savehandle)
         break
       case "showDirectoryPicker":
@@ -216,7 +251,8 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
           dirhandle = await window.showDirectoryPicker({
             mode: "readwrite"
           })
-        } catch (e) {}
+        } catch (e) {
+        }
         await sendResult("showDirectoryPickerResult", dirhandle)
         break
       case "progressbar":
@@ -226,8 +262,11 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
         data["components"] = JSON.parse(data["components"])
         addMessageEntry(data.type, id, data)
         break
+      case "clear":
+        currentState.messages.length = 0;
+        break
       default:
-        if (["select", "input", "diffcmp", "table", "stdout", "stderr"].includes(data.type)) {
+        if (["select", "input", "diffcmp", "table", "stdout", "stderr","raw_html"].includes(data.type)) {
           addMessageEntry(data.type, id, data)
           break
         } else {
@@ -257,11 +296,32 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     })
   }
 
+  function fetchScriptorVersions(){
+    async function get(){
+      try {
+          const response = await fetch(`https://pypi.org/pypi/viur-scriptor-api/json`);
+          if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
+          const versions = Object.keys(data.releases);
+          versions.sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
+          return versions.filter(x=>x.startsWith("1."));
+      } catch (error) {
+          console.error("Fehler beim Abrufen der Daten:", error);
+          return [];
+      }
+    }
+    return get()
+  }
+
   return {
     state,
     progress,
     execute,
     sendResult,
-    createNewInstance
+    createNewInstance,
+    fetchScriptorVersions
   }
 })

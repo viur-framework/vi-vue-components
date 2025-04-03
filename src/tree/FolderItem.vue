@@ -70,7 +70,7 @@ import { reactive, defineComponent, onMounted, inject, computed, watch } from "v
 import useTree from "./tree"
 import { Request } from "@viur/vue-utils"
 
-  const props = defineProps(props: {
+  const props = defineProps({
     module: {
       type: String,
       required: true

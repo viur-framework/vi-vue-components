@@ -17,6 +17,7 @@
         :rowselect="rowselect"
         :selector="true"
         :filter="filter"
+        :inheritContext="false"
         @currentSelection="relationUpdateSelection($event)"
         @closeSelector="relationApplySelection()"
       >

@@ -1,6 +1,6 @@
 <template>
   <sl-split-panel vertical style="height: 100%;--min:50px; --max:100% " position="50">
-  <div slot="start">
+  <div class="wrapper-outer-wrap" slot="start">
     <status-bar :id="state.id" :filename="state.script?.name">
       <template #startRight>
         <sl-button size="small" variant="info" outline style="margin-right:10px;" @click="clearlog">{{$t('actions.clear_log')}}</sl-button>
@@ -106,12 +106,24 @@ const messagewrapper = ref(null)
 </script>
 <style scoped>
 .wrapper-editor{
+  display: flex;
   height: calc(100% - 50px);
   width:100%;
+
+  sl-spinner{
+    align-self: center;
+    margin: 0 auto;
+    font-size: 2em;
+    --track-width: .1em;
+  }
 }
 
 .wrapper-widgets{
   overflow-y: auto;
+}
+
+.wrapper-outer-wrap{
+  min-width: 1px;
 }
 
 </style>

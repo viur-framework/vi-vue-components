@@ -22,10 +22,10 @@
       ></sl-avatar>
 
       <div
-        class="name"
+        class="name-wrap"
         @click="openUser"
       >
-        {{ state.name }}
+        <span class="name">{{ state.name }}</span>
         <span class="subline">{{ userStore.state.user.name }}</span>
       </div>
       <sl-button-group>
@@ -69,9 +69,11 @@
           <div class="group-headline">
             {{ $t("sidebar.section_tools") }}
           </div>
-          <sl-switch :checked="local.state.cache" @sl-change="changeCaching">Admin-Cache {{ local.state.cache?'aktiviert':'deaktiviert' }}</sl-switch>
+          <sl-switch size="small" :checked="local.state.cache" @sl-change="changeCaching">
+            Admin-Cache {{ local.state.cache?'aktiviert':'deaktiviert' }}
+          </sl-switch>
           <br>
-        <div class="group-headline">
+        <div class="group-headline" v-if="dbStore.state['tasks']?.length>0">
           {{ $t("sidebar.section_system_name") }}
         </div>
         <template
@@ -97,7 +99,7 @@
               open
               @sl-after-hide="state.openedTask = null"
             >
-              <div style="height: 400px">
+              <div>
                 <vi-form :ref="forms[`form_${item['key']}`]"
                   :useCategories="false"
                   module="_tasks"
@@ -109,21 +111,22 @@
                 <sl-alert variant="success" :open="state.taskstarted" duration="5000">{{ item["name"] }} started... </sl-alert>
               </div>
 
-              <sl-button
-                slot="footer"
-                :loading="forms[`form_${item['key']}`]?.value?.[0]?.state?.loading"
-                variant="success"
-                @click="executeTask(item['key'])"
-              >
-                {{ $t("confirm") }}
-              </sl-button>
-              <sl-button
-                slot="footer"
-                variant="danger"
-                @click="state.openedTask = null"
-              >
-                {{ $t("abort") }}
-              </sl-button>
+              <div class="dialog-btn-footer" slot="footer">
+                <sl-button
+                  outline
+                  variant="danger"
+                  @click="state.openedTask = null"
+                >
+                  {{ $t("abort") }}
+                </sl-button>
+                <sl-button
+                  :loading="forms[`form_${item['key']}`]?.value?.[0]?.state?.loading"
+                  variant="success"
+                  @click="executeTask(item['key'])"
+                >
+                  {{ $t("confirm") }}
+                </sl-button>
+              </div>
             </sl-dialog>
           </teleport>
         </template>
@@ -377,13 +380,24 @@ sl-drawer {
   align-items: flex-start;
   color: var(--vi-foreground-color);
 
+  sl-switch{
+    padding: var(--sl-spacing-2x-small) var(--sl-spacing-x-small);
+
+    &::part(base) {
+      gap: var(--sl-spacing-2x-small);
+    }
+  }
+
   & sl-button {
+    width: 100%;
+
     &::part(base) {
       justify-content: flex-start;
       background-color: transparent;
       border: none;
       color: var(--vi-foreground-color);
       transition: all ease 0.3s;
+      border-radius: 0;
     }
 
     &::part(label) {
@@ -402,16 +416,23 @@ sl-drawer {
   }
 }
 
+.dialog-btn-footer{
+  display: flex;
+  justify-content: space-between;
+  gap: var(--sl-spacing-large);
+}
+
 .group-headline {
   padding: 5px;
   text-align: left;
   font-weight: bold;
 }
 
-.name {
+.name-wrap {
   color: var(--vi-foreground-color);
   font-weight: bold;
-  margin-left: 15px;
+  margin-left: var(--sl-spacing-small);
+  margin-bottom: var(--sl-spacing-2x-small);
   font-size: 1.1em;
   margin-right: auto;
   white-space: nowrap;
@@ -435,11 +456,19 @@ sl-drawer {
   }
 }
 
+.name{
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
 .subline {
   font-size: 0.7rem;
+  line-height: 1;
   text-align: left;
   width: 100%;
-  overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 </style>

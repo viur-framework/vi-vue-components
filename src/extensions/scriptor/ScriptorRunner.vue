@@ -2,7 +2,7 @@
   <sl-button
         v-if="canAccess"
         size="small"
-        :disabled="!active && !state.scriptReady"
+        :disabled="(!active && !state.scriptReady) || disabled"
         :title="current['rel']['name']"
         @click="startScriptor"
       >
@@ -12,12 +12,11 @@
           :name="iconInfo[1]"
           :library="iconInfo[0]"
         ></sl-icon>
-        <template v-else>
+        <template v-if="!iconOnly">
           {{ current["rel"]["name"] }}
-
         </template>
 
-        <div v-show="state.scriptStatus">
+        <div v-show="state.scriptStatus && state.opened">
           <status :id="state.id" ref="scriptorAction"></status>
         </div>
       </sl-button>
@@ -71,6 +70,12 @@ const messagewrapper = ref(null)
       type:Array
     },
     active:{
+      type:Boolean
+    },
+    iconOnly:{
+      type:Boolean
+    },
+    disabled:{
       type:Boolean
     }
   })

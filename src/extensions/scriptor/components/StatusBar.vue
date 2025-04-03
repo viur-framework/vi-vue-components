@@ -42,6 +42,14 @@
         <span v-if="scriptorStore.state.isReady">&nbsp;&nbsp;</span>
         <span v-else>&nbsp;&nbsp;</span>
       </sl-badge>
+      <sl-select class="versionselect" size="small" :value="scriptorStore.state.scriptorVersion" :disabled="state.customVersion" @sl-change="changeVersion">
+        <template v-for="v,i in state.versions">
+          <sl-option v-if="state.customVersion" :value="state.customVersion">custom</sl-option>
+          <sl-option value="latest" v-if="i===0">latest (v{{ v }})</sl-option>
+          <sl-option v-else :value="`==${v}`">v{{ v }}</sl-option>
+        </template>
+      </sl-select>
+
       <slot name="startRight"></slot>
       <sl-button
         size="small"
@@ -58,7 +66,7 @@
 </template>
 
 <script setup>
-import { reactive, computed } from "vue"
+import { reactive, computed, onMounted } from "vue"
 import { useScriptorStore } from "../store/scriptor"
 const scriptorStore = useScriptorStore()
 
@@ -85,7 +93,9 @@ const state = reactive({
   }),
   scriptor: computed(() => {
     return scriptorStore.state.instances[props.id]
-  })
+  }),
+  versions:[],
+  customVersion:import.meta.env.VITE_SCRIPTOR_URL
 })
 
 async function executeScript() {
@@ -98,6 +108,21 @@ function reset() {
   scriptorStore.state.isReady = false
   scriptorStore.state.runningActions = new Map()
 }
+function changeVersion(e){
+  scriptorStore.state.scriptorVersion = e.target.value
+  reset()
+}
+onMounted(()=>{
+  scriptorStore.fetchScriptorVersions().then(result=>{
+    state.versions = result
+    if (state.customVersion){
+      scriptorStore.state.scriptorVersion = state.customVersion
+    }else{
+      scriptorStore.state.scriptorVersion = "latest"
+    }
+  })
+})
+
 </script>
 
 <style scoped>
@@ -123,6 +148,11 @@ sl-badge {
   margin-right: 5px;
   margin-left: 5px;
 }
+.versionselect{
+  width: 150px;
+  margin-right: 5px;
+}
+
 .scriptorprogressbar {
   width: 100%;
 }

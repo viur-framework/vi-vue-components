@@ -68,7 +68,8 @@ function clearCache(){
   background-color: var(--sl-color-neutral-300);
   border-radius: var(--sl-border-radius-medium);
 }
-.reload-wrapper:hover .cache{
 
+.cache{
+  color: var(--vi-text-color)
 }
 </style>

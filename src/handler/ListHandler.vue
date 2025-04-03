@@ -124,7 +124,7 @@ import {
   onActivated,
   onDeactivated,
   unref,
-  inject
+  inject, toRaw
 } from "vue"
 import HandlerBar from "../bars/HandlerBar.vue"
 import {ListRequest, boneLogic, Request} from "@viur/vue-utils"
@@ -160,7 +160,8 @@ import Utils from '../utils'
     noTopbar: false,
     columns: {
       default:undefined
-    }
+    },
+    inheritContext:true
   })
   const emit = defineEmits(["currentSelection", "closeSelector"])
 
@@ -244,11 +245,16 @@ import Utils from '../utils'
         checkBoneExists()
         return 0
       }
-      
+
       state.selectedBones = []
       currentlist.state.cached = localStore.state.cache
       currentlist.reset()
-      currentlist.state.params = { ...currentlist.state.params, ...contextStore.getContext(), ...props.filter  }
+      let ctx = {}
+      if (props.inheritContext){
+        ctx=contextStore.getContext()
+      }
+
+      currentlist.state.params = { ...currentlist.state.params, ...ctx, ...props.filter  }
       return currentlist
         .fetch()
         .catch((error) => {
@@ -294,7 +300,12 @@ import Utils from '../utils'
         }
       }
 
-      currentlist.state.params = { ...currentlist.state.params, ...contextStore.getContext(state.tabId), ...props.filter }
+      let ctx = {}
+      if (props.inheritContext){
+        ctx=contextStore.getContext(state.tabId)
+      }
+
+      currentlist.state.params = { ...currentlist.state.params, ...ctx, ...props.filter }
       currentlist.state.params["limit"] = localStore.state.listamount
       currentlist
         .fetch()
@@ -354,6 +365,12 @@ import Utils from '../utils'
       state.selectedRows = [...new Set(state.selectedRows)] // remove duplicates and sort
 
       state.currentSelection = currentlist.state.skellist.filter((entry, idx) => state.selectedRows.includes(idx))
+      const currentSelection = [];
+      for(const selection of state.currentSelection)
+      {
+        currentSelection.push(toRaw(selection))
+      }
+      contextStore.setContext("_selectedEntries", currentSelection,state.tabId) //set private Context for scriptor
       if (state.currentSelection.length > 0) {
         dbStore.state["skeldrawer.entry"] = state.currentSelection[0]
         dbStore.state["skeldrawer.structure"] = currentlist.structure
@@ -437,7 +454,7 @@ import Utils from '../utils'
           currentlist.state.headers = {"x-viur-bonelist": state.selectedBones.join(",")}
           checkBoneExists()
         }
-        
+
         return 0
       }
       state.conf = dbStore.getConf(props.module, props.view)
@@ -620,7 +637,7 @@ import Utils from '../utils'
   cursor: pointer;
   width: 100%;
   height: 100%;
-  padding: 33%;
+  padding:25%;
   opacity: 0;
 
   &.sort-down {

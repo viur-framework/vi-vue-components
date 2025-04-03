@@ -75,6 +75,7 @@ import FloatingBar from "../bars/FloatingBar.vue"
 import useTree from "../tree/tree.js"
 import Loader from "@viur/vue-utils/generic/Loader.vue"
 import HandlerContext from "../main/context/HandlerContext.vue";
+import { useContextStore } from "../stores/context"
 
   const props = defineProps({
     module: {
@@ -85,7 +86,7 @@ import HandlerContext from "../main/context/HandlerContext.vue";
     selector: false
   })
   const emit = defineEmits(["currentSelection", "closeSelector"])
-
+  const contextStore = useContextStore()
     const dbStore = useDBStore()
     const userStore = useUserStore()
     const modulesStore = useModulesStore()
@@ -181,11 +182,18 @@ import HandlerContext from "../main/context/HandlerContext.vue";
     })
 
     function fetchRoots() {
+      let context = contextStore.getCurrentContext()
       return Request.get(`/vi/${props.module}/listRootNodes`).then(async (resp) => {
         let data = await resp.json()
         state.availableRootNodes = data
         if (!state.currentRootNode) {
-          state.currentRootNode = data[0]
+          if (Object.keys(context).includes('@rootNode') && data.map(x=>x['key'] === context['@rootNode']).length>0){
+            state.currentRootNode = data.filter(x=>x['key']===context['@rootNode'])[0]
+          }else{
+            state.currentRootNode = data[0]
+          }
+
+          
         }
       })
     }
