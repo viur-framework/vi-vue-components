@@ -71,6 +71,10 @@ onMounted(() => {
     opts.push(nopt)
   }
   state.options = opts
+  for(const option of state.options)
+  {
+      option.selected=state.selectedOptions.includes(option["key"])
+  }
 })
 
 const state = reactive({
