@@ -36,7 +36,7 @@
 
     <div
       slot="footer"
-      v-if="state.isMultiple"
+      v-if="state.isMultiple && !inMultiple"
     >
       <sl-button
         size="small"
@@ -80,12 +80,20 @@ const state = reactive({
   options: {},
   value: props.entry.data?.default_value || [],
   sendable: computed(() => {
-    return state.value.length !==0
+    return  state.value.length !==0
   })
 })
 
 function toggleSelection(option) {
   option.selected = !option.selected
+  const res = []
+  for (const opt of state.options) {
+    if (opt.selected) {
+      res.push(opt.key)
+    }
+  }
+  state.value = res
+
 }
 
 async function selectSingleOption(option) {
@@ -100,14 +108,14 @@ async function selectSingleOption(option) {
 }
 
 async function sendMultipleOptions() {
-  let res = []
-  for (const opt of state.options) {
-    if (opt.selected) {
-      res.push(opt.key)
-    }
+
+
+  if(props.inMultiple)
+  {
+    state.isDisabled = true
+    await scriptorStore.sendResult("selectResult", state.value)
   }
-  await scriptorStore.sendResult("selectResult", res)
-  state.isDisabled = true
+
 }
 
 defineExpose({state})
