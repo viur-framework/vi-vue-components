@@ -450,7 +450,7 @@ import Utils from '../utils'
     function setSelectedBones() {
       if (props.columns && props.columns.length > 0) {
         state.selectedBones = props.columns
-        if (appStore.state.preflights){
+        if (appStore.state.preflights && state.conf?.['bonelist']){
           currentlist.state.headers = {"x-viur-bonelist": state.selectedBones.join(",")}
           checkBoneExists()
         }
@@ -460,7 +460,7 @@ import Utils from '../utils'
       state.conf = dbStore.getConf(props.module, props.view)
       if (state.conf && state.conf?.["columns"] && state.conf?.["columns"].length > 0) {
         state.selectedBones = state.conf["columns"]
-        if (appStore.state.preflights){
+        if (appStore.state.preflights && state.conf?.['bonelist']){
           currentlist.state.headers = {"x-viur-bonelist": state.selectedBones.join(",")}
           checkBoneExists()
         }
