@@ -143,6 +143,7 @@ import SortindexView from "../bones/sortindexView.vue";
 import HandlerContext from "../main/context/HandlerContext.vue"
 import { VueDraggable } from 'vue-draggable-plus'
 import { useCachedRequestsStore} from '@viur/vue-utils/utils/request'
+import { useUserStore } from "@viur/vue-utils/login/stores/user"
 import Utils from '../utils'
 
   const props = defineProps({
@@ -173,6 +174,7 @@ import Utils from '../utils'
     const contextStore = useContextStore()
     const localStore = useLocalStore()
     const appStore = useAppStore()
+    const userStore = useUserStore()
 
     const cachedRequestsStore = useCachedRequestsStore()
 
@@ -198,7 +200,6 @@ import Utils from '../utils'
       editableTable: false,
       active: false,
       conf: {},
-
       selectedBones: [],
       selectedRows: [],
       sticky: false,
@@ -226,7 +227,18 @@ import Utils from '../utils'
         return false
       }),
       sortindexBonename:null,
-      entryUpdate:false
+      entryUpdate:false,
+      canEdit: computed(() => {
+        if(state.conf?.["disabledActions"]?.includes('edit')) return false
+        if (userStore.state.user.access.indexOf("root") !== -1) {
+          return true
+        }
+        if (state.group) {
+          return userStore.state.user.access.indexOf(`${state.module}-${state.group}-edit`) > -1
+        } else {
+          return userStore.state.user.access.indexOf(`${state.module}-edit`) > -1
+        }
+      })
     })
     provide("handlerState", state)
     const currentlist = ListRequest(state.storeName, {
@@ -380,6 +392,7 @@ import Utils from '../utils'
     }
 
     function openEditor(e) {
+      if (!state.canEdit) return 0
       if (props.selector) {
         emit("closeSelector", state.currentSelection)
         return 0
