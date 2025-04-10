@@ -115,18 +115,21 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     const contextStore = useContextStore();
     //Use window object, because useRoute not work outside module.
     const tabId = (window.location.hash || '').replace(/^#/, '').split("_")[1].replace("=","")
-    let params = contextStore.getLocalContext(tabId,true)["_selectedEntries"];
-    if (!params && !scriptParams)
+    let selectedEntries = contextStore.getLocalContext(tabId,true)["_selectedEntries"];
+    if (!selectedEntries && !scriptParams)
     {
       return
     }
     if (!scriptParams) {
       scriptParams = {}
     }
-    if (!params) {
-      params = {}
+    if (!selectedEntries) {
+      selectedEntries = {}
     }
-    params = Object.assign(params, scriptParams)
+    else {
+      selectedEntries = {"__selected_entries":selectedEntries}
+    }
+    const params = Object.assign(selectedEntries, scriptParams)
 
     if (state.workerObject) {
       return new Promise((resolve) => {
