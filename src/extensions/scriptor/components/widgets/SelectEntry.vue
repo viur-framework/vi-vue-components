@@ -1,5 +1,36 @@
 <template>
-  <sl-card>
+
+  <div v-if="inMultiple">
+    {{ entry.data["title"] || entry.data["text"] }} :
+    <div v-if="!state.isMultiple">
+      <sl-button
+        :variant="state.selectedOptions.includes(option.key) ? 'success' : 'default'"
+        :disabled="state.isDisabled"
+        v-for="option in state.options"
+        :key="option.key"
+        @click="selectSingleOption(option)"
+      >
+        {{ option.key }}
+      </sl-button>
+    </div>
+
+    <div
+      v-else
+      class="wrapper-multi-select"
+    >
+      <sl-checkbox
+        :disabled="state.isDisabled"
+        v-for="option in state.options"
+        :checked="option.selected"
+        :key="option"
+        @sl-change="toggleSelection(option)"
+      >
+        {{ option.key }}
+      </sl-checkbox>
+    </div>
+  </div>
+
+  <sl-card v-else>
     <div slot="header">
       {{ entry.data["title"] }}
     </div>
@@ -36,7 +67,7 @@
 
     <div
       slot="footer"
-      v-if="state.isMultiple && !inMultiple"
+      v-if="state.isMultiple"
     >
       <sl-button
         size="small"
