@@ -91,7 +91,7 @@ function evaluateTabs(handler){
   --divider-width: 1px;
 
   flex: 1;
-  height: 0;
+  height: 100%;
 
   &::part(panel) {
     display: flex;
@@ -109,24 +109,22 @@ function evaluateTabs(handler){
   flex: 1;
   height: 100%;
 
-  &::-webkit-scrollbar-track {
-    background-color: transparent;
-  }
-
   &::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-    background-color: transparent;
+    width: 10px;
+    height: 11px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: transparent;
-    border-radius: 3px;
+    border: 4px solid rgba(0, 0, 0, 0);
+    border-right: 3px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    border-radius: 9999px;
+    background-color: var(--sl-color-neutral-200);
   }
 
   &:hover {
     &::-webkit-scrollbar-thumb {
-      background-color: #afafaf;
+      background-color: var(--sl-color-neutral-500);
     }
   }
 }
@@ -154,11 +152,6 @@ function evaluateTabs(handler){
   overflow:hidden;
 
 }
-
-.viewtabgroup::part(nav){
-  border-left: 1px solid var( --vi-divider-color);
-}
-
 
 .viewtabgroup::part(base){
   flex:1;

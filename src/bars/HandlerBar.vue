@@ -1,6 +1,6 @@
 <template>
   <div class="bar">
-    
+
     <template v-for="(actionlist, index) in state.actions['default']">
       <template v-for="action in actionlist">
         <group_action
@@ -27,7 +27,7 @@
             </template>
           </div>
         </group_action>
-        
+
         <component
           :is="currentAction(`${action}_action`)"
           v-else
@@ -75,7 +75,7 @@ import script_action from "../actions/script.vue"
     },
     handler: null
   })
-  
+
     const handlerState = inject("handlerState")
     const modulesStore = useModulesStore()
     const dbStore = useDBStore()
@@ -221,7 +221,8 @@ import script_action from "../actions/script.vue"
   gap: var(--sl-spacing-small);
   width: 100%;
   color: var(--vi-foreground-color);
-  border-bottom: 1px solid var(--vi-border-color);
+  box-shadow: 0 0 7px 0 rgba(0, 0, 0, .2);
+  z-index: 1;
 }
 
 .spacer {

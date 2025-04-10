@@ -41,5 +41,29 @@ import Utils from "../utils"
 sl-tab-group {
   --tab-flap-background-color: var(--vi-tab-background-color);
   z-index: 2;
+
+  &::part(base){
+    background: var(--sl-color-neutral-200);
+  }
+
+  &::part(nav){
+    display: flex;
+    flex-direction: row;
+    padding: 0;
+    box-shadow: inset 0px -10px 10px -10px rgba(0, 0, 0, .2);
+  }
+
+  &::part(scroll-button){
+    position: relative;
+    order: 10;
+    visibility: visible !important;
+    background-color: vaR(--sl-color-neutral-0);
+    box-shadow: inset 0px -10px 10px -10px rgba(0, 0, 0, .2);
+  }
+
+  &::part(scroll-button--end){
+    border-left: 1px solid var(--sl-color-neutral-200);
+  }
+
 }
 </style>

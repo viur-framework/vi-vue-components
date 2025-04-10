@@ -222,11 +222,10 @@ sl-button.more-login-btn:has(+ #google_oauth > *) {
 
 .wrapper {
   height: 100%;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-position: center center;
-  background-size: cover;
 }
 
 .wrapper::before {

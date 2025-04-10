@@ -123,15 +123,29 @@ import { useRouter } from "vue-router"
 
 <style scoped>
 sl-tab {
+  position: relative;
+  box-shadow: inset 0px -10px 10px -10px rgba(0, 0, 0, .2);
+
+  &:before{
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 10px;
+    bottom: 10px;
+    width: 1px;
+    border-left: 1px solid var(--sl-color-neutral-400);
+  }
+
   &::part(base) {
     display: flex;
-    padding: 5px 12px;
+    padding: var(--sl-spacing-x-small) var(--sl-spacing-medium);
+    height: 45px;
   }
 
   &::part(close-button) {
-    opacity: 0.5;
+    display: none;
     font-size: 0.9em;
-    margin: 0 -6px 0 5px;
+    margin: 0 -3px 0 10px;
     transition: all ease 0.3s;
     color: var(--vi-foreground-color);
   }
@@ -142,16 +156,15 @@ sl-tab {
   }
 
   & sl-avatar {
+    font-size: 1.2em;
+
     &::part(base) {
       background-color: var(--vi-foreground-color);
     }
+
   }
 
   &:hover {
-    &::part(close-button) {
-      opacity: 1;
-    }
-
     & .link-wrap {
       color: var(--vi-foreground-color);
       opacity: 0.9;
@@ -166,6 +179,21 @@ sl-tab {
 
   &[aria-selected="true"] {
     background-color: var(--vi-background-color);
+    box-shadow: none;
+
+    &:before{
+      display: none;
+    }
+
+    & + sl-tab{
+      &:before{
+        display: none;
+      }
+    }
+
+    &::part(close-button) {
+      display: flex;
+    }
 
     & .link-wrap {
       color: var(--vi-foreground-color);
@@ -174,8 +202,36 @@ sl-tab {
 
     & sl-avatar {
       &::part(base) {
-        background-color: var(--vi-foreground-color);
+        background-color: var(--sl-color-primary-500);
       }
+
+      sl-icon{
+        @supports (color: oklch(from red l c h)) {
+          --l: clamp(0, (l / 0.623 - 1) * -infinity, 1);
+          color: oklch(from var(--sl-color-primary-500) var(--l) 0 h);
+          text-shadow: none;
+        }
+
+        @supports (color: contrast-color(red)) {
+          color: contrast-color(var(--sl-color-primary-500));
+          text-shadow: none;
+        }
+      }
+    }
+  }
+
+
+  &:first-child{
+    &:before{
+      display: none;
+    }
+
+    sl-avatar{
+      margin-right: 0;
+    }
+
+    .name{
+      display: none;
     }
   }
 }

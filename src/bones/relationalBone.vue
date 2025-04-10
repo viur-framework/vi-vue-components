@@ -50,7 +50,6 @@
         "
       >
         <sl-icon
-          slot="prefix"
           name="x-lg"
         ></sl-icon>
       </sl-button>

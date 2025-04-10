@@ -34,13 +34,15 @@ import { useDBStore } from "../stores/db"
   flex-wrap: nowrap;
   gap: 15px;
   padding: 10px;
-  background-color: var(--vi-label-background-color);
-  border: 1px solid var(--sl-color-neutral-300);
-  border-radius: var(--sl-border-radius-medium);
+  background-color: var(--vi-background-color);
+  border-top: 2px solid var(--sl-color-primary-500);
+  border-top-right-radius: var(--sl-border-radius-medium);
+  border-top-left-radius: var(--sl-border-radius-medium);
   position: absolute;
-  bottom: 15px;
+  bottom: 0;
   left: 50%;
   transform: translateX(-50%);
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, .3);
 }
 
 sl-select {

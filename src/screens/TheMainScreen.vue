@@ -19,10 +19,11 @@
     </div>
   </template>
   <template v-else-if="state.status === 'ready'">
-    <the-topbar></the-topbar>
 
     <component :is="getLayout()">
     </component>
+
+    <the-rightbar></the-rightbar>
 
     <message-drawer></message-drawer>
 
@@ -31,7 +32,7 @@
 </template>
 
 <script setup>
-import TheTopbar from "../main/TheMainScreenTopbar.vue"
+import TheRightbar from "../main/TheMainScreenRightbar.vue"
 import { useRoute, useRouter } from "vue-router"
 import { Request } from "@viur/vue-utils"
 import { onBeforeMount, unref, h, reactive, computed } from "vue"

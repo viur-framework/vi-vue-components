@@ -1,5 +1,5 @@
 <template>
-  <div class="group">
+  <!--<div class="group">
     <div
       class="seperator"
       @click="openGroup"
@@ -38,7 +38,22 @@
       </sl-input>
       <slot></slot>
     </div>
-  </div>
+  </div>-->
+
+  <div
+      v-show="state.open"
+      class="list"
+    >
+      <slot></slot>
+    </div>
+      <sl-input v-model="state.searchValue"
+          size="medium"
+          placeholder="Module Filtern"
+          class="modulesearch"
+          clearable
+          @sl-clear="state.searchValue=''">
+        <sl-icon name="search" slot="prefix"></sl-icon>
+      </sl-input>
 </template>
 
 <script setup>
@@ -138,14 +153,42 @@ span {
 
   & .list {
     width: 100%;
-    height: auto;
   }
 }
 
-.modulesearch::part(base){
-  border: none;
-  border-bottom: 1px solid var(--vi-border-color);
-  border-radius: 0;
-    font-size: 0.85em;
+.modulesearch{
+  &::part(base){
+    border: none;
+    border-top: 1px solid var(--vi-border-color);
+    border-radius: 0;
+  }
+  &::part(prefix){
+    margin-left: calc(-1 * var(--sl-spacing-2x-small));
+  }
+}
+
+.list{
+  height: 1px;
+  flex: 1;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 10px;
+    height: 11px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border: 4px solid rgba(0, 0, 0, 0);
+    border-right: 3px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    border-radius: 9999px;
+    background-color: var(--sl-color-neutral-200);
+  }
+
+  &:hover {
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--sl-color-neutral-500);
+    }
+  }
 }
 </style>

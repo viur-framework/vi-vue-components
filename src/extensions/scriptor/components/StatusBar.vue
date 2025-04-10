@@ -30,18 +30,21 @@
       </div>
     </div>
 
-    <div slot="right">
-      
-      <sl-badge
-        :variant="state.userStatus['variant']"
-        pill
-        :title="state.userStatus['text']"
-        :pulse="state.userStatus['pulse']"
-        @click="reset"
-      >
-        <span v-if="scriptorStore.state.isReady">&nbsp;&nbsp;</span>
-        <span v-else>&nbsp;&nbsp;</span>
-      </sl-badge>
+    <div class="right" slot="right">
+
+      <div class="status"
+          :title="state.userStatus['text']">
+        <sl-badge
+          :variant="state.userStatus['variant']"
+          pill
+          :pulse="state.userStatus['pulse']"
+          @click="reset"
+        >
+        </sl-badge>
+
+        {{ state.userStatus['text'] }}
+      </div>
+
       <sl-select class="versionselect" size="small" :value="scriptorStore.state.scriptorVersion" :disabled="state.customVersion" @sl-change="changeVersion">
         <template v-for="v,i in state.versions">
           <sl-option v-if="state.customVersion" :value="state.customVersion">custom</sl-option>
@@ -144,16 +147,33 @@ sl-bar {
     }
   }
 }
-sl-badge {
-  margin-right: 5px;
-  margin-left: 5px;
+
+.right{
+  gap: 5px;
 }
+
 .versionselect{
   width: 150px;
-  margin-right: 5px;
 }
 
 .scriptorprogressbar {
   width: 100%;
+}
+
+.status{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: .9em;
+  border-radius: var(--sl-border-radius-medium);
+  border: 1px solid var(--vi-border-color);
+  background-color: var(--sl-color-neutral-0);
+  padding: 0 var(--sl-spacing-small);
+  height: var(--sl-input-height-small);
+
+  sl-badge{
+    aspect-ratio: 1;
+    margin-right: var(--sl-spacing-x-small);
+  }
 }
 </style>

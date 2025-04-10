@@ -3,9 +3,9 @@
   <div class="wrapper-outer-wrap" slot="start">
     <status-bar :id="state.id" :filename="state.script?.name">
       <template #startRight>
-        <sl-button size="small" variant="info" outline style="margin-right:10px;" @click="clearlog">{{$t('actions.clear_log')}}</sl-button>
+        <sl-button size="small" variant="info" outline @click="clearlog">{{$t('actions.clear_log')}}</sl-button>
       </template>
-      <sl-button :loading="state.saving" size="small" variant="success" style="margin-left:10px;" @click="saveCode">{{$t('actions.save')}}</sl-button>
+      <sl-button :loading="state.saving" size="small" variant="success" @click="saveCode">{{$t('actions.save')}}</sl-button>
     </status-bar>
     <div class="wrapper-editor">
       <code-editor v-if="state.script" :id="state.id"></code-editor>
