@@ -44,10 +44,13 @@ const props = defineProps({
 const state = reactive({
   buttonDisabled: false,
   sendable: computed(() => {
-    for (const el of elements.value) {
-      if (!el.state.sendable) {
-        return false
+    for (const element of elements.value) {
+      if (element.state && element.state.sendable !== undefined) {
+        if (!element.state.sendable) {
+          return false
+        }
       }
+
     }
     return true
   })
@@ -55,8 +58,10 @@ const state = reactive({
 
 async function buttonCallback() {
   const result = []
-  for (const el of elements.value) {
-    result.push(el.state.value)
+  for (const element of elements.value) {
+     if(element.state && element.state.value!==undefined) {
+       result.push(element.state.value)
+     }
   }
   await scriptorStore.sendResult("textResult", JSON.stringify(result))
 }
@@ -75,6 +80,8 @@ function getWidget(type) {
     return widgets.diffCompare
   } else if (["table"].includes(type)) {
     return widgets.tableEntry
+  } else if (["raw_html"].includes(type)) {
+    return widgets.rawHtml
   }
   return widgets.debugEntry
 }
