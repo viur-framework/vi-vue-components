@@ -33,7 +33,7 @@
           id="dialog-delete"
           :open="state.opened"
           :label="current['rel']['name']"
-          @sl-after-hide="state.opened=false"
+          @sl-after-hide="exitScriptor"
         >
           <div class="wrapper-widgets" ref="messagewrapper">
         <status-bar :id="state.id" :filename="current['dest']['name']"></status-bar>
@@ -111,6 +111,11 @@ const messagewrapper = ref(null)
   function startScriptor(){
     state.opened = true
     scriptorAction.value.executeScript(props.scriptParams)
+  }
+  function exitScriptor()
+  {
+    state.opened = false
+    scriptorAction.value.exitScript()
   }
 
   watch(

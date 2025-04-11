@@ -143,6 +143,11 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     }
   }
 
+  async function exitScript()
+  {
+    sendResult("exit","__exit__")
+  }
+
   async function execute(code, id = null, context = {},scriptParams={}) {
     let currentId = createNewInstance(id) // create needed Instance Object
     state.currentInstance = currentId
@@ -330,6 +335,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     state,
     progress,
     execute,
+    exitScript,
     sendResult,
     createNewInstance,
     fetchScriptorVersions
