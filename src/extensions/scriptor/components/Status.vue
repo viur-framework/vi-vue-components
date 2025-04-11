@@ -42,8 +42,8 @@ const state = reactive({
   })
 })
 
-async function executeScript() {
-  await scriptorStore.execute(state.scriptor.scriptCode, props.id)
+async function executeScript(scriptParams) {
+  await scriptorStore.execute(state.scriptor.scriptCode, props.id,{},scriptParams)
 }
 
 function reset() {
