@@ -31,7 +31,7 @@
     </div>
 
     <div slot="right">
-      
+
       <sl-badge
         :variant="state.userStatus['variant']"
         pill
@@ -99,7 +99,7 @@ const state = reactive({
 })
 
 async function executeScript() {
-  await scriptorStore.execute(state.scriptor.scriptCode, props.id)
+  await scriptorStore.execute(state.scriptor.scriptCode, props.id,{})
 }
 
 function reset() {

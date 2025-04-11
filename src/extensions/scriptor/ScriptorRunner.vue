@@ -77,6 +77,9 @@ const messagewrapper = ref(null)
     },
     disabled:{
       type:Boolean
+    },
+    scriptParams: {
+      type: Object
     }
   })
 
@@ -107,7 +110,7 @@ const messagewrapper = ref(null)
 
   function startScriptor(){
     state.opened = true
-    scriptorAction.value.executeScript()
+    scriptorAction.value.executeScript(props.scriptParams)
   }
   function exitScriptor()
   {

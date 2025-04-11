@@ -71,7 +71,7 @@ function collectViurConfig() {
     //preflight check
     try{
       await Request.get("/json/skey",{headers:{"x-viur-bonelist":"check"}})
-      appStore.state.preflights = false
+      appStore.state.preflights = true;
     }catch (error){
       appStore.state.preflights = false
     }

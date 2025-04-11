@@ -111,19 +111,29 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     }
   }
 
-  async function setParams() {
+  async function setParams(scriptParams={}) {
     const contextStore = useContextStore();
     //Use window object, because useRoute not work outside module.
     const tabId = (window.location.hash || '').replace(/^#/, '').split("_")[1].replace("=","")
-    let params = contextStore.getLocalContext(tabId,true)["_selectedEntries"];
-    if (!params)
+    let selectedEntries = contextStore.getLocalContext(tabId,true)["_selectedEntries"];
+    if (!selectedEntries && !scriptParams)
     {
       return
     }
+    if (!scriptParams) {
+      scriptParams = {}
+    }
+    if (!selectedEntries) {
+      selectedEntries = {}
+    }
+    else {
+      selectedEntries = {"__selected_entries":selectedEntries}
+    }
+    const params = Object.assign(selectedEntries, scriptParams)
+
     if (state.workerObject) {
       return new Promise((resolve) => {
         state.runningActions.set("setParams", resolve)
-
         state.workerObject.post({
           id: "setParams",
           python: "",
@@ -132,11 +142,13 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
       })
     }
   }
+
   async function exitScript()
   {
     sendResult("exit","__exit__")
   }
-  async function execute(code, id = null, context = {}) {
+
+  async function execute(code, id = null, context = {},scriptParams={}) {
     let currentId = createNewInstance(id) // create needed Instance Object
     state.currentInstance = currentId
     let currentState = state.instances[currentId]
@@ -147,7 +159,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
       createWebWorker()
       await load()
     }
-    await setParams();
+    await setParams(scriptParams);
     code = `${code}\nimport viur.scriptor\nimport traceback\nawait viur.scriptor._init_modules()\nfrom viur.scriptor import *\n\ntry:\n    await main()\nexcept:\n    logger.error(traceback.format_exc())\n`
 
     return new Promise((resolve) => {

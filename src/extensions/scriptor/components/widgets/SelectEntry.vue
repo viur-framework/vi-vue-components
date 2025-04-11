@@ -1,5 +1,36 @@
 <template>
-  <sl-card>
+
+  <div v-if="inMultiple">
+    {{ entry.data["title"] || entry.data["text"] }} :
+    <div v-if="!state.isMultiple">
+      <sl-button
+        :variant="state.selectedOptions.includes(option.key) ? 'success' : 'default'"
+        :disabled="state.isDisabled"
+        v-for="option in state.options"
+        :key="option.key"
+        @click="selectSingleOption(option)"
+      >
+        {{ option.key }}
+      </sl-button>
+    </div>
+
+    <div
+      v-else
+      class="wrapper-multi-select"
+    >
+      <sl-checkbox
+        :disabled="state.isDisabled"
+        v-for="option in state.options"
+        :checked="option.selected"
+        :key="option"
+        @sl-change="toggleSelection(option)"
+      >
+        {{ option.key }}
+      </sl-checkbox>
+    </div>
+  </div>
+
+  <sl-card v-else>
     <div slot="header">
       {{ entry.data["title"] }}
     </div>
@@ -71,6 +102,10 @@ onMounted(() => {
     opts.push(nopt)
   }
   state.options = opts
+  for(const option of state.options)
+  {
+      option.selected=state.selectedOptions.includes(option["key"])
+  }
 })
 
 const state = reactive({
@@ -80,12 +115,20 @@ const state = reactive({
   options: {},
   value: props.entry.data?.default_value || [],
   sendable: computed(() => {
-    return state.value.length !==0
+    return  state.value.length !==0
   })
 })
 
 function toggleSelection(option) {
   option.selected = !option.selected
+  const res = []
+  for (const opt of state.options) {
+    if (opt.selected) {
+      res.push(opt.key)
+    }
+  }
+  state.value = res
+
 }
 
 async function selectSingleOption(option) {
@@ -100,14 +143,14 @@ async function selectSingleOption(option) {
 }
 
 async function sendMultipleOptions() {
-  let res = []
-  for (const opt of state.options) {
-    if (opt.selected) {
-      res.push(opt.key)
-    }
+
+
+  if(props.inMultiple)
+  {
+    state.isDisabled = true
+    await scriptorStore.sendResult("selectResult", state.value)
   }
-  await scriptorStore.sendResult("selectResult", res)
-  state.isDisabled = true
+
 }
 
 defineExpose({state})
