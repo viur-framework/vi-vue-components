@@ -108,6 +108,7 @@ const messagewrapper = ref(null)
   function startScriptor(){
     state.opened = true
     scriptorAction.value.executeScript()
+
   }
 
   watch(
