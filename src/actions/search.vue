@@ -2,7 +2,7 @@
   <sl-button-group>
     <sl-input
       size="small"
-      :disabled="state.disabled"
+      :disabled="state.disabled || state.loading"
       placeholder="Suche"
       clearable
       :value="state.searchValue"
