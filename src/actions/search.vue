@@ -153,7 +153,9 @@ import { useDebounceFn } from "@vueuse/core"
           .fetch()
           .catch((error) => {
             state.loading = false
-            messageStore.addMessage("error", `${error.message}`, error.response?.url)
+            if (error.statusCode !== 20 && typeof(error)!=='string'){
+              messageStore.addMessage("error", `${error.message}`, error.response.url)
+            }
           })
           .then((resp) => {
             state.loading = false
