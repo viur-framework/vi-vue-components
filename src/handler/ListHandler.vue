@@ -162,7 +162,9 @@ import Utils from '../utils'
     columns: {
       default:undefined
     },
-    inheritContext:true
+    inheritContext:{
+      default:true
+    }
   })
   const emit = defineEmits(["currentSelection", "closeSelector"])
 
