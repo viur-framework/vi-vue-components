@@ -150,7 +150,7 @@ export function useHandlerLogic(props, handler_state) {
           handler
             .filter({ ...handler.state.params, ...params, ...contextStore.getContext() })
             .catch((error) => {
-              if (error.statusCode !== 20){
+              if (error.statusCode && typeof(error)!=='string'){
                 messageStore.addMessage("error", `${error.message}`, error.response?.url)
               }
               reject()
