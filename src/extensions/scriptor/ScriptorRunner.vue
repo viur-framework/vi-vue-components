@@ -101,7 +101,7 @@ const messagewrapper = ref(null)
   onBeforeMount(()=>{
     state.id = scriptorStore.createNewInstance()
     Request.view("script",props.current?.['dest']?.['key'],{group:"leaf"}).then(async(resp)=>{
-      let data = await resp.json()
+      const data = await resp.json()
       state.scriptor.scriptCode = data["values"]["script"].replace(/\/\/n/g, "\n")
       state.scriptReady = true
     })
@@ -110,7 +110,21 @@ const messagewrapper = ref(null)
 
   function startScriptor(){
     state.opened = true
-    scriptorAction.value.executeScript(props.scriptParams)
+    if (import.meta.env.DEV) {
+      //Reload the script on DEV Mode everytime
+      Request.view("script",props.current?.['dest']?.['key'],{group:"leaf"}).then(async(resp)=>{
+      const data = await resp.json()
+      state.scriptor.scriptCode = data["values"]["script"].replace(/\/\/n/g, "\n")
+      state.scriptReady = true
+      scriptorAction.value.executeScript(props.scriptParams)
+    })
+
+    }
+    else
+    {
+      scriptorAction.value.executeScript(props.scriptParams)
+    }
+
   }
 
   watch(
