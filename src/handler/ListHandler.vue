@@ -273,7 +273,7 @@ import Utils from '../utils'
         .fetch()
         .catch((error) => {
           setSelectedBones()
-          if (error.statusCode !== 20 && typeof(error)!=='string'){
+          if (error.statusCode && typeof(error)!=='string'){
             messageStore.addMessage("error", `${error.message}`, error.response?.url)
           }
         })
@@ -328,7 +328,7 @@ import Utils from '../utils'
         })
         .catch((error) => {
           setSelectedBones()
-          if (error.statusCode !== 20 && typeof(error)!=='string'){
+          if (error.statusCode && typeof(error)!=='string'){
             messageStore.addMessage("error", `${error.message}`, error.response.url)
           }
         })

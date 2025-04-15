@@ -158,7 +158,7 @@ import { useDebounceFn } from "@vueuse/core"
           .catch((error) => {
             state.loading = false
             setTimeout(()=>searchinput.value.focus(),500)
-            if (error.statusCode !== 20 && typeof(error)!=='string'){
+            if (error.statusCode && typeof(error)!=='string'){
               messageStore.addMessage("error", `${error.message}`, error.response.url)
             }
           })
