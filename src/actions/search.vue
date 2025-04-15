@@ -1,8 +1,9 @@
 <template>
   <sl-button-group>
     <sl-input
+      ref="searchinput"
       size="small"
-      :disabled="state.disabled"
+      :disabled="state.disabled || state.loading"
       placeholder="Suche"
       clearable
       :value="state.searchValue"
@@ -69,10 +70,10 @@
 
 <script setup>
 
-import { reactive, defineComponent, inject, computed, watch, onMounted } from "vue"
+import { reactive, defineComponent, inject, computed, watch, onMounted, ref } from "vue"
 import { useMessageStore } from "../stores/message"
 import { useDebounceFn } from "@vueuse/core"
-
+    const searchinput = ref()
     const currentlist = inject("currentlist")
     const handlerState = inject("handlerState")
     const reloadAction = inject("reloadAction")
@@ -124,7 +125,7 @@ import { useDebounceFn } from "@vueuse/core"
     const debouncedSearch = useDebounceFn((event) => {
       state.loading = true
       search_input(event)
-    }, 500)
+    }, 1000)
 
     function search_input(event) {
       state.loading = true
@@ -138,6 +139,7 @@ import { useDebounceFn } from "@vueuse/core"
       if (currentSearchType === "local") {
         handlerState.filter = event.target.value
         state.loading = false
+        setTimeout(()=>searchinput.value.focus(),500)
         try {
           delete currentlist.state.params["search"]
         } catch (e) {}
@@ -145,6 +147,8 @@ import { useDebounceFn } from "@vueuse/core"
         if (event.target.value === "" || event.target.value.length === 1) {
           reset_filter()
           state.loading = false
+          setTimeout(()=>searchinput.value.focus(),500)
+
           return 0
         }
 
@@ -153,10 +157,14 @@ import { useDebounceFn } from "@vueuse/core"
           .fetch()
           .catch((error) => {
             state.loading = false
-            messageStore.addMessage("error", `${error.message}`, error.response?.url)
+            setTimeout(()=>searchinput.value.focus(),500)
+            if (error.statusCode !== 20 && typeof(error)!=='string'){
+              messageStore.addMessage("error", `${error.message}`, error.response.url)
+            }
           })
           .then((resp) => {
             state.loading = false
+            setTimeout(()=>searchinput.value.focus(),500)
           })
       }
     }

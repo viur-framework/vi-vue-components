@@ -162,7 +162,9 @@ import Utils from '../utils'
     columns: {
       default:undefined
     },
-    inheritContext:true
+    inheritContext:{
+      default:true
+    }
   })
   const emit = defineEmits(["currentSelection", "closeSelector"])
 
@@ -271,7 +273,7 @@ import Utils from '../utils'
         .fetch()
         .catch((error) => {
           setSelectedBones()
-          if (error.statusCode !== 20){
+          if (error.statusCode !== 20 && typeof(error)!=='string'){
             messageStore.addMessage("error", `${error.message}`, error.response?.url)
           }
         })
@@ -326,7 +328,7 @@ import Utils from '../utils'
         })
         .catch((error) => {
           setSelectedBones()
-          if (error.code !== 20 && typeof(error)!=='string'){
+          if (error.statusCode !== 20 && typeof(error)!=='string'){
             messageStore.addMessage("error", `${error.message}`, error.response.url)
           }
         })
