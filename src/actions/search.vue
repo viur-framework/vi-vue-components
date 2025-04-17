@@ -125,7 +125,7 @@ import { useDebounceFn } from "@vueuse/core"
     const debouncedSearch = useDebounceFn((event) => {
       state.loading = true
       search_input(event)
-    }, 1000)
+    }, 2000)
 
     function search_input(event) {
       state.loading = true
