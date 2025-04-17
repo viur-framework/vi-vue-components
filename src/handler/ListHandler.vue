@@ -265,7 +265,9 @@ import Utils from '../utils'
       currentlist.reset()
       let ctx = {}
       if (props.inheritContext){
-        ctx=contextStore.getContext()
+        ctx = contextStore.getContext(state.tabId) //add local context && global Context
+      }else{
+        ctx = contextStore.getContext() // only global context
       }
 
       currentlist.state.params = { ...currentlist.state.params, ...ctx, ...props.filter  }
@@ -316,7 +318,9 @@ import Utils from '../utils'
 
       let ctx = {}
       if (props.inheritContext){
-        ctx=contextStore.getContext(state.tabId)
+        ctx = contextStore.getContext(state.tabId) //add local context && global Context
+      }else{
+        ctx = contextStore.getContext() // only global context
       }
 
       currentlist.state.params = { ...currentlist.state.params, ...ctx, ...props.filter }
