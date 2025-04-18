@@ -384,7 +384,6 @@ import { Request } from "@viur/vue-utils"
 
 .wrapper {
   width: 100%;
-  font-size: v-bind("state.cssFontSize");
 }
 
 .item {
