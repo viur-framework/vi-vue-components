@@ -145,10 +145,10 @@ async function selectSingleOption(option) {
 async function sendMultipleOptions() {
 
 
-  if(props.inMultiple)
+  if(!props.inMultiple)
   {
     state.isDisabled = true
-    await scriptorStore.sendResult("selectResult", state.value)
+    await scriptorStore.sendResult("selectResult", [...state.value])
   }
 
 }
