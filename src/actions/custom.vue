@@ -290,7 +290,11 @@ import Utils from "../utils"
 
             if (k === "rootNode") {
               akey = "parentrepo"
-              contextStore.setContext(akey, selection[akey], route.query["_"])
+              let data = selection[akey]
+              if (!data){
+                data = selection["key"]
+              }
+              contextStore.setContext(akey, data, route.query["_"])
             } else {
               contextStore.setContext(akey, buildUrl(v, selection), route.query["_"])
             }
