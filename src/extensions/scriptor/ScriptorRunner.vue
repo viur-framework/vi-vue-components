@@ -33,7 +33,7 @@
           id="dialog-delete"
           :open="state.opened"
           :label="current['rel']['name']"
-          :ref="runnerDialog"
+          ref="runnerDialog"
           @sl-after-hide="state.opened=false"
         >
           <div class="wrapper-widgets" ref="messagewrapper">
