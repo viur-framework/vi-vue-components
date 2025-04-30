@@ -294,7 +294,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
         addMessageEntry(data.type, id, data)
         break
       case "clear":
-        currentState.messages.length = 0;
+        currentState.messages.length = data["length"];
         break
       default:
         if (["select", "input", "diffcmp", "table", "stdout", "stderr","raw_html"].includes(data.type)) {
