@@ -20,6 +20,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     initCode: "",
     runningActions: new Map(),
     isReady: false, //scriptor webworker ready
+    isLoading: false, //scriptor webworker ready
     isRunning: computed(() => {
       // user script is running
       return state.runningActions.size > 0
@@ -33,7 +34,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     }),
     currentInstance: null,
     instances: reactive({}),
-    scriptorVersion:"latest"
+    scriptorVersion: "latest"
   })
 
   const progress = reactive({
@@ -143,6 +144,14 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     }
   }
 
+
+  async function exitScript()
+  {
+    console.log("exit programm")
+    sendResult("exit","__exit__")
+  }
+
+
   async function execute(code, id = null, context = {},scriptParams={}) {
     let currentId = createNewInstance(id) // create needed Instance Object
     state.currentInstance = currentId
@@ -150,9 +159,15 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     currentState.messages = []
     currentState.internalMessages = []
 
-    if (!state.isReady) {
+    if (!state.isReady && !state.isLoading) {
+      state.isLoading = true;
       createWebWorker()
       await load()
+      state.isLoading = false;
+    }
+    if (code === undefined) {
+      console.log("Nothing to execute")
+      code = ""
     }
     await setParams(scriptParams);
     code = `${code}\nimport viur.scriptor\nimport traceback\nawait viur.scriptor._init_modules()\nfrom viur.scriptor import *\n\ntry:\n    await main()\nexcept:\n    logger.error(traceback.format_exc())\n`
@@ -168,12 +183,18 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     })
   }
 
+
   function handleCallback(id, data) {
     let callback = state.runningActions.get(id)
     if (callback) {
       callback({results: data.res, error: null})
       state.runningActions.delete(id)
     }
+  }
+  function preload()
+  {
+    //start empty script for preloading all libraries
+    execute()
   }
 
   function addMessageEntry(type, id, data) {
@@ -273,7 +294,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
         addMessageEntry(data.type, id, data)
         break
       case "clear":
-        currentState.messages.length = 0;
+        currentState.messages.length = data["length"];
         break
       default:
         if (["select", "input", "diffcmp", "table", "stdout", "stderr","raw_html"].includes(data.type)) {
@@ -330,8 +351,10 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     state,
     progress,
     execute,
+    exitScript,
     sendResult,
     createNewInstance,
-    fetchScriptorVersions
+    fetchScriptorVersions,
+    preload
   }
 })

@@ -45,7 +45,11 @@ const state = reactive({
 async function executeScript(scriptParams) {
   await scriptorStore.execute(state.scriptor.scriptCode, props.id,{},scriptParams)
 }
+async function exitScript()
+{
+  await scriptorStore.exitScript()
 
+}
 function reset() {
   scriptorStore.state.instances[props.id].messages = []
   scriptorStore.state.instances[props.id].internalMessages = []
@@ -53,7 +57,7 @@ function reset() {
 }
 
 defineExpose({
-  reset, executeScript,state
+  reset, executeScript,exitScript,state
 })
 
 
