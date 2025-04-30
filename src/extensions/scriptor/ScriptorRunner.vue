@@ -33,6 +33,7 @@
           id="dialog-delete"
           :open="state.opened"
           :label="current['rel']['name']"
+          :ref="runnerDialog"
           @sl-after-hide="state.opened=false"
         >
           <div class="wrapper-widgets" ref="messagewrapper">
@@ -54,8 +55,9 @@ import {onBeforeMount, reactive, ref, computed, inject, watch} from 'vue';
   import { Request } from '@viur/vue-utils';
   import Utils from '../../utils';
 import {useDebounceFn} from "@vueuse/core";
-const messagewrapper = ref(null)
+  const messagewrapper = ref(null)
   const scriptorAction = ref(null)
+  const runnerDialog = ref(null)
 
   const handlerState = inject("handlerState")
 
@@ -118,7 +120,7 @@ const messagewrapper = ref(null)
     (newVal, oldVal) => {
       if (messagewrapper.value){
         const scroller = useDebounceFn((event) => {
-          messagewrapper.value.scrollTop = 999999
+          runnerDialog.value.shadowRoot.querySelector(".dialog__body").scroll(0,99999);
         }, 1)
         scroller()
       }
