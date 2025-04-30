@@ -34,7 +34,7 @@
           :open="state.opened"
           :label="current['rel']['name']"
           @sl-after-hide="exitScriptor"
-          :ref="runnerDialog"
+          ref="runnerDialog"
 
         >
           <div class="wrapper-widgets" ref="messagewrapper">
