@@ -70,7 +70,7 @@
                 <th
                   v-if="handlerLogic.currentlist.structure?.[bone]"
                   :class="{ 'stick-header': state.sticky }"
-                  :style="{ width: '150px' }"
+                  :style="{ width: handlerLogic.currentlist.structure?.[bone]['params']['column_width']||state.tableWidth }"
                 >
                   {{ handlerLogic.currentlist.structure?.[bone]?.["descr"] }}
                   <div
@@ -297,7 +297,7 @@ import { VueDraggable } from 'vue-draggable-plus'
       selectedBones: [],
 
       sticky: false,
-      tableWidth: "150",
+      tableWidth: "150px",
       sorting: "",
       filter: null,
       sortindexBonename:null,

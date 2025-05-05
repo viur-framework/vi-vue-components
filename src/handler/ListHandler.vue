@@ -34,7 +34,7 @@
               <th
                 v-if="currentlist.structure?.[bone]"
                 :class="{ 'stick-header': state.sticky }"
-                :style="{ width: '150px' }"
+                :style="{ width: currentlist.structure?.[bone]['params']['column_width']||state.tableWidth }"
               >
                 {{ currentlist.structure?.[bone]?.["descr"] }}
                 <div
@@ -205,7 +205,7 @@ import Utils from '../utils'
       selectedBones: [],
       selectedRows: [],
       sticky: false,
-      tableWidth: "150",
+      tableWidth: "150px",
       sorting: "",
       renderedList: computed(() => {
         return currentlist.state.skellist.map((skel) => {
