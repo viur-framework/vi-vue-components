@@ -69,13 +69,13 @@ export function useInitConnection() {
 
     function initBones() {
       addBoneWidget("select.access", selectaccessBone) //add Bone to store
-      addBoneWidget("relational.tree.leaf.file.file", fileBone) //add Bone to store
-      addBoneWidget("relational.tree.leaf.file.file.", fileBone) //add Bone to store
+      addBoneWidget("relational.tree.leaf.file.", fileBone) //add Bone to store
       addBoneWidget("relational.", relationalBone) //add Bone to store
 
-      addBoneActionbar("relational.tree.leaf.file.file", fileBar) //add custom multiple acionbar
-      addBoneActionbar("relational.tree.leaf.file.file.", fileBar) //add custom multiple acionbar
+
+      addBoneActionbar("relational.tree.leaf.file.", fileBar) //add custom multiple acionbar
       addBoneActionbar("relational.", relationalBar) //add custom multiple acionbar
+
     }
 
     function initExtensions() {
