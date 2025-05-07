@@ -3,7 +3,7 @@
     variant="success"
     size="small"
     :loading="state.loading"
-    title="$t(name)"
+    :title="$t(name)"
     :outline="name === 'actions.save_next' || name === 'actions.save_close'"
     @click="save"
   >
@@ -147,7 +147,7 @@ import {useTimeoutFn} from '@vueuse/core'
                     dbStore.addOpened(new_route, handlerState.module, currentview)
                   }, 1)
                   start()
-                  
+
                 }
               }
             }
@@ -162,7 +162,7 @@ import {useTimeoutFn} from '@vueuse/core'
             }else{
               messageStore.addMessage("success", handlerState.action, "Eintrag erfolgreich aktualisiert")
             }
-            
+
             dbStore.markHandlersToUpdate(handlerState.module, handlerState.group)
             if (props.close) {
               dbStore.removeOpened(route)
