@@ -113,6 +113,8 @@ import {useDebounceFn} from "@vueuse/core";
 
   function startScriptor(){
     state.opened = true
+
+    scriptorAction.value.executeScript()
     if (import.meta.env.DEV) {
       //Reload the script on DEV Mode everytime
       Request.view("script",props.current?.['dest']?.['key'],{group:"leaf"}).then(async(resp)=>{
