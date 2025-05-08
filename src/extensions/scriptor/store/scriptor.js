@@ -3,6 +3,7 @@ import {computed, reactive} from "vue"
 import {defineStore} from "pinia"
 import {useBrowserLocation, useWebWorker, useUrlSearchParams} from "@vueuse/core"
 import {useContextStore} from "../../../stores/context";
+import {Request} from "@viur/vue-utils";
 
 export const useScriptorStore = defineStore("scriptorStore", () => {
   const instanceTemplate = {
@@ -95,6 +96,16 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
 
 
     initCode = `with open("config.py", "w") as f:\n\tf.write("BASE_URL='${state.apiUrl}'")` + initCode
+    let importable = undefined
+    try {
+      const response = await Request.get("/json/script/get_importable");
+      if (response.status === 200) {
+        importable = await response.arrayBuffer();
+      }
+    }catch (e){}
+
+
+
 
     if (state.workerObject) {
       return new Promise((resolve) => {
@@ -106,7 +117,8 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
           pyoPackages: pyoPackages,
           packages: packages,
           initCode: initCode,
-          transformCode: "" //usage?
+          transformCode: "", //usage?
+          importable: importable,
         })
       })
     }
