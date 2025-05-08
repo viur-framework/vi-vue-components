@@ -19,7 +19,7 @@
       @click="buttonCallback"
       :disabled="state.buttonDisabled || !state.sendable"
     >
-      send
+      {{entry.data.buttonText||"Send"}}
     </sl-button>
   </sl-alert>
 </template>
