@@ -34,7 +34,7 @@
               <th
                 v-if="currentlist.structure?.[bone]"
                 :class="{ 'stick-header': state.sticky }"
-                :style="{ width: '150px' }"
+                :style="{ width: currentlist.structure?.[bone]['params']['column_width']||state.tableWidth }"
               >
                 {{ currentlist.structure?.[bone]?.["descr"] }}
                 <div
@@ -162,7 +162,9 @@ import Utils from '../utils'
     columns: {
       default:undefined
     },
-    inheritContext:true
+    inheritContext:{
+      default:true
+    }
   })
   const emit = defineEmits(["currentSelection", "closeSelector"])
 
@@ -203,7 +205,7 @@ import Utils from '../utils'
       selectedBones: [],
       selectedRows: [],
       sticky: false,
-      tableWidth: "150",
+      tableWidth: "150px",
       sorting: "",
       renderedList: computed(() => {
         return currentlist.state.skellist.map((skel) => {
@@ -263,7 +265,9 @@ import Utils from '../utils'
       currentlist.reset()
       let ctx = {}
       if (props.inheritContext){
-        ctx=contextStore.getContext()
+        ctx = contextStore.getContext(state.tabId) //add local context && global Context
+      }else{
+        ctx = contextStore.getContext() // only global context
       }
 
       currentlist.state.params = { ...currentlist.state.params, ...ctx, ...props.filter  }
@@ -271,7 +275,7 @@ import Utils from '../utils'
         .fetch()
         .catch((error) => {
           setSelectedBones()
-          if (error.statusCode !== 20){
+          if (error.statusCode && typeof(error)!=='string'){
             messageStore.addMessage("error", `${error.message}`, error.response?.url)
           }
         })
@@ -314,7 +318,9 @@ import Utils from '../utils'
 
       let ctx = {}
       if (props.inheritContext){
-        ctx=contextStore.getContext(state.tabId)
+        ctx = contextStore.getContext(state.tabId) //add local context && global Context
+      }else{
+        ctx = contextStore.getContext() // only global context
       }
 
       currentlist.state.params = { ...currentlist.state.params, ...ctx, ...props.filter }
@@ -326,7 +332,7 @@ import Utils from '../utils'
         })
         .catch((error) => {
           setSelectedBones()
-          if (error.code !== 20 && typeof(error)!=='string'){
+          if (error.statusCode && typeof(error)!=='string'){
             messageStore.addMessage("error", `${error.message}`, error.response.url)
           }
         })
