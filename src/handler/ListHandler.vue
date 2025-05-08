@@ -34,7 +34,7 @@
               <th
                 v-if="currentlist.structure?.[bone]"
                 :class="{ 'stick-header': state.sticky }"
-                :style="{ width: '150px' }"
+                :style="{ width: currentlist.structure?.[bone]['params']['column_width']||state.tableWidth }"
               >
                 {{ currentlist.structure?.[bone]?.["descr"] }}
                 <div
@@ -143,6 +143,7 @@ import SortindexView from "../bones/sortindexView.vue";
 import HandlerContext from "../main/context/HandlerContext.vue"
 import { VueDraggable } from 'vue-draggable-plus'
 import { useCachedRequestsStore} from '@viur/vue-utils/utils/request'
+import { useUserStore } from "@viur/vue-utils/login/stores/user"
 import Utils from '../utils'
 
   const props = defineProps({
@@ -161,7 +162,9 @@ import Utils from '../utils'
     columns: {
       default:undefined
     },
-    inheritContext:true
+    inheritContext:{
+      default:true
+    }
   })
   const emit = defineEmits(["currentSelection", "closeSelector"])
 
@@ -173,6 +176,7 @@ import Utils from '../utils'
     const contextStore = useContextStore()
     const localStore = useLocalStore()
     const appStore = useAppStore()
+    const userStore = useUserStore()
 
     const cachedRequestsStore = useCachedRequestsStore()
 
@@ -198,11 +202,10 @@ import Utils from '../utils'
       editableTable: false,
       active: false,
       conf: {},
-
       selectedBones: [],
       selectedRows: [],
       sticky: false,
-      tableWidth: "150",
+      tableWidth: "150px",
       sorting: "",
       renderedList: computed(() => {
         return currentlist.state.skellist.map((skel) => {
@@ -226,7 +229,18 @@ import Utils from '../utils'
         return false
       }),
       sortindexBonename:null,
-      entryUpdate:false
+      entryUpdate:false,
+      canEdit: computed(() => {
+        if(state.conf?.["disabledActions"]?.includes('edit')) return false
+        if (userStore.state.user.access.indexOf("root") !== -1) {
+          return true
+        }
+        if (state.group) {
+          return userStore.state.user.access.indexOf(`${state.module}-${state.group}-edit`) > -1
+        } else {
+          return userStore.state.user.access.indexOf(`${state.module}-edit`) > -1
+        }
+      })
     })
     provide("handlerState", state)
     const currentlist = ListRequest(state.storeName, {
@@ -251,7 +265,9 @@ import Utils from '../utils'
       currentlist.reset()
       let ctx = {}
       if (props.inheritContext){
-        ctx=contextStore.getContext()
+        ctx = contextStore.getContext(state.tabId) //add local context && global Context
+      }else{
+        ctx = contextStore.getContext() // only global context
       }
 
       currentlist.state.params = { ...currentlist.state.params, ...ctx, ...props.filter  }
@@ -259,7 +275,9 @@ import Utils from '../utils'
         .fetch()
         .catch((error) => {
           setSelectedBones()
-          messageStore.addMessage("error", `${error.message}`, error.response?.url)
+          if (error.statusCode && typeof(error)!=='string'){
+            messageStore.addMessage("error", `${error.message}`, error.response?.url)
+          }
         })
         .then((resp) => {
           setSelectedBones()
@@ -300,7 +318,9 @@ import Utils from '../utils'
 
       let ctx = {}
       if (props.inheritContext){
-        ctx=contextStore.getContext(state.tabId)
+        ctx = contextStore.getContext(state.tabId) //add local context && global Context
+      }else{
+        ctx = contextStore.getContext() // only global context
       }
 
       currentlist.state.params = { ...currentlist.state.params, ...ctx, ...props.filter }
@@ -312,7 +332,7 @@ import Utils from '../utils'
         })
         .catch((error) => {
           setSelectedBones()
-          if (error.code !== 20 && typeof(error)!=='string'){
+          if (error.statusCode && typeof(error)!=='string'){
             messageStore.addMessage("error", `${error.message}`, error.response.url)
           }
         })
@@ -378,6 +398,7 @@ import Utils from '../utils'
     }
 
     function openEditor(e) {
+      if (!state.canEdit) return 0
       if (props.selector) {
         emit("closeSelector", state.currentSelection)
         return 0
@@ -448,7 +469,7 @@ import Utils from '../utils'
     function setSelectedBones() {
       if (props.columns && props.columns.length > 0) {
         state.selectedBones = props.columns
-        if (appStore.state.preflights){
+        if (appStore.state.preflights && state.conf?.['bonelist']){
           currentlist.state.headers = {"x-viur-bonelist": state.selectedBones.join(",")}
           checkBoneExists()
         }
@@ -458,7 +479,7 @@ import Utils from '../utils'
       state.conf = dbStore.getConf(props.module, props.view)
       if (state.conf && state.conf?.["columns"] && state.conf?.["columns"].length > 0) {
         state.selectedBones = state.conf["columns"]
-        if (appStore.state.preflights){
+        if (appStore.state.preflights && state.conf?.['bonelist']){
           currentlist.state.headers = {"x-viur-bonelist": state.selectedBones.join(",")}
           checkBoneExists()
         }

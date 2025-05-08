@@ -33,7 +33,9 @@
           id="dialog-delete"
           :open="state.opened"
           :label="current['rel']['name']"
-          @sl-after-hide="state.opened=false"
+          @sl-after-hide="exitScriptor"
+          ref="runnerDialog"
+
         >
           <div class="wrapper-widgets" ref="messagewrapper">
         <status-bar :id="state.id" :filename="current['dest']['name']"></status-bar>
@@ -54,8 +56,9 @@ import {onBeforeMount, reactive, ref, computed, inject, watch} from 'vue';
   import { Request } from '@viur/vue-utils';
   import Utils from '../../utils';
 import {useDebounceFn} from "@vueuse/core";
-const messagewrapper = ref(null)
+  const messagewrapper = ref(null)
   const scriptorAction = ref(null)
+  const runnerDialog = ref(null)
 
   const handlerState = inject("handlerState")
 
@@ -77,6 +80,9 @@ const messagewrapper = ref(null)
     },
     disabled:{
       type:Boolean
+    },
+    scriptParams: {
+      type: Object
     }
   })
 
@@ -98,7 +104,7 @@ const messagewrapper = ref(null)
   onBeforeMount(()=>{
     state.id = scriptorStore.createNewInstance()
     Request.view("script",props.current?.['dest']?.['key'],{group:"leaf"}).then(async(resp)=>{
-      let data = await resp.json()
+      const data = await resp.json()
       state.scriptor.scriptCode = data["values"]["script"].replace(/\/\/n/g, "\n")
       state.scriptReady = true
     })
@@ -107,8 +113,28 @@ const messagewrapper = ref(null)
 
   function startScriptor(){
     state.opened = true
-    scriptorAction.value.executeScript()
 
+    scriptorAction.value.executeScript()
+    if (import.meta.env.DEV) {
+      //Reload the script on DEV Mode everytime
+      Request.view("script",props.current?.['dest']?.['key'],{group:"leaf"}).then(async(resp)=>{
+      const data = await resp.json()
+      state.scriptor.scriptCode = data["values"]["script"].replace(/\/\/n/g, "\n")
+      state.scriptReady = true
+      scriptorAction.value.executeScript(props.scriptParams)
+    })
+
+    }
+    else
+    {
+      scriptorAction.value.executeScript(props.scriptParams)
+    }
+
+  }
+  function exitScriptor()
+  {
+    state.opened = false
+    scriptorAction.value.exitScript()
   }
 
   watch(
@@ -116,7 +142,7 @@ const messagewrapper = ref(null)
     (newVal, oldVal) => {
       if (messagewrapper.value){
         const scroller = useDebounceFn((event) => {
-          messagewrapper.value.scrollTop = 999999
+          runnerDialog.value.shadowRoot.querySelector(".dialog__body").scroll(0,99999);
         }, 1)
         scroller()
       }

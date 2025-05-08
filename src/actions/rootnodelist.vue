@@ -15,7 +15,7 @@
     </sl-option>
   </sl-select>
   <span class="reponame" v-else>
-    {{Utils.renderValue(handlerState['availableRootNodes'].filter(x=>x['key']===handlerState['currentRootNode']?.['key'])?.[0]['name'])}}
+    {{Utils.renderValue(handlerState['availableRootNodes'].filter(x=>x['key']===handlerState['currentRootNode']?.['key'])?.[0]?.['name'])}}
   </span>
 </template>
 

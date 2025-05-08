@@ -21,6 +21,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     initCode: "",
     runningActions: new Map(),
     isReady: false, //scriptor webworker ready
+    isLoading: false, //scriptor webworker ready
     isRunning: computed(() => {
       // user script is running
       return state.runningActions.size > 0
@@ -34,7 +35,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     }),
     currentInstance: null,
     instances: reactive({}),
-    scriptorVersion:"latest"
+    scriptorVersion: "latest"
   })
 
   const progress = reactive({
@@ -123,19 +124,29 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     }
   }
 
-  async function setParams() {
+  async function setParams(scriptParams={}) {
     const contextStore = useContextStore();
     //Use window object, because useRoute not work outside module.
     const tabId = (window.location.hash || '').replace(/^#/, '').split("_")[1].replace("=","")
-    let params = contextStore.getLocalContext(tabId,true)["_selectedEntries"];
-    if (!params)
+    let selectedEntries = contextStore.getLocalContext(tabId,true)["_selectedEntries"];
+    if (!selectedEntries && !scriptParams)
     {
       return
     }
+    if (!scriptParams) {
+      scriptParams = {}
+    }
+    if (!selectedEntries) {
+      selectedEntries = {}
+    }
+    else {
+      selectedEntries = {"__selected_entries":selectedEntries}
+    }
+    const params = Object.assign(selectedEntries, scriptParams)
+
     if (state.workerObject) {
       return new Promise((resolve) => {
         state.runningActions.set("setParams", resolve)
-
         state.workerObject.post({
           id: "setParams",
           python: "",
@@ -145,18 +156,32 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     }
   }
 
-  async function execute(code, id = null, context = {}) {
+
+  async function exitScript()
+  {
+    console.log("exit programm")
+    sendResult("exit","__exit__")
+  }
+
+
+  async function execute(code, id = null, context = {},scriptParams={}) {
     let currentId = createNewInstance(id) // create needed Instance Object
     state.currentInstance = currentId
     let currentState = state.instances[currentId]
     currentState.messages = []
     currentState.internalMessages = []
 
-    if (!state.isReady) {
+    if (!state.isReady && !state.isLoading) {
+      state.isLoading = true;
       createWebWorker()
       await load()
+      state.isLoading = false;
     }
-    await setParams();
+    if (code === undefined) {
+      console.log("Nothing to execute")
+      code = ""
+    }
+    await setParams(scriptParams);
     code = `${code}\nimport viur.scriptor\nimport traceback\nawait viur.scriptor._init_modules()\nfrom viur.scriptor import *\n\ntry:\n    await main()\nexcept:\n    logger.error(traceback.format_exc())\n`
 
     return new Promise((resolve) => {
@@ -170,12 +195,18 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     })
   }
 
+
   function handleCallback(id, data) {
     let callback = state.runningActions.get(id)
     if (callback) {
       callback({results: data.res, error: null})
       state.runningActions.delete(id)
     }
+  }
+  function preload()
+  {
+    //start empty script for preloading all libraries
+    execute()
   }
 
   function addMessageEntry(type, id, data) {
@@ -275,7 +306,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
         addMessageEntry(data.type, id, data)
         break
       case "clear":
-        currentState.messages.length = 0;
+        currentState.messages.length = data["length"];
         break
       default:
         if (["select", "input", "diffcmp", "table", "stdout", "stderr","raw_html"].includes(data.type)) {
@@ -332,8 +363,10 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     state,
     progress,
     execute,
+    exitScript,
     sendResult,
     createNewInstance,
-    fetchScriptorVersions
+    fetchScriptorVersions,
+    preload
   }
 })
