@@ -135,12 +135,6 @@ import {useDebounceFn} from "@vueuse/core";
     state.opened = false
     scriptorAction.value.exitScript()
   }
-  function exitScriptor()
-  {
-    state.opened = false
-    scriptorAction.value.exitScript()
-  }
-
   watch(
     () => state.scriptor?.messages.length,
     (newVal, oldVal) => {
