@@ -2,7 +2,7 @@
   <sl-button
     size="small"
     :loading="state.loading"
-    title="$t(name)"
+    :title="$t(name)"
     @click="handleClick"
   >
     <sl-icon
