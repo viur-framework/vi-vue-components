@@ -35,7 +35,6 @@
           :label="current['rel']['name']"
           @sl-after-hide="exitScriptor"
           ref="runnerDialog"
-
         >
           <div class="wrapper-widgets" ref="messagewrapper">
         <status-bar :id="state.id" :filename="current['dest']['name']"></status-bar>
@@ -114,6 +113,7 @@ import {useDebounceFn} from "@vueuse/core";
   function startScriptor(){
     state.opened = true
 
+    scriptorAction.value.executeScript()
     if (import.meta.env.DEV) {
       //Reload the script on DEV Mode everytime
       Request.view("script",props.current?.['dest']?.['key'],{group:"leaf"}).then(async(resp)=>{
@@ -129,6 +129,11 @@ import {useDebounceFn} from "@vueuse/core";
       scriptorAction.value.executeScript(props.scriptParams)
     }
 
+  }
+  function exitScriptor()
+  {
+    state.opened = false
+    scriptorAction.value.exitScript()
   }
   function exitScriptor()
   {
