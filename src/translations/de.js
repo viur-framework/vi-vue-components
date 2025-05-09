@@ -37,7 +37,8 @@ export default {
     sortdesc: "Absteigend Sortieren",
     move: "verschieben",
     clear_log:"Log löschen",
-    clear_cache:"Zwischenspeicher löschen"
+    clear_cache:"Zwischenspeicher löschen",
+    translate:"Übersetzen"
   },
   sidebar: {
     workspace: "Arbeitsbereich",
