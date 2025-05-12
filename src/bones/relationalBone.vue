@@ -169,7 +169,7 @@ const props = defineProps({
 
     function changeEventNested(data) {
       if (state.selection?.dest){ // only send a change if we have a valid target
-        state.selection = {...state.selection, "rel":data["value"]}
+        state.selection = {...props.value, "rel":data["value"]}
         emit("change", data["name"], state.selection , data["lang"], data["index"])
       }
     }
