@@ -1,6 +1,6 @@
 {
   "name": "@viur/vue-components",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "a collection of complex components to build uis",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -9,7 +9,7 @@
   "license": "MIT",
   "dependencies": {
     "@codemirror/lang-python": "^6.1.6",
-    "@viur/vue-utils": "^2.2.13",
+    "@viur/vue-utils": "^2.2.14",
     "@vueuse/core": "^12.4.0",
     "codemirror": "^6.0.1",
     "logics-js": "^0.3.9",
