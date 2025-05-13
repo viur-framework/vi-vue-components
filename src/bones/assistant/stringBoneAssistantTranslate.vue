@@ -1,5 +1,4 @@
 <template>
-  {{boneState.bonevalue}}
   <sl-input
     class="widget-bone widget-bone-string widget-bone-string-default"
     :class="([`widget-bone-string-${name}`])"
@@ -26,7 +25,8 @@
     :module="boneState?.bonestructure['module']"
     assistant="translate"
     :params="{name,value,index, lang, bone,boneState}"
-    @close="console.log('fffff')"
+    @close="closeAssistant"
+    @next="nextAssistant"
   >
   </assistant-window>
 
@@ -77,7 +77,7 @@ import assistantWindow from '../components/assistantWindow.vue'
         return pat?.[boneState.defaultLanguage]?pat?.[boneState.defaultLanguage]:''
       }),
       opened:false,
-      disabled:computed(()=>!(!props.value && boneState.bonevalue?.['de']))
+      disabled:computed(()=>!boneState.bonevalue?.['de'])
     })
 
     const stringBone = ref(null)
@@ -109,6 +109,17 @@ import assistantWindow from '../components/assistantWindow.vue'
     onMounted(() => {
       emit("change", props.name, props.value, props.lang, props.index) //init
     })
+    function closeAssistant(val,lang){
+      state.opened=false
+      if(val){
+        emit("change", props.name, val, lang, props.index)
+      }
+    }
+    function nextAssistant(val,lang){
+      if(val){
+        emit("change", props.name, val, lang, props.index)
+      }
+    }
 
 </script>
 

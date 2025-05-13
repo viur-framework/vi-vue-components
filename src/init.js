@@ -14,6 +14,7 @@ import selectaccessBone from "./bones/selectaccessBone.vue"
 import relationalBone from "./bones/relationalBone.vue"
 import fileBone from "./bones/fileBone.vue"
 import stringBoneAssistantTranslate from './bones/assistant/stringBoneAssistantTranslate.vue'
+import textBoneAssistantTranslate from './bones/assistant/textBoneAssistantTranslate.vue'
 
 import fileBar from "./bones/actionbar/fileBar.vue"
 import relationalBar from "./bones/actionbar/relationalBar.vue"
@@ -75,6 +76,7 @@ export function useInitConnection() {
     function initBones() {
       addBoneWidget("select.access", selectaccessBone) //add Bone to store
       addBoneWidget("str.assistant", stringBoneAssistantTranslate) //add Bone to store
+      addBoneWidget("text.assistant", textBoneAssistantTranslate) //add Bone to store
       addBoneWidget("relational.tree.leaf.file.", fileBone) //add Bone to store
       addBoneWidget("relational.tree.leaf.file.file", fileBone) //override default, add Bone to store
       addBoneWidget("relational.", relationalBone) //add Bone to store

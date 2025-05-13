@@ -11,18 +11,23 @@
       style="--width: 85%"
       @sl-after-hide="relationCloseAction()"
     >
-      <div style="display:flex;width:100%;justify-content: space-between;gap:10px;padding:20px;">
-        <div style="width: 50%">Original(de):<br> {{params.boneState.bonevalue['de']}}</div>
-        <div style="width: 50%">Ziel({{params.lang}}): <br>{{state.result || '-'}}</div>
+      <div class="body-wrapper">
+        <div style="display:flex;width:100%;justify-content: space-between;gap:10px;">
+          <div style="width: 50%">Original(de):
+            <sl-textarea :value="state.value_de">
+            </sl-textarea>
+          </div>
+
+          <div style="width: 50%">Ziel({{state.currentLang}}):
+            <sl-textarea :value="state.result || '-'" @sl-change="updateValue">
+            </sl-textarea>
+            <sl-button @click="translate" size="small" outline variant="success">Übersetzen</sl-button>
+          </div>
+        </div>
+        <span style="font-size: var(--sl-font-size-small);font-style: italic;text-align: center">
+          Bei der Übersetzung kommt Künstliche Intelligenz zum Einsatz, die Erebnisse können fehlerhaft sein. Bitte prüfen Sie stehts das Ergebnis.
+        </span>
       </div>
-
-      <sl-button @click="translate">Anfragen</sl-button>
-
-
-      <br><br><br><br>
-      {{ params }}
-
-
 
       <div
         slot="footer"
@@ -35,12 +40,16 @@
           @click="relationCloseAction()"
           >{{ $t("relation.abort") }}</sl-button
         >
+        <sl-button variant="info" outline @click="nextlang" size="small":disabled="!state.nextlang">
+          Übernehmen und nächste leere Sprache
+        </sl-button>
+
         <sl-button
           variant="success"
           size="small"
           @click="relationApplySelection()"
         >
-          {{ $t("relation.select") }}
+          Ziel für {{state.currentLang}} übernehmen
         </sl-button>
       </div>
     </sl-dialog>
@@ -49,7 +58,7 @@
 
 <script setup>
 
-import {reactive, defineComponent, onMounted, inject, computed} from "vue"
+import {reactive, defineComponent, onMounted, inject, computed,watch} from "vue"
 import { Request } from "@viur/vue-utils"
 import handlers from "../../handler/handlers"
 
@@ -66,21 +75,53 @@ const props = defineProps({
     params:Object
   })
 
-  const emit = defineEmits(["close"])
+  const emit = defineEmits(["close",'next'])
 
     const state = reactive({
       result: null,
-      rawLang: computed(()=>props.params.lang.split("_")[0]),
-      simple: computed(()=>props.params.lang.split("_").length===2)
+      currentLang:null,
+      rawLang: computed(()=>state.currentLang?.split("_")[0]),
+      simple: computed(()=>state.currentLang?.split("_")?.length===2),
+      value_de:null,
+      nextlang: computed(()=>{
+        for (const [l,v] of Object.entries(props.params.boneState.bonevalue)){
+          if (!v && state.currentLang!==l) {
+            return l
+          }
+        }
+        return null
+      })
     })
     function translate(){
       Request.get("/json/assistant/translate",{dataObj:{
-        text:props.params.boneState.bonevalue['de'],
+        text:state.value_de,
         language:state.rawLang,
         simplified:state.simple
       }})
     }
 
+    onMounted(()=>{
+      state.value_de = props.params.boneState.bonevalue['de']
+      if(props.params.lang === "de"){
+        state.currentLang = state.nextlang
+      }else{
+        state.currentLang = props.params.lang
+      }
+    })
+
+    watch(()=>props.params.boneState.bonevalue['de'],(newVal,oldVal)=>{
+      state.value_de = newVal
+    })
+
+    function updateValue(e){
+      state.result = e.target.value
+    }
+
+
+    function nextlang(){
+      emit("next", state.result, state.currentLang)
+      state.currentLang = state.nextlang
+    }
 
 
     function relationCloseAction() {
@@ -89,7 +130,7 @@ const props = defineProps({
     }
 
     function relationApplySelection() {
-      emit("close", state.result)
+      emit("close", state.result, state.currentLang)
     }
 </script>
 
@@ -101,13 +142,13 @@ const props = defineProps({
   }
 
   &::part(panel) {
-    height: 100%;
-    max-height: calc(100% - 100px);
+
     margin-bottom: 40px;
   }
 
   &::part(body) {
     display: contents;
+    padding:20px;
   }
 
   &::part(footer) {
@@ -139,5 +180,12 @@ const props = defineProps({
 .footer {
   display: flex;
   justify-content: space-between;
+}
+
+.body-wrapper{
+  padding:20px 20px 0 20px;
+  display:flex;
+  flex-direction: column;
+  gap:20px;
 }
 </style>
