@@ -1,8 +1,12 @@
 <template>
   <div class="wrapper">
+
+    <div class="background-img">
+      <img :src="state.backgroundImage" />
+    </div>
+
     <div
       class="init-spinner"
-      style="position: relative; height: 100%; width: 100%"
     >
       <loader
         size="8"
@@ -36,7 +40,7 @@ import { useI18n } from "vue-i18n"
 
 
     const state = reactive({
-      backgroundImage: computed(() => `url('${appStore.state["admin.login.background"]}'`),
+      backgroundImage: computed(() => `${appStore.state["admin.login.background"]}`),
       loading:false,
     })
 
@@ -50,16 +54,43 @@ import { useI18n } from "vue-i18n"
 <style scoped>
 .wrapper {
   height: 100%;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-image: v-bind("state.backgroundImage");
-  background-position: center center;
-  background-size: cover;
+}
+
+.wrapper::before {
+  content: "";
+  opacity: 0.7;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  background: linear-gradient(to top left, var(--sl-color-primary-700), var(--sl-color-primary-500));
+}
+
+.background-img {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 0;
+
+  & img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
 }
 
 .init-spinner {
   display: flex;
   justify-content: center;
+  align-items: center;
+  z-index: 2;
 }
 </style>

@@ -696,7 +696,7 @@ table {
       background: linear-gradient(
         var(--vi-background-color) 0%,
         var(--vi-background-color) calc(100% - 2px),
-        var(--sl-color-neutral-700) 100%
+        var(--sl-color-primary-500) 100%
       );
       font-weight: 700;
       border-right: 1px solid var(--sl-color-neutral-300);
@@ -742,19 +742,23 @@ table {
   flex: 1;
   padding-bottom: 80px;
 
-  &::-webkit-scrollbar-track {
-    background-color: transparent;
-  }
-
   &::-webkit-scrollbar {
-    width: 4px;
-    height: 4px;
-    background-color: transparent;
+    width: 10px;
+    height: 11px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: var(--sl-color-neutral-400);
-    border-radius: 3px;
+    border: 4px solid rgba(0, 0, 0, 0);
+    border-right: 3px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    border-radius: 9999px;
+    background-color: var(--sl-color-neutral-200);
+  }
+
+  &:hover {
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--sl-color-neutral-500);
+    }
   }
 }
 .stick-header {
@@ -814,19 +818,23 @@ sl-tree{
     width: 100%;
    }
 
-  &::-webkit-scrollbar-track {
-    background-color: transparent;
-  }
-
-  &::-webkit-scrollbar {
-    width: 4px;
-    height: 4px;
-    background-color: transparent;
+   &::-webkit-scrollbar {
+    width: 10px;
+    height: 11px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: var(--sl-color-neutral-400);
-    border-radius: 3px;
+    border: 4px solid rgba(0, 0, 0, 0);
+    border-right: 3px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    border-radius: 9999px;
+    background-color: var(--sl-color-neutral-200);
+  }
+
+  &:hover {
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--sl-color-neutral-500);
+    }
   }
 }
 

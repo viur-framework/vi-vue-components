@@ -47,16 +47,6 @@
       :multiple="boneState.multiple"
       @change="handleUpload"
     />
-    <sl-button
-      v-if="value?.['dest']"
-      @click="downloadFile"
-      :title="$t('bone.download')"
-    >
-      <sl-icon
-        slot="prefix"
-        name="download"
-      ></sl-icon>
-    </sl-button>
     <div
       v-if="!boneState.isEmpty && value?.['dest']"
       class="box"
@@ -89,6 +79,7 @@
 
 
       </div>
+
       <sl-button
           v-if="value?.['dest']"
           variant="info"
@@ -100,6 +91,7 @@
           <sl-icon name="pencil-fill"></sl-icon>
         </sl-button>
     </div>
+
     <sl-button
       v-if="value?.['dest']"
       variant="info"
@@ -110,6 +102,19 @@
     >
       <sl-icon name="list-ul"></sl-icon>
     </sl-button>
+
+    <sl-button
+      outline
+      v-if="value?.['dest']"
+      @click="downloadFile"
+      :title="$t('bone.download')"
+    >
+      <sl-icon
+        slot="prefix"
+        name="download"
+      ></sl-icon>
+    </sl-button>
+
     <sl-button
       v-if="!boneState.multiple && !boneState.isEmpty && value?.['dest']"
       :disabled="boneState.readonly"
@@ -312,6 +317,7 @@ defineOptions({
   max-height: 40px;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
+  background-color: var(--sl-color-neutral-0);
 
   &:hover{
     .edit-btn{
@@ -368,6 +374,10 @@ defineOptions({
     aspect-ratio: 1;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
+  }
+
+  &::part(label){
+    padding: 0;
   }
 }
 

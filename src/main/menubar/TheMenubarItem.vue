@@ -44,24 +44,6 @@
         >
         </sl-icon>
 
-        <div
-          v-if="state.slotitems"
-          class="arrow"
-          :class="{ 'is-open': state.open }"
-          @click.stop="openGroup"
-        >
-          <sl-icon
-            name="chevron-right"
-            sprite
-          >
-          </sl-icon>
-        </div>
-
-        <div
-          v-else
-          class="space"
-        ></div>
-
         <sl-dropdown class="dropdown">
           <sl-icon-button
             slot="trigger"
@@ -109,6 +91,24 @@
             </sl-menu-item>
           </sl-menu>
         </sl-dropdown>
+
+        <div
+          v-if="state.slotitems"
+          class="arrow"
+          :class="{ 'is-open': state.open }"
+          @click.stop="openGroup"
+        >
+          <sl-icon
+            name="chevron-right"
+            sprite
+          >
+          </sl-icon>
+        </div>
+
+        <div
+          v-else
+          class="space"
+        ></div>
       </div>
 
       <div
@@ -384,7 +384,6 @@ import { Request } from "@viur/vue-utils"
 
 .wrapper {
   width: 100%;
-  font-size: v-bind("state.cssFontSize");
 }
 
 .item {
@@ -392,7 +391,7 @@ import { Request } from "@viur/vue-utils"
   user-select: none;
   border: 0;
   text-align: left;
-  padding: 5px 0;
+  padding: 7px 3px;
   align-items: center;
   align-self: stretch;
   min-height: 35px;
@@ -405,10 +404,10 @@ import { Request } from "@viur/vue-utils"
   transition: all ease 0.3s;
 
   & sl-avatar {
-    --size: 1.85em;
+    --size: 1.95em;
 
     &::part(icon) {
-      padding: 25%;
+      padding: 15%;
     }
 
     &::part(base) {
@@ -431,9 +430,19 @@ import { Request } from "@viur/vue-utils"
 
     & sl-avatar {
       &::part(base) {
-        border: 1px solid var(--vi-foreground-color);
-        background-color: transparent;
-        color: var(--vi-foreground-color);
+        border: 1px solid var(--sl-color-primary-500);
+        color: var(--sl-color-primary-500);
+
+        @supports (color: oklch(from red l c h)) {
+          --l: clamp(0, (l / 0.623 - 1) * -infinity, 1);
+          background-color: oklch(from var(--sl-color-primary-500) var(--l) 0 h);
+          text-shadow: none;
+        }
+
+        @supports (color: contrast-color(red)) {
+          background-color: contrast-color(var(--sl-color-primary-500));
+          text-shadow: none;
+        }
       }
     }
   }
@@ -452,6 +461,7 @@ import { Request } from "@viur/vue-utils"
   display: -webkit-box;
   color: var(--vi-foreground-color);
   margin-left: 13px;
+  line-height: 1;
 
   & a {
     color: var(--vi-foreground-color);
@@ -485,7 +495,7 @@ sl-icon {
 .dropdown {
   & sl-icon-button {
     transition: all ease 0.3s;
-    opacity: 0.3;
+    opacity: 0;
     rotate: 90deg;
     color: var(--vi-foreground-color);
 
@@ -527,5 +537,10 @@ sl-icon {
   & .item {
     padding-left: v-bind("state.padding");
   }
+}
+
+.space{
+  width: 0.75em;
+  margin: 0 var(--sl-spacing-small);
 }
 </style>

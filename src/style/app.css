@@ -518,15 +518,20 @@ ol.is-list {
     page-break-inside: avoid;
   }
 }
-::-moz-selection {
-  background-color: #a00c16;
+
+::selection, ::-moz-selection {
+  background-color: var(--sl-color-primary-500);
   text-shadow: none;
-  color: #ffffff;
-}
-::selection {
-  background-color: #a00c16;
-  text-shadow: none;
-  color: #ffffff;
+  @supports (color: oklch(from red l c h)) {
+    --l: clamp(0, (l / 0.623 - 1) * -infinity, 1);
+    color: oklch(from var(--sl-color-primary-500) var(--l) 0 h);
+    text-shadow: none;
+  }
+
+  @supports (color: contrast-color(red)) {
+    color: contrast-color(var(--sl-color-primary-500));
+    text-shadow: none;
+  }
 }
 :focus {
   outline: 1px dotted #ddd;
@@ -554,18 +559,19 @@ body {
 
 #app {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   height: 100vh;
+  width: 100vw;
 }
 sl-input,
 sl-select {
-  --sl-panel-background-color: var(--vi-background-color);
+  --sl-panel-background-color: var(--sl-color-neutral-0);
 }
 sl-input::part(base),
 sl-select::part(base) {
   box-shadow: none;
   color: var(--vi-foreground-color);
-  background-color: var(--vi-background-color);
+  background-color: var(--sl-color-neutral-0);
   border-color: var(--vi-border-color);
 }
 sl-input::part(input),
@@ -576,13 +582,13 @@ sl-input::part(combobox),
 sl-select::part(combobox) {
   box-shadow: none;
   color: var(--vi-foreground-color);
-  background-color: var(--vi-background-color);
+  background-color: var(--sl-color-neutral-0);
   border-color: var(--vi-border-color) !important;
 }
 sl-input::part(display-input),
 sl-select::part(display-input) {
   color: var(--vi-foreground-color);
-  background-color: var(--vi-background-color);
+  background-color: var(--sl-color-neutral-0);
   border-color: var(--vi-border-color) !important;
 }
 sl-input::part(form-control-label),
@@ -592,13 +598,13 @@ sl-select::part(form-control-label) {
 sl-input sl-option::part(base),
 sl-select sl-option::part(base) {
   color: var(--vi-foreground-color);
-  background-color: var(--vi-background-color);
+  background-color: var(--sl-color-neutral-0);
 }
 sl-checkbox::part(label) {
   color: var(--vi-foreground-color);
 }
 sl-checkbox::part(control) {
-  background-color: var(--vi-background-color);
+  background-color: var(--sl-color-neutral-0);
   border: 1px solid var(--vi-border-color);
 }
 sl-checkbox::part(control--checked) {
@@ -705,27 +711,109 @@ sl-bone {
   --hover-color: rgba(0, 0, 0, 0.2);
 }
 sl-drawer::part(header) {
-  border-bottom: 1px solid var(--vi-border-color);
+  background-color: var(--sl-color-primary-500);
+  height: 45px;
+
+  @supports (color: oklch(from red l c h)) {
+    --l: clamp(0, (l / 0.623 - 1) * -infinity, 1);
+    color: oklch(from var(--sl-color-primary-500) var(--l) 0 h);
+    text-shadow: none;
+  }
+
+  @supports (color: contrast-color(red)) {
+    color: contrast-color(var(--sl-color-primary-500));
+    text-shadow: none;
+  }
 }
 sl-drawer::part(footer) {
-  border-top: 1px solid var(--vi-border-color);
+  border-top: 1px solid var(--sl-color-primary-500);
   padding-top: var(--sl-spacing-medium);
   padding-bottom: var(--sl-spacing-medium);
 }
 sl-drawer::part(title) {
-  font-size: 1.2em;
-  padding-top: var(--sl-spacing-medium);
-  padding-bottom: var(--sl-spacing-medium);
+  display: flex;
+  align-items: center;
+  font-size: 1em;
+  padding-top: var(--sl-spacing-small);
+  padding-bottom: var(--sl-spacing-small);
+  font-weight: 500;
 }
 sl-drawer::part(header-actions) {
   padding: 0;
   aspect-ratio: 1;
   justify-content: center;
 }
+sl-drawer::part(close-button) {
+  @supports (color: oklch(from red l c h)) {
+    --l: clamp(0, (l / 0.623 - 1) * -infinity, 1);
+    color: oklch(from var(--sl-color-primary-500) var(--l) 0 h);
+    text-shadow: none;
+  }
+
+  @supports (color: contrast-color(red)) {
+    color: contrast-color(var(--sl-color-primary-500));
+    text-shadow: none;
+  }
+}
 sl-drawer::part(panel) {
   color: var(--vi-foreground-color);
   background-color: var(--vi-background-color);
-  font-size: 0.9em;
+}
+
+sl-button{
+  &::part(base){
+    transition: all ease .2s;
+  }
+
+  &[variant="primary"]{
+    &::part(label){
+      @supports (color: oklch(from red l c h)) {
+        --l: clamp(0, (l / 0.623 - 1) * -infinity, 1);
+        color: oklch(from var(--sl-color-primary-500) var(--l) 0 h);
+        text-shadow: none;
+      }
+
+      @supports (color: contrast-color(red)) {
+        color: contrast-color(var(--sl-color-primary-500));
+        text-shadow: none;
+      }
+    }
+
+    &::part(prefix){
+      @supports (color: oklch(from red l c h)) {
+        --l: clamp(0, (l / 0.623 - 1) * -infinity, 1);
+        color: oklch(from var(--sl-color-primary-500) var(--l) 0 h);
+        text-shadow: none;
+      }
+
+      @supports (color: contrast-color(red)) {
+        color: contrast-color(var(--sl-color-primary-500));
+        text-shadow: none;
+      }
+    }
+  }
+}
+
+sl-button[outline]:not(:hover){
+  &::part(base){
+    background-color: var(--sl-color-neutral-0);
+  }
+}
+
+sl-button[variant="default"]:not(:hover){
+  &::part(base){
+    background-color: var(--sl-color-neutral-0);
+  }
+}
+
+.square-btn{
+  &::part(base){
+    aspect-ratio: 1;
+  }
+
+  &::part(label){
+    padding: 0;
+  }
 }
 
 :root,

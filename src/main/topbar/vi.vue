@@ -21,13 +21,16 @@
         @click="openUser"
       ></sl-avatar>
 
-      <div
-        class="name-wrap"
-        @click="openUser"
-      >
-        <span class="name">{{ state.name }}</span>
-        <span class="subline">{{ userStore.state.user.name }}</span>
-      </div>
+      <sl-tooltip :content="userStore.state.user.name">
+        <div
+          class="name-wrap"
+          @click="openUser"
+        >
+          <span class="name">{{ state.name }}</span>
+        </div>
+
+      </sl-tooltip>
+
       <sl-button-group>
         <sl-button
           variant="primary"
@@ -346,11 +349,26 @@ sl-drawer {
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 10px 15px;
-  height: 60px;
-  border-bottom: 2px solid var(--sl-color-primary-500);
+  padding: var(--sl-spacing-x-small);
+  height: 45px;
+  border-bottom: 1px solid var(--sl-color-primary-500);
+
   & sl-avatar {
     cursor: pointer;
+    padding: 0;
+
+    &::part(initals){
+      @supports (color: oklch(from red l c h)) {
+        --l: clamp(0, (l / 0.623 - 1) * -infinity, 1);
+        color: oklch(from var(--sl-color-primary-500) var(--l) 0 h);
+        text-shadow: none;
+      }
+
+      @supports (color: contrast-color(red)) {
+        color: contrast-color(var(--sl-color-primary-500));
+        text-shadow: none;
+      }
+    }
   }
 }
 
@@ -370,7 +388,6 @@ sl-drawer {
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  padding: 15px;
 }
 
 .group {
@@ -381,7 +398,7 @@ sl-drawer {
   color: var(--vi-foreground-color);
 
   sl-switch{
-    padding: var(--sl-spacing-2x-small) var(--sl-spacing-x-small);
+    padding: var(--sl-spacing-2x-small) var(--sl-spacing-small);
 
     &::part(base) {
       gap: var(--sl-spacing-2x-small);
@@ -398,6 +415,7 @@ sl-drawer {
       color: var(--vi-foreground-color);
       transition: all ease 0.3s;
       border-radius: 0;
+      padding: 0 var(--sl-spacing-small);
     }
 
     &::part(label) {
@@ -423,16 +441,15 @@ sl-drawer {
 }
 
 .group-headline {
-  padding: 5px;
+  padding:  var(--sl-spacing-x-small) var(--sl-spacing-small);
   text-align: left;
   font-weight: bold;
 }
 
 .name-wrap {
   color: var(--vi-foreground-color);
-  font-weight: bold;
+  font-weight: 600;
   margin-left: var(--sl-spacing-small);
-  margin-bottom: var(--sl-spacing-2x-small);
   font-size: 1.1em;
   margin-right: auto;
   white-space: nowrap;
@@ -462,13 +479,17 @@ sl-drawer {
   overflow: hidden;
 }
 
-.subline {
-  font-size: 0.7rem;
-  line-height: 1;
-  text-align: left;
-  width: 100%;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
+.footer-item{
+  @supports (color: oklch(from red l c h)) {
+    --l: clamp(0, (l / 0.623 - 1) * -infinity, 1);
+    color: oklch(from var(--sl-color-primary-500) var(--l) 0 h);
+    text-shadow: none;
+  }
+
+  @supports (color: contrast-color(red)) {
+    color: contrast-color(var(--sl-color-primary-500));
+    text-shadow: none;
+  }
 }
+
 </style>

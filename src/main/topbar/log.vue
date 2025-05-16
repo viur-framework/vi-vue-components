@@ -1,8 +1,7 @@
 <template>
   <sl-button
     size="small"
-    variant="default"
-    class="btn--mobile-simple"
+    variant="secondary"
     @click="openInfo"
   >
     <sl-icon
@@ -26,4 +25,11 @@ import { useMessageStore } from "../../stores/message"
 
 </script>
 
-<style scoped></style>
+<style scoped>
+  sl-button{
+    &::part(base){
+      background-color: var(--sl-color-neutral-500);
+      border-color: var(--sl-color-neutral-500);
+    }
+  }
+</style>

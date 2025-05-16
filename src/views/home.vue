@@ -1,7 +1,9 @@
 <template>
   <div class="home">
-    <h1 class="main-headline">Hallo {{ Utils.unescape(state.name) }}</h1>
-    <strong> {{ userStore.state.user.name }}</strong>
+    <div class="welcome-sign">
+      <h1 class="main-headline">Hallo {{ Utils.unescape(state.name) }}</h1>
+      <strong> {{ userStore.state.user.name }}</strong>
+    </div>
 
     <div
       v-if="false && userStore.favoriteModules?.length > 0"
@@ -96,11 +98,6 @@ import WidgetSmall from "../dashboard/WidgetSmall.vue"
   color: var(--vi-foreground-color);
 }
 
-.main-headline {
-  font-size: 2em;
-  font-weight: 600;
-}
-
 .headline {
   display: flex;
   flex-direction: row;
@@ -143,8 +140,27 @@ import WidgetSmall from "../dashboard/WidgetSmall.vue"
   grid-gap: 15px;
 }
 
-strong {
-  display: block;
-  margin-bottom: 20px;
+.welcome-sign{
+  width: 100%;
+  margin-top: var(--sl-spacing-large);
+  padding: var(--sl-spacing-medium) var(--sl-spacing-large) var(--sl-spacing-large) var(--sl-spacing-large);
+  border-radius: var(--sl-border-radius-medium);
+  background: linear-gradient(to right, var(--sl-color-primary-500), var(--sl-color-primary-200));
+
+  @supports (color: oklch(from red l c h)) {
+    --l: clamp(0, (l / 0.623 - 1) * -infinity, 1);
+    color: oklch(from var(--sl-color-primary-500) var(--l) 0 h);
+    text-shadow: none;
+  }
+
+  @supports (color: contrast-color(red)) {
+    color: contrast-color(var(--sl-color-primary-500));
+    text-shadow: none;
+  }
+}
+
+.main-headline {
+  font-size: 2.5em;
+  font-weight: 400;
 }
 </style>

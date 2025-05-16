@@ -299,12 +299,12 @@ function currentHandler(name){
 
     function editViewFilter(handler) {
       let filter = {}
-      
+
       if (handler["filter"]) {
         filter = handler["filter"]
       }
       if (!viform.value?.state?.skel) return filter
-      
+
       //todo set Context on routing
       if(typeof handler["context"] === 'object'){
         for (const [k, v] of Object.entries(handler["context"])) {
@@ -339,7 +339,7 @@ function currentHandler(name){
         state.errors = props.errors
       }
     )
-    
+
     onActivated(() => {
       let tabData = dbStore.getTabById(route.query["_"])
 
@@ -384,24 +384,22 @@ function currentHandler(name){
   overflow-y: auto;
   position: relative;
 
-  &::-webkit-scrollbar-track {
-    background-color: transparent;
-  }
-
   &::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-    background-color: transparent;
+    width: 10px;
+    height: 11px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: transparent;
-    border-radius: 3px;
+    border: 4px solid rgba(0, 0, 0, 0);
+    border-right: 3px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    border-radius: 9999px;
+    background-color: var(--sl-color-neutral-200);
   }
 
   &:hover {
     &::-webkit-scrollbar-thumb {
-      background-color: #afafaf;
+      background-color: var(--sl-color-neutral-500);
     }
   }
 }

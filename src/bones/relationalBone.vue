@@ -50,7 +50,6 @@
         "
       >
         <sl-icon
-          slot="prefix"
           name="x-lg"
         ></sl-icon>
       </sl-button>
@@ -222,13 +221,6 @@ const props = defineProps({
   display: flex;
   gap: var(--sl-spacing-x-small);
 
-  :deep(sl-combobox) {
-    &::part(input__base) {
-      border-top-left-radius: 0;
-      border-bottom-left-radius: 0;
-    }
-  }
-
   sl-button-group{
     sl-button{
       margin-left: var(--sl-spacing-x-small);
@@ -241,33 +233,17 @@ sl-input {
   width: 100%;
 
   &::part(base) {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-  }
-
-  &::part(base) {
     background-color: var(--sl-color-neutral-0);
   }
 }
 
 sl-combobox {
   width: 100%;
-
-  &::part(input) {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-  }
 }
 
 .square-btn {
   &::part(base) {
     aspect-ratio: 1;
-  }
-}
-
-.record {
-  :deep(.form) {
-    margin-top: var(--sl-spacing-x-small);
   }
 }
 
