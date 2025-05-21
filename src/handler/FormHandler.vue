@@ -8,7 +8,7 @@
         <div>
           <span v-if="['clone', 'add'].includes(action)">Neuer</span>
           <span v-else-if="['edit'].includes(action)">Bearbeite</span>
-          {{ state.conf?.["name"] }} Eintrag
+          {{ Utils.unescape(state.conf?.["name"]) }} Eintrag
           <span v-if="state.formValues?.['name']?.[0]['name']">: {{ Utils.unescape(state.formValues["name"][0]["name"]) }}</span>
         </div>
         <handler-context></handler-context>
@@ -299,12 +299,12 @@ function currentHandler(name){
 
     function editViewFilter(handler) {
       let filter = {}
-      
+
       if (handler["filter"]) {
         filter = handler["filter"]
       }
       if (!viform.value?.state?.skel) return filter
-      
+
       //todo set Context on routing
       if(typeof handler["context"] === 'object'){
         for (const [k, v] of Object.entries(handler["context"])) {
@@ -339,7 +339,7 @@ function currentHandler(name){
         state.errors = props.errors
       }
     )
-    
+
     onActivated(() => {
       let tabData = dbStore.getTabById(route.query["_"])
 
