@@ -13,8 +13,6 @@ import { addBoneWidget, addBoneActionbar } from "@viur/vue-utils/bones/edit/inde
 import selectaccessBone from "./bones/selectaccessBone.vue"
 import relationalBone from "./bones/relationalBone.vue"
 import fileBone from "./bones/fileBone.vue"
-import stringBoneAssistantTranslate from './bones/assistant/stringBoneAssistantTranslate.vue'
-import textBoneAssistantTranslate from './bones/assistant/textBoneAssistantTranslate.vue'
 
 import fileBar from "./bones/actionbar/fileBar.vue"
 import relationalBar from "./bones/actionbar/relationalBar.vue"
