@@ -100,6 +100,9 @@ function navigateSubRoute(subroute){
   }
   let new_route = router.resolve(unref(org_path))
   router.push(new_route)
+
+  let currentTab = dbStore.state['handlers.opened'][dbStore.state['handlers.active']]
+  currentTab.to = new_route
 }
 
 </script>

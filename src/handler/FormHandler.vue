@@ -35,6 +35,7 @@
 
     <div class="scroll-content" v-if="!state.loading">
       <vi-form ref="viform"
+              :boneactions="true"
               :module="module"
               :action="action"
               :group="group"
