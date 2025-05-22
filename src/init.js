@@ -56,7 +56,7 @@ export function useInitConnection() {
           }
         }
 
-        document.title = data["admin.name"] ? data["admin.name"] : "ViUR Administration"
+        appStore.state['title'] = data["admin.name"] ? data["admin.name"] : "ViUR Administration"
 
         if( data["admin.user.google.clientID"] ){
           userStore.googleInit(data["admin.user.google.clientID"]).catch(() => {
