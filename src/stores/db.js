@@ -274,6 +274,8 @@ export const useDBStore = defineStore("db", () => {
     //boneViewer
     "bones.view": shallowRef({}),
 
+    //rowStyling
+    "row.styling": shallowRef({}),
     //dynamic child buckets
     "handlers.opened": [
       {
