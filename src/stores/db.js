@@ -1,10 +1,12 @@
 //@ts-nocheck
 
 import { reactive, computed, getCurrentInstance, unref, markRaw,shallowRef } from "vue"
+import {useTitle} from '@vueuse/core'
 import { defineStore } from "pinia"
 import { useRoute, useRouter } from "vue-router"
 import { useViewStore } from "./views"
 import { useLocalStore } from "./local"
+import { useAppStore } from './app'
 import { useUserStore } from "@viur/vue-utils/login/stores/user"
 import { useContextStore } from "./context"
 import { destroyStore } from "@viur/vue-utils/utils/handlers"
@@ -272,6 +274,8 @@ export const useDBStore = defineStore("db", () => {
     //boneViewer
     "bones.view": shallowRef({}),
 
+    //rowStyling
+    "row.styling": shallowRef({}),
     //dynamic child buckets
     "handlers.opened": [
       {
@@ -495,6 +499,9 @@ export const useDBStore = defineStore("db", () => {
       if (!view) return url
       return `${url}___${view}`
     }
+    const appStore = useAppStore()
+    const title = useTitle()
+    title.value = appStore.state["title"]+" | "+ Utils.unescape(name)
 
     let tabNames = state["handlers.opened"].map((e) => uniqueTabname(e["url"],e['view'])).filter((name) => name === uniqueTabname(entry['url'],entry['view']))
     if (tabNames.length===0 || force){
@@ -511,6 +518,10 @@ export const useDBStore = defineStore("db", () => {
 
   function removeOpened(route) {
     let url = route.fullPath
+
+    const appStore = useAppStore()
+    const title = useTitle()
+    title.value = appStore.state["title"]
 
     let idx = state["handlers.opened"].findIndex((e) => e["url"] === url)
     if (idx === -1){

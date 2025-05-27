@@ -113,19 +113,16 @@ import {useDebounceFn} from "@vueuse/core";
   function startScriptor(){
     state.opened = true
 
-    scriptorAction.value.executeScript()
     if (import.meta.env.DEV) {
       //Reload the script on DEV Mode everytime
-      Request.view("script",props.current?.['dest']?.['key'],{group:"leaf"}).then(async(resp)=>{
-      const data = await resp.json()
-      state.scriptor.scriptCode = data["values"]["script"].replace(/\/\/n/g, "\n")
-      state.scriptReady = true
-      scriptorAction.value.executeScript(props.scriptParams)
-    })
+      Request.view("script", props.current?.['dest']?.['key'], {group: "leaf"}).then(async (resp) => {
+        const data = await resp.json()
+        state.scriptor.scriptCode = data["values"]["script"].replace(/\/\/n/g, "\n")
+        state.scriptReady = true
+        scriptorAction.value.executeScript(props.scriptParams)
+      })
 
-    }
-    else
-    {
+    } else {
       scriptorAction.value.executeScript(props.scriptParams)
     }
 
@@ -135,12 +132,6 @@ import {useDebounceFn} from "@vueuse/core";
     state.opened = false
     scriptorAction.value.exitScript()
   }
-  function exitScriptor()
-  {
-    state.opened = false
-    scriptorAction.value.exitScript()
-  }
-
   watch(
     () => state.scriptor?.messages.length,
     (newVal, oldVal) => {

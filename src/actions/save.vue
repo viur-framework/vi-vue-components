@@ -109,11 +109,11 @@ import {useTimeoutFn} from '@vueuse/core'
             } else {
 
               //messageStore.addMessage("success", `Edit`, "Entry edited successfully")
-              dbStore.markHandlersToUpdate(handlerState.module, handlerState.group)
-              state.loading = false
-              if (props.close) {
-                dbStore.removeOpened(route)
-              }
+              //dbStore.markHandlersToUpdate(handlerState.module, handlerState.group)
+              //state.loading = false
+              //if (props.close) {
+              //  dbStore.removeOpened(route)
+              //}
             }
           }
           if (handlerState.action === "add" || handlerState.action === "clone") {

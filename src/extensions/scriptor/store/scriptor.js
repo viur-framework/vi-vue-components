@@ -293,6 +293,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
             mode: "readwrite"
           })
         } catch (e) {
+          console.error("Failed to open the FilePicker",e)
         }
         await sendResult("showDirectoryPickerResult", dirhandle)
         break
@@ -320,7 +321,6 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     let messageId = "_sendDialogSignal"
 
     let message = {}
-
     //Dialogs needs type
     if (messageId === "_sendDialogSignal") {
       message = {

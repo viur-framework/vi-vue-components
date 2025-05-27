@@ -32,7 +32,7 @@
           class="name"
           @click="openItem(route)"
         >
-          {{ name }}
+          {{ Utils.unescape(name) }}
         </div>
 
         <sl-icon
@@ -140,7 +140,7 @@
         </sl-avatar>
 
         <div class="name">
-          {{ name }}
+          {{ Utils.unescape(name) }}
         </div>
 
         <div
@@ -186,7 +186,7 @@
         </sl-avatar>
 
         <div class="name">
-          {{ name }}
+          {{ Utils.unescape(name) }}
         </div>
 
         <div
