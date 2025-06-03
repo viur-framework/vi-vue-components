@@ -12,10 +12,12 @@
 <script setup>
 import { reactive, defineComponent, inject, computed } from "vue"
 import { useDBStore } from "../stores/db"
+import { useContextStore} from "../stores/context";
 import { useRoute } from "vue-router"
 
     const handlerState = inject("handlerState")
     const dbStore = useDBStore()
+    const contextStore = useContextStore()
     const route = useRoute()
     const state = reactive({
       active: computed(() => {
@@ -38,7 +40,12 @@ import { useRoute } from "vue-router"
           url = url.replace(`{{${k}}}`, v)
         }
       }
+      let handlerId = route?.query?.["_"]
+      let context = contextStore.getContext(handlerId)
 
+      for (const [k, v] of Object.entries(context)) {
+        url = url.replace(`{{${k}}}`, v)
+      }
       return url
     }
 
