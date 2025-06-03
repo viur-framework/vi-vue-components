@@ -85,11 +85,28 @@ import { useUserStore } from "@viur/vue-utils/login/stores/user"
         }
 
         await Request.securePost(url, { dataObj: dataObj }).then(async (resp) => {
+
           if (resp.status !== 200) {
-            messageStore.addMessage("error", `Error on Save`, "Error on Save")
+            const errorData = await resp.json();
+            if (errorData.descr && errorData.reason) {
+              messageStore.addMessage("error", errorData.reason, errorData.descr)
+            } else {
+              messageStore.addMessage("error", `Error on Delete`, "Error on Delete")
+            }
             deletionSuccess = false
             return 0
           }
+        }).catch(async (error) => {
+          deletionSuccess = false
+          const errorData = await error.response.json();
+          console.error(error)
+          state.loading = false
+          if (errorData.descr && errorData.reason) {
+            messageStore.addMessage("error", errorData.reason, errorData.descr)
+          } else {
+            messageStore.addMessage("error", `Error on Save`, "Error on Save")
+          }
+
         })
       }
       if (deletionSuccess) {
