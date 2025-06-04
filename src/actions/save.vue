@@ -179,14 +179,19 @@ import {useTimeoutFn} from '@vueuse/core'
 
         })
         .catch(async (error) => {
-          const errorData = await error.response.json();
-          console.error(error)
-          state.loading = false
-          if (errorData.descr && errorData.reason) {
-            messageStore.addMessage("error", errorData.reason, errorData.descr)
-          } else {
+          console.log(typeof error)
+          if (typeof error !== "string"){
+            const errorData = await error.response.json();
+            state.loading = false
+            if (errorData.descr && errorData.reason) {
+              messageStore.addMessage("error", errorData.reason, errorData.descr)
+            } else {
+              messageStore.addMessage("error", `Error on Save`, "Error on Save")
+            }
+          }else{
             messageStore.addMessage("error", `Error on Save`, "Error on Save")
           }
+
 
         })
     }
