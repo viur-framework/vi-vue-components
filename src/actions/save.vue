@@ -179,7 +179,6 @@ import {useTimeoutFn} from '@vueuse/core'
 
         })
         .catch(async (error) => {
-          console.log(typeof error)
           if (typeof error !== "string"){
             const errorData = await error.response.json();
             state.loading = false
