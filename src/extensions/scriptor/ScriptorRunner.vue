@@ -110,20 +110,20 @@ import {useDebounceFn} from "@vueuse/core";
 
   })
 
-  function startScriptor(){
+  function startScriptor(params = {}) {
     state.opened = true
-
+    params={...params,...props.scriptParams}
     if (import.meta.env.DEV) {
       //Reload the script on DEV Mode everytime
       Request.view("script", props.current?.['dest']?.['key'], {group: "leaf"}).then(async (resp) => {
         const data = await resp.json()
         state.scriptor.scriptCode = data["values"]["script"].replace(/\/\/n/g, "\n")
         state.scriptReady = true
-        scriptorAction.value.executeScript(props.scriptParams)
+        scriptorAction.value.executeScript(params)
       })
 
     } else {
-      scriptorAction.value.executeScript(props.scriptParams)
+      scriptorAction.value.executeScript(params)
     }
 
   }
@@ -144,6 +144,7 @@ import {useDebounceFn} from "@vueuse/core";
 
     }
   )
+defineExpose({startScriptor, exitScriptor})
 
 </script>
 
