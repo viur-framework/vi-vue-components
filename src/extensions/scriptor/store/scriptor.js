@@ -270,9 +270,11 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
         break
       case "showOpenFilePicker":
         let openhandle = -1
+        const types = data.types || []
         try {
           openhandle = await window.showOpenFilePicker({
-            multiple: false
+            multiple: false,
+            types:types
           })
         } catch (e) {
         }
