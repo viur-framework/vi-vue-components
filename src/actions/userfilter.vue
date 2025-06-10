@@ -1,7 +1,7 @@
 <template>
   <sl-button-group>
     <sl-button size="small" @click="state.open=true" :disabled="handlerState.conf['userFilters']?.length===0">{{state.currentName}}</sl-button>
-    <sl-button v-if="state.currentName!=='filtern'" size="small" @click="removeFilter" :disabled="handlerState.conf['userFilters']?.length===0" variant="danger" outline>x</sl-button>
+    <sl-button v-if="state.currentName!==actionName" size="small" @click="removeFilter" :disabled="handlerState.conf['userFilters']?.length===0" variant="danger" outline>x</sl-button>
   </sl-button-group>
   <sl-drawer :open="state.open" @sl-after-hide="state.open=false">
     <p slot="label">Filter</p>
@@ -45,15 +45,17 @@ const currentlist = inject("currentlist")
 const handlerState = inject("handlerState")
 const reloadAction = inject("reloadAction")
 
+const actionName = "Filtern"
+
 const state = reactive({
   open:true,
   filter:{},
   originalFilter:null,
-  currentName:"filtern"
+  currentName:actionName
 })
 function removeFilter(){
    handlerState.externfiltered = false
-  state.currentName = "filtern"
+  state.currentName = actionName
   currentlist.state.params = {...state.originalFilter}
   reloadAction()
 }
