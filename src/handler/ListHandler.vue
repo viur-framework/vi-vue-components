@@ -236,6 +236,7 @@ import Utils from '../utils'
       }),
       sortindexBonename:null,
       entryUpdate:false,
+      externfiltered:true,
       canEdit: computed(() => {
         if(state.conf?.["disabledActions"]?.includes('edit')) return false
         if (userStore.state.user.access.indexOf("root") !== -1) {
