@@ -1,10 +1,13 @@
 <template>
   <sl-card class="interaction">
     <div slot="header">Alert</div>
-
+    <div class="alert-wrapper">
+        <v-image class="img" v-if="entry['data']['image']" :src="entry['data']['image']"></v-image>
     <p class="paragraph">
       {{ entry["data"]["text"] }}
     </p>
+    </div>
+
 
     <sl-button
       slot="footer"
@@ -19,6 +22,7 @@
 
 <script setup>
 import { reactive, computed } from "vue"
+import VImage from '@viur/vue-utils/generic/Image.vue'
 
 import { useScriptorStore } from "../../store/scriptor"
 const scriptorStore = useScriptorStore()
@@ -39,4 +43,16 @@ async function pressedOk() {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.alert-wrapper{
+  display:flex;
+  flex-direction: row;
+  gap:10px;
+  & :deep(.image-wrap){
+    width:100px;
+    height:100px;
+  }
+}
+
+
+</style>
