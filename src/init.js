@@ -1,4 +1,4 @@
-import { onBeforeMount } from "vue"
+import { onBeforeMount, shallowRef } from "vue"
 import { Request } from "@viur/vue-utils"
 import { useUserStore } from "@viur/vue-utils/login/stores/user"
 import { useAppStore } from "./stores/app"
@@ -8,7 +8,7 @@ import { useRoute } from "vue-router"
 import Utils from "./utils"
 // custom Bones
 
-import { addBoneWidget, addBoneActionbar } from "@viur/vue-utils/bones/edit/index"
+import { addBoneWidget, addBoneActionbar, useBoneStore } from "@viur/vue-utils/bones/edit/index"
 
 import selectaccessBone from "./bones/selectaccessBone.vue"
 import relationalBone from "./bones/relationalBone.vue"
@@ -26,6 +26,8 @@ export function useInitConnection() {
   const appStore = useAppStore()
   const colorStore = useColorStore()
   const extensionStore = useExtensionsStore()
+  const boneStore = useBoneStore()
+
   const route = useRoute()
   useModulesStore().setmodules()
 
@@ -76,12 +78,10 @@ export function useInitConnection() {
       addBoneWidget("relational.tree.leaf.file.", fileBone) //add Bone to store
       addBoneWidget("relational.tree.leaf.file.file", fileBone) //override default, add Bone to store
       addBoneWidget("relational.", relationalBone) //add Bone to store
-
-
+      boneStore.state.actionbars = shallowRef({})
       addBoneActionbar("relational.tree.leaf.file.", fileBar) //add custom multiple acionbar
       addBoneActionbar("relational.tree.leaf.file.file", fileBar) // override default, add custom multiple acionbar
       addBoneActionbar("relational.", relationalBar) //add custom multiple acionbar
-
     }
 
     function initExtensions() {
