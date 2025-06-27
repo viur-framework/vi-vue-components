@@ -2,6 +2,8 @@
 
   <div v-if="inMultiple">
     {{ entry.data["title"] || entry.data["text"] }} :
+    <div class="alert-wrapper">
+    <v-image class="img" v-if="entry['data']['image']" :src="entry['data']['image']"></v-image>
     <div v-if="!state.isMultiple">
       <sl-button
         :variant="state.selectedOptions.includes(option.key) ? 'success' : 'default'"
@@ -28,15 +30,19 @@
         {{ option.key }}
       </sl-checkbox>
     </div>
+      </div>
   </div>
 
   <sl-card v-else>
     <div slot="header">
       {{ entry.data["title"] }}
     </div>
-    <p class="paragraph">
-      {{ entry.data["text"] }}
-    </p>
+    <div class="alert-wrapper">
+        <v-image class="img" v-if="entry['data']['image']" :src="entry['data']['image']"></v-image>
+      <p class="paragraph">
+        {{ entry.data["text"] }}
+      </p>
+    </div>
 
     <div v-if="!state.isMultiple">
       <sl-button
@@ -85,6 +91,8 @@
 <script setup>
 import {computed, onMounted, reactive} from "vue"
 import {useScriptorStore} from "../../store/scriptor"
+import VImage from "@viur/vue-utils/generic/Image.vue";
+
 
 const scriptorStore = useScriptorStore()
 
@@ -160,4 +168,16 @@ defineExpose({state})
   display: flex;
   flex-direction: column;
 }
+.alert-wrapper{
+  display:flex;
+  flex-direction: row;
+  gap:10px;
+
+  & :deep(.image-wrap){
+    width:100px;
+    height:100px;
+    margin-bottom:10px;
+  }
+}
+
 </style>
