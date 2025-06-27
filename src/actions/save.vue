@@ -96,7 +96,11 @@ import {useTimeoutFn} from '@vueuse/core'
           let responsedata = await resp.json()
 
           if (resp.status !== 200) {
-            messageStore.addMessage("error", `Error on Save`, "Error on Save")
+            if (responsedata.descr && responsedata.reason) {
+              messageStore.addMessage("error", responsedata.reason, responsedata.descr)
+            } else {
+              messageStore.addMessage("error", `Error on Save`, "Error on Save")
+            }
             state.loading = false
             return 0
           }
@@ -109,11 +113,11 @@ import {useTimeoutFn} from '@vueuse/core'
             } else {
 
               //messageStore.addMessage("success", `Edit`, "Entry edited successfully")
-              dbStore.markHandlersToUpdate(handlerState.module, handlerState.group)
-              state.loading = false
-              if (props.close) {
-                dbStore.removeOpened(route)
-              }
+              //dbStore.markHandlersToUpdate(handlerState.module, handlerState.group)
+              //state.loading = false
+              //if (props.close) {
+              //  dbStore.removeOpened(route)
+              //}
             }
           }
           if (handlerState.action === "add" || handlerState.action === "clone") {
@@ -154,7 +158,11 @@ import {useTimeoutFn} from '@vueuse/core'
           }
           if (responsedata["action"] !== handlerState.action+"Success"){
             state.loading = false
-            messageStore.addMessage("error", `Error on Save`, "Error on Save")
+             if (responsedata.descr && responsedata.reason) {
+              messageStore.addMessage("error", responsedata.reason, responsedata.descr)
+            } else {
+              messageStore.addMessage("error", `Error on Save`, "Error on Save")
+            }
           }else{
             state.loading = false
             if (handlerState.action ==="add" ||handlerState.action ==="clone"){
@@ -170,10 +178,21 @@ import {useTimeoutFn} from '@vueuse/core'
           }
 
         })
-        .catch((error) => {
-          console.log(error)
+        .catch(async (error) => {
           state.loading = false
-          messageStore.addMessage("error", `Error on Save`, "Error on Save")
+          if (typeof error !== "string"){
+            const errorData = await error.response.json();
+
+            if (errorData.descr && errorData.reason) {
+              messageStore.addMessage("error", errorData.reason, errorData.descr)
+            } else {
+              messageStore.addMessage("error", `Error on Save`, "Error on Save")
+            }
+          }else{
+            messageStore.addMessage("error", `Error on Save`, "Error on Save")
+          }
+
+
         })
     }
 </script>

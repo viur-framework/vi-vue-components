@@ -12,20 +12,22 @@
 <script setup>
 import { reactive, defineComponent, inject, computed } from "vue"
 import { useDBStore } from "../stores/db"
+import { useContextStore} from "../stores/context";
 import { useRoute } from "vue-router"
 
     const handlerState = inject("handlerState")
     const dbStore = useDBStore()
+    const contextStore = useContextStore()
     const route = useRoute()
     const state = reactive({
       active: computed(() => {
+        if (Object.keys(route.params).includes("parentmodule")) {
+          return true
+        }
         return handlerState.currentSelection && handlerState.currentSelection.length > 0
       }),
       conf: computed(() => {
         let module = handlerState["module"]
-        if (Object.keys(route.params).includes("parentmodule")) {
-          module = route.params["parentmodule"]
-        }
         return dbStore.state["vi.modules"][module]
       })
     })
@@ -38,18 +40,25 @@ import { useRoute } from "vue-router"
           url = url.replace(`{{${k}}}`, v)
         }
       }
+      let handlerId = route?.query?.["_"]
+      let context = contextStore.getContext(handlerId)
 
+      for (const [k, v] of Object.entries(context)) {
+        url = url.replace(`{{@${k}}}`, v)
+      }
       return url
     }
 
     function openPreview(e) {
-      console.log("GGG")
       let url = state.conf["preview"]
       if (e["type"] === "sl-change") {
         url = e.target.value
       }
-      console.log(url)
-      for (let selection of handlerState.currentSelection) {
+      let items = handlerState.currentSelection
+      if (!items){
+        items = [null]
+      }
+      for (let selection of items) {
         window.open(import.meta.env.VITE_API_URL + buildUrl(url, selection), "_blank").focus()
       }
       e.target.value = ""

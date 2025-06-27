@@ -30,7 +30,8 @@ export default {
     reset: "Reset",
     open: "Open",
     sortasc: "Sort Ascending",
-    sortdesc: "Sort Descending"
+    sortdesc: "Sort Descending",
+    translate:"Translate"
   },
   sidebar: {
     workspace: "Workspace",

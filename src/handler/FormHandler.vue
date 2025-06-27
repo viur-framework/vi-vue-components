@@ -8,7 +8,7 @@
         <div>
           <span v-if="['clone', 'add'].includes(action)">Neuer</span>
           <span v-else-if="['edit'].includes(action)">Bearbeite</span>
-          {{ state.conf?.["name"] }} Eintrag
+          {{ Utils.unescape(state.conf?.["name"]) }} Eintrag
           <span v-if="state.formValues?.['name']?.[0]['name']">: {{ Utils.unescape(state.formValues["name"][0]["name"]) }}</span>
         </div>
         <handler-context></handler-context>
@@ -35,6 +35,7 @@
 
     <div class="scroll-content" v-if="!state.loading">
       <vi-form ref="viform"
+              :boneactions="true"
               :module="module"
               :action="action"
               :group="group"

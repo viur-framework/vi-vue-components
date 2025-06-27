@@ -17,7 +17,7 @@
         :src="icon"
       ></sl-icon>
 
-      <span v-if="name">{{ name }}</span>
+      <span v-if="name">{{ Utils.unescape(name) }}</span>
       <span v-else> &nbsp;</span>
 
       <sl-icon

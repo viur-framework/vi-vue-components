@@ -35,10 +35,11 @@
 import TheRightbar from "../main/TheMainScreenRightbar.vue"
 import { useRoute, useRouter } from "vue-router"
 import { Request } from "@viur/vue-utils"
-import { onBeforeMount, unref, h, reactive, computed } from "vue"
+import { onBeforeMount, unref, h, reactive, computed,onMounted } from "vue"
 import { useDBStore } from "../stores/db"
 import { useAppStore } from "../stores/app"
 import { getLayout } from "../layouts/layouts";
+import { useTitle } from '@vueuse/core'
 
 //default top actions
 import ViAction from "../main/topbar/vi.vue"
@@ -138,6 +139,10 @@ onBeforeMount(() => {
   initTopBarActions()
 })
 
+onMounted(()=>{
+  const title = useTitle()
+  title.value = appStore.state["title"]
+})
 
 
 

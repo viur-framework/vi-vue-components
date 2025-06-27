@@ -289,7 +289,7 @@ export function useHandlerLogic(props, handler_state) {
 
   function openEditor(e) {
     if (props.selector) {
-      context.emit("closeSelector", handler_state.currentSelection)
+      emit("closeSelector", handler_state.currentSelection)
       return 0
     }
     let url = `/db/${props.module}/edit/${handler_state.currentSelection[0]["key"]}`

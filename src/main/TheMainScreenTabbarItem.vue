@@ -40,7 +40,10 @@
 <script setup>
 import { reactive, defineComponent, computed } from "vue"
 import { useDBStore } from "../stores/db"
+import { useAppStore } from "../stores/app"
+import Utils from "../utils.js"
 import { useRouter } from "vue-router"
+import {useTitle} from '@vueuse/core'
 
   const props = defineProps({
     to: {
@@ -82,6 +85,7 @@ import { useRouter } from "vue-router"
     }
   })
     const dbStore = useDBStore()
+    const appStore = useAppStore()
     const router = useRouter()
     const state = reactive({
       icon: true,
@@ -118,6 +122,9 @@ import { useRouter } from "vue-router"
     }
     function forceUpdate() {
       dbStore.state["handlers.active"] = props.position
+      const appStore = useAppStore()
+      const title = useTitle()
+      title.value = appStore.state["title"]+" | "+ Utils.unescape(props.name)
     }
 </script>
 

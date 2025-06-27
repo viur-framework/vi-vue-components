@@ -66,6 +66,7 @@
           <template v-for="(skel, idx) in state.renderedList">
             <tr
               :class="{ selected: state.selectedRows.includes(idx), 'is-hidden': !skel['_visible'] }"
+              :style="skel['_style']"
               @dblclick="primaryAction"
               @click.exact="entrySelected(idx)"
               @click.ctrl="entrySelected(idx, 'append')"
@@ -214,6 +215,11 @@ import Utils from '../utils'
             vSkel[k] = getBoneViewer(skel, k).toString()
           }
           vSkel["_visible"] = filter_update(vSkel) ? "true" : ""
+          if(Object.keys(dbStore.state["row.styling"]).includes(props.module))
+          {
+            vSkel["_style"]=dbStore.state["row.styling"][props.module](vSkel);
+          }
+
           return vSkel
         })
       }),
@@ -230,6 +236,7 @@ import Utils from '../utils'
       }),
       sortindexBonename:null,
       entryUpdate:false,
+      externfiltered:false,
       canEdit: computed(() => {
         if(state.conf?.["disabledActions"]?.includes('edit')) return false
         if (userStore.state.user.access.indexOf("root") !== -1) {

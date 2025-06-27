@@ -23,6 +23,7 @@
       @sl-after-hide="state.searchTypeOpened = false"
     >
       <sl-button
+      :disabled="state.disabled"
         slot="trigger"
         size="small"
         caret
@@ -80,7 +81,7 @@ import { useDebounceFn } from "@vueuse/core"
     const messageStore = useMessageStore()
     const state = reactive({
       disabled: computed(() => {
-        return false
+        return handlerState.externfiltered
         let searchableBone = false
         for (const [k, v] of Object.entries(currentlist?.structure)) {
           if (Object.keys(v).includes("searchable") && v["searchable"]) {
@@ -96,7 +97,7 @@ import { useDebounceFn } from "@vueuse/core"
       searchValue: "",
       searchTypeOpened: false,
       loading: false,
-      isLarge: false
+      isLarge: false,
     })
 
     watch(

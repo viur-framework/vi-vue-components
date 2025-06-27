@@ -25,6 +25,7 @@ import script_action from "./script.vue"
 import move_action from "./move.vue"
 import fluidpagepreview_action from "./fluidpagepreview.vue"
 import formutils_action from "./formutils.vue"
+import userfilter_action from "./userfilter.vue"
 
 export default {
   add_action,
@@ -53,5 +54,6 @@ export default {
   script_action,
   move_action,
   fluidpagepreview_action,
-  formutils_action
+  formutils_action,
+  userfilter_action
 }
