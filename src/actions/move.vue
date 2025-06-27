@@ -20,7 +20,7 @@
     @sl-request-close="closeAction($event)"
   >
     <template v-if="state.selection"
-      >{{ handlerState.currentSelection.length }} Einträge nach: {{ state.selection["name"] }} verschieben</template
+      >{{ handlerState.currentSelection.length }} Einträge nach: {{ Utils.renderValue(state.selection["name"]) }} verschieben</template
     >
     <sl-tree @sl-selection-change="nodeSelection">
       <tree-item
@@ -53,6 +53,7 @@ import { reactive, defineComponent, inject, onBeforeMount, computed } from "vue"
 import { useUserStore } from "@viur/vue-utils/login/stores/user"
 import treeItem from "../tree/TreeItem.vue"
 import { Request } from "@viur/vue-utils"
+import Utils from '@viur/vue-components/utils'
 
     const handlerState = inject("handlerState")
     const reloadAction = inject("reloadAction")
@@ -73,6 +74,8 @@ import { Request } from "@viur/vue-utils"
       total: 0,
       current: 0
     })
+
+
     function closeAction(e) {
       state.opened = false
     }
@@ -84,6 +87,7 @@ import { Request } from "@viur/vue-utils"
       console.log(e)
       state.selection = e.detail.selection[0]["value"]
     }
+
 
     function moveItems() {
       state.total = handlerState.currentSelection.length
