@@ -90,6 +90,7 @@ import { useDBStore } from "../stores/db"
 import { useAppStore } from "../stores/app"
 import { useRoute, useRouter } from "vue-router"
 import { useUserStore } from "@viur/vue-utils/login/stores/user"
+import { useMessageStore } from "../stores/message"
 import { useContextStore } from "../stores/context"
 import Logics from "logics-js"
 import { Request } from "@viur/vue-utils"
@@ -106,6 +107,7 @@ import Utils from "../utils"
     const dbStore = useDBStore()
     const contextStore = useContextStore()
     const appStore = useAppStore()
+    const messageStore = useMessageStore()
     const userStore = useUserStore()
     const tableReload = inject("reloadAction")
 
@@ -249,6 +251,11 @@ import Utils from "../utils"
       function triggerServersideAction(url) {
         url = buildUrl(url, selection)
         let request = Request.get
+
+        if (state.info?.['fetch_method'] && state.info?.['fetch_method']==="POST"){
+          request = Request.post
+        }
+
         for (const skey of ["?skey={{skey}}", "&skey={{skey}}"]) {
           if (url.includes(skey)) {
             url = url.replace(skey, "")
@@ -259,14 +266,36 @@ import Utils from "../utils"
           return false
         }
 
-        request(url).then((resp) => {
+        request(url).then(async (resp) => {
+          let responsedata = await resp.json()
+          if (resp.status !== 200) {
+            if (responsedata.descr && responsedata.reason) {
+              messageStore.addMessage("error", responsedata.reason, responsedata.descr)
+            } else {
+              messageStore.addMessage("error", `Error`, "Error")
+            }
+            return 0
+          }
+
           if (state.info?.["then"] === "reload-module") {
             tableReload()
           } else if (state.info?.["then"] === "reload-vi") {
             window.location.reload()
           }
           if (state.info?.["success"]) {
-            //MESSAGE
+            messageStore.addMessage("success", state.info["name"], state.info['success'])
+          }
+        }).catch(async (error) => {
+          if (typeof error !== "string"){
+            const errorData = await error.response.json();
+
+            if (errorData.descr && errorData.reason) {
+              messageStore.addMessage("error", errorData.reason, errorData.descr)
+            } else {
+              messageStore.addMessage("error", `Error`, "Error")
+            }
+          }else{
+            messageStore.addMessage("error", `Error`, "Error")
           }
         })
       }
