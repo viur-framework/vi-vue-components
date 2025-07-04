@@ -46,7 +46,7 @@
               :renderer="renderer"
               :collapsedCategories="state.conf?.['collapsedCategories'] || []"
               :fetchUrl="state.fetchurl"
-              :params="{ ...contextStore.getContext(state.tabId) }"
+              :params="state.params"
       >
 
 
@@ -225,6 +225,13 @@ function currentHandler(name){
           url += `/${props.skelkey}`
         }
         return url
+      }),
+      params:computed(()=>{
+        let params = { ...contextStore.getContext(state.tabId) }
+        if (["add","clone"].includes(props.action)){
+          params["bounce"] = true
+        }
+        return params
       })
     })
 
