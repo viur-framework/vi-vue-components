@@ -414,11 +414,23 @@ import Utils from '../utils'
       if (state.group) {
         url = `/db/${state.module}/edit/${state.group}/${state.currentSelection[0]["key"]}`
       }
+      if (dbStore.state["editor.url"][state.module]) {
+        const customUrl=dbStore.state["editor.url"][state.module];
+
+        if (typeof customUrl === "function") {
+          url = customUrl(url);
+        }
+        else {
+          url = customUrl;
+        }
+
+      }
       let route = router.resolve(unref(url))
       dbStore.addOpened(route, state.module, state.view, Utils.extractNamefromSkel(state.currentSelection[0]))
     }
 
     function primaryAction(e) {
+
       if (!props.selector && state.conf["handler"].startsWith("list.fluidpage")) {
         let conf = dbStore.getConf(state.module)
         let module = conf["handler"].split(".").at(-1).replace("/", ".")
