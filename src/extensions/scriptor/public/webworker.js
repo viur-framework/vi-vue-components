@@ -1,5 +1,5 @@
 
-importScripts("https://cdn.jsdelivr.net/pyodide/v0.24.0/full/pyodide.js");
+importScripts("https://cdn.jsdelivr.net/pyodide/v0.28.1/full/pyodide.js");
 
 let isPyLoaded = false;
 
@@ -57,6 +57,7 @@ let manager = {
 async function loadPyodideAndPackages(id, pyoPackages, packages, initCode, transformCode, importable) {
   installLog(id, 1, "Loading python runtime")
   self.pyodide = await loadPyodide({
+    convertNullToNone: true,
     stdout: stdout,
     stderr: stderr,
   });

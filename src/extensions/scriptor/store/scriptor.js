@@ -236,6 +236,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     }
 
     let currentState = state.instances[id]
+
     switch (data.type) {
       case "installlog":
         //installer status
@@ -245,6 +246,9 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
         } else {
           state.isReady = false
         }
+        break
+      case "stdout":
+        addInternalMessageEntry("install", id, data)
         break
       case "run_end": //script ended
       case "end": //action ended
