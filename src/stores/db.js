@@ -33,7 +33,6 @@ function adminTreeLayer(itemList, parent) {
   let i = 0
 
   for (let conf of itemList) {
-
     if (conf['module']==="script" && userStore.userAccess.includes('scriptor')){
       conf["display"] = "visible"
     }
@@ -81,8 +80,13 @@ function adminTreeLayer(itemList, parent) {
         }
       }
 
-      delete conf["views"] //remove views from parent
-      conf["view_number"] = i
+      if (parent['view_layer']>=1){
+        conf["view_number"] = (100*(parent['view_layer']))+i
+      }else{
+        conf["view_number"] = i
+      }
+
+
     }
 
     // add parentmodule as parententry... component expects this
@@ -196,7 +200,6 @@ function adminTreeLayer(itemList, parent) {
     }
 
     if (Object.keys(conf).includes("view_number") && Object.keys(conf).includes("handler") && conf["handler"]) {
-      //@ts-ignore
       conf["url"]["query"] = { view: conf["view_number"] }
     }
 
@@ -218,10 +221,15 @@ function adminTreeLayer(itemList, parent) {
     }
 
     //append children (views)
-    //@ts-ignore
     if (Object.keys(conf).includes("views") && conf["views"]?.length > 0) {
-      //@ts-ignore
-      conf["children"] = conf["children"].concat(adminTreeLayer(conf["views"], conf))
+      let views = conf["views"]
+      delete conf["views"] //remove views from parent
+      if (conf["view_layer"] === undefined){
+        conf["view_layer"] = 0
+      }else{
+        conf["view_layer"] +=1
+      }
+      conf["children"] = conf["children"].concat(adminTreeLayer(views, conf))
     }
     listOfNodes.push(conf)
     i += 1
