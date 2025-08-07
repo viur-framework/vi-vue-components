@@ -270,15 +270,17 @@ import Utils from "../utils"
         }
 
         request(url).then(async (resp) => {
-          let responsedata = await resp.json()
-          if (resp.status !== 200) {
-            if (responsedata.descr && responsedata.reason) {
-              messageStore.addMessage("error", responsedata.reason, responsedata.descr)
-            } else {
-              messageStore.addMessage("error", `Error`, "Error")
+          try{
+            let responsedata = await resp.json()
+            if (resp.status !== 200) {
+              if (responsedata.descr && responsedata.reason) {
+                messageStore.addMessage("error", responsedata.reason, responsedata.descr)
+              } else {
+                messageStore.addMessage("error", `Error`, "Error")
+              }
+              return 0
             }
-            return 0
-          }
+          }catch(e){}
 
           if (state.info?.["then"] === "reload-module") {
             tableReload()
