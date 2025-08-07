@@ -121,14 +121,17 @@ import Utils from "../utils"
         return conf?.["customActions"]?.[props.name]
       }),
       access: computed(() => {
-        let access = false
+        let access = true
         if (state.info && state.info["access"]) {
+          let collectedAccess = false
           for (let i of state.info["access"]) {
             let current_access = buildUrl(i)
             if (userStore.state.user?.access.includes(current_access)) {
-              access = true
+              collectedAccess = true
+              break
             }
           }
+          access = collectedAccess
         }
         return access
       }),
