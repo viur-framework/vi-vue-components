@@ -118,7 +118,10 @@ import Utils from "../utils"
         if (handlerState["view"]) {
           conf = conf["children"].filter((i) => i["view_number"] === parseInt(handlerState["view"]))?.[0]
         }
-        return conf?.["customActions"]?.[props.name]
+        if (conf?.["customActions"]){
+          return conf?.["customActions"]?.[props.name]
+        }
+        return conf?.["clientActions"]?.[props.name]
       }),
       access: computed(() => {
         let access = true
