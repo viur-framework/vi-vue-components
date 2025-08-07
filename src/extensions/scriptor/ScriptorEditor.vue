@@ -67,7 +67,7 @@ const messagewrapper = ref(null)
       let data = await resp.json()
       state.script = data['values']
 
-      state.scriptor.scriptCode = data["values"]['script'].replace(/\\n/g, "\n")
+      state.scriptor.scriptCode = data["values"]['script']
       state.scriptor.scriptKey = data["values"]['key']
     })
 
