@@ -98,7 +98,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     initCode = `with open("config.py", "w") as f:\n\tf.write("BASE_URL='${state.apiUrl}'")` + initCode
     let importable = undefined
     try {
-      const response = await Request.get("/json/script/get_importable");
+      const response = await Request.get("/vi/script/get_importable");
       if (response.status === 200) {
         importable = await response.arrayBuffer();
       }
