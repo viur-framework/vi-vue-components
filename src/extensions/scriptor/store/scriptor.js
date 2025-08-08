@@ -66,11 +66,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
       state.workerObject.terminate()
     }
 
-    let path = `${useBrowserLocation().value.pathname.replace("/main.html", "")}/scriptor/public/webworker.js`;
-    if (import.meta.env.DEV) {
-      path = import.meta.url
-      path = path.substring(0, path.lastIndexOf('/')) + "/../public/webworker.js";
-    }
+    const path = `${useBrowserLocation().value.pathname.replace("/main.html", "")}/scriptor/public/webworker.js`;
     state.workerObject = useWebWorker(path)
 
     const nativWorker = state.workerObject.worker

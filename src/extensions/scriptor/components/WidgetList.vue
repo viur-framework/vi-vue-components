@@ -26,6 +26,7 @@
       class="wrapper-empty"
     >
       {{ $t('scriptor.no_messages') }}
+      <sl-spinner v-if="scriptorStore.state.isLoading"></sl-spinner>
     </div>
   </div>
 </template>
