@@ -95,7 +95,8 @@ import useTree from "./tree.js"
     const router = useRouter()
     const state = reactive({
       currentEntry: {},
-      layer: computed(() => props.path.length)
+      layer: computed(() => props.path.length),
+      nodes:[]
     })
     const tree = useTree(props.module, treeState, state)
 
@@ -111,19 +112,20 @@ import useTree from "./tree.js"
       }
     }
 
-    onMounted(() => {
-      state.currentEntry = tree.EntryFromPath(props.path)
-      if (props.path && props.path.length === 1 && props.path[0] === 0) {
-        // prefetch rootnode childs
-        state.currentEntry["_status"] = "loading"
-        Request.get(`/vi/${props.module}/list`, {
-          dataObj: {
+    function fetchAll(cursor=null){
+      let params = {
             skelType: "node",
             orderby: "sortindex",
             parententry: state.currentEntry["key"],
             limit: 99,
             ...treeState.params
           }
+      if (cursor){
+        params["cursor"] = cursor
+      }
+
+      Request.get(`/vi/${props.module}/list`, {
+          dataObj: params
         }).then(async (resp) => {
           let data = await resp.json()
           if (!treeState.structure || Object.keys(treeState.structure).length === 0) {
@@ -136,15 +138,30 @@ import useTree from "./tree.js"
             }
             treeState.structure = structureToDict(structure)
           }
+          state.nodes = state.nodes.concat(data["skellist"])
+          if (data["cursor"]){
+            fetchAll(data['cursor'])
+          }else{
+            //finished fetching
+            state.currentEntry["_nodes"] = state.nodes
+            state.currentEntry["_disabled"] = false
+            state.currentEntry["_status"] = "loaded" //loading, loaded
+            state.currentEntry["_dragging"] = false
+            state.currentEntry["_isover"] = false
+            state.currentEntry["_drop"] = null
+            emit("loaded")
+          }
 
-          state.currentEntry["_nodes"] = data["skellist"]
-          state.currentEntry["_disabled"] = false
-          state.currentEntry["_status"] = "loaded" //loading, loaded
-          state.currentEntry["_dragging"] = false
-          state.currentEntry["_isover"] = false
-          state.currentEntry["_drop"] = null
-          emit("loaded")
         })
+    }
+
+
+    onMounted(() => {
+      state.currentEntry = tree.EntryFromPath(props.path)
+      if (props.path && props.path.length === 1 && props.path[0] === 0) {
+        // prefetch rootnode childs
+        state.currentEntry["_status"] = "loading"
+        fetchAll()
       }
     })
 
