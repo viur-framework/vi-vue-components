@@ -279,6 +279,8 @@ export const useDBStore = defineStore("db", () => {
     "topbar.actions": markRaw([]),
     "floatingbar.actions": markRaw([]),
 
+    "editor.url": shallowRef({}),
+
     //boneViewer
     "bones.view": shallowRef({}),
 
