@@ -23,6 +23,7 @@
       v-model="state.foldername"
       autofocus
       placeholder="name"
+      @keydown.enter="createNode($event)"
     ></sl-input>
     {{ state.foldername }}
     <sl-button
