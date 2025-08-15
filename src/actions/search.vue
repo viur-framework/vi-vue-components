@@ -9,6 +9,7 @@
       :value="state.searchValue"
       @sl-input="debouncedSearch"
       @sl-clear="reset_filter"
+      @keydown.enter="search_input"
     >
       <sl-spinner-viur
         v-if="state.loading"
