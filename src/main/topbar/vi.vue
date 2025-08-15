@@ -145,21 +145,19 @@
   <teleport
     v-if="state.openLogout"
     to="#dialogs"
-    :disabled="!state.openLogout"
   >
     <sl-dialog
       :label="$t('sidebar.logout')"
       style="--width: 50%"
       class="logout-confirm"
       open
-      @sl-after-hide="state.openLogout = false"
     >
       {{ $t("sidebar.logout_text") }}
 
       <sl-button
         slot="footer"
         variant="danger"
-        @click="state.openedTask = null"
+        @click="state.openLogout = false"
       >
         {{ $t("abort") }}
       </sl-button>
@@ -191,7 +189,6 @@ import { useLocalStore} from "../../stores/local"
     const userStore = useUserStore()
     const appStore = useAppStore()
     const dbStore = useDBStore()
-    const messageStore = useMessageStore()
     const router = useRouter()
     const local = useLocalStore()
 
