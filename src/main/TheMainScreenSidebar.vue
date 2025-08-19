@@ -1,18 +1,12 @@
 <template>
   <nav class="nav">
-    <the-menubar-group
-      v-if="userStore.favoriteModules?.length > 0"
-      :name="$t('sidebar.favorites')"
-    >
+    <the-menubar-group v-if="userStore.favoriteModules?.length > 0" :name="$t('sidebar.favorites')">
       <menu-tree :tree="userStore.favoriteModules"></menu-tree>
     </the-menubar-group>
     <the-menubar-group :name="$t('sidebar.administration')">
       <menu-tree :tree="dbStore.state['vi.moduleTree']"></menu-tree>
     </the-menubar-group>
-    <div
-      v-if="dbStore.state['vi.moduleTree'].length === 0"
-      class="loader"
-    >
+    <div v-if="dbStore.state['vi.moduleTree'].length === 0" class="loader">
       <loader></loader>
     </div>
   </nav>
@@ -27,10 +21,9 @@ import TheMenubarItem from "./menubar/TheMenubarItem.vue"
 import { useUserStore } from "@viur/vue-utils/login/stores/user"
 import Loader from "@viur/vue-utils/generic/Loader.vue"
 
-    const dbStore = useDBStore()
-    const userStore = useUserStore()
-    const state = reactive({
-    })
+const dbStore = useDBStore()
+const userStore = useUserStore()
+const state = reactive({})
 </script>
 
 <style scoped>
@@ -47,6 +40,4 @@ import Loader from "@viur/vue-utils/generic/Loader.vue"
   height: 100%;
   position: relative;
 }
-
-
 </style>

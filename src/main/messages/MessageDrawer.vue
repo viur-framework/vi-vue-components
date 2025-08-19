@@ -37,9 +37,9 @@ import Message from "./Message.vue"
 import { useMessageStore } from "../../stores/message"
 import { useDBStore } from "../../stores/db"
 
-    const messageStore = useMessageStore()
-    const dbStore = useDBStore()
-    const state = reactive({})
+const messageStore = useMessageStore()
+const dbStore = useDBStore()
+const state = reactive({})
 </script>
 
 <style scoped>

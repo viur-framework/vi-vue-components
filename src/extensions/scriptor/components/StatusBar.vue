@@ -1,16 +1,11 @@
 <template>
   <sl-bar>
-    <div
-      slot="left"
-      class="bar--left"
-    >
+    <div slot="left" class="bar--left">
       <sl-icon name="file-earmark-code-fill"></sl-icon>
       <template v-if="filename">
         {{ filename }}
       </template>
-      <template v-else>
-        Scriptor
-      </template>
+      <template v-else>Scriptor</template>
     </div>
 
     <div slot="center">
@@ -31,7 +26,6 @@
     </div>
 
     <div slot="right">
-
       <sl-badge
         :variant="state.userStatus['variant']"
         pill
@@ -42,22 +36,22 @@
         <span v-if="scriptorStore.state.isReady">&nbsp;&nbsp;</span>
         <span v-else>&nbsp;&nbsp;</span>
       </sl-badge>
-      <sl-select class="versionselect" size="small" :value="scriptorStore.state.scriptorVersion" :disabled="state.customVersion" @sl-change="changeVersion">
-        <template v-for="v,i in state.versions">
+      <sl-select
+        class="versionselect"
+        size="small"
+        :value="scriptorStore.state.scriptorVersion"
+        :disabled="state.customVersion"
+        @sl-change="changeVersion"
+      >
+        <template v-for="(v, i) in state.versions">
           <sl-option v-if="state.customVersion" :value="state.customVersion">custom</sl-option>
-          <sl-option value="latest" v-if="i===0">latest (v{{ v }})</sl-option>
+          <sl-option v-if="i === 0" value="latest">latest (v{{ v }})</sl-option>
           <sl-option v-else :value="`==${v}`">v{{ v }}</sl-option>
         </template>
       </sl-select>
 
       <slot name="startRight"></slot>
-      <sl-button
-        size="small"
-        variant="success"
-        outline
-        :disabled="state.userStatus.pulse"
-        @click="executeScript"
-      >
+      <sl-button size="small" variant="success" outline :disabled="state.userStatus.pulse" @click="executeScript">
         Ausführen
       </sl-button>
       <slot></slot>
@@ -72,11 +66,11 @@ const scriptorStore = useScriptorStore()
 
 const props = defineProps({
   id: {
-    required: true
+    required: true,
   },
-  filename:{
-    type:String
-  }
+  filename: {
+    type: String,
+  },
 })
 
 const state = reactive({
@@ -94,12 +88,12 @@ const state = reactive({
   scriptor: computed(() => {
     return scriptorStore.state.instances[props.id]
   }),
-  versions:[],
-  customVersion:import.meta.env.VITE_SCRIPTOR_URL
+  versions: [],
+  customVersion: import.meta.env.VITE_SCRIPTOR_URL,
 })
 
 async function executeScript() {
-  await scriptorStore.execute(state.scriptor.scriptCode, props.id,{})
+  await scriptorStore.execute(state.scriptor.scriptCode, props.id, {})
 }
 
 function reset() {
@@ -108,21 +102,20 @@ function reset() {
   scriptorStore.state.isReady = false
   scriptorStore.state.runningActions = new Map()
 }
-function changeVersion(e){
+function changeVersion(e) {
   scriptorStore.state.scriptorVersion = e.target.value
   reset()
 }
-onMounted(()=>{
-  scriptorStore.fetchScriptorVersions().then(result=>{
+onMounted(() => {
+  scriptorStore.fetchScriptorVersions().then((result) => {
     state.versions = result
-    if (state.customVersion){
+    if (state.customVersion) {
       scriptorStore.state.scriptorVersion = state.customVersion
-    }else{
+    } else {
       scriptorStore.state.scriptorVersion = "latest"
     }
   })
 })
-
 </script>
 
 <style scoped>
@@ -148,7 +141,7 @@ sl-badge {
   margin-right: 5px;
   margin-left: 5px;
 }
-.versionselect{
+.versionselect {
   width: 150px;
   margin-right: 5px;
 }

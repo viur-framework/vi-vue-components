@@ -11,12 +11,12 @@ import { useDBStore } from "../stores/db"
 
 const handlerState = inject("handlerState")
 
-const props = defineProps( {
+const props = defineProps({
   skel: Object,
   bonename: String,
   structure: Object,
   idx: Number,
-  rendered: String
+  rendered: String,
 })
 
 const dbStore = useDBStore()
@@ -24,14 +24,13 @@ const state = reactive({})
 </script>
 
 <style scoped>
-.wrapper{
-  display:flex;
+.wrapper {
+  display: flex;
   justify-content: center;
 }
-sl-icon{
-  min-width:30px;
+sl-icon {
+  min-width: 30px;
   width: 1.2em;
-  height:1.5em;
+  height: 1.5em;
 }
-
 </style>

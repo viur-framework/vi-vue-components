@@ -6,7 +6,7 @@ export const useAppStore = defineStore("appStore", () => {
   const state = reactive({
     debug: false,
     "vi.version": [4, 0, 7],
-    "language":"de",
+    language: "de",
     //core section
     "core.version": null,
     "core.version.min": [3, 5, 0],
@@ -35,9 +35,9 @@ export const useAppStore = defineStore("appStore", () => {
       hierarchy: "diagram-2-fill",
       "icon-settings": "gear-fill",
       "icon-hashtag": "hash",
-      "icon-list": "list-ul"
+      "icon-list": "list-ul",
     },
-    preflights:false //allow headers for requests (currently only lists use this feature: x-viur-bonelist)
+    preflights: false, //allow headers for requests (currently only lists use this feature: x-viur-bonelist)
   })
 
   return { state }

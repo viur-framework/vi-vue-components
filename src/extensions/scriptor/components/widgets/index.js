@@ -15,5 +15,5 @@ export default {
   diffCompare,
   tableEntry,
   multipleInputs,
-  rawHtml
+  rawHtml,
 }

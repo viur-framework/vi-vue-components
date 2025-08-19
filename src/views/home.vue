@@ -1,35 +1,21 @@
 <template>
   <div class="home">
     <h1 class="main-headline">Hallo {{ Utils.unescape(state.name) }}</h1>
-    <strong> {{ userStore.state.user.name }}</strong>
+    <strong>{{ userStore.state.user.name }}</strong>
 
-    <div
-      v-if="false && userStore.favoriteModules?.length > 0"
-      class="main-box"
-    >
+    <div v-if="false && userStore.favoriteModules?.length > 0" class="main-box">
       <h2 class="headline">Deine Favoriten</h2>
       <div class="home-grid">
-        <widget-small
-          v-for="i in userStore.favoriteModules"
-          :icon="i['icon']"
-          :library="i['library']"
-          :to="i['to']"
-        >
+        <widget-small v-for="i in userStore.favoriteModules" :icon="i['icon']" :library="i['library']" :to="i['to']">
           {{ Utils.unescape(i["name"]) }}
         </widget-small>
       </div>
     </div>
 
-    <div
-      v-if="localStore.state.lastEntries.length > 0"
-      class="main-box"
-    >
+    <div v-if="localStore.state.lastEntries.length > 0" class="main-box">
       <h2 class="headline">
         Zuletzt bearbeitet
-        <sl-icon
-          name="x-lg"
-          @click="localStore.removeAllEntries()"
-        ></sl-icon>
+        <sl-icon name="x-lg" @click="localStore.removeAllEntries()"></sl-icon>
       </h2>
 
       <div class="home-grid">
@@ -55,34 +41,33 @@ import { useLocalStore } from "../stores/local"
 import Utils from "../utils"
 import WidgetSmall from "../dashboard/WidgetSmall.vue"
 
+const route = useRoute()
+const userStore = useUserStore()
+const localStore = useLocalStore()
 
-    const route = useRoute()
-    const userStore = useUserStore()
-    const localStore = useLocalStore()
+const state = reactive({
+  name: computed(() => {
+    let name = ""
+    if (!userStore.state.user) return name
 
-    const state = reactive({
-      name: computed(() => {
-        let name = ""
-        if (!userStore.state.user) return name
-
-        if (userStore.state.user["firstname"] && userStore.state.user["lastname"]) {
-          name = `${userStore.state.user["firstname"]} ${userStore.state.user["lastname"]}`
-        } else if (userStore.state.user["firstname"]) {
-          name = userStore.state.user["firstname"]
-        } else {
-          name = userStore.state.user["name"]
-        }
-        return name
-      })
-    })
-
-    function createInitials(name) {
-      return Utils.nameToInitials(name)
+    if (userStore.state.user["firstname"] && userStore.state.user["lastname"]) {
+      name = `${userStore.state.user["firstname"]} ${userStore.state.user["lastname"]}`
+    } else if (userStore.state.user["firstname"]) {
+      name = userStore.state.user["firstname"]
+    } else {
+      name = userStore.state.user["name"]
     }
-    function iconInfo(conf){
-      const [icon, iconType, iconname, library] = Utils.iconNormalization(conf["icon"])
-      return [library,iconname]
-    }
+    return name
+  }),
+})
+
+function createInitials(name) {
+  return Utils.nameToInitials(name)
+}
+function iconInfo(conf) {
+  const [icon, iconType, iconname, library] = Utils.iconNormalization(conf["icon"])
+  return [library, iconname]
+}
 </script>
 
 <style scoped>

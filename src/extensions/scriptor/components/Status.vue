@@ -9,9 +9,7 @@
     <span v-if="scriptorStore.state.isReady">&nbsp;&nbsp;</span>
     <span v-else>&nbsp;&nbsp;</span>
   </sl-badge>
-  <slot :disabled="state.userStatus.pulse" :execute="executeScript">
-
-  </slot>
+  <slot :disabled="state.userStatus.pulse" :execute="executeScript"></slot>
 </template>
 
 <script setup>
@@ -21,8 +19,8 @@ const scriptorStore = useScriptorStore()
 
 const props = defineProps({
   id: {
-    required: true
-  }
+    required: true,
+  },
 })
 
 const state = reactive({
@@ -39,16 +37,14 @@ const state = reactive({
   }),
   scriptor: computed(() => {
     return scriptorStore.state.instances[props.id]
-  })
+  }),
 })
 
 async function executeScript(scriptParams) {
-  await scriptorStore.execute(state.scriptor.scriptCode, props.id,{},scriptParams)
+  await scriptorStore.execute(state.scriptor.scriptCode, props.id, {}, scriptParams)
 }
-async function exitScript()
-{
+async function exitScript() {
   await scriptorStore.exitScript()
-
 }
 function reset() {
   scriptorStore.state.instances[props.id].messages = []
@@ -57,15 +53,16 @@ function reset() {
 }
 
 defineExpose({
-  reset, executeScript,exitScript,state
+  reset,
+  executeScript,
+  exitScript,
+  state,
 })
-
-
 </script>
 
 <style scoped>
-sl-badge::part(base){
-  width:1rem;
-  height:1rem;
+sl-badge::part(base) {
+  width: 1rem;
+  height: 1rem;
 }
 </style>

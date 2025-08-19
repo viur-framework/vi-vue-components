@@ -21,30 +21,16 @@
         @click="openUser"
       ></sl-avatar>
 
-      <div
-        class="name-wrap"
-        @click="openUser"
-      >
+      <div class="name-wrap" @click="openUser">
         <span class="name">{{ state.name }}</span>
         <span class="subline">{{ userStore.state.user.name }}</span>
       </div>
       <sl-button-group>
-        <sl-button
-          variant="primary"
-          size="small"
-          @click="state.openLogout = !state.openLogout"
-          >{{ $t("sidebar.logout") }}
+        <sl-button variant="primary" size="small" @click="state.openLogout = !state.openLogout">
+          {{ $t("sidebar.logout") }}
         </sl-button>
-        <sl-button
-          variant="primary"
-          size="small"
-          @click="state.sidebarOpen = false"
-        >
-          <sl-icon
-            slot="prefix"
-            name="x-lg"
-          >
-          </sl-icon>
+        <sl-button variant="primary" size="small" @click="state.sidebarOpen = false">
+          <sl-icon slot="prefix" name="x-lg"></sl-icon>
         </sl-button>
       </sl-button-group>
     </div>
@@ -66,57 +52,40 @@
       </div> -->
 
       <div class="group">
-          <div class="group-headline">
-            {{ $t("sidebar.section_tools") }}
-          </div>
-          <sl-switch size="small" :checked="local.state.cache" @sl-change="changeCaching">
-            Admin-Cache {{ local.state.cache?'aktiviert':'deaktiviert' }}
-          </sl-switch>
-          <br>
-        <div class="group-headline" v-if="dbStore.state['tasks']?.length>0">
+        <div class="group-headline">
+          {{ $t("sidebar.section_tools") }}
+        </div>
+        <sl-switch size="small" :checked="local.state.cache" @sl-change="changeCaching">
+          Admin-Cache {{ local.state.cache ? "aktiviert" : "deaktiviert" }}
+        </sl-switch>
+        <br />
+        <div v-if="dbStore.state['tasks']?.length > 0" class="group-headline">
           {{ $t("sidebar.section_system_name") }}
         </div>
-        <template
-          v-for="item in dbStore.state['tasks']"
-          :key="item['key']"
-        >
-          <sl-button
-            size="medium"
-            @click="state.openedTask = item['key']"
-          >
+        <template v-for="item in dbStore.state['tasks']" :key="item['key']">
+          <sl-button size="medium" @click="state.openedTask = item['key']">
             <sl-icon name="gear"></sl-icon>
             {{ item["name"] }}
           </sl-button>
 
-          <teleport
-            v-if="state.openedTask === item['key']"
-            to="#dialogs"
-            :disabled="state.openedTask !== item['key']"
-          >
-            <sl-dialog
-              :label="item['name']"
-              style="--width: 50%"
-              open
-              @sl-after-hide="state.openedTask = null"
-            >
+          <teleport v-if="state.openedTask === item['key']" to="#dialogs" :disabled="state.openedTask !== item['key']">
+            <sl-dialog :label="item['name']" style="--width: 50%" open @sl-after-hide="state.openedTask = null">
               <div>
-                <vi-form :ref="forms[`form_${item['key']}`]"
-                  :useCategories="false"
+                <vi-form
+                  :ref="forms[`form_${item['key']}`]"
+                  :use-categories="false"
                   module="_tasks"
                   action="execute"
                   :group="item['key']"
-                >
-                </vi-form>
+                ></vi-form>
 
-                <sl-alert variant="success" :open="state.taskstarted" duration="5000">{{ item["name"] }} started... </sl-alert>
+                <sl-alert variant="success" :open="state.taskstarted" duration="5000">
+                  {{ item["name"] }} started...
+                </sl-alert>
               </div>
 
-              <div class="dialog-btn-footer" slot="footer">
-                <sl-button
-                  outline
-                  variant="danger"
-                  @click="state.openedTask = null"
-                >
+              <div slot="footer" class="dialog-btn-footer">
+                <sl-button outline variant="danger" @click="state.openedTask = null">
                   {{ $t("abort") }}
                 </sl-button>
                 <sl-button
@@ -133,40 +102,20 @@
       </div>
     </div>
 
-    <div
-      slot="footer"
-      class="drawer-footer"
-    >
+    <div slot="footer" class="drawer-footer">
       <div class="footer-item">Admin: {{ state.viVersion }}</div>
       <div class="footer-item">Core: {{ state.coreVersion }}</div>
     </div>
   </sl-drawer>
 
-  <teleport
-    v-if="state.openLogout"
-    to="#dialogs"
-  >
-    <sl-dialog
-      :label="$t('sidebar.logout')"
-      style="--width: 50%"
-      class="logout-confirm"
-      open
-    >
+  <teleport v-if="state.openLogout" to="#dialogs">
+    <sl-dialog :label="$t('sidebar.logout')" style="--width: 50%" class="logout-confirm" open>
       {{ $t("sidebar.logout_text") }}
 
-      <sl-button
-        slot="footer"
-        variant="danger"
-        @click="state.openLogout = false"
-      >
+      <sl-button slot="footer" variant="danger" @click="state.openLogout = false">
         {{ $t("abort") }}
       </sl-button>
-      <sl-button
-        slot="footer"
-        variant="success"
-        :loading="state.logoutloading"
-        @click="logout"
-      >
+      <sl-button slot="footer" variant="success" :loading="state.logoutloading" @click="logout">
         {{ $t("confirm") }}
       </sl-button>
     </sl-dialog>
@@ -184,126 +133,124 @@ import FormHandler from "../../handler/FormHandler.vue"
 import { Request } from "@viur/vue-utils"
 import { useEventListener } from "@vueuse/core"
 import ViForm from "@viur/vue-utils/forms/ViForm.vue"
-import { useLocalStore} from "../../stores/local"
+import { useLocalStore } from "../../stores/local"
 
-    const userStore = useUserStore()
-    const appStore = useAppStore()
-    const dbStore = useDBStore()
-    const router = useRouter()
-    const local = useLocalStore()
+const userStore = useUserStore()
+const appStore = useAppStore()
+const dbStore = useDBStore()
+const router = useRouter()
+const local = useLocalStore()
 
-    let forms = {}
-    const state = reactive({
-      sidebarOpen: false,
-      nameInitials: computed(() => {
-        let name = ""
-        if (!userStore.state.user) return name
+let forms = {}
+const state = reactive({
+  sidebarOpen: false,
+  nameInitials: computed(() => {
+    let name = ""
+    if (!userStore.state.user) return name
 
-        if (userStore.state.user["firstname"] && userStore.state.user["lastname"]) {
-          name = userStore.state.user["firstname"][0] + userStore.state.user["lastname"][0]
-        } else {
-          let nameSplitted = userStore.state.user["name"].split(" ")
-          for (let namePart in nameSplitted) {
-            name += namePart[0]
-          }
-        }
-        return name
-      }),
-      name: computed(() => {
-        let name = ""
-        if (!userStore.state.user) return name
-
-        if (userStore.state.user["firstname"] && userStore.state.user["lastname"]) {
-          name = userStore.state.user["firstname"] + " " + userStore.state.user["lastname"]
-        } else {
-          name = userStore.state.user["name"]
-        }
-        return name
-      }),
-      avatarUser: computed(() => {
-        let avatar = ""
-        if (!userStore.state.user) return avatar
-
-        return userStore.state.user["image"]
-      }),
-      viVersion: computed(() => {
-        let vi = ""
-        if (!appStore.state["vi.version"]) return vi
-        for (let i = 0; i < appStore.state["vi.version"].length; i++) {
-          vi += appStore.state["vi.version"][i]
-          if (i < appStore.state["vi.version"].length - 1) {
-            vi += "."
-          }
-        }
-        return vi
-      }),
-      coreVersion: computed(() => {
-        let core = ""
-        if (!appStore.state["core.version"]) return core
-        appStore.state["core.version"] = appStore.state["core.version"].filter((e) => e !== null)
-        return appStore.state["core.version"].join(".")
-      }),
-      openedTask: null,
-      openLogout: null,
-      formValues: null,
-      taskstarted:false,
-      logoutloading:false
-    })
-
-
-    useEventListener(window, "beforeunload", (e) => {
-      e.preventDefault()
-      e.returnValue = "Do you really want to reload?"
-    })
-
-    onMounted(() => {
-      Request.get("/vi/_tasks/list").then(async (resp) => {
-        let data = await resp.json()
-        dbStore.state["tasks"] = data["skellist"]
-
-        for(const task of data["skellist"]){
-          forms[`form_${task["key"]}`] = ref(null)
-        }
-      })
-    })
-    function executeTask(key) {
-      forms[`form_${key}`].value[0].sendData(`/vi/_tasks/execute/${key}`).then(async (resp)=>{
-        let data = await resp.json()
-        if (data["action"] === "addSuccess"){
-          state.taskstarted = true
-        }
-      })
+    if (userStore.state.user["firstname"] && userStore.state.user["lastname"]) {
+      name = userStore.state.user["firstname"][0] + userStore.state.user["lastname"][0]
+    } else {
+      let nameSplitted = userStore.state.user["name"].split(" ")
+      for (let namePart in nameSplitted) {
+        name += namePart[0]
+      }
     }
-    function openTask(key) {
-      state.openedTask = key
-    }
-    function setValues(formValues){
-      console.log(formValues)
-      state.formValues = formValues
-    }
+    return name
+  }),
+  name: computed(() => {
+    let name = ""
+    if (!userStore.state.user) return name
 
-    function openUser() {
-      let route = router.resolve("/db/user/edit/self")
-      dbStore.addOpened(route, "user")
-      state.sidebarOpen = !state.sidebarOpen
+    if (userStore.state.user["firstname"] && userStore.state.user["lastname"]) {
+      name = userStore.state.user["firstname"] + " " + userStore.state.user["lastname"]
+    } else {
+      name = userStore.state.user["name"]
     }
+    return name
+  }),
+  avatarUser: computed(() => {
+    let avatar = ""
+    if (!userStore.state.user) return avatar
 
-    function openScriptor() {
-      let url = `${import.meta.env.VITE_API_URL}${appStore.state["admin.scriptor.url"]}#/home`
-      window.open(url, "_blank").focus()
+    return userStore.state.user["image"]
+  }),
+  viVersion: computed(() => {
+    let vi = ""
+    if (!appStore.state["vi.version"]) return vi
+    for (let i = 0; i < appStore.state["vi.version"].length; i++) {
+      vi += appStore.state["vi.version"][i]
+      if (i < appStore.state["vi.version"].length - 1) {
+        vi += "."
+      }
     }
+    return vi
+  }),
+  coreVersion: computed(() => {
+    let core = ""
+    if (!appStore.state["core.version"]) return core
+    appStore.state["core.version"] = appStore.state["core.version"].filter((e) => e !== null)
+    return appStore.state["core.version"].join(".")
+  }),
+  openedTask: null,
+  openLogout: null,
+  formValues: null,
+  taskstarted: false,
+  logoutloading: false,
+})
 
-    function logout(){
-      state.logoutloading = true
-      userStore.logout().then(async (resp)=>{
-        state.logoutloading = false
-      })
+useEventListener(window, "beforeunload", (e) => {
+  e.preventDefault()
+  e.returnValue = "Do you really want to reload?"
+})
+
+onMounted(() => {
+  Request.get("/vi/_tasks/list").then(async (resp) => {
+    let data = await resp.json()
+    dbStore.state["tasks"] = data["skellist"]
+
+    for (const task of data["skellist"]) {
+      forms[`form_${task["key"]}`] = ref(null)
     }
-
-    function changeCaching(){
-      local.state.cache=!local.state.cache
+  })
+})
+function executeTask(key) {
+  forms[`form_${key}`].value[0].sendData(`/vi/_tasks/execute/${key}`).then(async (resp) => {
+    let data = await resp.json()
+    if (data["action"] === "addSuccess") {
+      state.taskstarted = true
     }
+  })
+}
+function openTask(key) {
+  state.openedTask = key
+}
+function setValues(formValues) {
+  console.log(formValues)
+  state.formValues = formValues
+}
 
+function openUser() {
+  let route = router.resolve("/db/user/edit/self")
+  dbStore.addOpened(route, "user")
+  state.sidebarOpen = !state.sidebarOpen
+}
+
+function openScriptor() {
+  let url = `${import.meta.env.VITE_API_URL}${appStore.state["admin.scriptor.url"]}#/home`
+  window.open(url, "_blank").focus()
+}
+
+function logout() {
+  state.logoutloading = true
+  userStore.logout().then(async (resp) => {
+    state.logoutloading = false
+  })
+}
+
+function changeCaching() {
+  local.state.cache = !local.state.cache
+}
 </script>
 
 <style scoped>
@@ -377,7 +324,7 @@ sl-drawer {
   align-items: flex-start;
   color: var(--vi-foreground-color);
 
-  sl-switch{
+  sl-switch {
     padding: var(--sl-spacing-2x-small) var(--sl-spacing-x-small);
 
     &::part(base) {
@@ -413,7 +360,7 @@ sl-drawer {
   }
 }
 
-.dialog-btn-footer{
+.dialog-btn-footer {
   display: flex;
   justify-content: space-between;
   gap: var(--sl-spacing-large);
@@ -453,7 +400,7 @@ sl-drawer {
   }
 }
 
-.name{
+.name {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;

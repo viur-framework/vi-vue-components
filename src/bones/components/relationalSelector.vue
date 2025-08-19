@@ -1,9 +1,5 @@
 <template>
-  <teleport
-    v-if="open"
-    :to="'#view_dialogs_' + tabId"
-    :disabled="!open"
-  >
+  <teleport v-if="open" :to="'#view_dialogs_' + tabId" :disabled="!open">
     <sl-dialog
       open
       :label="'Auswahl: ' + name"
@@ -17,28 +13,16 @@
         :rowselect="rowselect"
         :selector="true"
         :filter="filter"
-        :inheritContext="false"
-        @currentSelection="relationUpdateSelection($event)"
-        @closeSelector="relationApplySelection()"
-      >
-      </component>
+        :inherit-context="false"
+        @current-selection="relationUpdateSelection($event)"
+        @close-selector="relationApplySelection()"
+      ></component>
 
-      <div
-        slot="footer"
-        class="footer"
-      >
-        <sl-button
-          variant="danger"
-          size="small"
-          outline
-          @click="relationCloseAction()"
-          >{{ $t("relation.abort") }}</sl-button
-        >
-        <sl-button
-          variant="success"
-          size="small"
-          @click="relationApplySelection()"
-        >
+      <div slot="footer" class="footer">
+        <sl-button variant="danger" size="small" outline @click="relationCloseAction()">
+          {{ $t("relation.abort") }}
+        </sl-button>
+        <sl-button variant="success" size="small" @click="relationApplySelection()">
           {{ $t("relation.select") }}
         </sl-button>
       </div>
@@ -47,49 +31,48 @@
 </template>
 
 <script setup>
-
 import { reactive, defineComponent, onMounted, inject } from "vue"
 import { Request } from "@viur/vue-utils"
 import handlers from "../../handler/handlers"
 
-function currentHandler(name){
-  return handlers?.[name]?handlers[name]:name
+function currentHandler(name) {
+  return handlers?.[name] ? handlers[name] : name
 }
 
 const props = defineProps({
-    open: Boolean,
-    name: String,
-    handler: [Object, String],
-    module: String,
-    tabId: String,
-    filter:Object,
-    rowselect: {
-      default: 1
-    }
-  })
+  open: Boolean,
+  name: String,
+  handler: [Object, String],
+  module: String,
+  tabId: String,
+  filter: Object,
+  rowselect: {
+    default: 1,
+  },
+})
 
-  const emit = defineEmits(["close"])
+const emit = defineEmits(["close"])
 
-    const state = reactive({
-      selection: null
-    })
+const state = reactive({
+  selection: null,
+})
 
-    function relationCloseAction() {
-      state.selection = null
-      emit("close")
-    }
+function relationCloseAction() {
+  state.selection = null
+  emit("close")
+}
 
-    function relationApplySelection() {
-      emit("close", state.selection)
-    }
+function relationApplySelection() {
+  emit("close", state.selection)
+}
 
-    function relationUpdateSelection(selection) {
-      if (props.rowselect === 1) {
-        state.selection = selection?.[0]
-      } else {
-        state.selection = selection
-      }
-    }
+function relationUpdateSelection(selection) {
+  if (props.rowselect === 1) {
+    state.selection = selection?.[0]
+  } else {
+    state.selection = selection
+  }
+}
 </script>
 
 <style scoped>

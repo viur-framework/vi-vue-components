@@ -1,10 +1,6 @@
 <template>
   <div class="main-wrapper">
-    <handler-bar
-      v-if="!noTopbar"
-      :module="module"
-      handler="listhandler"
-    ></handler-bar>
+    <handler-bar v-if="!noTopbar" :module="module" handler="listhandler"></handler-bar>
     <sl-details
       v-if="modulesStore.state.loaded && modulesStore.state.modules[module]?.['help_text']"
       open
@@ -14,20 +10,16 @@
     </sl-details>
     <div class="breadcrumb">
       <sl-breadcrumb>
-        <sl-breadcrumb-item
-          v-for="path in state.currentPath"
-          :key="path['key']"
-          @click="goToPath(path['key'])"
-        >
+        <sl-breadcrumb-item v-for="path in state.currentPath" :key="path['key']" @click="goToPath(path['key'])">
           <sl-icon
             slot="prefix"
             :name="listItemMeta(path, 'node').icon"
             :library="listItemMeta(path, 'node').library"
           ></sl-icon>
-          {{ Utils.renderValue( path["name"]) }}</sl-breadcrumb-item
-        >
+          {{ Utils.renderValue(path["name"]) }}
+        </sl-breadcrumb-item>
       </sl-breadcrumb>
-      <div style="display:flex; flex-direction: row; gap:10px; align-items: center">
+      <div style="display: flex; flex-direction: row; gap: 10px; align-items: center">
         <handler-context></handler-context>
       </div>
     </div>
@@ -37,10 +29,7 @@
       position-in-pixels="200"
       snap="200px"
     >
-      <sl-tree
-        slot="start"
-        @sl-selection-change="nodeSelection"
-      >
+      <sl-tree slot="start" @sl-selection-change="nodeSelection">
         <tree-item
           v-if="!state.needUpdate"
           :name="state.currentRootNode?.['name']"
@@ -50,15 +39,8 @@
           :load="true"
         ></tree-item>
       </sl-tree>
-      <div
-        slot="end"
-        class="table-wrapper"
-        @scroll="stickyHeader"
-      >
-        <loader
-          v-if="handlerLogic.state.state === 0"
-          size="3"
-        ></loader>
+      <div slot="end" class="table-wrapper" @scroll="stickyHeader">
+        <loader v-if="handlerLogic.state.state === 0" size="3"></loader>
         <table ref="datatable">
           <thead>
             <tr>
@@ -70,13 +52,12 @@
                 <th
                   v-if="handlerLogic.currentlist.structure?.[bone]"
                   :class="{ 'stick-header': state.sticky }"
-                  :style="{ width: handlerLogic.currentlist.structure?.[bone]['params']['column_width']||state.tableWidth }"
+                  :style="{
+                    width: handlerLogic.currentlist.structure?.[bone]['params']['column_width'] || state.tableWidth,
+                  }"
                 >
                   {{ handlerLogic.currentlist.structure?.[bone]?.["descr"] }}
-                  <div
-                    v-if="handlerLogic.currentlist.state.state === 2"
-                    class="sort-arrow-wrap"
-                  >
+                  <div v-if="handlerLogic.currentlist.state.state === 2" class="sort-arrow-wrap">
                     <sl-icon
                       v-if="state.sorting === '' || state.sorting !== bone + '$asc'"
                       name="caret-right-fill"
@@ -98,16 +79,20 @@
               </template>
             </tr>
           </thead>
-          <vue-draggable v-model="state.skellist" @end="dragChange" tag="tbody" handle=".drag-handler" :disabled="false" direction="vertical">
-            <template
-              v-for="(skel, idx) in handlerLogic.currentNodeList?.state?.renderedSkellist"
-              :key="skel['key']"
-            >
+          <vue-draggable
+            v-model="state.skellist"
+            tag="tbody"
+            handle=".drag-handler"
+            :disabled="false"
+            direction="vertical"
+            @end="dragChange"
+          >
+            <template v-for="(skel, idx) in handlerLogic.currentNodeList?.state?.renderedSkellist" :key="skel['key']">
               <tr
                 data-skeltype="node"
                 :class="{
                   selected: state.selectedRows.includes(idx) && state.currentSelectionType === 'node',
-                  'is-hidden': !handlerLogic.filterAction(skel)
+                  'is-hidden': !handlerLogic.filterAction(skel),
                 }"
                 @dblclick="primaryAction(skel, 'node')"
                 @click.exact="entrySelected(idx, 'replace', 'node')"
@@ -119,8 +104,7 @@
                     style="font-size: 1.1em"
                     :name="listItemMeta(handlerLogic.currentNodeList.state.skellist[idx], 'node').icon"
                     :library="listItemMeta(handlerLogic.currentNodeList.state.skellist[idx], 'node').library"
-                  >
-                  </sl-icon>
+                  ></sl-icon>
                 </td>
                 <template v-for="name in state.selectedBones">
                   <td v-if="handlerLogic.currentNodeList.structure?.[name]">
@@ -131,23 +115,19 @@
                       :bonename="name"
                       :idx="idx"
                       :rendered="skel[name]"
-                    >
-                    </component>
+                    ></component>
                   </td>
                   <td v-else></td>
                 </template>
               </tr>
             </template>
 
-            <template
-              v-for="(skel, idx) in handlerLogic.currentlist?.state?.renderedSkellist"
-              :key="skel['key']"
-            >
+            <template v-for="(skel, idx) in handlerLogic.currentlist?.state?.renderedSkellist" :key="skel['key']">
               <tr
                 data-skeltype="leaf"
                 :class="{
                   selected: state.selectedRows.includes(idx) && state.currentSelectionType === 'leaf',
-                  'is-hidden': !handlerLogic.filterAction(skel)
+                  'is-hidden': !handlerLogic.filterAction(skel),
                 }"
                 @dblclick="primaryAction(skel, 'leaf')"
                 @click.exact="entrySelected(idx)"
@@ -159,8 +139,7 @@
                     style="font-size: 1.1em"
                     :name="listItemMeta(handlerLogic.currentlist.state.skellist[idx], 'leaf').icon"
                     :library="listItemMeta(handlerLogic.currentlist.state.skellist[idx], 'leaf').library"
-                  >
-                  </sl-icon>
+                  ></sl-icon>
                 </td>
                 <template v-for="name in state.selectedBones">
                   <td v-if="handlerLogic.currentlist.structure?.[name]">
@@ -171,8 +150,7 @@
                       :bonename="name"
                       :idx="idx"
                       :rendered="skel[name]"
-                    >
-                    </component>
+                    ></component>
                   </td>
                 </template>
               </tr>
@@ -185,15 +163,8 @@
           "
           class="empty-message"
         >
-          <sl-alert
-            variant="info"
-            open
-            class="alert"
-          >
-            <sl-icon
-              slot="icon"
-              name="exclamation-triangle"
-            ></sl-icon>
+          <sl-alert variant="info" open class="alert">
+            <sl-icon slot="icon" name="exclamation-triangle"></sl-icon>
             <strong>Keine Einträge</strong>
           </sl-alert>
         </div>
@@ -204,7 +175,6 @@
 </template>
 
 <script setup>
-
 import {
   reactive,
   defineComponent,
@@ -219,7 +189,7 @@ import {
   onDeactivated,
   unref,
   inject,
-  toRaw
+  toRaw,
 } from "vue"
 import HandlerBar from "../bars/HandlerBar.vue"
 import { ListRequest, boneLogic, Request } from "@viur/vue-utils"
@@ -237,354 +207,360 @@ import { useHandlerLogic } from "./handlerLogic"
 import treeItem from "../tree/TreeItem.vue"
 import Utils from "../utils"
 import HandlerContext from "../main/context/HandlerContext.vue"
-import { VueDraggable } from 'vue-draggable-plus'
+import { VueDraggable } from "vue-draggable-plus"
 
-  const props = defineProps({
-    module: {
-      type: String,
-      required: true
-    },
-    group: String,
-    view: null,
-    rowselect: {
-      default: 2 //0 == disabled, 1==select One, 2: select multiple
-    },
-    selector: false,
-    filter: {},
-    noTopbar: false,
-    columns: []
-  })
-  const emit = defineEmits(["currentSelection", "closeSelector"])
+const props = defineProps({
+  module: {
+    type: String,
+    required: true,
+  },
+  group: String,
+  view: null,
+  rowselect: {
+    default: 2, //0 == disabled, 1==select One, 2: select multiple
+  },
+  selector: false,
+  filter: {},
+  noTopbar: false,
+  columns: [],
+})
+const emit = defineEmits(["currentSelection", "closeSelector"])
 
-    const dbStore = useDBStore()
-    const route = useRoute()
-    const router = useRouter()
-    const messageStore = useMessageStore()
-    const modulesStore = useModulesStore()
-    const contextStore = useContextStore()
-    const localStore = useLocalStore()
-    const datatable = ref(null)
+const dbStore = useDBStore()
+const route = useRoute()
+const router = useRouter()
+const messageStore = useMessageStore()
+const modulesStore = useModulesStore()
+const contextStore = useContextStore()
+const localStore = useLocalStore()
+const datatable = ref(null)
 
-    const state = reactive({
-      type: "treehandler",
-      currentSelectionType: "node",
-      currentSelection: [],
-      selectedRows: [],
+const state = reactive({
+  type: "treehandler",
+  currentSelectionType: "node",
+  currentSelection: [],
+  selectedRows: [],
 
-      module: computed(() => props.module),
-      group: computed(() => props.group),
-      view: computed(() => props.view),
+  module: computed(() => props.module),
+  group: computed(() => props.group),
+  view: computed(() => props.view),
 
-      availableRootNodes: [],
-      currentRootNode: null,
-      currentPath: [],
-      needUpdate: true, //performes a full update
-      structure: computed(() => handlerLogic.currentlist.structure),
-      tabId: route.query?.["_"],
-      storeName: computed(() => {
-        let name = `module___${props.module}`
-        if (props.view) {
-          name += `___${props.view}`
-        }
-        name += `___${route.query["_"]}`
-
-        return name
-      }),
-
-      active: false,
-      conf: {},
-
-      selectedBones: [],
-
-      sticky: false,
-      tableWidth: "150px",
-      sorting: "",
-      filter: null,
-      sortindexBonename:null,
-      entryUpdate:false,
-      skellist:[]
-    })
-    provide("handlerState", state)
-
-    const handlerLogic = useHandlerLogic(props, state)
-    provide("reloadAction", reloadAction)
-    provide("setLimit", handlerLogic.limitAction)
-    provide("nextpage", handlerLogic.nextPageAction)
-    provide("currentlist", handlerLogic.currentlist)
-    provide("changeRootNode", handlerLogic.changeRootNode)
-
-    function reloadAction(folderUpdate=false, params={}) {
-
-      if (!folderUpdate){
-        state.needUpdate = true
-        state.currentSelection = [state.currentRootNode]
-        state.currentSelectionType = "node"
-      }
-      return handlerLogic.reloadAction(params, state.needUpdate)
+  availableRootNodes: [],
+  currentRootNode: null,
+  currentPath: [],
+  needUpdate: true, //performes a full update
+  structure: computed(() => handlerLogic.currentlist.structure),
+  tabId: route.query?.["_"],
+  storeName: computed(() => {
+    let name = `module___${props.module}`
+    if (props.view) {
+      name += `___${props.view}`
     }
+    name += `___${route.query["_"]}`
 
-    watch(
-      () => state.currentRootNode,
-      (newVal, oldVal) => {
-        if (!newVal) return 0
-        state.currentPath = [newVal]
-        state.currentSelection = [state.currentRootNode]
-      }
-    )
+    return name
+  }),
 
-    watch(
-      () => state.currentPath,
-      (newVal, oldVal) => {
-        if (
-          oldVal.length > 0 &&
-          (newVal.length !== oldVal.length ||
-            newVal[0]["key"] !== oldVal[0]["key"] ||
-            newVal[newVal.length - 1]["key"] !== oldVal[oldVal.length - 1]["key"])
-        ) {
-          handlerLogic
-            .reloadAction({ parententry: state.currentPath[state.currentPath.length - 1]["key"] }, state.needUpdate)
-            .then((resp) => {
-              handlerLogic.setSelectedBones()
-            })
-        }
-      }
-    )
+  active: false,
+  conf: {},
 
-    onMounted(() => {
-      if (props.columns && props.columns.length > 0) {
-        state.selectedBones = props.columns
-      }
-      handlerLogic.reloadAction().then((resp) => {
-        handlerLogic.setSelectedBones()
-      })
-    })
+  selectedBones: [],
 
-    onActivated(() => {
-      state.active = true
-      let tabData = dbStore.getTabById(route.query["_"])
+  sticky: false,
+  tableWidth: "150px",
+  sorting: "",
+  filter: null,
+  sortindexBonename: null,
+  entryUpdate: false,
+  skellist: [],
+})
+provide("handlerState", state)
 
-      if (tabData?.["update"]) {
-        console.log("activate")
-        handlerLogic.reloadAction()
-        tabData["update"] = false
-      }
-    })
+const handlerLogic = useHandlerLogic(props, state)
+provide("reloadAction", reloadAction)
+provide("setLimit", handlerLogic.limitAction)
+provide("nextpage", handlerLogic.nextPageAction)
+provide("currentlist", handlerLogic.currentlist)
+provide("changeRootNode", handlerLogic.changeRootNode)
 
-    watch(
-      () => Object.values(contextStore.state.globalContext),
-      (newVal, oldVal) => {
-        handlerLogic.reloadAction().then((resp) => {
+function reloadAction(folderUpdate = false, params = {}) {
+  if (!folderUpdate) {
+    state.needUpdate = true
+    state.currentSelection = [state.currentRootNode]
+    state.currentSelectionType = "node"
+  }
+  return handlerLogic.reloadAction(params, state.needUpdate)
+}
+
+watch(
+  () => state.currentRootNode,
+  (newVal, oldVal) => {
+    if (!newVal) return 0
+    state.currentPath = [newVal]
+    state.currentSelection = [state.currentRootNode]
+  }
+)
+
+watch(
+  () => state.currentPath,
+  (newVal, oldVal) => {
+    if (
+      oldVal.length > 0 &&
+      (newVal.length !== oldVal.length ||
+        newVal[0]["key"] !== oldVal[0]["key"] ||
+        newVal[newVal.length - 1]["key"] !== oldVal[oldVal.length - 1]["key"])
+    ) {
+      handlerLogic
+        .reloadAction({ parententry: state.currentPath[state.currentPath.length - 1]["key"] }, state.needUpdate)
+        .then((resp) => {
           handlerLogic.setSelectedBones()
         })
-      }
-    )
+    }
+  }
+)
 
-    watch(()=>handlerLogic.currentlist.state.skellist, (oldVal, newVal)=>{
-      let newList = handlerLogic.currentlist.state.skellist.map(x =>{
-        x["__skeltype"] = "leaf"
-        return x
-      })
-      state.skellist = [...handlerLogic.currentNodeList.state.skellist, ...newList]
+onMounted(() => {
+  if (props.columns && props.columns.length > 0) {
+    state.selectedBones = props.columns
+  }
+  handlerLogic.reloadAction().then((resp) => {
+    handlerLogic.setSelectedBones()
+  })
+})
 
+onActivated(() => {
+  state.active = true
+  let tabData = dbStore.getTabById(route.query["_"])
+
+  if (tabData?.["update"]) {
+    console.log("activate")
+    handlerLogic.reloadAction()
+    tabData["update"] = false
+  }
+})
+
+watch(
+  () => Object.values(contextStore.state.globalContext),
+  (newVal, oldVal) => {
+    handlerLogic.reloadAction().then((resp) => {
+      handlerLogic.setSelectedBones()
     })
+  }
+)
 
-    watch(()=>handlerLogic.currentNodeList.state.skellist, (oldVal, newVal)=>{
-      let newList = handlerLogic.currentNodeList.state.skellist.map(x =>{
-        x["__skeltype"] = "node"
-        return x
-      })
-      state.skellist = [...newList, ...handlerLogic.currentlist.state.skellist]
+watch(
+  () => handlerLogic.currentlist.state.skellist,
+  (oldVal, newVal) => {
+    let newList = handlerLogic.currentlist.state.skellist.map((x) => {
+      x["__skeltype"] = "leaf"
+      return x
     })
+    state.skellist = [...handlerLogic.currentNodeList.state.skellist, ...newList]
+  }
+)
 
-
-    onDeactivated(() => {
-      state.active = false
+watch(
+  () => handlerLogic.currentNodeList.state.skellist,
+  (oldVal, newVal) => {
+    let newList = handlerLogic.currentNodeList.state.skellist.map((x) => {
+      x["__skeltype"] = "node"
+      return x
     })
+    state.skellist = [...newList, ...handlerLogic.currentlist.state.skellist]
+  }
+)
 
-    function entrySelected(idx, action = "replace", skelType = "leaf") {
-      if (state.currentSelectionType !== skelType) {
-        action = "replace"
-      }
-      if (action === "append" && props.rowselect > 1) {
-        if (state.selectedRows.includes(idx)) {
-          state.selectedRows.splice(state.selectedRows.indexOf(idx), 1)
-        } else {
-          state.selectedRows.push(idx)
-        }
-      } else if (action === "range" && props.rowselect > 1) {
-        let lastEntry = state.selectedRows[state.selectedRows.length - 1]
-        let end = idx
-        let start = lastEntry
-        if (lastEntry > idx) {
-          //selection is smaller than last number
-          start = idx
-          end = lastEntry
-        }
-        state.selectedRows = state.selectedRows.concat(new Array(end + 1 - start).fill().map((d, i) => i + start))
-      } else if (props.rowselect > 0) {
-        state.selectedRows = [idx]
-      }
+onDeactivated(() => {
+  state.active = false
+})
 
-      let currentHandler = handlerLogic.currentHandlers[skelType]
-      state.currentSelectionType = skelType
-      state.selectedRows = [...new Set(state.selectedRows)] // remove duplicates and sort
-
-      state.currentSelection = currentHandler.state.skellist.filter((entry, idx) => state.selectedRows.includes(idx))
-      if (state.currentSelection.length > 0) {
-        dbStore.state["skeldrawer.entry"] = state.currentSelection[0]
-        dbStore.state["skeldrawer.structure"] = currentHandler.structure
-      }
-
-      emit("currentSelection", state.currentSelection)
+function entrySelected(idx, action = "replace", skelType = "leaf") {
+  if (state.currentSelectionType !== skelType) {
+    action = "replace"
+  }
+  if (action === "append" && props.rowselect > 1) {
+    if (state.selectedRows.includes(idx)) {
+      state.selectedRows.splice(state.selectedRows.indexOf(idx), 1)
+    } else {
+      state.selectedRows.push(idx)
     }
-
-    function primaryAction(skel, skelType = "leaf") {
-      //fluidpage injection - rework
-      if (state.conf["handler"].startsWith("list.fluidpage")) {
-        let conf = dbStore.getConf(state.module)
-        let module = conf["handler"].split(".").at(-1).replace("/", ".")
-        let url = `/db/${module}/fluidpage/${state.module}/${state.currentSelection[0]["key"]}`
-        let route = router.resolve(unref(url))
-        contextStore.setContext("fluidpage", state.currentSelection[0]["key"], state.tabId)
-        dbStore.addOpened(route, module)
-        return 0
-      }
-
-      if (skelType === "node") {
-        goToPath(skel["key"])
-      } else {
-        handlerLogic.openEditor(null)
-      }
+  } else if (action === "range" && props.rowselect > 1) {
+    let lastEntry = state.selectedRows[state.selectedRows.length - 1]
+    let end = idx
+    let start = lastEntry
+    if (lastEntry > idx) {
+      //selection is smaller than last number
+      start = idx
+      end = lastEntry
     }
+    state.selectedRows = state.selectedRows.concat(new Array(end + 1 - start).fill().map((d, i) => i + start))
+  } else if (props.rowselect > 0) {
+    state.selectedRows = [idx]
+  }
 
-    function stickyHeader(e) {
-      if (e.target.scrollTop > 10) {
-        state.sticky = true
-      } else {
-        state.sticky = false
-      }
+  let currentHandler = handlerLogic.currentHandlers[skelType]
+  state.currentSelectionType = skelType
+  state.selectedRows = [...new Set(state.selectedRows)] // remove duplicates and sort
+
+  state.currentSelection = currentHandler.state.skellist.filter((entry, idx) => state.selectedRows.includes(idx))
+  if (state.currentSelection.length > 0) {
+    dbStore.state["skeldrawer.entry"] = state.currentSelection[0]
+    dbStore.state["skeldrawer.structure"] = currentHandler.structure
+  }
+
+  emit("currentSelection", state.currentSelection)
+}
+
+function primaryAction(skel, skelType = "leaf") {
+  //fluidpage injection - rework
+  if (state.conf["handler"].startsWith("list.fluidpage")) {
+    let conf = dbStore.getConf(state.module)
+    let module = conf["handler"].split(".").at(-1).replace("/", ".")
+    let url = `/db/${module}/fluidpage/${state.module}/${state.currentSelection[0]["key"]}`
+    let route = router.resolve(unref(url))
+    contextStore.setContext("fluidpage", state.currentSelection[0]["key"], state.tabId)
+    dbStore.addOpened(route, module)
+    return 0
+  }
+
+  if (skelType === "node") {
+    goToPath(skel["key"])
+  } else {
+    handlerLogic.openEditor(null)
+  }
+}
+
+function stickyHeader(e) {
+  if (e.target.scrollTop > 10) {
+    state.sticky = true
+  } else {
+    state.sticky = false
+  }
+}
+
+function nodeSelection(e) {
+  let newPath = e.detail.path.map((x) => {
+    return x["value"]
+  })
+
+  state.currentSelectionType = "node"
+  state.currentSelection = [e.detail.selection[0]["value"]]
+  state.selectedRows = []
+  state.currentPath = newPath
+}
+
+function goToPath(value) {
+  let currentIndex = state.currentPath.findIndex((x) => x["key"] === value)
+  console.log(currentIndex)
+  if (currentIndex === -1) {
+    console.log(state.currentSelection[0])
+    state.currentPath = state.currentPath.concat([state.currentSelection[0]])
+    return 0
+  }
+  state.currentPath = state.currentPath.splice(0, currentIndex + 1)
+}
+
+function itemMeta(item, skelType = "leaf") {
+  let currentType = skelType
+
+  if (item?.["kind"] && item?.["kind"] !== "-") {
+    currentType += `.${item["kind"]}`
+  }
+
+  let currentMeta = toRaw(state.conf["kinds"]?.[currentType])
+  if (!currentMeta) return 0
+  if (Object.keys(state.conf["kinds"]).includes(currentType)) {
+    currentMeta = state.conf["kinds"][currentType]
+  }
+  if (!Object.keys(currentMeta).includes("library")) {
+    currentMeta["library"] = "default"
+  }
+
+  return currentMeta
+}
+provide("itemMeta", itemMeta)
+
+function listItemMeta(item, skelType = "leaf") {
+  let currentMeta = { ...itemMeta(item, skelType) }
+  let mimeBaseMatch = {
+    image: "file-earmark-image",
+    audio: "file-earmark-music",
+    text: "file-earmark-text",
+    "application/epub+zip": "file-earmark-text",
+    "application/pdf": "file-earmark-pdf",
+    "application/vnd.ms-powerpoint": "file-earmark-ppt",
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation": "file-earmark-ppt",
+    "application/msword": "file-earmark-word",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "file-earmark-word",
+    "application/zip": "file-earmark-zip",
+    "application/x-7z-compressed": "file-earmark-zip",
+    "application/vnd.rar": "file-earmark-zip",
+    "application/x-tar": "file-earmark-zip",
+    "application/gzip": "file-earmark-zip",
+    "application/vnd.ms-excel": "file-earmark-excel",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "file-earmark-excel",
+    video: "file-earmark-play",
+    "application/json": "file-earmark-code",
+  }
+
+  if (Object.keys(item).includes("mimetype")) {
+    if (Object.keys(mimeBaseMatch).includes(item["mimetype"])) {
+      currentMeta["icon"] = mimeBaseMatch[item["mimetype"]]
+      currentMeta["library"] = "default"
+    } else if (Object.keys(mimeBaseMatch).includes(item["mimetype"]?.split("/")?.[0])) {
+      currentMeta["icon"] = mimeBaseMatch[item["mimetype"].split("/")[0]]
+      currentMeta["library"] = "default"
+    } else {
+      currentMeta["icon"] = state.conf["kinds"]?.[skelType].icon
+      currentMeta["library"] = state.conf["kinds"]?.[skelType].library
     }
+  }
+  return currentMeta
+}
 
-    function nodeSelection(e) {
-      let newPath = e.detail.path.map((x) => {
-        return x["value"]
-      })
+function dragChange(event) {
+  state.entryUpdate = true
+  let preIdx = 0
+  let nextIdx = 0
+  let skeltype = event.item.dataset.skeltype //inject skeltype to determ correct listhandler
+  let listhandler = handlerLogic.currentlist?.state
 
-      state.currentSelectionType = "node"
-      state.currentSelection = [e.detail.selection[0]["value"]]
-      state.selectedRows = []
-      state.currentPath = newPath
+  if (skeltype === "node") {
+    listhandler = handlerLogic.currentNodeList?.state
+  }
+
+  if (event.newIndex !== 0) {
+    if (state.skellist[event.newIndex - 1]["__skeltype"] === skeltype) {
+      preIdx = state.skellist[event.newIndex - 1][state.sortindexBonename]
     }
+  }
+  if (event.newIndex !== state.skellist.length - 1 && state.skellist[event.newIndex + 1]["__skeltype"] === skeltype) {
+    nextIdx = state.skellist[event.newIndex + 1][state.sortindexBonename]
+  } else {
+    nextIdx = new Date().getTime()
+  }
 
-    function goToPath(value) {
-      let currentIndex = state.currentPath.findIndex((x) => x["key"] === value)
-      console.log(currentIndex)
-      if (currentIndex === -1) {
-        console.log(state.currentSelection[0])
-        state.currentPath = state.currentPath.concat([state.currentSelection[0]])
-        return 0
-      }
-      state.currentPath = state.currentPath.splice(0, currentIndex + 1)
-    }
+  let newsortindex = preIdx + (nextIdx - preIdx) / 2
 
-    function itemMeta(item, skelType = "leaf") {
-      let currentType = skelType
+  let currentEntry = event.data
 
-      if (item?.["kind"] && item?.["kind"] !== "-") {
-        currentType += `.${item["kind"]}`
-      }
+  Request.securePost(`/vi/${listhandler.module}/move/${skeltype}/${currentEntry["key"]}`, {
+    dataObj: {
+      [state.sortindexBonename]: newsortindex,
+      parentNode: currentEntry["parententry"],
+    },
+  })
+    .then(async (resp) => {
+      let data = await resp.json()
+      state.skellist[event.newIndex][state.sortindexBonename] = data["values"][state.sortindexBonename]
+      state.entryUpdate = false
 
-      let currentMeta = toRaw(state.conf["kinds"]?.[currentType])
-      if (!currentMeta) return 0
-      if (Object.keys(state.conf["kinds"]).includes(currentType)) {
-        currentMeta = state.conf["kinds"][currentType]
-      }
-      if (!Object.keys(currentMeta).includes("library")) {
-        currentMeta["library"] = "default"
-      }
-
-      return currentMeta
-    }
-    provide("itemMeta", itemMeta)
-
-    function listItemMeta(item, skelType = "leaf") {
-      let currentMeta = { ...itemMeta(item, skelType) }
-      let mimeBaseMatch = {
-        image: "file-earmark-image",
-        audio: "file-earmark-music",
-        text: "file-earmark-text",
-        "application/epub+zip": "file-earmark-text",
-        "application/pdf": "file-earmark-pdf",
-        "application/vnd.ms-powerpoint": "file-earmark-ppt",
-        "application/vnd.openxmlformats-officedocument.presentationml.presentation": "file-earmark-ppt",
-        "application/msword": "file-earmark-word",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "file-earmark-word",
-        "application/zip": "file-earmark-zip",
-        "application/x-7z-compressed": "file-earmark-zip",
-        "application/vnd.rar": "file-earmark-zip",
-        "application/x-tar": "file-earmark-zip",
-        "application/gzip": "file-earmark-zip",
-        "application/vnd.ms-excel": "file-earmark-excel",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "file-earmark-excel",
-        video: "file-earmark-play",
-        "application/json": "file-earmark-code"
-      }
-
-      if (Object.keys(item).includes("mimetype")) {
-        if (Object.keys(mimeBaseMatch).includes(item["mimetype"])) {
-          currentMeta["icon"] = mimeBaseMatch[item["mimetype"]]
-          currentMeta["library"] = "default"
-        } else if (Object.keys(mimeBaseMatch).includes(item["mimetype"]?.split("/")?.[0])) {
-          currentMeta["icon"] = mimeBaseMatch[item["mimetype"].split("/")[0]]
-          currentMeta["library"] = "default"
-        } else {
-          currentMeta["icon"] = state.conf["kinds"]?.[skelType].icon
-          currentMeta["library"] = state.conf["kinds"]?.[skelType].library
-        }
-      }
-      return currentMeta
-    }
-
-    function dragChange(event){
-      state.entryUpdate=true
-      let preIdx = 0
-      let nextIdx = 0
-      let skeltype = event.item.dataset.skeltype //inject skeltype to determ correct listhandler
-      let listhandler = handlerLogic.currentlist?.state
-
-
-      if (skeltype === "node"){
-        listhandler = handlerLogic.currentNodeList?.state
-      }
-
-      if (event.newIndex !==0){
-        if(state.skellist[event.newIndex-1]["__skeltype"]===skeltype){
-          preIdx = state.skellist[event.newIndex-1][state.sortindexBonename]
-        }
-      }
-      if (event.newIndex!==state.skellist.length-1 && state.skellist[event.newIndex+1]["__skeltype"]===skeltype){
-        nextIdx = state.skellist[event.newIndex+1][state.sortindexBonename]
-      } else{
-        nextIdx = new Date().getTime()
-      }
-
-      let newsortindex = preIdx + ((nextIdx-preIdx)/2)
-
-      let currentEntry = event.data
-
-      Request.securePost(`/vi/${listhandler.module}/move/${skeltype}/${currentEntry["key"]}`,{dataObj:{
-        [state.sortindexBonename]:newsortindex,
-        parentNode:currentEntry["parententry"]
-        }}).then(async (resp)=>{
-          let data = await resp.json()
-          state.skellist[event.newIndex][state.sortindexBonename] = data['values'][state.sortindexBonename]
-          state.entryUpdate=false
-
-          reloadAction(true)
-        }).catch((error)=>{
-          state.entryUpdate=false
-        })
-    }
+      reloadAction(true)
+    })
+    .catch((error) => {
+      state.entryUpdate = false
+    })
+}
 </script>
 
 <style scoped>
@@ -799,20 +775,20 @@ sl-split-panel {
   --max: 75%;
   --divider-width: 1px;
 
-  &::part(divider){
+  &::part(divider) {
     background-color: var(--vi-border-color);
-   }
+  }
 
   overflow: auto;
 }
 
-sl-tree{
+sl-tree {
   display: flex;
   overflow: auto;
 
-  &::part(base){
+  &::part(base) {
     width: 100%;
-   }
+  }
 
   &::-webkit-scrollbar-track {
     background-color: transparent;
@@ -836,16 +812,14 @@ sl-tree-item {
   &::part(base) {
     width: 100%;
   }
-
 }
 
-.breadcrumb{
+.breadcrumb {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 var(--sl-spacing-medium) 0 0;
   border-bottom: 1px solid var(--vi-border-color);
-  font-size: .9em;
+  font-size: 0.9em;
 }
-
 </style>

@@ -1,11 +1,7 @@
 <template>
   <div class="more-entries">
     <template v-if="['listhandler'].includes(handerState['type'])">
-      <component
-        :is="action"
-        v-for="action in dbStore.state['floatingbar.actions']"
-      >
-      </component>
+      <component :is="action" v-for="action in dbStore.state['floatingbar.actions']"></component>
     </template>
 
     <next-page v-if="['listhandler', 'treehandler'].includes(handerState['type'])"></next-page>
@@ -21,10 +17,9 @@ import SetAmount from "../actions/setamount.vue"
 import NextPage from "../actions/nextpage.vue"
 import { useDBStore } from "../stores/db"
 
-    const state = reactive({})
-    const dbStore = useDBStore()
-    const handerState = inject("handlerState")
-
+const state = reactive({})
+const dbStore = useDBStore()
+const handerState = inject("handlerState")
 </script>
 
 <style scoped>

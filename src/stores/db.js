@@ -1,62 +1,68 @@
 //@ts-nocheck
 
-import { reactive, computed, getCurrentInstance, unref, markRaw,shallowRef } from "vue"
-import {useTitle} from '@vueuse/core'
+import { reactive, computed, getCurrentInstance, unref, markRaw, shallowRef } from "vue"
+import { useTitle } from "@vueuse/core"
 import { defineStore } from "pinia"
 import { useRoute, useRouter } from "vue-router"
 import { useViewStore } from "./views"
 import { useLocalStore } from "./local"
-import { useAppStore } from './app'
+import { useAppStore } from "./app"
 import { useUserStore } from "@viur/vue-utils/login/stores/user"
 import { useContextStore } from "./context"
 import { destroyStore } from "@viur/vue-utils/utils/handlers"
 import Utils from "../utils"
 
-
 function adminTreeLayer(itemList, parent) {
   const userStore = useUserStore()
 
-  function module_access(modulename, group=null){
+  function module_access(modulename, group = null) {
     const userStore = useUserStore()
     if (userStore.userAccess.includes("root")) {
       return true
     }
     if (group) {
-      return userStore.userAccess.includes(`${modulename}-${group}-add`) || userStore.userAccess.includes(`${modulename}-${group}-edit`) || userStore.userAccess.includes(`${modulename}-${group}-delete`)
+      return (
+        userStore.userAccess.includes(`${modulename}-${group}-add`) ||
+        userStore.userAccess.includes(`${modulename}-${group}-edit`) ||
+        userStore.userAccess.includes(`${modulename}-${group}-delete`)
+      )
     } else {
-      return userStore.userAccess.includes(`${modulename}-add`) || userStore.userAccess.includes(`${modulename}-edit`) || userStore.userAccess.includes(`${modulename}-delete`)
+      return (
+        userStore.userAccess.includes(`${modulename}-add`) ||
+        userStore.userAccess.includes(`${modulename}-edit`) ||
+        userStore.userAccess.includes(`${modulename}-delete`)
+      )
     }
   }
-
 
   let listOfNodes = []
   let i = 0
 
   for (let conf of itemList) {
-    if (conf['module']==="script" && userStore.userAccess.includes('scriptor')){
+    if (conf["module"] === "script" && userStore.userAccess.includes("scriptor")) {
       conf["display"] = "visible"
     }
-
 
     if (!Object.keys(conf).includes("display")) {
       conf["display"] = "visible"
     }
-    if (conf['handler'] && conf["display"] !== "group"){
-      if (module_access(conf['module'],conf["group"])){
+    if (conf["handler"] && conf["display"] !== "group") {
+      if (module_access(conf["module"], conf["group"])) {
         conf["hasAccess"] = true
-      }else{
+      } else {
         conf["hasAccess"] = false
       }
     }
 
-    if(conf['nodeType'] === "group" && conf["moduleGroups"]?.length === 0){
+    if (conf["nodeType"] === "group" && conf["moduleGroups"]?.length === 0) {
       conf["display"] = "hidden"
     }
 
-
     // set index as sortindex if missing
     if (!Object.keys(conf).includes("sortIndex") || conf["sortIndex"] === 0) {
-      conf["sortIndex"] = Array.from(conf["name"].substring(0, 3)).map(x=>x.charCodeAt(0).toString().padStart(3,'0')).join("")
+      conf["sortIndex"] = Array.from(conf["name"].substring(0, 3))
+        .map((x) => x.charCodeAt(0).toString().padStart(3, "0"))
+        .join("")
     }
     if (!Object.keys(conf).includes("columns")) {
       conf["columns"] = undefined
@@ -67,26 +73,24 @@ function adminTreeLayer(itemList, parent) {
       conf = { ...parent, ...conf }
 
       // merge some cases manual
-      if (Object.keys(parent).includes('context')){
+      if (Object.keys(parent).includes("context")) {
         try {
-          let currentContext = conf?.['context']
-          if (!currentContext){
+          let currentContext = conf?.["context"]
+          if (!currentContext) {
             currentContext = {}
           }
 
-          conf['context'] = { ...parent['context'], ...currentContext }
-        }catch (e){
+          conf["context"] = { ...parent["context"], ...currentContext }
+        } catch (e) {
           console.log("Error while merging context")
         }
       }
 
-      if (parent['view_layer']>=1){
-        conf["view_number"] = (100*(parent['view_layer']))+i
-      }else{
+      if (parent["view_layer"] >= 1) {
+        conf["view_number"] = 100 * parent["view_layer"] + i
+      } else {
         conf["view_number"] = i
       }
-
-
     }
 
     // add parentmodule as parententry... component expects this
@@ -114,8 +118,8 @@ function adminTreeLayer(itemList, parent) {
       conf["url"] = { path: `/db/${conf["module"]}/tree` }
       conf["handlerComponent"] = "treehandler"
 
-      if (!conf["columns"]){
-        conf["columns"] = ['name']
+      if (!conf["columns"]) {
+        conf["columns"] = ["name"]
       }
       if (!Object.keys(conf).includes("kinds")) {
         conf["kinds"] = {
@@ -123,8 +127,8 @@ function adminTreeLayer(itemList, parent) {
           leaf: {
             icon: "file-earmark",
             name: "Datei",
-            allowedChildren: null
-          }
+            allowedChildren: null,
+          },
         }
       }
     } else if (conf["handler"] === "tree.node" || conf["handler"].startsWith("tree.node.")) {
@@ -132,7 +136,7 @@ function adminTreeLayer(itemList, parent) {
       conf["handlerComponent"] = "hierarchyhandler"
       if (!Object.keys(conf).includes("kinds")) {
         conf["kinds"] = {
-          node: { icon: "diagram-2-fill", name: "Knoten", library: "default", allowedChildren: ["node"] }
+          node: { icon: "diagram-2-fill", name: "Knoten", library: "default", allowedChildren: ["node"] },
         }
       }
       if (!Object.keys(conf["kinds"]).includes("node")) {
@@ -140,7 +144,7 @@ function adminTreeLayer(itemList, parent) {
           icon: "diagram-2-fill",
           name: "Knoten",
           library: "default",
-          allowedChildren: ["node"]
+          allowedChildren: ["node"],
         }
       }
       for (const kind of Object.keys(conf["kinds"])) {
@@ -152,24 +156,24 @@ function adminTreeLayer(itemList, parent) {
       conf["url"] = { path: `/db/${conf["module"]}/tree` }
       conf["handlerComponent"] = "treehandler"
       if (!Object.keys(conf).includes("kinds")) {
-        if (conf['module']==="script"){
+        if (conf["module"] === "script") {
           conf["kinds"] = {
             node: { icon: "folder", name: "Ordner", allowedChildren: ["leaf", "node"] },
             leaf: {
               icon: "file-earmark",
               name: "Skript",
-              allowedChildren: null
-            }
+              allowedChildren: null,
+            },
           }
-        }else{
+        } else {
           conf["kinds"] = {
             node: { icon: "archive-fill", name: "Gruppe", library: "default", allowedChildren: ["leaf", "node"] },
             leaf: {
               icon: "card-heading",
               name: "Eintrag",
               library: "default",
-              allowedChildren: null
-            }
+              allowedChildren: null,
+            },
           }
         }
       }
@@ -178,7 +182,7 @@ function adminTreeLayer(itemList, parent) {
           icon: "archive-fill",
           name: "Gruppe",
           library: "default",
-          allowedChildren: ["leaf", "node"]
+          allowedChildren: ["leaf", "node"],
         }
       }
       if (!Object.keys(conf["kinds"]).includes("leaf")) {
@@ -186,7 +190,7 @@ function adminTreeLayer(itemList, parent) {
           icon: "card-heading",
           name: "Eintrag",
           library: "default",
-          allowedChildren: null
+          allowedChildren: null,
         }
       }
       for (const kind of Object.keys(conf["kinds"])) {
@@ -203,7 +207,6 @@ function adminTreeLayer(itemList, parent) {
       conf["url"]["query"] = { view: conf["view_number"] }
     }
 
-
     if (!Object.keys(conf).includes("children")) {
       conf["children"] = []
     }
@@ -211,23 +214,23 @@ function adminTreeLayer(itemList, parent) {
     if (conf["moduleGroups"]?.length > 0) {
       conf["children"] = conf["children"].concat(adminTreeLayer(conf["moduleGroups"], conf))
       let groupVisible = false
-      for (let m of conf["children"]){
-        if (m["hasAccess"] || m['nodeType']==="group"){
+      for (let m of conf["children"]) {
+        if (m["hasAccess"] || m["nodeType"] === "group") {
           groupVisible = true
           break
         }
       }
-      conf["display"] = groupVisible?"visible":"hidden"
+      conf["display"] = groupVisible ? "visible" : "hidden"
     }
 
     //append children (views)
     if (Object.keys(conf).includes("views") && conf["views"]?.length > 0) {
       let views = conf["views"]
       delete conf["views"] //remove views from parent
-      if (conf["view_layer"] === undefined){
+      if (conf["view_layer"] === undefined) {
         conf["view_layer"] = 0
-      }else{
-        conf["view_layer"] +=1
+      } else {
+        conf["view_layer"] += 1
       }
       conf["children"] = conf["children"].concat(adminTreeLayer(views, conf))
     }
@@ -294,8 +297,8 @@ export const useDBStore = defineStore("db", () => {
         name: "Dashboard",
         icon: "grid-3x3-gap-fill",
         closeable: false,
-        id: 0
-      }
+        id: 0,
+      },
     ], // {'url','name','library'}
     "handlers.active": 0, //current active index
 
@@ -308,38 +311,46 @@ export const useDBStore = defineStore("db", () => {
     "fluidpage.element": "FluidpageElement",
 
     //Tasks
-    tasks: []
+    tasks: [],
   })
 
-
-  function module_access(modulename, group=null){
+  function module_access(modulename, group = null) {
     const userStore = useUserStore()
     if (userStore.userAccess.includes("root")) {
       return true
     }
     if (group) {
-      return userStore.userAccess.includes(`${modulename}-${group}-add`) || userStore.userAccess.includes(`${modulename}-${group}-edit`) || userStore.userAccess.includes(`${modulename}-${group}-delete`)
+      return (
+        userStore.userAccess.includes(`${modulename}-${group}-add`) ||
+        userStore.userAccess.includes(`${modulename}-${group}-edit`) ||
+        userStore.userAccess.includes(`${modulename}-${group}-delete`)
+      )
     } else {
-      return userStore.userAccess.includes(`${modulename}-add`) || userStore.userAccess.includes(`${modulename}-edit`) || userStore.userAccess.includes(`${modulename}-delete`)
+      return (
+        userStore.userAccess.includes(`${modulename}-add`) ||
+        userStore.userAccess.includes(`${modulename}-edit`) ||
+        userStore.userAccess.includes(`${modulename}-delete`)
+      )
     }
   }
 
   function modulesTree() {
-
     let groups = {}
     let nestedGroups = []
     for (let moduleGroup in state["vi.modules.groups"]) {
       let groupconf = state["vi.modules.groups"][moduleGroup]
       let prefixed_group = `moduleGroup___${moduleGroup}`
       groupconf["module"] = prefixed_group
-      groupconf['nodeType'] = "group"
-      groupconf['moduleGroups'] = [...Object.values(state["vi.modules.groups"]).filter((i)=>i['moduleGroup']===moduleGroup ), ...Object.values(state["vi.modules"]).filter((i)=>i['moduleGroup']===moduleGroup )]
-      if(!groupconf['moduleGroup']){
+      groupconf["nodeType"] = "group"
+      groupconf["moduleGroups"] = [
+        ...Object.values(state["vi.modules.groups"]).filter((i) => i["moduleGroup"] === moduleGroup),
+        ...Object.values(state["vi.modules"]).filter((i) => i["moduleGroup"] === moduleGroup),
+      ]
+      if (!groupconf["moduleGroup"]) {
         groups[prefixed_group] = groupconf
-      }else{
+      } else {
         nestedGroups.push(prefixed_group)
       }
-
     }
 
     let itemList = []
@@ -347,11 +358,12 @@ export const useDBStore = defineStore("db", () => {
     for (let modulename in state["vi.modules"]) {
       let moduleconf = state["vi.modules"][modulename]
       moduleconf["module"] = modulename
-      moduleconf["baseModule"] = modulename.split("/").length>1?modulename.split("/")[modulename.split("/").length-1]:modulename
-      moduleconf["nodeType"] = 'module'
+      moduleconf["baseModule"] =
+        modulename.split("/").length > 1 ? modulename.split("/")[modulename.split("/").length - 1] : modulename
+      moduleconf["nodeType"] = "module"
 
-      if (Object.keys(moduleconf).includes("moduleGroup") && (groups[`moduleGroup___${moduleconf["moduleGroup"]}`])) {
-      }else if (nestedGroups.includes(`moduleGroup___${moduleconf["moduleGroup"]}`) ){
+      if (Object.keys(moduleconf).includes("moduleGroup") && groups[`moduleGroup___${moduleconf["moduleGroup"]}`]) {
+      } else if (nestedGroups.includes(`moduleGroup___${moduleconf["moduleGroup"]}`)) {
       } else {
         itemList.push(moduleconf)
       }
@@ -365,7 +377,7 @@ export const useDBStore = defineStore("db", () => {
   }
 
   const modulesList = computed(() => {
-    return flattenTree(state['vi.moduleTree'])
+    return flattenTree(state["vi.moduleTree"])
   })
 
   function getConfByRoute(route) {
@@ -446,19 +458,18 @@ export const useDBStore = defineStore("db", () => {
     }
     if (contextInheritance) {
       contextStore.copyLocalContext(currentRoute.query["_"], route.query["_"])
-      if(currentConf?.["context"]){
-        for(const [k,v] of Object.entries(currentConf?.["context"])){
-          contextStore.setContext(k,v,route.query["_"])
+      if (currentConf?.["context"]) {
+        for (const [k, v] of Object.entries(currentConf?.["context"])) {
+          contextStore.setContext(k, v, route.query["_"])
         }
       }
 
       //merge route on top
-      for (const [boneName, value] of Object.entries(route.query)){
-        if( !boneName.startsWith("_")){
-          contextStore.setContext(boneName,value,route.query["_"])
+      for (const [boneName, value] of Object.entries(route.query)) {
+        if (!boneName.startsWith("_")) {
+          contextStore.setContext(boneName, value, route.query["_"])
         }
       }
-
     }
 
     if (url) {
@@ -478,13 +489,12 @@ export const useDBStore = defineStore("db", () => {
       }
       //If not found a name we set it to the route name or an empty string
       if (!name) {
-        name = route["name"] ? route["name"] : "";
+        name = route["name"] ? route["name"] : ""
       }
-
     }
     let group = currentConf?.["group"]
-    if (!group && route.params['group']) {
-      group = route.params['group']
+    if (!group && route.params["group"]) {
+      group = route.params["group"]
     }
     let entry = {
       to: route,
@@ -502,24 +512,28 @@ export const useDBStore = defineStore("db", () => {
       currentConf: currentConf,
       closeable: true,
       update: false,
-      keep: keep //always render and keep open, use v-show while navigation
+      keep: keep, //always render and keep open, use v-show while navigation
     }
 
-    function uniqueTabname(url,view){
+    function uniqueTabname(url, view) {
       if (!view) return url
       return `${url}___${view}`
     }
     const appStore = useAppStore()
     const title = useTitle()
-    title.value = appStore.state["title"]+" | "+ Utils.unescape(name)
+    title.value = appStore.state["title"] + " | " + Utils.unescape(name)
 
-    let tabNames = state["handlers.opened"].map((e) => uniqueTabname(e["url"],e['view'])).filter((name) => name === uniqueTabname(entry['url'],entry['view']))
-    if (tabNames.length===0 || force){
+    let tabNames = state["handlers.opened"]
+      .map((e) => uniqueTabname(e["url"], e["view"]))
+      .filter((name) => name === uniqueTabname(entry["url"], entry["view"]))
+    if (tabNames.length === 0 || force) {
       state["handlers.opened"].push(entry) //add to tablist
       state["handlers.active"] = state["handlers.opened"].indexOf(entry) //mark as active
       router.push(entry["to"]) //change route
     } else {
-      state["handlers.active"] = state["handlers.opened"].map((e) => uniqueTabname(e["url"],e['view'])).indexOf(uniqueTabname(entry['url'],entry['view']))
+      state["handlers.active"] = state["handlers.opened"]
+        .map((e) => uniqueTabname(e["url"], e["view"]))
+        .indexOf(uniqueTabname(entry["url"], entry["view"]))
       router.push(state["handlers.opened"][state["handlers.active"]]["to"])
       return false
     }
@@ -534,11 +548,11 @@ export const useDBStore = defineStore("db", () => {
     title.value = appStore.state["title"]
 
     let idx = state["handlers.opened"].findIndex((e) => e["url"] === url)
-    if (idx === -1){
+    if (idx === -1) {
       idx = state["handlers.opened"].findIndex((e) => e["id"] === parseInt(route.query?.["_"])) //use id fallback
       if (idx === -1) return
     }
-    if (idx === 0){
+    if (idx === 0) {
       return 0
     } else if (idx === state["handlers.active"]) {
       router.push(state["handlers.opened"][idx - 1]["to"]).then(() => {
@@ -645,6 +659,6 @@ export const useDBStore = defineStore("db", () => {
     getTabByRoute,
     updateActiveTabName,
     markHandlersToUpdate,
-    module_access
+    module_access,
   }
 })

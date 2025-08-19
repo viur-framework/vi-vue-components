@@ -11,10 +11,7 @@
       @sl-clear="reset_filter"
       @keydown.enter="search_input"
     >
-      <sl-spinner-viur
-        v-if="state.loading"
-        slot="suffix"
-      ></sl-spinner-viur>
+      <sl-spinner-viur v-if="state.loading" slot="suffix"></sl-spinner-viur>
     </sl-input>
 
     <sl-dropdown
@@ -23,46 +20,22 @@
       @sl-after-show="state.searchTypeOpened = true"
       @sl-after-hide="state.searchTypeOpened = false"
     >
-      <sl-button
-      :disabled="state.disabled"
-        slot="trigger"
-        size="small"
-        caret
-      >
-        <sl-icon
-          slot="prefix"
-          :name="searchTypeIcon()"
-        ></sl-icon>
+      <sl-button slot="trigger" :disabled="state.disabled" size="small" caret>
+        <sl-icon slot="prefix" :name="searchTypeIcon()"></sl-icon>
       </sl-button>
       <sl-menu @sl-select="typeSelection">
-        <sl-menu-item
-          title="Wenn alle Einträge geladen wurden wird lokal gesucht"
-          value="auto"
-        >
-          <sl-icon
-            slot="prefix"
-            name="robot"
-          ></sl-icon>
+        <sl-menu-item title="Wenn alle Einträge geladen wurden wird lokal gesucht" value="auto">
+          <sl-icon slot="prefix" name="robot"></sl-icon>
           Automatisch
         </sl-menu-item>
 
-        <sl-menu-item
-          :title="$t('search.local')"
-          value="local"
-          ><sl-icon
-            slot="prefix"
-            name="list-ul"
-          ></sl-icon>
+        <sl-menu-item :title="$t('search.local')" value="local">
+          <sl-icon slot="prefix" name="list-ul"></sl-icon>
           Lokale Suche
         </sl-menu-item>
 
-        <sl-menu-item
-          :title="$t('search.database')"
-          value="database"
-          ><sl-icon
-            slot="prefix"
-            name="database"
-          ></sl-icon>
+        <sl-menu-item :title="$t('search.database')" value="database">
+          <sl-icon slot="prefix" name="database"></sl-icon>
           Datenbank Suche
         </sl-menu-item>
       </sl-menu>
@@ -71,124 +44,123 @@
 </template>
 
 <script setup>
-
 import { reactive, defineComponent, inject, computed, watch, onMounted, ref } from "vue"
 import { useMessageStore } from "../stores/message"
 import { useDebounceFn } from "@vueuse/core"
-    const searchinput = ref()
-    const currentlist = inject("currentlist")
-    const handlerState = inject("handlerState")
-    const reloadAction = inject("reloadAction")
-    const messageStore = useMessageStore()
-    const state = reactive({
-      disabled: computed(() => {
-        return handlerState.externfiltered
-        let searchableBone = false
-        for (const [k, v] of Object.entries(currentlist?.structure)) {
-          if (Object.keys(v).includes("searchable") && v["searchable"]) {
-            searchableBone = true
-          }
-        }
-
-        return false //till core update
-        return !searchableBone
-      }),
-      searchTypeAuto: "database",
-      searchType: "auto",
-      searchValue: "",
-      searchTypeOpened: false,
-      loading: false,
-      isLarge: false,
-    })
-
-    watch(
-      () => currentlist?.state.state,
-      (newVal, oldVal) => {
-        if (newVal === 1) {
-          state.isLarge = true
-          state.searchTypeAuto = "database"
-        }
-
-        if (!state.isLarge && newVal === 2) {
-          state.searchTypeAuto = "local"
-        }
-      }
-    )
-
-    onMounted(()=>{
-      if(handlerState.filter){
-        state.searchValue = handlerState.filter
-      }
-      if(currentlist.state.params?.["search"]){
-        state.searchValue = currentlist.state.params?.["search"]
-      }
-    })
-
-    const debouncedSearch = useDebounceFn((event) => {
-      state.loading = true
-      search_input(event)
-    }, 2000)
-
-    function search_input(event) {
-      state.loading = true
-      state.searchValue = event.target.value
-
-      let currentSearchType = state.searchType
-      if (currentSearchType === "auto") {
-        currentSearchType = state.searchTypeAuto
-      }
-
-      if (currentSearchType === "local") {
-        handlerState.filter = event.target.value
-        state.loading = false
-        setTimeout(()=>searchinput.value.focus(),500)
-        try {
-          delete currentlist.state.params["search"]
-        } catch (e) {}
-      } else {
-        if (event.target.value === "" || event.target.value.length === 1) {
-          reset_filter()
-          state.loading = false
-          setTimeout(()=>searchinput.value.focus(),500)
-
-          return 0
-        }
-
-        currentlist.state.params["search"] = event.target.value
-        currentlist
-          .fetch()
-          .catch((error) => {
-            state.loading = false
-            setTimeout(()=>searchinput.value.focus(),500)
-            if (error.statusCode && typeof(error)!=='string'){
-              messageStore.addMessage("error", `${error.message}`, error.response.url)
-            }
-          })
-          .then((resp) => {
-            state.loading = false
-            setTimeout(()=>searchinput.value.focus(),500)
-          })
+const searchinput = ref()
+const currentlist = inject("currentlist")
+const handlerState = inject("handlerState")
+const reloadAction = inject("reloadAction")
+const messageStore = useMessageStore()
+const state = reactive({
+  disabled: computed(() => {
+    return handlerState.externfiltered
+    let searchableBone = false
+    for (const [k, v] of Object.entries(currentlist?.structure)) {
+      if (Object.keys(v).includes("searchable") && v["searchable"]) {
+        searchableBone = true
       }
     }
-    function reset_filter() {
+
+    return false //till core update
+    return !searchableBone
+  }),
+  searchTypeAuto: "database",
+  searchType: "auto",
+  searchValue: "",
+  searchTypeOpened: false,
+  loading: false,
+  isLarge: false,
+})
+
+watch(
+  () => currentlist?.state.state,
+  (newVal, oldVal) => {
+    if (newVal === 1) {
+      state.isLarge = true
+      state.searchTypeAuto = "database"
+    }
+
+    if (!state.isLarge && newVal === 2) {
+      state.searchTypeAuto = "local"
+    }
+  }
+)
+
+onMounted(() => {
+  if (handlerState.filter) {
+    state.searchValue = handlerState.filter
+  }
+  if (currentlist.state.params?.["search"]) {
+    state.searchValue = currentlist.state.params?.["search"]
+  }
+})
+
+const debouncedSearch = useDebounceFn((event) => {
+  state.loading = true
+  search_input(event)
+}, 2000)
+
+function search_input(event) {
+  state.loading = true
+  state.searchValue = event.target.value
+
+  let currentSearchType = state.searchType
+  if (currentSearchType === "auto") {
+    currentSearchType = state.searchTypeAuto
+  }
+
+  if (currentSearchType === "local") {
+    handlerState.filter = event.target.value
+    state.loading = false
+    setTimeout(() => searchinput.value.focus(), 500)
+    try {
+      delete currentlist.state.params["search"]
+    } catch (e) {}
+  } else {
+    if (event.target.value === "" || event.target.value.length === 1) {
+      reset_filter()
       state.loading = false
-      try {
-        delete currentlist.state.params["search"]
-      } catch (e) {}
-      handlerState.filter = null
-      reloadAction()
+      setTimeout(() => searchinput.value.focus(), 500)
+
+      return 0
     }
 
-    function typeSelection(event) {
-      state.searchType = event.detail.item.value
-      state.searchTypeOpened = false
-    }
+    currentlist.state.params["search"] = event.target.value
+    currentlist
+      .fetch()
+      .catch((error) => {
+        state.loading = false
+        setTimeout(() => searchinput.value.focus(), 500)
+        if (error.statusCode && typeof error !== "string") {
+          messageStore.addMessage("error", `${error.message}`, error.response.url)
+        }
+      })
+      .then((resp) => {
+        state.loading = false
+        setTimeout(() => searchinput.value.focus(), 500)
+      })
+  }
+}
+function reset_filter() {
+  state.loading = false
+  try {
+    delete currentlist.state.params["search"]
+  } catch (e) {}
+  handlerState.filter = null
+  reloadAction()
+}
 
-    function searchTypeIcon() {
-      if (state.searchType === "auto") return "robot"
-      if (state.searchType === "local") return "list-ul"
-      if (state.searchType === "database") return "database"
-    }
+function typeSelection(event) {
+  state.searchType = event.detail.item.value
+  state.searchTypeOpened = false
+}
+
+function searchTypeIcon() {
+  if (state.searchType === "auto") return "robot"
+  if (state.searchType === "local") return "list-ul"
+  if (state.searchType === "database") return "database"
+}
 </script>
 
 <style scoped>

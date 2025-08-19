@@ -1,17 +1,10 @@
 <template>
   <template v-if="!state.access">
     <div class="wrapper">
-      <sl-dialog
-        open
-        :label="$t('noaccess.title')"
-        @sl-request-close="$event.preventDefault()"
-      >
+      <sl-dialog open :label="$t('noaccess.title')" @sl-request-close="$event.preventDefault()">
         {{ $t("noaccess.descr") }}
         <div style="margin-top: 10px">
-          <sl-button
-            variant="danger"
-            @click="userStore.logout()"
-          >
+          <sl-button variant="danger" @click="userStore.logout()">
             {{ $t("login.logout") }}
           </sl-button>
         </div>
@@ -21,8 +14,7 @@
   <template v-else-if="state.status === 'ready'">
     <the-topbar></the-topbar>
 
-    <component :is="getLayout()">
-    </component>
+    <component :is="getLayout()"></component>
 
     <message-drawer></message-drawer>
 
@@ -34,11 +26,11 @@
 import TheTopbar from "../main/TheMainScreenTopbar.vue"
 import { useRoute, useRouter } from "vue-router"
 import { Request } from "@viur/vue-utils"
-import { onBeforeMount, unref, h, reactive, computed,onMounted } from "vue"
+import { onBeforeMount, unref, h, reactive, computed, onMounted } from "vue"
 import { useDBStore } from "../stores/db"
 import { useAppStore } from "../stores/app"
-import { getLayout } from "../layouts/layouts";
-import { useTitle } from '@vueuse/core'
+import { getLayout } from "../layouts/layouts"
+import { useTitle } from "@vueuse/core"
 
 //default top actions
 import ViAction from "../main/topbar/vi.vue"
@@ -63,20 +55,18 @@ const state = reactive({
     }
     return false
   }),
-  status: "loading"
+  status: "loading",
 })
 
 function collectViurConfig() {
   Request.get("/vi/config").then(async (resp) => {
-
     //preflight check
-    try{
-      await Request.get("/json/skey",{headers:{"x-viur-bonelist":"check"}})
-      appStore.state.preflights = true;
-    }catch (error){
+    try {
+      await Request.get("/json/skey", { headers: { "x-viur-bonelist": "check" } })
+      appStore.state.preflights = true
+    } catch (error) {
       appStore.state.preflights = false
     }
-
 
     let data = await resp.json()
     dbStore.state["vi.name"] = data["configuration"]["vi.name"]
@@ -128,7 +118,7 @@ function urlToRoute(tab) {
   }
 
   const component = h(ViewComponent.matched[0].components.default, {
-    ...ViewComponent.params
+    ...ViewComponent.params,
   })
   return () => component
 }
@@ -138,13 +128,10 @@ onBeforeMount(() => {
   initTopBarActions()
 })
 
-onMounted(()=>{
+onMounted(() => {
   const title = useTitle()
   title.value = appStore.state["title"]
 })
-
-
-
 </script>
 
 <style scoped>

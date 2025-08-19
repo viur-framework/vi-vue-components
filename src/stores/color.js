@@ -4,15 +4,15 @@ import { defineStore } from "pinia"
 export const useColorStore = defineStore("colorStore", () => {
   const state = reactive({
     primaryColor: "#d00f1c",
-    secondaryColor: "#333333"
+    secondaryColor: "#333333",
   })
 
   function getPrimaryColor(lightness = 0) {
-    const [h,s,l] = colorConvert(state.primaryColor, lightness)
+    const [h, s, l] = colorConvert(state.primaryColor, lightness)
     return "hsl(" + h + "," + s + "%," + l + "%)"
   }
   function getSecondaryColor(lightness = 0) {
-    const [h,s,l] = colorConvert(state.secondaryColor, lightness)
+    const [h, s, l] = colorConvert(state.secondaryColor, lightness)
     return "hsl(" + h + "," + s + "%," + l + "%)"
   }
   function colorConvert(hexColor, lightness) {
@@ -43,13 +43,12 @@ export const useColorStore = defineStore("colorStore", () => {
     if (lightness) {
       l = lightness
     }
-    return [h,s,l]
-
+    return [h, s, l]
   }
 
-  function getAlphaColor(color, lightness, alpha){
-    const [h,s,l] = colorConvert(state[color], lightness)
-    return "hsla(" + h + "," + s + "%," + l + "% , "+ alpha +"%)"
+  function getAlphaColor(color, lightness, alpha) {
+    const [h, s, l] = colorConvert(state[color], lightness)
+    return "hsla(" + h + "," + s + "%," + l + "% , " + alpha + "%)"
   }
 
   return { state, getPrimaryColor, getSecondaryColor, getAlphaColor }

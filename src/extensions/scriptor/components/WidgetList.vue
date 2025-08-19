@@ -1,16 +1,12 @@
 <template>
-  <div
-    class="wrapper-widget"
-    ref="wrapper"
-  >
+  <div ref="wrapper" class="wrapper-widget">
     <template v-if="state.scriptor?.hideInternalMessages && ['all', 'internal'].includes(type)">
       <component
         :is="getWidget(entry['type'])"
         v-for="entry in state.scriptor?.internalMessages?.slice(-100)"
         :key="entry.data['unique_id']"
         :entry="entry"
-      >
-      </component>
+      ></component>
     </template>
     <template v-if="['all', 'script'].includes(type)">
       <component
@@ -18,14 +14,10 @@
         v-for="entry in state.scriptor?.messages?.slice(-100)"
         :key="entry.data['unique_id']"
         :entry="entry"
-      >
-      </component>
+      ></component>
     </template>
-    <div
-      v-if="state.isEmpty"
-      class="wrapper-empty"
-    >
-      {{ $t('scriptor.no_messages') }}
+    <div v-if="state.isEmpty" class="wrapper-empty">
+      {{ $t("scriptor.no_messages") }}
       <sl-spinner v-if="scriptorStore.state.isLoading"></sl-spinner>
     </div>
   </div>
@@ -45,18 +37,18 @@ const props = defineProps({
     default: "all",
     validator(value, props) {
       return ["script", "internal", "all"].includes(value)
-    }
+    },
   },
   id: {
-    required: true
-  }
+    required: true,
+  },
 })
 
 const state = reactive({
   scriptor: computed(() => {
     return scriptorStore.state.instances[props.id]
   }),
-  isEmpty: computed(() => !(state.scriptor?.messages.length && state.scriptor?.internalMessages))
+  isEmpty: computed(() => !(state.scriptor?.messages.length && state.scriptor?.internalMessages)),
 })
 
 function getWidget(type) {
@@ -80,7 +72,6 @@ function getWidget(type) {
 
   return widgets.debugEntry
 }
-
 </script>
 
 <style scoped>

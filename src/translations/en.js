@@ -5,7 +5,7 @@ export default {
     clone: "Clone",
     delete: {
       text: "Delete",
-      msg: "`Do you want to delete these {count} entries`"
+      msg: "`Do you want to delete these {count} entries`",
     },
     debug: "Debug",
     edit: "Edit",
@@ -18,20 +18,20 @@ export default {
     save_close: "Save and close",
     filter: {
       text: "Filter",
-      nofilter: "There are no filter for this module"
+      nofilter: "There are no filter for this module",
     },
     nextpage: "More Entries ({amount})",
     nextpage_finish: "Entries: {amount}",
     fluidpage: {
       edit: "Edit Contents",
       emptyheadline: "This Fluidpage is empty",
-      emptytext: 'Please use the "Add"-Button to add content to this page.'
+      emptytext: 'Please use the "Add"-Button to add content to this page.',
     },
     reset: "Reset",
     open: "Open",
     sortasc: "Sort Ascending",
     sortdesc: "Sort Descending",
-    translate:"Translate"
+    translate: "Translate",
   },
   sidebar: {
     workspace: "Workspace",
@@ -46,22 +46,22 @@ export default {
     section_system_searchindex: "Rebuild Search Index",
     section_system_vacuum: "Vacuum Viur Relations",
     section_system_entities: "Clear all entities of a kind",
-    section_tools: "Tools"
+    section_tools: "Tools",
   },
   skeldrawer: {
-    noentry: "No entry selected"
+    noentry: "No entry selected",
   },
   selectfields: {
     selectall: "Select all",
     unselectall: "Unselect all",
-    invertselect: "Invert selection"
+    invertselect: "Invert selection",
   },
   relation: {
     select: "Select",
-    abort: "Cancel"
+    abort: "Cancel",
   },
   tab: {
-    amount_warning: "You have already opened {amount} entries of '{module}'. Do you still want to open another one?"
+    amount_warning: "You have already opened {amount} entries of '{module}'. Do you still want to open another one?",
   },
   abort: "Abort",
   confirm: "Confirm",
@@ -70,7 +70,7 @@ export default {
   refresh: "Refresh",
   search: {
     local: "Search in list",
-    database: "Search Online"
+    database: "Search Online",
   },
   login: {
     email: "Email",
@@ -78,14 +78,14 @@ export default {
     login: "Login",
     logout: "Logout",
     with_google: "Login with Google",
-    or: "or"
+    or: "or",
   },
   noaccess: {
     title: "No access",
-    descr: "This user does not have enough permissions."
+    descr: "This user does not have enough permissions.",
   },
-  connection:{
-    header:'Connection not found.',
-    message:'No connection to the ViUR Core could be established.'
-  }
+  connection: {
+    header: "Connection not found.",
+    message: "No connection to the ViUR Core could be established.",
+  },
 }

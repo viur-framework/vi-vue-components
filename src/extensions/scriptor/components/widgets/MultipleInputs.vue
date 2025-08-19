@@ -1,45 +1,33 @@
 <template>
-  <sl-alert
-    variant="neutral"
-    open
-  >
-
-    <div  v-for="_entry in entry.data.components">
-
-
+  <sl-alert variant="neutral" open>
+    <div v-for="_entry in entry.data.components">
       <component
         :is="getWidget(_entry['type'])"
         ref="elements"
-        :entry="{data:_entry}"
-        :inMultiple="true"
+        :entry="{ data: _entry }"
+        :in-multiple="true"
       ></component>
     </div>
 
-    <sl-button
-      @click="buttonCallback"
-      :disabled="state.buttonDisabled || !state.sendable"
-    >
-      {{entry.data.buttonText||"Send"}}
+    <sl-button :disabled="state.buttonDisabled || !state.sendable" @click="buttonCallback">
+      {{ entry.data.buttonText || "Send" }}
     </sl-button>
   </sl-alert>
 </template>
 
 <script setup>
-import {computed, reactive, ref} from "vue"
-import {useScriptorStore} from "../../store/scriptor"
+import { computed, reactive, ref } from "vue"
+import { useScriptorStore } from "../../store/scriptor"
 import widgets from "./index"
 
-
-const elements = ref([]);
+const elements = ref([])
 const scriptorStore = useScriptorStore()
-
 
 const props = defineProps({
   entry: {
-    type: Object
-  }
+    type: Object,
+  },
 })
-
 
 const state = reactive({
   buttonDisabled: false,
@@ -50,18 +38,17 @@ const state = reactive({
           return false
         }
       }
-
     }
     return true
-  })
+  }),
 })
 
 async function buttonCallback() {
   const result = []
   for (const element of elements.value) {
-     if(element.state && element.state.value!==undefined) {
-       result.push(element.state.value)
-     }
+    if (element.state && element.state.value !== undefined) {
+      result.push(element.state.value)
+    }
   }
   await scriptorStore.sendResult("textResult", JSON.stringify(result))
 }
@@ -85,6 +72,4 @@ function getWidget(type) {
   }
   return widgets.debugEntry
 }
-
-
 </script>

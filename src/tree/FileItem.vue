@@ -6,7 +6,7 @@
       isSelected: treeState.selected_leaf?.key === skel.key,
       dropin: state.currentEntry['_isover'] && state.currentEntry['_drop'] === 'in',
       dropafter: state.currentEntry['_isover'] && state.currentEntry['_drop'] === 'after',
-      dropbefore: state.currentEntry['_isover'] && state.currentEntry['_drop'] === 'before'
+      dropbefore: state.currentEntry['_isover'] && state.currentEntry['_drop'] === 'before',
     }"
     @dragstart="tree.onDragStart($event, idx, 'leaf')"
     @drop.stop="tree.onDrop($event, idx)"
@@ -22,25 +22,12 @@
         >
           <sl-icon name="grip-vertical"></sl-icon>
         </div>
-        <sl-icon
-          name="download"
-          title="download"
-          sprite
-          @click="downloadFile(skel)"
-        ></sl-icon>
-        <span
-          class="filename"
-          v-html="skel.name"
-        ></span>
+        <sl-icon name="download" title="download" sprite @click="downloadFile(skel)"></sl-icon>
+        <span class="filename" v-html="skel.name"></span>
       </div>
     </td>
     <td>
-      <sl-format-date
-        year="numeric"
-        month="numeric"
-        day="2-digit"
-        :date="skel.changedate"
-      ></sl-format-date>
+      <sl-format-date year="numeric" month="numeric" day="2-digit" :date="skel.changedate"></sl-format-date>
     </td>
     <td>
       <sl-tooltip :content="skel.mimetype">
@@ -61,46 +48,45 @@ import { reactive, defineComponent, onMounted, inject, computed } from "vue"
 import useTree from "./tree"
 import { Request } from "@viur/vue-utils"
 
-  const props = defineProps({
-    module: {
-      type: String,
-      required: true
-    },
-    skel: {
-      type: Object
-    },
-    idx: {
-      type: Number
-    },
-    path: {
-      type: Array
+const props = defineProps({
+  module: {
+    type: String,
+    required: true,
+  },
+  skel: {
+    type: Object,
+  },
+  idx: {
+    type: Number,
+  },
+  path: {
+    type: Array,
+  },
+})
+
+const treeState = inject("handlerState")
+const state = reactive({
+  currentEntry: {},
+  child: computed(() => {
+    if (!state.currentEntry["_leafs"]) {
+      return null
     }
-  })
+    return state.currentEntry["_leafs"][props.idx]
+  }),
+})
 
-    const treeState = inject("handlerState")
-    const state = reactive({
-      currentEntry: {},
-      child: computed(() => {
-        if (!state.currentEntry["_leafs"]) {
-          return null
-        }
-        return state.currentEntry["_leafs"][props.idx]
-      })
-    })
+onMounted(() => {
+  state.currentEntry = tree.EntryFromPath(props.path)
+})
 
-    onMounted(() => {
-      state.currentEntry = tree.EntryFromPath(props.path)
-    })
-
-    //activate File
-    function entrySelected(skel) {
-      treeState.selected_leaf = skel
-    }
-    function downloadFile(skel) {
-      window.open(Request.downloadUrlFor({ dest: skel }, false), "_blank", "noreferrer")
-    }
-    const tree = useTree(props.module, treeState, state)
-
+//activate File
+function entrySelected(skel) {
+  treeState.selected_leaf = skel
+}
+function downloadFile(skel) {
+  window.open(Request.downloadUrlFor({ dest: skel }, false), "_blank", "noreferrer")
+}
+const tree = useTree(props.module, treeState, state)
 </script>
 
 <style scoped>

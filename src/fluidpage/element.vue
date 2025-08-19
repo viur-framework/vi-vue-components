@@ -5,51 +5,47 @@
       [state.width]: true,
       [state.height]: true,
       ghost: state.isGhost,
-      'is-selected': handlerState.currentSelection?.[0]['key'] === skel['key']
+      'is-selected': handlerState.currentSelection?.[0]['key'] === skel['key'],
     }"
     :draggable="state.draggable"
     @dragstart="startDragging"
     @dragover.prevent="dragOver"
     @dragend.prevent="dragEnd"
   >
-    <div class="actions_before">
-
-    </div>
+    <div class="actions_before"></div>
 
     <div class="header">
-      <div
-        class="dragger"
-        @mousedown="onMouseDownDragger"
-        @mouseup="onMouseUpDragger"
-      >
+      <div class="dragger" @mousedown="onMouseDownDragger" @mouseup="onMouseUpDragger">
         <sl-icon name="list"></sl-icon>
       </div>
 
-      <div class="header-type" :title="'Typ: ' + skel['kind'] ">
-        {{ Utils.getDescr(currentlist.structure["kind"],skel["kind"])}}
+      <div class="header-type" :title="'Typ: ' + skel['kind']">
+        {{ Utils.getDescr(currentlist.structure["kind"], skel["kind"]) }}
       </div>
 
-
-      <sl-select v-if="state.languages && state.languages?.length>0" placeholder="Sprache" size="small" @sl-change="changeLang" class="langchooser" :value="state.lang"
+      <sl-select
+        v-if="state.languages && state.languages?.length > 0"
+        placeholder="Sprache"
+        size="small"
+        class="langchooser"
+        :value="state.lang"
         :class="{ 'is-selected': handlerState.currentSelection?.[0]['key'] === skel['key'] }"
+        @sl-change="changeLang"
       >
-          <sl-option v-for="lang in state.languages" :value="lang" :key="lang">
-            {{$t(lang)}}
-          </sl-option>
-        </sl-select>
+        <sl-option v-for="lang in state.languages" :key="lang" :value="lang">
+          {{ $t(lang) }}
+        </sl-option>
+      </sl-select>
 
-      <div :class="{ 'is-selected': handlerState.currentSelection?.[0]['key'] === skel['key'] }"
-                        class="button-group"
-      >
-
+      <div :class="{ 'is-selected': handlerState.currentSelection?.[0]['key'] === skel['key'] }" class="button-group">
         <sl-button
-          v-if="skel['width'] !== 'fullwidth' "
+          v-if="skel['width'] !== 'fullwidth'"
           class="square-btn expand"
           title="Expand"
           size="small"
           @click="expandContent"
         >
-          <sl-icon name="plus-lg" slot="prefix"></sl-icon>
+          <sl-icon slot="prefix" name="plus-lg"></sl-icon>
         </sl-button>
         <sl-button
           v-if="skel['width'] !== '1'"
@@ -58,22 +54,16 @@
           size="small"
           @click="shrinkContent"
         >
-          <sl-icon name="dash-lg" slot="prefix"></sl-icon>
+          <sl-icon slot="prefix" name="dash-lg"></sl-icon>
         </sl-button>
 
         <edit></edit>
         <delete></delete>
       </div>
 
-
-
       <sl-dropdown class="edit-dropdown">
-        <sl-button slot="trigger"
-                    class="square-btn"
-                   size="small"
-        >
-          <sl-icon slot="prefix" name="three-dots"
-          ></sl-icon>
+        <sl-button slot="trigger" class="square-btn" size="small">
+          <sl-icon slot="prefix" name="three-dots"></sl-icon>
         </sl-button>
         <sl-button
           v-if="skel['width'] !== 'fullwidth'"
@@ -82,7 +72,7 @@
           size="small"
           @click="expandContent"
         >
-          <sl-icon name="plus-lg" slot="prefix"></sl-icon>
+          <sl-icon slot="prefix" name="plus-lg"></sl-icon>
         </sl-button>
         <sl-button
           v-if="skel['width'] !== '1'"
@@ -91,14 +81,12 @@
           size="small"
           @click="shrinkContent"
         >
-          <sl-icon name="dash-lg" slot="prefix"></sl-icon>
+          <sl-icon slot="prefix" name="dash-lg"></sl-icon>
         </sl-button>
 
         <edit></edit>
         <delete></delete>
       </sl-dropdown>
-
-
     </div>
 
     <div class="content">
@@ -109,27 +97,20 @@
         style="--size: 3em"
         :image="Request.downloadUrlFor(skel['image'], false)"
         :label="skel['image']['dest']['name']"
-      >
-      </sl-avatar>
+      ></sl-avatar>
 
       <div class="column">
-        <h2 class="element-headline" v-if="skel['headline']">{{ dataValue(skel["headline"]) }}</h2>
-        <h3 class="element-headline" v-if="skel['subline']">{{ dataValue(skel["subline"]) }}</h3>
+        <h2 v-if="skel['headline']" class="element-headline">{{ dataValue(skel["headline"]) }}</h2>
+        <h3 v-if="skel['subline']" class="element-headline">{{ dataValue(skel["subline"]) }}</h3>
 
-        <div
-          v-if="skel['descr']"
-          class="text-desc"
-          v-html="dataValue(skel['descr'])"
-        ></div>
-        <div class="info-item"
-             v-if="skel['downloaditems']">
+        <div v-if="skel['descr']" class="text-desc" v-html="dataValue(skel['descr'])"></div>
+        <div v-if="skel['downloaditems']" class="info-item">
           <span>Dateien:</span>
           {{ skel["downloaditems"].length }}
         </div>
-        <div class="info-item"
-             v-if="skel['url']">
+        <div v-if="skel['url']" class="info-item">
           <span>Navigation:</span>
-          {{ dataValue(skel['url']) }}
+          {{ dataValue(skel["url"]) }}
         </div>
         <!--<span class="sortindex">sortindex: {{ skel["sortindex"] }}</span>-->
       </div>
@@ -139,7 +120,7 @@
         :label="false"
         :params="{
           sortindex: calculateIndex(state.nextIdx),
-          'fluidpage': route.params['key']
+          fluidpage: route.params['key'],
         }"
       ></add>
     </div>
@@ -155,107 +136,105 @@ import Delete from "../actions/delete.vue"
 import Add from "../actions/add.vue"
 import { useRoute } from "vue-router"
 
-  const props = defineProps({
-    skel: Object
-  })
+const props = defineProps({
+  skel: Object,
+})
 
-    const route = useRoute()
-    const state = reactive({
-      width: computed(() => "fluid-width-" + props.skel["width"]),
-      height: computed(() => "fluid-height-" + props.skel["height"]),
-      isGhost: false,
-      draggable: false,
-      nextIdx: computed(() => {
-        let idx = currentlist.state.skellist.findIndex((e) => e["key"] === props.skel["key"])
-        return idx + 1
-      }),
-      prevIdx: computed(() => {
-        let idx = currentlist.state.skellist.findIndex((e) => e["key"] === props.skel["key"])
-        if (idx === 0) {
-          return idx
-        } else {
-          return idx
-        }
-      }),
-      lang:"de",
-      languages:computed(()=>{
-        return currentlist.structure['headline']?.['languages']
-      })
-    })
-    const changeOrder = inject("changeOrder")
-    const updateDragged = inject("updateDragged")
-    const updateWidth = inject("updateWidth")
-    const entrySelected = inject("entrySelected")
-    const handlerState = inject("handlerState")
-    const calculateIndex = inject("calculateIndex")
-    const currentlist = inject("currentlist")
-
-    function changeLang(e){
-      state.lang = e.target.value
+const route = useRoute()
+const state = reactive({
+  width: computed(() => "fluid-width-" + props.skel["width"]),
+  height: computed(() => "fluid-height-" + props.skel["height"]),
+  isGhost: false,
+  draggable: false,
+  nextIdx: computed(() => {
+    let idx = currentlist.state.skellist.findIndex((e) => e["key"] === props.skel["key"])
+    return idx + 1
+  }),
+  prevIdx: computed(() => {
+    let idx = currentlist.state.skellist.findIndex((e) => e["key"] === props.skel["key"])
+    if (idx === 0) {
+      return idx
+    } else {
+      return idx
     }
+  }),
+  lang: "de",
+  languages: computed(() => {
+    return currentlist.structure["headline"]?.["languages"]
+  }),
+})
+const changeOrder = inject("changeOrder")
+const updateDragged = inject("updateDragged")
+const updateWidth = inject("updateWidth")
+const entrySelected = inject("entrySelected")
+const handlerState = inject("handlerState")
+const calculateIndex = inject("calculateIndex")
+const currentlist = inject("currentlist")
 
-    function startDragging(e) {
-      let target = e.target
-      if (!target.classList.contains("fluid-element")) {
-        target = target.closest(".fluid-element")
-      }
-      handlerState.dragCurrentElement = {
-        element: target,
-        key: props.skel["key"]
-      }
-      e.dataTransfer.effectAllowed = "move"
-      state.isGhost = true
-    }
+function changeLang(e) {
+  state.lang = e.target.value
+}
 
-    function dragOver(e) {
-      e.dataTransfer.dropEffect = "move"
-      let target = e.target
-      if (!target.classList.contains("fluid-element")) {
-        target = target.closest(".fluid-element")
-      }
+function startDragging(e) {
+  let target = e.target
+  if (!target.classList.contains("fluid-element")) {
+    target = target.closest(".fluid-element")
+  }
+  handlerState.dragCurrentElement = {
+    element: target,
+    key: props.skel["key"],
+  }
+  e.dataTransfer.effectAllowed = "move"
+  state.isGhost = true
+}
 
-      if (target && target !== handlerState.dragCurrentElement["element"]) {
-        changeOrder(handlerState.dragCurrentElement["key"], props.skel["key"])
-      }
-    }
-    function dragEnd(e) {
-      state.isGhost = false
-      state.draggable = false
-      updateDragged()
-    }
+function dragOver(e) {
+  e.dataTransfer.dropEffect = "move"
+  let target = e.target
+  if (!target.classList.contains("fluid-element")) {
+    target = target.closest(".fluid-element")
+  }
 
-    function onMouseDownDragger(e) {
-      state.draggable = true
-    }
+  if (target && target !== handlerState.dragCurrentElement["element"]) {
+    changeOrder(handlerState.dragCurrentElement["key"], props.skel["key"])
+  }
+}
+function dragEnd(e) {
+  state.isGhost = false
+  state.draggable = false
+  updateDragged()
+}
 
-    function onMouseUpDragger(e) {
-      state.draggable = false
-    }
+function onMouseDownDragger(e) {
+  state.draggable = true
+}
 
-    function expandContent() {
-      if (parseInt(props.skel["width"])===12){
-        updateWidth(props.skel["key"], "fullwidth")
-      }else{
-        updateWidth(props.skel["key"], parseInt(props.skel["width"]) + 1 + "")
-      }
+function onMouseUpDragger(e) {
+  state.draggable = false
+}
 
-    }
+function expandContent() {
+  if (parseInt(props.skel["width"]) === 12) {
+    updateWidth(props.skel["key"], "fullwidth")
+  } else {
+    updateWidth(props.skel["key"], parseInt(props.skel["width"]) + 1 + "")
+  }
+}
 
-    function shrinkContent() {
-      if (props.skel["width"] === "fullwidth") {
-        updateWidth(props.skel["key"], "12")
-      } else {
-        updateWidth(props.skel["key"], parseInt(props.skel["width"]) - 1 + "")
-      }
-    }
+function shrinkContent() {
+  if (props.skel["width"] === "fullwidth") {
+    updateWidth(props.skel["key"], "12")
+  } else {
+    updateWidth(props.skel["key"], parseInt(props.skel["width"]) - 1 + "")
+  }
+}
 
-    function dataValue(obj){
-      if (typeof obj === "string"){
-        return obj
-      }
-      return obj[state.lang]
-
-    }
+function dataValue(obj) {
+  if (typeof obj === "string") {
+    return obj
+  }
+  return obj[state.lang]
+}
 </script>
 
 <style scoped>
@@ -285,27 +264,26 @@ import { useRoute } from "vue-router"
 
   &.fluid-width-1,
   &.fluid-width-2 {
-
-    .header{
+    .header {
       flex-direction: column;
     }
 
-    .button-group{
+    .button-group {
       display: none;
     }
 
-    .header-type{
+    .header-type {
       display: none;
     }
 
-    .edit-dropdown{
+    .edit-dropdown {
       display: flex;
     }
 
-    .content{
+    .content {
       flex-direction: column;
 
-      .image{
+      .image {
         margin-bottom: var(--sl-spacing-x-small);
       }
 
@@ -314,31 +292,30 @@ import { useRoute } from "vue-router"
         max-width: 100%;
       }
     }
-   }
-
+  }
 
   &.fluid-width-1,
   &.fluid-width-2,
   &.fluid-width-3,
   &.fluid-width-4 {
-    .button-group{
+    .button-group {
       display: none;
     }
 
-    .edit-dropdown{
+    .edit-dropdown {
       display: flex;
     }
   }
 
   &.fluid-width-fullwidth {
-    .actions-after{
+    .actions-after {
       margin-right: var(--sl-spacing-small);
 
-      & :deep(sl-button){
+      & :deep(sl-button) {
         transform: none;
       }
     }
-   }
+  }
 }
 
 sl-button {
@@ -366,7 +343,7 @@ sl-button {
   padding-bottom: var(--sl-spacing-small);
   margin-bottom: var(--sl-spacing-small);
   border-bottom: 1px solid var(--sl-color-neutral-300);
-  gap:5px;
+  gap: 5px;
 }
 
 .dragger {
@@ -379,7 +356,7 @@ sl-button {
   margin-right: var(--sl-spacing-small);
 }
 
-.header-type{
+.header-type {
   margin-right: auto;
   font-weight: 600;
   color: var(--sl-color-neutral-500);
@@ -433,7 +410,8 @@ sl-button {
   }
 }
 
-.button-group, .langchooser {
+.button-group,
+.langchooser {
   display: flex;
   flex-direction: row;
   gap: var(--sl-spacing-2x-small);
@@ -508,30 +486,30 @@ sl-button {
   width: 100%;
 }
 
-.edit-dropdown{
+.edit-dropdown {
   display: none;
 
-  &::part(popup){
+  &::part(popup) {
     background-color: transparent;
   }
-  &::part(panel){
+  &::part(panel) {
     box-shadow: none;
     background-color: transparent;
-    display:flex;
+    display: flex;
     flex-direction: column;
-    gap:5px;
-    margin-top:5px;
+    gap: 5px;
+    margin-top: 5px;
   }
 
-
-  sl-button, sl-select{
-    &:part(base){
+  sl-button,
+  sl-select {
+    &:part(base) {
       aspect-ratio: 1;
     }
   }
 }
 
-.info-item{
+.info-item {
   display: flex;
   flex-direction: row;
   max-width: 700px;
@@ -543,20 +521,19 @@ sl-button {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 
-  span{
+  span {
     font-weight: 600;
     margin-right: var(--sl-spacing-small);
   }
 }
 
-.square-btn{
-  &::part(base){
+.square-btn {
+  &::part(base) {
     aspect-ratio: 1;
   }
 }
 
-.langchooser{
-  width:70px;
+.langchooser {
+  width: 70px;
 }
-
 </style>

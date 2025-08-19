@@ -6,10 +6,7 @@
     :title="$t('actions.addfolder')"
     @click="openAction($event)"
   >
-    <sl-icon
-      slot="prefix"
-      :name="itemMeta(null, 'node').icon"
-    ></sl-icon>
+    <sl-icon slot="prefix" :name="itemMeta(null, 'node').icon"></sl-icon>
     {{ itemMeta(null, "node").name }} {{ $t("actions.add") }}
   </sl-button>
 
@@ -19,27 +16,12 @@
     :label="$t('actions.addfolder')"
     @sl-request-close="closeAction($event)"
   >
-    <sl-input
-      v-model="state.foldername"
-      autofocus
-      placeholder="name"
-      @keydown.enter="createNode($event)"
-    ></sl-input>
+    <sl-input v-model="state.foldername" autofocus placeholder="name" @keydown.enter="createNode($event)"></sl-input>
     {{ state.foldername }}
-    <sl-button
-      slot="footer"
-      variant="success"
-      :loading="state.loading"
-      @click="createNode($event)"
-      >{{ $t("create") }}</sl-button
-    >
-    <sl-button
-      slot="footer"
-      variant="danger"
-      outline
-      @click="closeAction($event)"
-      >{{ $t("abort") }}</sl-button
-    >
+    <sl-button slot="footer" variant="success" :loading="state.loading" @click="createNode($event)">
+      {{ $t("create") }}
+    </sl-button>
+    <sl-button slot="footer" variant="danger" outline @click="closeAction($event)">{{ $t("abort") }}</sl-button>
   </sl-dialog>
 </template>
 
@@ -51,50 +33,50 @@ import { useRoute } from "vue-router"
 import { Request } from "@viur/vue-utils"
 import { useMessageStore } from "../stores/message"
 
-    const handlerState = inject("handlerState")
-    const tableReload = inject("reloadAction")
-    const itemMeta = inject("itemMeta")
-    const messageStore = useMessageStore()
-    const dbStore = useDBStore()
-    const userStore = useUserStore()
-    const route = useRoute()
+const handlerState = inject("handlerState")
+const tableReload = inject("reloadAction")
+const itemMeta = inject("itemMeta")
+const messageStore = useMessageStore()
+const dbStore = useDBStore()
+const userStore = useUserStore()
+const route = useRoute()
 
-    const state = reactive({
-      canAdd: computed(() => {
-        if (userStore.state.user.access.indexOf("root") !== -1) {
-          return true
-        }
-        return userStore.state.user.access.indexOf(`${handlerState.module}-add`) > -1
-      }),
-      opened: false,
-      foldername: "",
-      loading: false
-    })
-
-    function closeAction(e) {
-      state.opened = false
+const state = reactive({
+  canAdd: computed(() => {
+    if (userStore.state.user.access.indexOf("root") !== -1) {
+      return true
     }
-    function openAction(e) {
-      state.opened = true
-    }
-    function createNode(e) {
-      state.loading = true
+    return userStore.state.user.access.indexOf(`${handlerState.module}-add`) > -1
+  }),
+  opened: false,
+  foldername: "",
+  loading: false,
+})
 
-      let targetnode = handlerState.currentPath.slice(-1)[0]?.["key"]
+function closeAction(e) {
+  state.opened = false
+}
+function openAction(e) {
+  state.opened = true
+}
+function createNode(e) {
+  state.loading = true
 
-      Request.add(handlerState.module, {
-        dataObj: {
-          name: state.foldername,
-          skelType: "node",
-          node: targetnode
-        }
-      }).then(() => {
-        state.opened = false
-        state.loading = false
-        tableReload(true)
-        messageStore.addMessage("success", `Folder`, "Entry created")
-      })
-    }
+  let targetnode = handlerState.currentPath.slice(-1)[0]?.["key"]
+
+  Request.add(handlerState.module, {
+    dataObj: {
+      name: state.foldername,
+      skelType: "node",
+      node: targetnode,
+    },
+  }).then(() => {
+    state.opened = false
+    state.loading = false
+    tableReload(true)
+    messageStore.addMessage("success", `Folder`, "Entry created")
+  })
+}
 </script>
 
 <style scoped></style>

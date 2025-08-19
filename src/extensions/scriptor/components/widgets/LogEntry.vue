@@ -1,8 +1,5 @@
 <template>
-  <sl-alert
-    open
-    :variant="state.variant"
-  >
+  <sl-alert open :variant="state.variant">
     <div v-html="state.message"></div>
   </sl-alert>
 </template>
@@ -11,8 +8,8 @@
 import { reactive, computed } from "vue"
 const props = defineProps({
   entry: {
-    type: Object
-  }
+    type: Object,
+  },
 })
 
 const variant_lookup = {
@@ -21,7 +18,7 @@ const variant_lookup = {
   critical: "danger",
   warning: "warning",
   info: "info",
-  debug: "info"
+  debug: "info",
 }
 
 const state = reactive({
@@ -34,6 +31,6 @@ const state = reactive({
   }),
   variant: computed(() => {
     return variant_lookup[props.entry["type"]] ?? "default"
-  })
+  }),
 })
 </script>

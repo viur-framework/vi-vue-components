@@ -17,8 +17,14 @@ export function useHandlerLogic(props, handler_state) {
 
   const time = new Date().getTime()
   let currentConf = dbStore.getConf(props.module, props.view) //needed
-  let currentNodeList = ListRequest(props.module + "_node_handler" + time, { module: props.module,cached:localStore.state.cache })
-  let currentlist = ListRequest(props.module + "_handler" + time, { module: props.module,cached:localStore.state.cache  })
+  let currentNodeList = ListRequest(props.module + "_node_handler" + time, {
+    module: props.module,
+    cached: localStore.state.cache,
+  })
+  let currentlist = ListRequest(props.module + "_handler" + time, {
+    module: props.module,
+    cached: localStore.state.cache,
+  })
   let currentHandlers = {}
 
   const state = reactive({
@@ -31,7 +37,7 @@ export function useHandlerLogic(props, handler_state) {
         currentState = Math.max(handler?.state.state, currentState)
       }
       return currentState
-    })
+    }),
   })
 
   patch_listRequest(currentlist)
@@ -65,7 +71,7 @@ export function useHandlerLogic(props, handler_state) {
 
   function fetchRoots(update = true) {
     let context = contextStore.getCurrentContext()
-    return Request.get(`/vi/${props.module}/listRootNodes`, {cached:localStore.state.cache})
+    return Request.get(`/vi/${props.module}/listRootNodes`, { cached: localStore.state.cache })
       .then(async (resp) => {
         let data = await resp.json()
         handler_state.availableRootNodes = data
@@ -75,7 +81,7 @@ export function useHandlerLogic(props, handler_state) {
           handler_state.currentRootNode = data.filter((i) => i["key"] === context["parentrepo"])?.[0]
         } else if (contextKeys.includes("@rootNode")) {
           handler_state.currentRootNode = data.filter((i) => i["key"] === context["@rootNode"])?.[0]
-          if (!handler_state.currentRootNode){
+          if (!handler_state.currentRootNode) {
             handler_state.currentRootNode = data[0]
           }
         } else if (update) {
@@ -122,7 +128,7 @@ export function useHandlerLogic(props, handler_state) {
                   ...params,
                 })
                 .catch((error) => {
-                  if (error.code !== 20 && typeof(error)!=='string'){
+                  if (error.code !== 20 && typeof error !== "string") {
                     messageStore.addMessage("error", `${error.message}`, error.response?.url)
                   }
                   console.log(error)
@@ -134,12 +140,14 @@ export function useHandlerLogic(props, handler_state) {
             })
             requestPromises.push(aPromise)
           }
-          Promise.all(requestPromises).then((resp) => {
+          Promise.all(requestPromises)
+            .then((resp) => {
               resolve()
-            //messageStore.addMessage("success", `Reload`, "Liste neu geladen")
-          }).catch((error) => {
+              //messageStore.addMessage("success", `Reload`, "Liste neu geladen")
+            })
+            .catch((error) => {
               reject()
-          })
+            })
         })
       })
     } else {
@@ -150,7 +158,7 @@ export function useHandlerLogic(props, handler_state) {
           handler
             .filter({ ...handler.state.params, ...params, ...contextStore.getContext() })
             .catch((error) => {
-              if (error.statusCode && typeof(error)!=='string'){
+              if (error.statusCode && typeof error !== "string") {
                 messageStore.addMessage("error", `${error.message}`, error.response?.url)
               }
               reject()
@@ -274,7 +282,7 @@ export function useHandlerLogic(props, handler_state) {
       }
     }
 
-    if (boneType==="numeric.sortindex"){
+    if (boneType === "numeric.sortindex") {
       handler_state.sortindexBonename = name
       return SortindexView
     }
@@ -340,6 +348,6 @@ export function useHandlerLogic(props, handler_state) {
     getTextWidget,
     openEditor,
     setSelectedBones,
-    changeRootNode
+    changeRootNode,
   }
 }

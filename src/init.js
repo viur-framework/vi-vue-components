@@ -17,8 +17,6 @@ import fileBone from "./bones/fileBone.vue"
 import fileBar from "./bones/actionbar/fileBar.vue"
 import relationalBar from "./bones/actionbar/relationalBar.vue"
 
-
-
 import { useExtensionsStore } from "./stores/extensions"
 
 export function useInitConnection() {
@@ -56,14 +54,14 @@ export function useInitConnection() {
           }
         }
 
-        appStore.state['title'] = data["admin.name"] ? data["admin.name"] : "ViUR Administration"
+        appStore.state["title"] = data["admin.name"] ? data["admin.name"] : "ViUR Administration"
 
-        if( data["admin.user.google.clientID"] ){
+        if (data["admin.user.google.clientID"]) {
           userStore.googleInit(data["admin.user.google.clientID"]).catch(() => {
             throw new Error("clientId is required since the plugin is not initialized with a Client Id")
           })
         }
-        if (route.query?.debug){
+        if (route.query?.debug) {
           appStore.state["debug"] = true
         }
         appStore.state["init"] = true

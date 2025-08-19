@@ -1,53 +1,22 @@
 <template>
   <sl-breadcrumb>
-    <sl-breadcrumb-item
-      v-for="(entry, idx) in state.selectedEntries"
-      :key="idx"
-      @click="changePath(idx)"
-    >
+    <sl-breadcrumb-item v-for="(entry, idx) in state.selectedEntries" :key="idx" @click="changePath(idx)">
       {{ entry["name"] }}
     </sl-breadcrumb-item>
   </sl-breadcrumb>
 
-  <sl-split-panel
-    class="main"
-    position="30"
-    snap="30%"
-    style="--min: 200px; --max: 30%"
-  >
-    <div
-      slot="start"
-      class="tree-wrapper"
-    >
+  <sl-split-panel class="main" position="30" snap="30%" style="--min: 200px; --max: 30%">
+    <div slot="start" class="tree-wrapper">
       <ul>
-        <tree-folder-item
-          :module="module"
-          :path="rootnode ? [0] : []"
-        ></tree-folder-item>
+        <tree-folder-item :module="module" :path="rootnode ? [0] : []"></tree-folder-item>
       </ul>
     </div>
 
-    <sl-split-panel
-      slot="end"
-      position="70"
-      style="--max: 70%"
-    >
-      <div
-        slot="start"
-        class="start-slot"
-      >
-        <slot
-          :nodes="state.currentEntry?.['_nodes']"
-          :leafs="state.currentEntry?.['_leafs']"
-        >
-          <sl-table-wrapper
-            sortable
-            class="scroller"
-          >
-            <table
-              ref="currentTable"
-              class="table"
-            >
+    <sl-split-panel slot="end" position="70" style="--max: 70%">
+      <div slot="start" class="start-slot">
+        <slot :nodes="state.currentEntry?.['_nodes']" :leafs="state.currentEntry?.['_leafs']">
+          <sl-table-wrapper sortable class="scroller">
+            <table ref="currentTable" class="table">
               <thead>
                 <tr>
                   <th style="width: 50%">
@@ -65,28 +34,12 @@
                 </tr>
               </thead>
               <tbody>
-                <template
-                  v-for="(skel, idx) in state.currentEntry?.['_nodes']"
-                  :key="skel['key']"
-                >
-                  <folder-item
-                    :module="module"
-                    :skel="skel"
-                    :idx="idx"
-                    :path="state.selectedPath"
-                  ></folder-item>
+                <template v-for="(skel, idx) in state.currentEntry?.['_nodes']" :key="skel['key']">
+                  <folder-item :module="module" :skel="skel" :idx="idx" :path="state.selectedPath"></folder-item>
                 </template>
 
-                <template
-                  v-for="(skel, idx) in state.currentEntry?.['_leafs']"
-                  :key="skel['key']"
-                >
-                  <file-item
-                    :module="module"
-                    :skel="skel"
-                    :idx="idx"
-                    :path="state.selectedPath"
-                  ></file-item>
+                <template v-for="(skel, idx) in state.currentEntry?.['_leafs']" :key="skel['key']">
+                  <file-item :module="module" :skel="skel" :idx="idx" :path="state.selectedPath"></file-item>
                 </template>
 
                 <tr v-if="state.loading">
@@ -100,15 +53,8 @@
                   "
                 >
                   <td colspan="3">
-                    <sl-alert
-                      variant="info"
-                      open
-                      class="alert"
-                    >
-                      <sl-icon
-                        slot="icon"
-                        name="exclamation-triangle"
-                      ></sl-icon>
+                    <sl-alert variant="info" open class="alert">
+                      <sl-icon slot="icon" name="exclamation-triangle"></sl-icon>
                       <strong>Keine Einträge</strong>
                     </sl-alert>
                   </td>
@@ -119,25 +65,15 @@
         </slot>
       </div>
 
-      <div
-        v-if="state.selected_leaf?.name"
-        slot="end"
-        class="file-info"
-      >
-        <slot
-          :selection="state.selected_leaf"
-          name="details"
-        >
-          <div
-            class="headline"
-            v-html="state.selected_leaf.name"
-          ></div>
+      <div v-if="state.selected_leaf?.name" slot="end" class="file-info">
+        <slot :selection="state.selected_leaf" name="details">
+          <div class="headline" v-html="state.selected_leaf.name"></div>
           <div
             v-if="state.selected_leaf?.mimetype && state.selected_leaf?.mimetype.startsWith('image/')"
             class="file-preview"
             @click="openFileNewTab(state.selected_leaf)"
           >
-            <vi-image :src="Request.downloadUrlFor({ dest: state.selected_leaf }, true)"> </vi-image>
+            <vi-image :src="Request.downloadUrlFor({ dest: state.selected_leaf }, true)"></vi-image>
           </div>
           <div class="details">
             <span class="details-name">Hochgeladen am:</span>
@@ -159,10 +95,7 @@
           </div>
           <div class="details">
             <span class="details-name">Größe:</span>
-            <sl-format-bytes
-              class="download-size"
-              :value="state.selected_leaf['size']"
-            ></sl-format-bytes>
+            <sl-format-bytes class="download-size" :value="state.selected_leaf['size']"></sl-format-bytes>
           </div>
           <div class="details">
             <span class="details-name">Mimetype:</span>
@@ -183,159 +116,159 @@ import useTree from "./tree.js"
 import FolderItem from "./FolderItem.vue"
 import FileItem from "./FileItem.vue"
 
-  const props = defineProps({
-    module: {
-      type: String,
-      required: true
-    },
-    rootnode: {
-      // type: String,
-      required: true
-    },
-    view: null,
-    dragging: false,
-    params: {}
-  })
-  const emit = defineEmits(["changed"])
-    const state = reactive({
-      tree: [],
-      leafView: 100,
-      selected_leaf: null,
-      selectedPath: [],
-      selectedEntries: computed(() => {
-        let retVal = []
-        let entry = state.tree
-        let x = 0
-        for (let i of state.selectedPath) {
-          if (Array.isArray(entry)) {
-            entry = entry[i]
-            if (!entry) break
-            entry["_expanded"] = true
-            retVal.push(entry)
-          }
-          if (state.selectedPath.length - 1 !== x && Object.keys(entry).includes("_nodes")) {
-            entry = entry["_nodes"]
-          }
-          x += 1
-        }
-        return retVal
-      }),
-      draggedEntry: null,
-      currentEntry: computed(() => {
-        return tree.EntryFromPath(state.selectedPath)
-      }),
-      current_nodes: [], // holds our entries
-      current_leaves: [], // holds our entries
-      refreshList: false,
-      dragging: computed(() => props.dragging),
-      loading: false,
-      selectedNode: null,
-      selectedType: null,
-      params: computed(() => props.params)
-    })
-    provide("handlerState", state) // expose to components
-
-    const tree = useTree(props.module, state, state)
-
-    //update if path changes
-    watch(
-      () => state.selectedEntries,
-      (newVal, oldVal) => {
-        fetchAll()
+const props = defineProps({
+  module: {
+    type: String,
+    required: true,
+  },
+  rootnode: {
+    // type: String,
+    required: true,
+  },
+  view: null,
+  dragging: false,
+  params: {},
+})
+const emit = defineEmits(["changed"])
+const state = reactive({
+  tree: [],
+  leafView: 100,
+  selected_leaf: null,
+  selectedPath: [],
+  selectedEntries: computed(() => {
+    let retVal = []
+    let entry = state.tree
+    let x = 0
+    for (let i of state.selectedPath) {
+      if (Array.isArray(entry)) {
+        entry = entry[i]
+        if (!entry) break
+        entry["_expanded"] = true
+        retVal.push(entry)
       }
-    )
-
-    watch(
-      () => state.selected_leaf,
-      (newVal, oldVal) => {
-        state.selectedNode = state.selected_leaf
-        emit("changed", state.selectedNode, "leaf")
-        state.leafView = 50
+      if (state.selectedPath.length - 1 !== x && Object.keys(entry).includes("_nodes")) {
+        entry = entry["_nodes"]
       }
-    )
+      x += 1
+    }
+    return retVal
+  }),
+  draggedEntry: null,
+  currentEntry: computed(() => {
+    return tree.EntryFromPath(state.selectedPath)
+  }),
+  current_nodes: [], // holds our entries
+  current_leaves: [], // holds our entries
+  refreshList: false,
+  dragging: computed(() => props.dragging),
+  loading: false,
+  selectedNode: null,
+  selectedType: null,
+  params: computed(() => props.params),
+})
+provide("handlerState", state) // expose to components
 
-    //update if marked as needs update
-    watch(
-      () => state.refreshList,
-      (newVal, oldVal) => {
-        if (newVal) {
-          fetchAll()
-          state.refreshList = false
-        }
-      }
-    )
+const tree = useTree(props.module, state, state)
 
-    // init tree
-    onBeforeMount(() => {
-      state.tree = [props.rootnode]
-      state.selectedPath = [0]
-    })
-    watch(
-      () => props.rootnode,
-      (newVal, oldVal) => {
-        state.tree = [newVal]
-      }
-    )
+//update if path changes
+watch(
+  () => state.selectedEntries,
+  (newVal, oldVal) => {
+    fetchAll()
+  }
+)
 
-    //breadcrumb navigation
-    function changePath(idx) {
-      state.selectedPath.splice(idx + 1, state.selectedPath.length - (idx + 1))
+watch(
+  () => state.selected_leaf,
+  (newVal, oldVal) => {
+    state.selectedNode = state.selected_leaf
+    emit("changed", state.selectedNode, "leaf")
+    state.leafView = 50
+  }
+)
+
+//update if marked as needs update
+watch(
+  () => state.refreshList,
+  (newVal, oldVal) => {
+    if (newVal) {
       fetchAll()
+      state.refreshList = false
     }
+  }
+)
 
-    function fetchAll() {
-      state.selected_leaf = null
-      state.loading = true
-      emit("changed", null, null)
-      try {
-        fetch("node").then((resp) => {
-          state.selectedNode = state.selectedEntries.at(-1)
-          emit("changed", state.selectedNode, "node")
-          state.leafView = 100
-        })
-      } catch (e) {}
-      fetch("leaf")
-      state.loading = false
-    }
+// init tree
+onBeforeMount(() => {
+  state.tree = [props.rootnode]
+  state.selectedPath = [0]
+})
+watch(
+  () => props.rootnode,
+  (newVal, oldVal) => {
+    state.tree = [newVal]
+  }
+)
 
-    /**
-     * Fetch nodes and leafs
-     * @param skelType
-     * @returns {Promise<Response>|number}
-     */
-    function fetch(skelType) {
-      let parent_entry_key = state.selectedEntries.at(-1)?.["key"]
-      if (!parent_entry_key) return 0
+//breadcrumb navigation
+function changePath(idx) {
+  state.selectedPath.splice(idx + 1, state.selectedPath.length - (idx + 1))
+  fetchAll()
+}
 
-      return Request.list(props.module, {
-        dataObj: {
-          parententry: parent_entry_key,
-          skelType: skelType,
-          orderby: "sortindex",
-          amount: 99,
-          ...state.params
-        }
-      })
-        .then(async (resp) => {
-          let data = await resp.json()
+function fetchAll() {
+  state.selected_leaf = null
+  state.loading = true
+  emit("changed", null, null)
+  try {
+    fetch("node").then((resp) => {
+      state.selectedNode = state.selectedEntries.at(-1)
+      emit("changed", state.selectedNode, "node")
+      state.leafView = 100
+    })
+  } catch (e) {}
+  fetch("leaf")
+  state.loading = false
+}
 
-          state.request_state = parseInt(resp.status)
-          state.cursor = data["cursor"]
-          if (skelType === "node") {
-            state.currentEntry["_nodes"] = data["skellist"]
-          } else {
-            state.currentEntry["_leafs"] = data["skellist"]
-          }
-        })
-        .catch((error) => {
-          if (error.response) {
-            state.request_state = parseInt(error.response.status)
-          } else {
-            state.request_state = 501
-          }
-          throw error
-        })
-    }
+/**
+ * Fetch nodes and leafs
+ * @param skelType
+ * @returns {Promise<Response>|number}
+ */
+function fetch(skelType) {
+  let parent_entry_key = state.selectedEntries.at(-1)?.["key"]
+  if (!parent_entry_key) return 0
+
+  return Request.list(props.module, {
+    dataObj: {
+      parententry: parent_entry_key,
+      skelType: skelType,
+      orderby: "sortindex",
+      amount: 99,
+      ...state.params,
+    },
+  })
+    .then(async (resp) => {
+      let data = await resp.json()
+
+      state.request_state = parseInt(resp.status)
+      state.cursor = data["cursor"]
+      if (skelType === "node") {
+        state.currentEntry["_nodes"] = data["skellist"]
+      } else {
+        state.currentEntry["_leafs"] = data["skellist"]
+      }
+    })
+    .catch((error) => {
+      if (error.response) {
+        state.request_state = parseInt(error.response.status)
+      } else {
+        state.request_state = 501
+      }
+      throw error
+    })
+}
 </script>
 
 <style scoped>

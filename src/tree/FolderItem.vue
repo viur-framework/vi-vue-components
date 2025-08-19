@@ -5,7 +5,7 @@
     :class="{
       dropin: state.child?.['_isover'] && state.child?.['_drop'] === 'in',
       dropafter: state.child?.['_isover'] && state.child?.['_drop'] === 'after',
-      dropbefore: state.child?.['_isover'] && state.child?.['_drop'] === 'before'
+      dropbefore: state.child?.['_isover'] && state.child?.['_drop'] === 'before',
     }"
     @dragstart="tree.onDragStart($event, idx)"
     @dragenter.prevent="tree.onDragEnter($event, idx)"
@@ -15,25 +15,11 @@
     @click="changeParentEntry(idx)"
   >
     <td>
-      <div
-        v-if="up"
-        class="folder"
-      >
-        <sl-icon
-          name="folder"
-          sprite
-          @click="changeParentEntryUp"
-        ></sl-icon>
-        <span
-          class="filename"
-          @click="changeParentEntryUp"
-          >..</span
-        >
+      <div v-if="up" class="folder">
+        <sl-icon name="folder" sprite @click="changeParentEntryUp"></sl-icon>
+        <span class="filename" @click="changeParentEntryUp">..</span>
       </div>
-      <div
-        v-else
-        class="folder"
-      >
+      <div v-else class="folder">
         <div
           v-if="treeState.dragging"
           class="dragger"
@@ -42,23 +28,12 @@
         >
           <sl-icon name="grip-vertical"></sl-icon>
         </div>
-        <sl-icon
-          name="folder"
-          sprite
-        ></sl-icon>
-        <span
-          class="filename"
-          v-html="skel['name']"
-        ></span>
+        <sl-icon name="folder" sprite></sl-icon>
+        <span class="filename" v-html="skel['name']"></span>
       </div>
     </td>
     <td>
-      <sl-format-date
-        year="numeric"
-        month="numeric"
-        day="2-digit"
-        :date="skel['changedate']"
-      ></sl-format-date>
+      <sl-format-date year="numeric" month="numeric" day="2-digit" :date="skel['changedate']"></sl-format-date>
     </td>
     <td>Ordner</td>
     <td>-</td>
@@ -70,70 +45,70 @@ import { reactive, defineComponent, onMounted, inject, computed, watch } from "v
 import useTree from "./tree"
 import { Request } from "@viur/vue-utils"
 
-  const props = defineProps({
-    module: {
-      type: String,
-      required: true
-    },
-    skel: {
-      type: Object
-    },
-    idx: {
-      type: Number
-    },
-    path: {
-      type: Array
-    },
-    up: Boolean
-  })
+const props = defineProps({
+  module: {
+    type: String,
+    required: true,
+  },
+  skel: {
+    type: Object,
+  },
+  idx: {
+    type: Number,
+  },
+  path: {
+    type: Array,
+  },
+  up: Boolean,
+})
 
-    const treeState = inject("handlerState")
-    const state = reactive({
-      currentEntry: {},
-      child: computed(() => {
-        if (!state.currentEntry["_nodes"]) {
-          return null
-        }
-        return state.currentEntry["_nodes"][props.idx]
-      })
-    })
-    const tree = useTree(props.module, treeState, state)
-
-    onMounted(() => {
-      state.currentEntry = tree.EntryFromPath(props.path)
-      if (props.path && props.path.length === 1 && props.path[0] === 0) {
-        // prefetch rootnode childs
-        state.currentEntry["_status"] = "loading"
-        Request.get(`/vi/${props.module}/list`, {
-          dataObj: {
-            skelType: "node",
-            orderby: "sortindex",
-            parententry: state.currentEntry["key"],
-            ...treeState.params
-          }
-        }).then(async (resp) => {
-          let data = await resp.json()
-          state.currentEntry["_nodes"] = data["skellist"]
-          state.currentEntry["_disabled"] = false
-          state.currentEntry["_status"] = "loaded" //loading, loaded
-          state.currentEntry["_dragging"] = false
-          state.currentEntry["_isover"] = false
-          state.currentEntry["_overElement"] = null
-          state.currentEntry["_drop"] = null
-        })
-      }
-    })
-
-    //folder navigation
-    function changeParentEntry(idx) {
-      treeState.selectedPath.push(idx)
-      treeState.selected_leaf = null
+const treeState = inject("handlerState")
+const state = reactive({
+  currentEntry: {},
+  child: computed(() => {
+    if (!state.currentEntry["_nodes"]) {
+      return null
     }
+    return state.currentEntry["_nodes"][props.idx]
+  }),
+})
+const tree = useTree(props.module, treeState, state)
 
-    function changeParentEntryUp() {
-      treeState.selectedPath = treeState.selectedPath.splice(0, -1)
-      treeState.selected_leaf = null
-    }
+onMounted(() => {
+  state.currentEntry = tree.EntryFromPath(props.path)
+  if (props.path && props.path.length === 1 && props.path[0] === 0) {
+    // prefetch rootnode childs
+    state.currentEntry["_status"] = "loading"
+    Request.get(`/vi/${props.module}/list`, {
+      dataObj: {
+        skelType: "node",
+        orderby: "sortindex",
+        parententry: state.currentEntry["key"],
+        ...treeState.params,
+      },
+    }).then(async (resp) => {
+      let data = await resp.json()
+      state.currentEntry["_nodes"] = data["skellist"]
+      state.currentEntry["_disabled"] = false
+      state.currentEntry["_status"] = "loaded" //loading, loaded
+      state.currentEntry["_dragging"] = false
+      state.currentEntry["_isover"] = false
+      state.currentEntry["_overElement"] = null
+      state.currentEntry["_drop"] = null
+    })
+  }
+})
+
+//folder navigation
+function changeParentEntry(idx) {
+  treeState.selectedPath.push(idx)
+  treeState.selected_leaf = null
+}
+
+function changeParentEntryUp() {
+  treeState.selectedPath = treeState.selectedPath.splice(0, -1)
+  treeState.selected_leaf = null
+}
 </script>
 
 <style scoped>

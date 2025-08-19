@@ -1,12 +1,10 @@
 <template>
   <scriptor-runner
-    :canAccess="state.canAccess"
+    :can-access="state.canAccess"
     :current="state.current"
-    :iconInfo="state.iconInfo"
+    :icon-info="state.iconInfo"
     :active="state.active"
-  >
-
-  </scriptor-runner>
+  ></scriptor-runner>
 </template>
 
 <script setup>
@@ -24,8 +22,8 @@ import ScriptorRunner from "../extensions/scriptor/ScriptorRunner.vue"
 const props = defineProps({
   name: {
     type: String,
-    required: true
-  }
+    required: true,
+  },
 })
 
 const handlerState = inject("handlerState")
@@ -94,7 +92,7 @@ const state = reactive({
   iconInfo: computed(() => {
     const [icon, iconType, iconname, library] = Utils.iconNormalization(state.current["rel"]?.["icon"])
     return [library, iconname]
-  })
+  }),
 })
 
 function ScriptorUrl() {
@@ -113,8 +111,6 @@ function createAndNavigate(route) {
 
   //dbStore.addOpened(route, handlerState["module"], handlerState["view"]) //, "", "", "", true, false, true
 }
-
-
 </script>
 
 <style scoped></style>

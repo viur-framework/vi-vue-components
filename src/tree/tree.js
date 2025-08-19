@@ -23,14 +23,14 @@ export default function useTree(module, treeState, state) {
         entry: state.currentEntry["_nodes"][idx],
         idx: idx,
         parent: state.currentEntry,
-        type: "node"
+        type: "node",
       }
     } else {
       treeState.draggedEntry = {
         entry: state.currentEntry["_leafs"][idx],
         idx: idx,
         parent: state.currentEntry,
-        type: "leaf"
+        type: "leaf",
       }
     }
   }
@@ -148,8 +148,8 @@ export default function useTree(module, treeState, state) {
           parentNode: newparent,
           key: entry["key"],
           sortindex: idx,
-          skelType: entrytype
-        }
+          skelType: entrytype,
+        },
       }).then((resp) => {
         treeState.refreshList = true
       })
@@ -157,8 +157,8 @@ export default function useTree(module, treeState, state) {
       Request.edit(module, entry["key"], {
         dataObj: {
           sortindex: idx,
-          skelType: entrytype
-        }
+          skelType: entrytype,
+        },
       }).then((resp) => {
         treeState.refreshList = true
       })
@@ -173,8 +173,8 @@ export default function useTree(module, treeState, state) {
         orderby: "sortindex",
         limit: 99,
         parententry: state.currentEntry["_nodes"][idx]["key"],
-        ...state.params
-      }
+        ...state.params,
+      },
     }).then(async (resp) => {
       let data = await resp.json()
 
@@ -212,6 +212,6 @@ export default function useTree(module, treeState, state) {
     onDrop,
     EntryMoved,
     EntryFromPath,
-    requestChildren
+    requestChildren,
   }
 }

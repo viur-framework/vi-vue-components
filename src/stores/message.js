@@ -5,14 +5,14 @@ const types = {
   error: { icon: "exclamation-octagon", variant: "danger" },
   warning: { icon: "exclamation-triangle", variant: "warning" },
   info: { icon: "info-circle", variant: "info" },
-  success: { icon: "check", variant: "success" }
+  success: { icon: "check", variant: "success" },
 }
 
 export const useMessageStore = defineStore("messageStore", () => {
   const state = reactive({
     opened: false,
     messages: [],
-    maxMessages: 15
+    maxMessages: 15,
   })
 
   function addMessage(type, headline, body) {

@@ -9,20 +9,9 @@
     @auxclick="clickEvent"
     @click="forceUpdate"
   >
-    <router-link
-      class="link-wrap"
-      :to="to"
-      :title="state.title"
-    >
-      <sl-avatar label="Rounded avatar" :initials="state.modeIcon||icon ? '' : name[0]">
-        <sl-icon
-          v-if="mode !== 'view'"
-          slot="icon"
-          class="mode-icon"
-          :name="state.modeIcon"
-
-          sprite
-        ></sl-icon>
+    <router-link class="link-wrap" :to="to" :title="state.title">
+      <sl-avatar label="Rounded avatar" :initials="state.modeIcon || icon ? '' : name[0]">
+        <sl-icon v-if="mode !== 'view'" slot="icon" class="mode-icon" :name="state.modeIcon" sprite></sl-icon>
         <sl-icon
           v-else-if="state.icon"
           slot="icon"
@@ -43,89 +32,89 @@ import { useDBStore } from "../stores/db"
 import { useAppStore } from "../stores/app"
 import Utils from "../utils.js"
 import { useRouter } from "vue-router"
-import {useTitle} from '@vueuse/core'
+import { useTitle } from "@vueuse/core"
 
-  const props = defineProps({
-    to: {
-      type: Object,
-      required: true,
-      default: undefined
-    },
-    name: {
-      type: String,
-      default: undefined
-    },
-    icon: {
-      type: String,
-      default: undefined
-    },
-    library: {
-      type: String,
-      default: "default"
-    },
-    closeable: {
-      type: Boolean,
-      default: true
-    },
-    position: {
-      type: Number,
-      required: true
-    },
-    mode: {
-      type: String,
-      default: "view"
-    },
-    active: {
-      type: Boolean,
-      default: false
-    },
-    title: {
-      type: String,
-      default: ""
-    }
-  })
-    const dbStore = useDBStore()
-    const appStore = useAppStore()
-    const router = useRouter()
-    const state = reactive({
-      icon: true,
-      modeIcon: computed(() => {
-        if (props.mode === "add") return "plus-lg"
-        if (props.mode === "edit") return "pencil-fill"
-        if (props.mode === "clone") return "copy"
-        return false
-      }),
-      title:computed(()=>{
-        let title = ""
-        if (props.to?.params?.module){
-          title = props.to.params.module + ": "
-        }
-
-        title += props.title ? props.title : props.name
-
-        return title
-      })
-    })
-    function onIconError() {
-      state.icon = false
+const props = defineProps({
+  to: {
+    type: Object,
+    required: true,
+    default: undefined,
+  },
+  name: {
+    type: String,
+    default: undefined,
+  },
+  icon: {
+    type: String,
+    default: undefined,
+  },
+  library: {
+    type: String,
+    default: "default",
+  },
+  closeable: {
+    type: Boolean,
+    default: true,
+  },
+  position: {
+    type: Number,
+    required: true,
+  },
+  mode: {
+    type: String,
+    default: "view",
+  },
+  active: {
+    type: Boolean,
+    default: false,
+  },
+  title: {
+    type: String,
+    default: "",
+  },
+})
+const dbStore = useDBStore()
+const appStore = useAppStore()
+const router = useRouter()
+const state = reactive({
+  icon: true,
+  modeIcon: computed(() => {
+    if (props.mode === "add") return "plus-lg"
+    if (props.mode === "edit") return "pencil-fill"
+    if (props.mode === "clone") return "copy"
+    return false
+  }),
+  title: computed(() => {
+    let title = ""
+    if (props.to?.params?.module) {
+      title = props.to.params.module + ": "
     }
 
-    function onTabClose() {
-      // @ts-ignore
-      dbStore.removeOpened(props.to)
-    }
-    //close tab with middel mouse click.
-    function clickEvent(e) {
-      e.preventDefault()
-      onTabClose()
-      return false
-    }
-    function forceUpdate() {
-      dbStore.state["handlers.active"] = props.position
-      const appStore = useAppStore()
-      const title = useTitle()
-      title.value = appStore.state["title"]+" | "+ Utils.unescape(props.name)
-    }
+    title += props.title ? props.title : props.name
+
+    return title
+  }),
+})
+function onIconError() {
+  state.icon = false
+}
+
+function onTabClose() {
+  // @ts-ignore
+  dbStore.removeOpened(props.to)
+}
+//close tab with middel mouse click.
+function clickEvent(e) {
+  e.preventDefault()
+  onTabClose()
+  return false
+}
+function forceUpdate() {
+  dbStore.state["handlers.active"] = props.position
+  const appStore = useAppStore()
+  const title = useTitle()
+  title.value = appStore.state["title"] + " | " + Utils.unescape(props.name)
+}
 </script>
 
 <style scoped>

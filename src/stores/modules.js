@@ -5,7 +5,7 @@ import { ListRequest, Request } from "@viur/vue-utils"
 export const useModulesStore = defineStore("modulesStore", () => {
   const state = reactive({
     modules: {},
-    loaded: false
+    loaded: false,
   })
 
   function setmodules() {

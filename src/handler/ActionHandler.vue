@@ -1,38 +1,30 @@
 <template>
   <div class="wrap-for-popup">
     <sl-bar class="wrapper-action topbar">
-        <div slot="left">
-          <sl-spinner v-if="state.loading"></sl-spinner>
-        </div>
-        <div slot="right">
-        <action-entry-bar
-          :module="module"
-          :action="action"
-          :skelkey="skelkey"
-          skeltype="skeltype"
-        ></action-entry-bar>
+      <div slot="left">
+        <sl-spinner v-if="state.loading"></sl-spinner>
       </div>
-      </sl-bar>
+      <div slot="right">
+        <action-entry-bar :module="module" :action="action" :skelkey="skelkey" skeltype="skeltype"></action-entry-bar>
+      </div>
+    </sl-bar>
     <div class="scroll-content">
-      <vi-form ref="viform"
-              :module="module"
-              :action="action"
-              :group="group"
-              :skelkey="skelkey"
-              :skeltype="skeltype"
-              :values="values"
-              :secure="secure"
-              :renderer="renderer"
-              :collapsedCategories="state.conf?.['collapsedCategories'] || []"
-              :params="{ ...contextStore.getContext(state.tabId) }"
-      >
-
-
-      </vi-form>
+      <vi-form
+        ref="viform"
+        :module="module"
+        :action="action"
+        :group="group"
+        :skelkey="skelkey"
+        :skeltype="skeltype"
+        :values="values"
+        :secure="secure"
+        :renderer="renderer"
+        :collapsed-categories="state.conf?.['collapsedCategories'] || []"
+        :params="{ ...contextStore.getContext(state.tabId) }"
+      ></vi-form>
       <template v-for="handler in state.conf?.['editViews']">
-
         <sl-details
-          v-if="skelkey && viform && Object.keys(viform?.state?.skel).length>0"
+          v-if="skelkey && viform && Object.keys(viform?.state?.skel).length > 0"
           :summary="handler['name'] || dbStore.getConf(handler['module'])?.['name'] || handler['module']"
           :open="false"
         >
@@ -43,12 +35,10 @@
               :group="handler?.['group']"
               :columns="handler?.['columns'] ? handler['columns'] : []"
               :filter="editViewFilter(handler)"
-            >
-            </component>
+            ></component>
           </div>
         </sl-details>
       </template>
-
     </div>
 
     <template v-if="state.relation_opened">
@@ -64,20 +54,12 @@
             :is="currentHandler(bone['bone_conf']['handlerComponent'])"
             :rowselect="1"
             :module="bone['boneStructure']['module']"
-            @currentSelection="relationUpdateSelection($event, bone)"
-          >
-          </component>
-          <div
-            slot="footer"
-            class="footer"
-          >
-            <sl-button
-              variant="danger"
-              size="small"
-              outline
-              @click="relationRemoveHandler(bone)"
-              >{{ $t("relation.abort") }}</sl-button
-            >
+            @current-selection="relationUpdateSelection($event, bone)"
+          ></component>
+          <div slot="footer" class="footer">
+            <sl-button variant="danger" size="small" outline @click="relationRemoveHandler(bone)">
+              {{ $t("relation.abort") }}
+            </sl-button>
             <sl-button
               :disabled="!bone['currentSelection'] || bone['currentSelection']?.length === 0"
               variant="success"
@@ -91,15 +73,13 @@
       </template>
     </template>
   </div>
-
-
 </template>
 
 <script setup>
 import { reactive, defineComponent, onBeforeMount, computed, ref, provide, toRaw, unref, watch, onActivated } from "vue"
 import { Request } from "@viur/vue-utils"
 import { useDBStore } from "../stores/db"
-import { useLocalStore} from "../stores/local"
+import { useLocalStore } from "../stores/local"
 import { useContextStore } from "../stores/context"
 import { useRoute } from "vue-router"
 import { useMessageStore } from "../stores/message"
@@ -115,193 +95,196 @@ import VueJsonPretty from "vue-json-pretty"
 import "vue-json-pretty/lib/styles.css"
 import Logics from "logics-js"
 import Utils from "../utils"
-import HandlerContext from "../main/context/HandlerContext.vue";
+import HandlerContext from "../main/context/HandlerContext.vue"
 import ViForm from "@viur/vue-utils/forms/ViForm.vue"
 
-function currentHandler(name){
-  return handlers?.[name]?handlers[name]:name
+function currentHandler(name) {
+  return handlers?.[name] ? handlers[name] : name
 }
 
-  const props = defineProps({
-    module: {
-      type: String,
-      required: true
-    },
-    view: null,
-    action: null,
-    group: null,
-    skelkey: null,
-    skeltype: null,
-    noTopbar: false,
-    secure: {
-      type: Boolean,
-      default: true
-    },
-    bones: {
-      type: Array,
-      default: []
-    },
-    values: {
-      type: Object,
-      default: null
-    },
-    renderer: {
-      type: String,
-      default: import.meta.env.VITE_DEFAULT_RENDERER || "vi"
-    },
-    errors: []
-  })
+const props = defineProps({
+  module: {
+    type: String,
+    required: true,
+  },
+  view: null,
+  action: null,
+  group: null,
+  skelkey: null,
+  skeltype: null,
+  noTopbar: false,
+  secure: {
+    type: Boolean,
+    default: true,
+  },
+  bones: {
+    type: Array,
+    default: [],
+  },
+  values: {
+    type: Object,
+    default: null,
+  },
+  renderer: {
+    type: String,
+    default: import.meta.env.VITE_DEFAULT_RENDERER || "vi",
+  },
+  errors: [],
+})
 
-  const emit = defineEmits( ["change"])
-    const dbStore = useDBStore()
-    const appStore = useAppStore()
-    const contextStore = useContextStore()
-    const route = useRoute()
-    const modulesStore = useModulesStore()
-    const messageStore = useMessageStore()
-    const localStore = useLocalStore()
-    const userStore = useUserStore()
-    const state = reactive({
-      type: "formhandler",
-      skel: {},
-      structure: {},
-      errors: [],
-      conf: computed(() => {
-        return dbStore.getConf(props.module)
-      }),
-      tabId: route.query?.["_"],
-      formValues: {},
-      module: props.module,
-      view: props.view,
-      action: props.action,
-      group: props.group,
-      skelkey: props.skelkey,
-      skeltype: props.skeltype,
-      renderer: computed(() => props.renderer),
-      relation_opened: [],
-      loading: false
+const emit = defineEmits(["change"])
+const dbStore = useDBStore()
+const appStore = useAppStore()
+const contextStore = useContextStore()
+const route = useRoute()
+const modulesStore = useModulesStore()
+const messageStore = useMessageStore()
+const localStore = useLocalStore()
+const userStore = useUserStore()
+const state = reactive({
+  type: "formhandler",
+  skel: {},
+  structure: {},
+  errors: [],
+  conf: computed(() => {
+    return dbStore.getConf(props.module)
+  }),
+  tabId: route.query?.["_"],
+  formValues: {},
+  module: props.module,
+  view: props.view,
+  action: props.action,
+  group: props.group,
+  skelkey: props.skelkey,
+  skeltype: props.skeltype,
+  renderer: computed(() => props.renderer),
+  relation_opened: [],
+  loading: false,
+})
+
+const viform = ref(null)
+provide("handlerState", state)
+provide("viform", viform)
+
+function fetchData() {
+  viform.value.fetchData()
+}
+provide("fetchData", fetchData)
+
+function getWidget(boneName) {
+  let widget = "base_item"
+  if (state.structure != null && state.structure[boneName] != null && state.structure[boneName]["type"] != null) {
+    const typeName = state.structure[boneName]["type"].replace(/\./g, "_")
+    if (Object.keys(bones).includes(typeName)) {
+      widget = typeName
+    }
+  }
+  return widget
+}
+
+function reloadAction() {
+  state.loading = true
+  if (!viform.value) return
+  return viform.value
+    .fetchData()
+    .then(async (resp) => {
+      state.loading = false
+      if (resp.status !== 200) {
+        messageStore.addMessage("error", resp.statusText, resp.url)
+      }
     })
-
-    const viform = ref(null)
-    provide("handlerState", state)
-    provide("viform",viform)
-
-    function fetchData(){
-      viform.value.fetchData()
-    }
-    provide("fetchData",fetchData)
-
-    function getWidget(boneName) {
-      let widget = "base_item"
-      if (state.structure != null && state.structure[boneName] != null && state.structure[boneName]["type"] != null) {
-        const typeName = state.structure[boneName]["type"].replace(/\./g, "_")
-        if (Object.keys(bones).includes(typeName)) {
-          widget = typeName
-        }
-      }
-      return widget
-    }
-
-    function reloadAction(){
-      state.loading = true
-      if (!viform.value) return
-      return viform.value.fetchData().then(async (resp)=>{
-        state.loading = false
-        if (resp.status !== 200) {
-            messageStore.addMessage("error", resp.statusText, resp.url)
-        }
-      }).catch(async (error)=>{
-        messageStore.addMessage("error", `${error.message}`, error.response?.url)
-      })
-    }
-    provide("reloadAction",reloadAction)
-
-    function updateValue(data) {
-      state.formValues[data.name] = data.value
-      emit("change", state.formValues)
-    }
-
-    function relationSelection(event, bone) {
-      bone["bone_instance"] = event.target
-      bone["bone_instance_boneName"] = event["detail"]["boneName"]
-      bone["bone_conf"] = dbStore.getConf(bone["boneStructure"]["module"])
-
-      state.relation_opened.push(bone)
-    }
-
-    function relationUpdateSelection(event, bone) {
-      bone["currentSelection"] = event
-    }
-
-    function relationApplySelection(bone) {
-      for (let skel of bone["currentSelection"]) {
-        bone["bone_instance"].addRelation(toRaw(skel), bone["bone_instance_boneName"])
-      }
-      relationRemoveHandler(bone)
-    }
-
-    function relationCloseAction(event, bone) {
-      if (event.detail.source === "overlay") {
-        event.preventDefault()
-        return 0
-      }
-      relationRemoveHandler(bone)
-    }
-
-    function relationRemoveHandler(bone) {
-      state.relation_opened = state.relation_opened.filter((i) => i !== bone)
-    }
-
-    function editViewFilter(handler) {
-      let filter = {}
-      if (handler["filter"]) {
-        filter = handler["filter"]
-      }
-      if (!viform.value?.state?.skel) return filter
-
-      //todo set Context on routing
-      if(typeof handler["context"] === 'object'){
-        for (const [k, v] of Object.entries(handler["context"])) {
-          if (Object.keys(viform.value.state.skel).includes(v)) {
-            contextStore.setContext(k, viform.value.state.skel[v], state.tabId)
-            filter[k] = viform.value.state.skel[v]
-          }
-        }
-      } else {
-        filter[handler["context"]] = props.skelkey
-        contextStore.setContext(handler["context"], props.skelkey, state.tabId)
-      }
-      return filter
-    }
-
-    function getEditView(handler) {
-      let currentModule = dbStore.getConf(handler["module"])
-      //fluidpage editview always use lists
-      if (currentModule['handlerComponent'] === "fluidpagehandler"){
-          return "listhandler"
-      }
-      return currentModule['handlerComponent']
-    }
-
-    watch(
-      () => props.errors,
-      (newVal, oldVal) => {
-        state.errors = props.errors
-      }
-    )
-
-    watch(()=>viform?.value?.state.loading, (newVal, oldVal)=>{
-      state.loading = newVal
+    .catch(async (error) => {
+      messageStore.addMessage("error", `${error.message}`, error.response?.url)
     })
+}
+provide("reloadAction", reloadAction)
 
+function updateValue(data) {
+  state.formValues[data.name] = data.value
+  emit("change", state.formValues)
+}
+
+function relationSelection(event, bone) {
+  bone["bone_instance"] = event.target
+  bone["bone_instance_boneName"] = event["detail"]["boneName"]
+  bone["bone_conf"] = dbStore.getConf(bone["boneStructure"]["module"])
+
+  state.relation_opened.push(bone)
+}
+
+function relationUpdateSelection(event, bone) {
+  bone["currentSelection"] = event
+}
+
+function relationApplySelection(bone) {
+  for (let skel of bone["currentSelection"]) {
+    bone["bone_instance"].addRelation(toRaw(skel), bone["bone_instance_boneName"])
+  }
+  relationRemoveHandler(bone)
+}
+
+function relationCloseAction(event, bone) {
+  if (event.detail.source === "overlay") {
+    event.preventDefault()
+    return 0
+  }
+  relationRemoveHandler(bone)
+}
+
+function relationRemoveHandler(bone) {
+  state.relation_opened = state.relation_opened.filter((i) => i !== bone)
+}
+
+function editViewFilter(handler) {
+  let filter = {}
+  if (handler["filter"]) {
+    filter = handler["filter"]
+  }
+  if (!viform.value?.state?.skel) return filter
+
+  //todo set Context on routing
+  if (typeof handler["context"] === "object") {
+    for (const [k, v] of Object.entries(handler["context"])) {
+      if (Object.keys(viform.value.state.skel).includes(v)) {
+        contextStore.setContext(k, viform.value.state.skel[v], state.tabId)
+        filter[k] = viform.value.state.skel[v]
+      }
+    }
+  } else {
+    filter[handler["context"]] = props.skelkey
+    contextStore.setContext(handler["context"], props.skelkey, state.tabId)
+  }
+  return filter
+}
+
+function getEditView(handler) {
+  let currentModule = dbStore.getConf(handler["module"])
+  //fluidpage editview always use lists
+  if (currentModule["handlerComponent"] === "fluidpagehandler") {
+    return "listhandler"
+  }
+  return currentModule["handlerComponent"]
+}
+
+watch(
+  () => props.errors,
+  (newVal, oldVal) => {
+    state.errors = props.errors
+  }
+)
+
+watch(
+  () => viform?.value?.state.loading,
+  (newVal, oldVal) => {
+    state.loading = newVal
+  }
+)
 </script>
 
 <style scoped>
-.wrapper-action{
+.wrapper-action {
   padding: 10px 20px;
-
 }
-
 
 .split {
   flex: 1;

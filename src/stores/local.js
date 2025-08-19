@@ -8,10 +8,10 @@ export const useLocalStore = defineStore(
     const state = reactive({
       listamount: "30",
       lastEntries: [],
-      cache:true
+      cache: true,
     })
     function addEntries(handler) {
-      let exists = state.lastEntries.filter( x => x['key']===handler['key'])
+      let exists = state.lastEntries.filter((x) => x["key"] === handler["key"])
       if (exists.length === 0) {
         state.lastEntries.unshift(handler)
         if (state.lastEntries.length > 12) {
@@ -20,14 +20,14 @@ export const useLocalStore = defineStore(
       }
     }
 
-    function removeAllEntries(){
+    function removeAllEntries() {
       state.lastEntries = []
     }
 
     return {
       state,
       addEntries,
-      removeAllEntries
+      removeAllEntries,
     }
   },
   { persist: true }

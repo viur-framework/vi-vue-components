@@ -55,5 +55,5 @@ export default {
   move_action,
   fluidpagepreview_action,
   formutils_action,
-  userfilter_action
+  userfilter_action,
 }

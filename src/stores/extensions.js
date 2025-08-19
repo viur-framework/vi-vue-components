@@ -1,13 +1,13 @@
-import { reactive } from 'vue'
-import { defineStore } from "pinia";
-import { useRouter} from "vue-router";
+import { reactive } from "vue"
+import { defineStore } from "pinia"
+import { useRouter } from "vue-router"
 
 export const useExtensionsStore = defineStore("extensionsStore", () => {
   const router = useRouter()
 
   const state = reactive({
     extensions: {},
-    activeExtensions: ["debug", "scriptor"]
+    activeExtensions: ["debug", "scriptor"],
   })
 
   function addExtension(extension) {
@@ -25,11 +25,10 @@ export const useExtensionsStore = defineStore("extensionsStore", () => {
     //register topbar actions
     //register subhandlers
 
-
     // add routes
-    for( const [name, extension] of Object.entries(state.extensions)){
-      if (extension?.["routes"]){
-        for (const route of extension.routes){
+    for (const [name, extension] of Object.entries(state.extensions)) {
+      if (extension?.["routes"]) {
+        for (const route of extension.routes) {
           router.addRoute(route)
         }
       }
@@ -39,19 +38,16 @@ export const useExtensionsStore = defineStore("extensionsStore", () => {
   function loadExtensions() {
     const extensions = import.meta.glob("../extensions/**/extension.js", { eager: true })
 
-    for (const [path, extension] of Object.entries(extensions)){
+    for (const [path, extension] of Object.entries(extensions)) {
       let ext = extension.default()
-      state.extensions[ext['name']] = ext
-
+      state.extensions[ext["name"]] = ext
     }
   }
-
-
 
   return {
     state,
     addExtension,
     removeExtension,
-    initExtensions
+    initExtensions,
   }
 })

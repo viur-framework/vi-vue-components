@@ -1,21 +1,11 @@
 <template>
-  <div
-    class="home-box"
-    @click="openTab"
-  >
+  <div class="home-box" @click="openTab">
     <div class="icon-wrap">
-      <sl-icon
-            v-if="icon"
-            slot="icon"
-            :name="icon"
-            :library="library"
-            sprite
-          ></sl-icon>
+      <sl-icon v-if="icon" slot="icon" :name="icon" :library="library" sprite></sl-icon>
       <span v-else>
         {{ name?.[0] || to.params["module"] }}
       </span>
     </div>
-
 
     <div class="home-name">
       <slot></slot>
@@ -28,24 +18,23 @@ import { reactive, defineComponent } from "vue"
 import { useDBStore } from "../stores/db"
 import { useRoute } from "vue-router"
 
-  const props = defineProps({
-    icon: String,
-    library: {
-      type: String,
-      default: "default"
-    },
-    name:String,
-    to: Object
-  })
+const props = defineProps({
+  icon: String,
+  library: {
+    type: String,
+    default: "default",
+  },
+  name: String,
+  to: Object,
+})
 
-    const state = reactive({})
-    const dbStore = useDBStore()
-    const route = useRoute()
+const state = reactive({})
+const dbStore = useDBStore()
+const route = useRoute()
 
-    function openTab() {
-      dbStore.addOpened(props.to, props.to.params["module"], props.to.query["view"],props.name)
-    }
-
+function openTab() {
+  dbStore.addOpened(props.to, props.to.params["module"], props.to.query["view"], props.name)
+}
 </script>
 
 <style scoped>
@@ -63,7 +52,7 @@ import { useRoute } from "vue-router"
     font-size: 1.3em;
   }
 
-  span{
+  span {
     font-size: 1.3em;
     color: #fff;
   }

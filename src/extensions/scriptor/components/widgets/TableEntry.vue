@@ -10,18 +10,12 @@
           ></sl-checkbox>
         </th>
         <th v-if="entry.data.select && !entry.data.multiple"></th>
-        <th
-          v-for="(h, index) in entry.data.header"
-          :key="index"
-        >
+        <th v-for="(h, index) in entry.data.header" :key="index">
           {{ h }}
         </th>
       </thead>
       <tbody>
-        <tr
-          v-for="(row, index) in state.rowdata"
-          :key="index"
-        >
+        <tr v-for="(row, index) in state.rowdata" :key="index">
           <td v-if="entry.data.select">
             <sl-checkbox
               :disabled="state.dataSent"
@@ -29,10 +23,7 @@
               @sl-input="toggleSelectOne(row)"
             ></sl-checkbox>
           </td>
-          <td
-            v-for="(cell, index) in row.row"
-            :key="index"
-          >
+          <td v-for="(cell, index) in row.row" :key="index">
             {{ cell }}
           </td>
         </tr>
@@ -56,8 +47,8 @@ const scriptorStore = useScriptorStore()
 
 const props = defineProps({
   entry: {
-    type: Object
-  }
+    type: Object,
+  },
 })
 
 async function sendButtonClick() {
@@ -120,7 +111,7 @@ const state = reactive({
   rowdata: [],
   all_selected: false,
   dataSent: false,
-  atLeastOneSelected: false
+  atLeastOneSelected: false,
 })
 </script>
 

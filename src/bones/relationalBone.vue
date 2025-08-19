@@ -7,13 +7,7 @@
           :disabled="true"
           :value="value ? formatString(state.format, state.selection) : ''"
         ></sl-input>
-        <sl-button
-          v-if="!boneState.isEmpty"
-          variant="info"
-          outline
-          class="square-btn"
-          @click="editSelection"
-        >
+        <sl-button v-if="!boneState.isEmpty" variant="info" outline class="square-btn" @click="editSelection">
           <sl-icon name="pencil-fill"></sl-icon>
         </sl-button>
       </sl-button-group>
@@ -22,16 +16,11 @@
         :disabled="bone.readonly"
         :source="getList"
         hoist
+        :placeholder="boneState.label === 'placeholder' ? boneState?.bonestructure?.descr : undefined"
         @sl-item-select="changeEvent"
-        :placeholder="boneState.label==='placeholder'?boneState?.bonestructure?.descr:undefined"
-      >
-      </sl-combobox>
+      ></sl-combobox>
 
-      <sl-button
-        class="square-btn"
-        :disabled="bone.readonly"
-        @click="openRelationalSelection"
-      >
+      <sl-button class="square-btn" :disabled="bone.readonly" @click="openRelationalSelection">
         <sl-icon name="list-ul"></sl-icon>
       </sl-button>
 
@@ -49,10 +38,7 @@
           }
         "
       >
-        <sl-icon
-          slot="prefix"
-          name="x-lg"
-        ></sl-icon>
+        <sl-icon slot="prefix" name="x-lg"></sl-icon>
       </sl-button>
     </div>
 
@@ -65,8 +51,7 @@
       :bone="bone"
       :disabled="bone['readonly']"
       @change="changeEventNested"
-    >
-    </Wrapper_nested>
+    ></Wrapper_nested>
   </div>
   <relational-selector
     :open="state.openedSelection"
@@ -76,8 +61,7 @@
     :handler="state.moduleInfo?.['handlerComponent']"
     :module="boneState?.bonestructure['module']"
     @close="relationCloseAction"
-  >
-  </relational-selector>
+  ></relational-selector>
 </template>
 
 <script setup>
@@ -90,131 +74,132 @@ import handlers from "../handler/handlers"
 import relationalSelector from "./components/relationalSelector.vue"
 
 defineOptions({
-    inheritAttrs: false
-  })
+  inheritAttrs: false,
+})
 
 const props = defineProps({
-    name: String,
-    value: [Object, String, Number, Boolean, Array],
-    index: Number,
-    lang: String,
-    bone:Object,
-    autofocus: Boolean
+  name: String,
+  value: [Object, String, Number, Boolean, Array],
+  index: Number,
+  lang: String,
+  bone: Object,
+  autofocus: Boolean,
+})
+const emit = defineEmits(["change"])
+
+const boneState = inject("boneState")
+const handlerState = inject("handlerState")
+const formatString = inject("formatString")
+const route = useRoute()
+const router = useRouter()
+const dbStore = useDBStore()
+
+const state = reactive({
+  viform: null,
+  format: computed(() => {
+    return props.bone["format"]
+  }),
+  openedSelection: false,
+  moduleInfo: computed(() => dbStore.getConf(props.bone["module"])),
+  selection: null,
+  entry: computed(() => {
+    if (typeof props.value !== "object") {
+      return { dest: props.value, rel: null }
+    }
+    return props.value
+  }),
+  skellistdata: null,
+  filter: computed(() => {
+    if (props.bone["params"]?.["context"] && state.viform) {
+      let ret = {}
+      for (const [queryparameter, fieldname] of Object.entries(props.bone["params"]["context"])) {
+        //ret[queryparameter] = state.viform.state.skel[fieldname]
+        //contexts are a mess...
+        ret[queryparameter] = fieldname
+      }
+      return ret
+    }
+    return {}
+  }),
+})
+
+function getList(search) {
+  if (!search) return []
+  let params = ""
+  if (props.bone["type"] === "relational.tree.leaf.file") {
+    params = "skelType=leaf&"
+  } else if (props.bone["type"] === "relational.tree.node.file") {
+    params = "skelType=node&"
+  }
+
+  if (props.bone["context"]) {
+    for (const [queryparameter, fieldname] of Object.entries(props.bone["context"])) {
+      params += `${queryparameter}=${fieldname}&`
+    }
+  }
+  return Request.get(`/vi/${props.bone["module"]}/list?${params}limit=99`).then(async (resp) => {
+    //?viurTags$lk=${search.toLowerCase()
+    const data = await resp.json()
+    state.skellistdata = {}
+    for (let e of data["skellist"]) {
+      state.skellistdata[e["key"]] = e
+    }
+
+    return data["skellist"]?.map((d) => {
+      return { text: formatString(props.bone["format"], { dest: d }), value: d.key, data: d }
+    })
   })
-  const emit = defineEmits( ["change"])
+}
 
-    const boneState = inject("boneState")
-    const handlerState = inject("handlerState")
-    const formatString = inject("formatString")
-    const route = useRoute()
-    const router = useRouter()
-    const dbStore = useDBStore()
+function changeEventNested(data) {
+  if (state.selection?.dest) {
+    // only send a change if we have a valid target
+    state.selection = { ...props.value, rel: data["value"] }
+    emit("change", data["name"], state.selection, data["lang"], data["index"])
+  }
+}
 
-    const state = reactive({
-      viform:null,
-      format: computed(() => {
-        return props.bone["format"]
-      }),
-      openedSelection: false,
-      moduleInfo: computed(() => dbStore.getConf(props.bone["module"])),
-      selection: null,
-      entry: computed(() => {
-        if (typeof props.value !== "object") {
-          return { dest: props.value, rel: null }
-        }
-        return props.value
-      }),
-      skellistdata: null,
-      filter:computed(()=>{
-        if(props.bone['params']?.['context'] && state.viform){
-          let ret = {}
-          for(const [queryparameter, fieldname] of Object.entries(props.bone["params"]["context"]) ){
-            //ret[queryparameter] = state.viform.state.skel[fieldname]
-            //contexts are a mess...
-            ret[queryparameter] = fieldname
-          }
-          return ret
-        }
-        return {}
-      })
-    })
+function changeEvent(event) {
+  state.selection = { dest: state.skellistdata[event.detail.item.value] }
+  emit("change", props.name, state.selection, props.lang, props.index)
+}
 
-    function getList(search) {
-      if (!search) return []
-      let params = ""
-      if (props.bone["type"] === "relational.tree.leaf.file") {
-        params = "skelType=leaf&"
-      } else if (props.bone["type"] === "relational.tree.node.file") {
-        params = "skelType=node&"
-      }
+onMounted(() => {
+  state.viform = inject("formState")
+  state.selection = props.value
+  emit("change", props.name, props.value, props.lang, props.index) //init
+})
 
-      if (props.bone["context"]){
-        for(const [queryparameter, fieldname] of Object.entries(props.bone["context"]) ){
-          params+=`${queryparameter}=${fieldname}&`
-        }
-      }
-      return Request.get(`/vi/${props.bone["module"]}/list?${params}limit=99`).then(async (resp) => {
-        //?viurTags$lk=${search.toLowerCase()
-        const data = await resp.json()
-        state.skellistdata = {}
-        for (let e of data["skellist"]) {
-          state.skellistdata[e["key"]] = e
-        }
+function openRelationalSelection() {
+  state.openedSelection = true
+}
 
-        return data["skellist"]?.map((d) => {
-          return { text: formatString(props.bone["format"], { dest: d }), value: d.key, data: d }
-        })
-      })
+function relationCloseAction(selection) {
+  state.openedSelection = false
+  if (selection) {
+    if (state.selection) {
+      state.selection["dest"] = selection
+    } else {
+      state.selection = { dest: selection }
     }
+    emit("change", props.name, state.selection, props.lang, props.index)
+  }
+}
 
-    function changeEventNested(data) {
-      if (state.selection?.dest){ // only send a change if we have a valid target
-        state.selection = {...props.value, "rel":data["value"]}
-        emit("change", data["name"], state.selection , data["lang"], data["index"])
-      }
-    }
+function editSelection() {
+  const mod = props.bone["module"]
 
-    function changeEvent(event) {
-      state.selection = { dest: state.skellistdata[event.detail.item.value] }
-      emit("change", props.name, state.selection, props.lang, props.index)
-    }
+  let url = `/db/${mod}/edit`
+  if (props.bone["type"].startsWith("relational.tree.leaf")) {
+    url += "/leaf"
+  } else if (props.bone["type"].startsWith("relational.tree.node")) {
+    url += "/node"
+  }
 
-    onMounted(() => {
-      state.viform = inject("formState")
-      state.selection = props.value
-      emit("change", props.name, props.value, props.lang, props.index) //init
-    })
-
-    function openRelationalSelection() {
-      state.openedSelection = true
-    }
-
-    function relationCloseAction(selection) {
-      state.openedSelection = false
-      if (selection) {
-        if (state.selection) {
-          state.selection["dest"] = selection
-        } else {
-          state.selection = { dest: selection }
-        }
-        emit("change", props.name, state.selection, props.lang, props.index)
-      }
-    }
-
-    function editSelection() {
-      const mod = props.bone["module"]
-
-      let url = `/db/${mod}/edit`
-      if (props.bone['type'].startsWith("relational.tree.leaf")){
-        url += "/leaf"
-      } else if (props.bone['type'].startsWith("relational.tree.node")){
-        url += "/node"
-      }
-
-      url+=`/${props.value["dest"]["key"]}`
-      let route = router.resolve(unref(url))
-      dbStore.addOpened(route, mod)
-    }
+  url += `/${props.value["dest"]["key"]}`
+  let route = router.resolve(unref(url))
+  dbStore.addOpened(route, mod)
+}
 </script>
 
 <style scoped>
@@ -229,12 +214,11 @@ const props = defineProps({
     }
   }
 
-  sl-button-group{
-    sl-button{
+  sl-button-group {
+    sl-button {
       margin-left: var(--sl-spacing-x-small);
     }
   }
-
 }
 
 sl-input {

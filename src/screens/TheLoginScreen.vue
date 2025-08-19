@@ -1,38 +1,19 @@
 <template>
   <div class="wrapper">
-
     <div class="background-img">
-      <img
-        :src="state.backgroundImage"
-        @error="$event.target.src = Utils.publicAsset('login-background.jpg')"
-      />
+      <img :src="state.backgroundImage" @error="$event.target.src = Utils.publicAsset('login-background.jpg')" />
     </div>
     <div class="card">
-      <img
-        class="logo"
-        :src="state.logo"
-        @error="$event.target.src = Utils.publicAsset('logo.svg')"
-      />
-      <sl-alert
-        v-if="userStore.state['user.loggedin'] === 'error'"
-        open
-        variant="danger"
-      >
+      <img class="logo" :src="state.logo" @error="$event.target.src = Utils.publicAsset('logo.svg')" />
+      <sl-alert v-if="userStore.state['user.loggedin'] === 'error'" open variant="danger">
         Fehler beim Anmelden
       </sl-alert>
 
-      <div
-        v-if="state.waitFor === 'init'"
-        class="init-spinner"
-        style="position: relative; height: 40px"
-      >
+      <div v-if="state.waitFor === 'init'" class="init-spinner" style="position: relative; height: 40px">
         <loader></loader>
       </div>
 
-      <form
-        v-show="['no', 'error'].includes(userStore.state['user.loggedin'])"
-        autocomplete="on"
-      >
+      <form v-show="['no', 'error'].includes(userStore.state['user.loggedin'])" autocomplete="on">
         <input
           v-model="state.name"
           class="input"
@@ -58,16 +39,10 @@
         >
           {{ $t("login.login") }}
         </sl-button>
-        <sl-button
-          v-else
-          @click="logout"
-          >{{ $t("login.logout") }}
-        </sl-button>
+        <sl-button v-else @click="logout">{{ $t("login.logout") }}</sl-button>
       </form>
 
-      <div
-        v-if="['no', 'error'].includes(userStore.state['user.loggedin'])"
-        class="or">
+      <div v-if="['no', 'error'].includes(userStore.state['user.loggedin'])" class="or">
         {{ $t("login.or") }}
       </div>
 
@@ -77,12 +52,7 @@
           class="more-login-btn"
           @click="googleLogin"
         >
-          <sl-icon
-            slot="prefix"
-            library="bootstrap"
-            name="google"
-            class="google-icon"
-          ></sl-icon>
+          <sl-icon slot="prefix" library="bootstrap" name="google" class="google-icon"></sl-icon>
           {{ $t("login.with_google") }}
         </sl-button>
         <div id="google_oauth"></div>
@@ -103,22 +73,15 @@
             :structure="userStore.state['user.login.secound_factor']['structure']"
             :errors="userStore.state['user.login.secound_factor_errors']"
             @change="updateValue"
-          >
-          </bone>
+          ></bone>
         </template>
-        <sl-button
-          variant="primary"
-          @click="secondFactorSend"
-        >
-          Send
-        </sl-button>
+        <sl-button variant="primary" @click="secondFactorSend">Send</sl-button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-
 import { useUserStore } from "@viur/vue-utils/login/stores/user"
 import { reactive, computed, onBeforeMount, defineComponent } from "vue"
 import { useAppStore } from "../stores/app"
@@ -127,86 +90,84 @@ import Utils from "../utils"
 
 import { getBoneWidget } from "@viur/vue-utils/bones/edit/index"
 
-    const userStore = useUserStore()
-    const appStore = useAppStore()
+const userStore = useUserStore()
+const appStore = useAppStore()
 
+const state = reactive({
+  name: "",
+  password: "",
+  userDataFilled: computed(() => state.name && state.password),
+  waitForLogout: false,
+  waitFor: "init",
+  backgroundImage: computed(() => `${appStore.state["admin.login.background"]}`),
+  logo: computed(() => appStore.state["admin.login.logo"]),
+  otp: "",
+  userPasswordLoginActivated: computed(() => {
+    return (
+      (userStore.state["user.login.type"] !== "user" && userStore.state["user.login.type"] !== "no") ||
+      !userStore.state.primaryAuthMethods.has("X-VIUR-AUTH-User-Password")
+    )
+  }),
+  userGoogleLoginActivated: computed(() => {
+    return (
+      (userStore.state["user.login.type"] !== "google" && userStore.state["user.login.type"] !== "no") ||
+      !userStore.state.primaryAuthMethods.has("X-VIUR-AUTH-Google-Account")
+    )
+  }),
+  secondFactorFormdata: {},
+})
 
-    const state = reactive({
-      name: "",
-      password: "",
-      userDataFilled: computed(() => state.name && state.password),
-      waitForLogout: false,
-      waitFor: "init",
-      backgroundImage: computed(() => `${appStore.state["admin.login.background"]}`),
-      logo: computed(() => appStore.state["admin.login.logo"]),
-      otp: "",
-      userPasswordLoginActivated: computed(() => {
-        return (
-          (userStore.state["user.login.type"] !== "user" && userStore.state["user.login.type"] !== "no") ||
-          !userStore.state.primaryAuthMethods.has("X-VIUR-AUTH-User-Password")
-        )
-      }),
-      userGoogleLoginActivated: computed(() => {
-        return (
-          (userStore.state["user.login.type"] !== "google" && userStore.state["user.login.type"] !== "no") ||
-          !userStore.state.primaryAuthMethods.has("X-VIUR-AUTH-Google-Account")
-        )
-      }),
-      secondFactorFormdata: {}
+function googleLogin() {
+  state.waitForLogout = false
+  userStore.googleLogin()
+}
+
+function logout() {
+  state.waitForLogout = true
+  userStore.logout()
+}
+
+function userLogin() {
+  state.waitForLogout = false
+  state.waitFor = "" //FIXME
+  userStore
+    .userLogin(state.name, state.password)
+    .then(() => {})
+    .catch((e) => {
+      state.waitFor = "login"
     })
+}
+function userSecondFactor() {
+  state.waitForLogout = false
+  userStore.userSecondFactor(state.otp)
+}
+function userSecondFactorStart(choice) {
+  userStore.userSecondFactorStart(choice)
+  console.log(choice)
+}
+function updateValue(data) {
+  console.log(data.value)
+  state.secondFactorFormdata[data.name] = data.value[0][data.name] //Fixme can this broke
+}
+function secondFactorSend() {
+  console.log("send", state.secondFactorFormdata)
+  userStore
+    .secondFactorSend(state.secondFactorFormdata)
+    .then(() => {})
+    .catch((err) => {})
+}
+onBeforeMount(() => {
+  userStore.getAuthMethods()
 
-    function googleLogin() {
-      state.waitForLogout = false
-      userStore.googleLogin()
-    }
-
-    function logout() {
-      state.waitForLogout = true
-      userStore.logout()
-    }
-
-    function userLogin() {
-      state.waitForLogout = false
-      state.waitFor = "" //FIXME
-      userStore
-        .userLogin(state.name, state.password)
-        .then(() => {})
-        .catch((e) => {
-          state.waitFor = "login"
-        })
-    }
-    function userSecondFactor() {
-      state.waitForLogout = false
-      userStore.userSecondFactor(state.otp)
-    }
-    function userSecondFactorStart(choice) {
-      userStore.userSecondFactorStart(choice)
-      console.log(choice)
-    }
-    function updateValue(data) {
-      console.log(data.value)
-      state.secondFactorFormdata[data.name] = data.value[0][data.name] //Fixme can this broke
-    }
-    function secondFactorSend() {
-      console.log("send", state.secondFactorFormdata)
-      userStore
-        .secondFactorSend(state.secondFactorFormdata)
-        .then(() => {})
-        .catch((err) => {})
-    }
-    onBeforeMount(() => {
-      userStore.getAuthMethods()
-
-      userStore
-        .updateUser()
-        .then(() => {
-          state.waitFor = "login"
-        })
-        .catch((error) => {
-          state.waitFor = "login"
-        })
+  userStore
+    .updateUser()
+    .then(() => {
+      state.waitFor = "login"
     })
-
+    .catch((error) => {
+      state.waitFor = "login"
+    })
+})
 </script>
 
 <style scoped>
@@ -214,7 +175,6 @@ import { getBoneWidget } from "@viur/vue-utils/bones/edit/index"
   display: flex;
   justify-content: center;
 }
-
 
 sl-button.more-login-btn:has(+ #google_oauth > *) {
   display: none;
@@ -353,14 +313,13 @@ sl-input {
   }
 }
 
-sl-alert{
+sl-alert {
   margin-bottom: var(--sl-spacing-x-small);
 
-  &::part(message){
-      font-weight: 700;
-      color: var(--sl-color-danger-500);
-      padding: var(--sl-spacing-x-small) var(--sl-spacing-medium)
-   }
+  &::part(message) {
+    font-weight: 700;
+    color: var(--sl-color-danger-500);
+    padding: var(--sl-spacing-x-small) var(--sl-spacing-medium);
+  }
 }
-
 </style>

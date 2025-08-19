@@ -8,7 +8,7 @@ export default {
     clone: "Klonen",
     delete: {
       text: "Löschen",
-      msg: "Wollen Sie keinen Eintrag löschen? | Wollen Sie den Eintrag löschen? | Wollen Sie {n} Einträge löschen?"
+      msg: "Wollen Sie keinen Eintrag löschen? | Wollen Sie den Eintrag löschen? | Wollen Sie {n} Einträge löschen?",
     },
     debug: "Debuggen",
     edit: "Bearbeiten",
@@ -22,23 +22,23 @@ export default {
     save_next: "Speichern und Kopie",
     filter: {
       text: "Filter",
-      nofilter: "Für dieses Modul sind keine Filter vorhanden"
+      nofilter: "Für dieses Modul sind keine Filter vorhanden",
     },
     reset: "Zurücksetzen",
     nextpage: "weitere Einträge",
-    nextpage_stats:"{amount} Einträge | {selection}/{amount} ausgewählt | {selection}/{amount} ausgewählt",
+    nextpage_stats: "{amount} Einträge | {selection}/{amount} ausgewählt | {selection}/{amount} ausgewählt",
     fluidpage: {
       edit: "Inhalt bearbeiten",
       emptyheadline: "Diese Fluidpage ist noch leer",
-      emptytext: 'Mit dem "Hinzufügen"-Button können Inhalte auf dieser Fluidpage hinzugefügt werden.'
+      emptytext: 'Mit dem "Hinzufügen"-Button können Inhalte auf dieser Fluidpage hinzugefügt werden.',
     },
     open: "Öffnen",
     sortasc: "Aufsteigend Sortieren",
     sortdesc: "Absteigend Sortieren",
     move: "verschieben",
-    clear_log:"Log löschen",
-    clear_cache:"Zwischenspeicher löschen",
-    translate:"Übersetzen"
+    clear_log: "Log löschen",
+    clear_cache: "Zwischenspeicher löschen",
+    translate: "Übersetzen",
   },
   sidebar: {
     workspace: "Arbeitsbereich",
@@ -49,23 +49,23 @@ export default {
     logout_text: "Wenn Sie sich ausloggen, gehen alle nicht gespeicherten Daten verloren. Möchten sie fortfahren?",
     section_general_name: "Allgemein",
     section_system_name: "Servertasks",
-    section_tools: "Tools"
+    section_tools: "Tools",
   },
   skeldrawer: {
-    noentry: "Kein Eintrag ausgewählt"
+    noentry: "Kein Eintrag ausgewählt",
   },
   selectfields: {
     selectall: "Alle auswählen",
     unselectall: "Alle abwählen",
-    invertselect: "Auswahl umkehren"
+    invertselect: "Auswahl umkehren",
   },
   relation: {
     select: "Auswählen",
-    abort: "Abbrechen"
+    abort: "Abbrechen",
   },
   tab: {
     amount_warning:
-      "Du hast bereits {amount} Einträge von '{module}' geöffnet. Möchtest du trotzdem einen weiteren öffnen?"
+      "Du hast bereits {amount} Einträge von '{module}' geöffnet. Möchtest du trotzdem einen weiteren öffnen?",
   },
   abort: "Abbrechen",
   confirm: "Bestätigen",
@@ -74,7 +74,7 @@ export default {
   refresh: "Neuladen",
   search: {
     local: "Suche wird in der Liste ausgeführt",
-    database: "Suche wird online ausgeführt"
+    database: "Suche wird online ausgeführt",
   },
   login: {
     email: "E-Mail",
@@ -82,17 +82,17 @@ export default {
     login: "Einloggen",
     logout: "Ausloggen",
     with_google: "Mit Google einloggen",
-    or: "oder"
+    or: "oder",
   },
   noaccess: {
     title: "Nicht genügend Berechtigungen",
-    descr: "Dieser Nutzer hat nicht genügend Berechtigungen."
+    descr: "Dieser Nutzer hat nicht genügend Berechtigungen.",
   },
-  connection:{
-    header:'Verbindung unterbrochen.',
-    message:'Es konnte keine Verbindung zum ViUR Core aufgebaut werden.'
+  connection: {
+    header: "Verbindung unterbrochen.",
+    message: "Es konnte keine Verbindung zum ViUR Core aufgebaut werden.",
   },
-  scriptor:{
-    no_messages:"Keine Nachrichten"
-  }
+  scriptor: {
+    no_messages: "Keine Nachrichten",
+  },
 }

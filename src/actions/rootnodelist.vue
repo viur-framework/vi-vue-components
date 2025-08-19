@@ -1,10 +1,5 @@
 <template>
-  <sl-select
-    v-if="state.visible"
-    size="small"
-    :value="state.initValue"
-    @sl-change="rootNodeChange"
-  >
+  <sl-select v-if="state.visible" size="small" :value="state.initValue" @sl-change="rootNodeChange">
     <sl-option
       v-for="node in handlerState['availableRootNodes']"
       :key="node['key']"
@@ -14,35 +9,41 @@
       {{ Utils.renderValue(node["name"]) }}
     </sl-option>
   </sl-select>
-  <span class="reponame" v-else>
-    {{Utils.renderValue(handlerState['availableRootNodes'].filter(x=>x['key']===handlerState['currentRootNode']?.['key'])?.[0]?.['name'])}}
+  <span v-else class="reponame">
+    {{
+      Utils.renderValue(
+        handlerState["availableRootNodes"].filter((x) => x["key"] === handlerState["currentRootNode"]?.["key"])?.[0]?.[
+          "name"
+        ]
+      )
+    }}
   </span>
 </template>
 
 <script setup>
 import { reactive, defineComponent, inject, computed, onMounted } from "vue"
 import { useContextStore } from "../stores/context"
-import Utils from "../utils";
-    const contextStore = useContextStore()
-    const state = reactive({
-      initValue: computed(() => {
-        return handlerState["currentRootNode"]?.["key"]
-      }),
-      visible: true
-    })
-    const handlerState = inject("handlerState")
-    const changeRootNode = inject("changeRootNode")
+import Utils from "../utils"
+const contextStore = useContextStore()
+const state = reactive({
+  initValue: computed(() => {
+    return handlerState["currentRootNode"]?.["key"]
+  }),
+  visible: true,
+})
+const handlerState = inject("handlerState")
+const changeRootNode = inject("changeRootNode")
 
-    function rootNodeChange(e) {
-      changeRootNode(e.target.value)
-    }
+function rootNodeChange(e) {
+  changeRootNode(e.target.value)
+}
 
-    onMounted(()=>{
-      let context = contextStore.getCurrentContext()
-      if (Object.keys(context).includes('parentrepo') || Object.keys(context).includes('@rootNode')){
-        state.visible=false
-      }
-    })
+onMounted(() => {
+  let context = contextStore.getCurrentContext()
+  if (Object.keys(context).includes("parentrepo") || Object.keys(context).includes("@rootNode")) {
+    state.visible = false
+  }
+})
 </script>
 
 <style scoped>
@@ -59,7 +60,7 @@ sl-select {
   }
 }
 
-.reponame{
+.reponame {
   font-style: italic;
   font-size: 0.9rem;
   display: flex;

@@ -1,79 +1,73 @@
 <template>
-<div class="main-wrapper">
-
-  <div style="height:100%;padding:20px;">
-    <h1 class="headline">Modulebeschreibung {{dbStore.getConf(module)['name']}}</h1>
-  <sl-details summary="Datenmodel">
-    <div class="wrapper">
-
-        <div class="model-wrap" v-for="bone, boneName in state.skels[Object.keys(state.skels)[0]]" >
-          <div class="model-entry">
-            <span>{{bone['descr']}} ( {{boneName}} )</span>
-            <span>Typ: {{bone['type']}} </span>
+  <div class="main-wrapper">
+    <div style="height: 100%; padding: 20px">
+      <h1 class="headline">Modulebeschreibung {{ dbStore.getConf(module)["name"] }}</h1>
+      <sl-details summary="Datenmodel">
+        <div class="wrapper">
+          <div v-for="(bone, boneName) in state.skels[Object.keys(state.skels)[0]]" class="model-wrap">
+            <div class="model-entry">
+              <span>{{ bone["descr"] }} ( {{ boneName }} )</span>
+              <span>Typ: {{ bone["type"] }}</span>
+            </div>
+            <vue-json-pretty :deep="2" :data="bone" />
           </div>
-          <vue-json-pretty :deep="2" :data="bone" />
+
+          <sl-details v-for="(data, name) in state.skels" :summary="'Model: ' + name">
+            <vue-json-pretty :deep="1" :data="data" />
+          </sl-details>
         </div>
+      </sl-details>
 
-
-
-      <sl-details :summary="'Model: '+name" v-for="(data, name) in state.skels">
-        <vue-json-pretty :deep="1" :data="data" />
+      <sl-details summary="Funktionen" open>
+        <div class="wrapper">
+          <sl-card v-for="(method, name) in dbStore.getConf(module)['methods']">
+            <h2 class="subline">Endpunkt: {{ name }}</h2>
+            <span class="doc" v-html="optimizeText(method['docs'])"></span>
+            <sl-details summary="Parameter" open>
+              <ul>
+                <li v-for="(arg, arg_name) in method['args']">
+                  <template v-if="!arg['type']">
+                    <b>{{ arg_name }}</b>
+                  </template>
+                  <template v-else>
+                    <b>{{ arg_name }}</b>
+                    : {{ arg["type"] }}
+                  </template>
+                </li>
+              </ul>
+            </sl-details>
+          </sl-card>
+        </div>
       </sl-details>
     </div>
-  </sl-details>
-
-  <sl-details summary="Funktionen" open>
-    <div class="wrapper">
-      <sl-card v-for="(method, name) in dbStore.getConf(module)['methods']">
-        <h2 class="subline">Endpunkt: {{ name }}</h2>
-        <span class="doc" v-html="optimizeText(method['docs'])"></span>
-        <sl-details summary="Parameter" open>
-          <ul>
-            <li v-for="(arg,arg_name) in method['args']">
-              <template v-if="!arg['type']">
-                <b>{{ arg_name }}</b>
-              </template>
-              <template v-else>
-                <b>{{ arg_name }}</b> : {{ arg["type"]}}
-              </template>
-
-            </li>
-
-          </ul>
-        </sl-details>
-      </sl-card>
-    </div>
-  </sl-details>
   </div>
-</div>
 </template>
 
 <script setup>
-
 import { reactive, watch, onBeforeMount } from "vue"
 import { useRoute } from "vue-router"
 import { useDBStore } from "../stores/db"
 import utils from "../utils"
-import {Request} from "@viur/vue-utils";
+import { Request } from "@viur/vue-utils"
 
-import VueJsonPretty from 'vue-json-pretty';
-import 'vue-json-pretty/lib/styles.css';
+import VueJsonPretty from "vue-json-pretty"
+import "vue-json-pretty/lib/styles.css"
 
 const props = defineProps({
   module: {
     type: String,
-    required: true
+    required: true,
   },
   group: String,
   skelkey: {
     type: String,
-    default: ""
+    default: "",
   },
-  skeltype: String
+  skeltype: String,
 })
 
 const state = reactive({
-  skels:{}
+  skels: {},
 })
 const dbStore = useDBStore()
 const route = useRoute()
@@ -91,52 +85,49 @@ watch(
   }
 )
 
-function optimizeText(txt){
+function optimizeText(txt) {
   if (!txt) return txt
-  txt = txt.replace(/(exc)/g,'&nbsp;&nbsp;$1')
-  txt = txt.replace(/`(.*?)`/g,'<i>$1</i>')
-  txt = txt.replace(/::/,"<hr>")
-  txt = txt.replace(/:(.*?):/g,'<br><span>$1: </span>')
+  txt = txt.replace(/(exc)/g, "&nbsp;&nbsp;$1")
+  txt = txt.replace(/`(.*?)`/g, "<i>$1</i>")
+  txt = txt.replace(/::/, "<hr>")
+  txt = txt.replace(/:(.*?):/g, "<br><span>$1: </span>")
 
   return txt
 }
 
-onBeforeMount(()=>{
-  Request.getStructure(props.module).then(async (resp)=>{
+onBeforeMount(() => {
+  Request.getStructure(props.module).then(async (resp) => {
     let data = await resp.json()
     state.skels = data
   })
 })
-
-
 </script>
 
 <style scoped>
-
-.wrapper{
-  padding:10px;
+.wrapper {
+  padding: 10px;
   display: flex;
   flex-direction: column;
-  gap:10px;
-  overflow:visible;
+  gap: 10px;
+  overflow: visible;
 }
 
-.headline{
+.headline {
   font-weight: bold;
   font-size: 24px;
 }
 
-.subline{
+.subline {
   font-weight: bold;
-  color:var(--sl-color-neutral-800);
-  font-size:24px;
+  color: var(--sl-color-neutral-800);
+  font-size: 24px;
 }
 
-sl-details{
-  margin-top:20px;
+sl-details {
+  margin-top: 20px;
 
-  &::part(summary){
-  font-weight: bold;
+  &::part(summary) {
+    font-weight: bold;
   }
 }
 
@@ -146,25 +137,25 @@ sl-details{
   flex-direction: column;
   height: 0;
   position: relative;
-  overflow:scroll;
+  overflow: scroll;
 }
 :deep(span.doc) > span {
   font-weight: bold;
 }
 
-.model-wrap{
-  margin-bottom:20px;
-  background-color:var(--sl-color-neutral-200);
-  padding:10px;
-  border-radius:10px;
+.model-wrap {
+  margin-bottom: 20px;
+  background-color: var(--sl-color-neutral-200);
+  padding: 10px;
+  border-radius: 10px;
 }
 
-.model-entry{
-  font-size:18px;
-  display:flex;
+.model-entry {
+  font-size: 18px;
+  display: flex;
   justify-content: space-between;
-  border-bottom:1px solid var(--sl-color-neutral-700);
-  font-weight:bold;
-  margin-bottom:10px;
+  border-bottom: 1px solid var(--sl-color-neutral-700);
+  font-weight: bold;
+  margin-bottom: 10px;
 }
 </style>

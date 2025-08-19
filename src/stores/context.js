@@ -6,22 +6,22 @@ export const useContextStore = defineStore("contextStore", () => {
   const state = reactive({
     globalContext: {},
     localContext: {},
-    localPrivateContext:{} // keys that start with _ are private, private contexts are not cloned!
+    localPrivateContext: {}, // keys that start with _ are private, private contexts are not cloned!
   })
 
   function setContext(key, value, handlerId = null) {
     if (handlerId) {
       if (key.startsWith("_")) {
-        if (Object.keys(state.localPrivateContext).includes('' + handlerId)) {
+        if (Object.keys(state.localPrivateContext).includes("" + handlerId)) {
           state.localPrivateContext[handlerId][key] = value
         } else {
-          state.localPrivateContext[handlerId] = {[key]: value}
+          state.localPrivateContext[handlerId] = { [key]: value }
         }
       } else {
-        if (Object.keys(state.localContext).includes('' + handlerId)) {
+        if (Object.keys(state.localContext).includes("" + handlerId)) {
           state.localContext[handlerId][key] = value
         } else {
-          state.localContext[handlerId] = {[key]: value}
+          state.localContext[handlerId] = { [key]: value }
         }
       }
     } else {
@@ -34,24 +34,24 @@ export const useContextStore = defineStore("contextStore", () => {
     state.localContext[newHandlerId] = structuredClone(old)
   }
 
-  function getLocalContext(handlerId, includePrivate=false) {
+  function getLocalContext(handlerId, includePrivate = false) {
     let context = {}
     if (Object.keys(state.localContext).includes(handlerId)) {
       context = toRaw(state.localContext[handlerId])
-      if (includePrivate && Object.keys(state.localPrivateContext).includes(handlerId)){
-        context = {...context, ... toRaw(state.localPrivateContext[handlerId])}
+      if (includePrivate && Object.keys(state.localPrivateContext).includes(handlerId)) {
+        context = { ...context, ...toRaw(state.localPrivateContext[handlerId]) }
       }
     }
     return context
   }
 
-  function getCurrentContext(includePrivate=false) {
+  function getCurrentContext(includePrivate = false) {
     let route = useRoute()
     let handlerId = route?.query?.["_"]
-    return getContext(handlerId,includePrivate)
+    return getContext(handlerId, includePrivate)
   }
 
-  function getContext(handlerId, includePrivate=false) {
+  function getContext(handlerId, includePrivate = false) {
     return { ...unref(state.globalContext), ...getLocalContext(handlerId, includePrivate) }
   }
 
@@ -61,6 +61,6 @@ export const useContextStore = defineStore("contextStore", () => {
     setContext,
     getLocalContext,
     copyLocalContext,
-    getCurrentContext
+    getCurrentContext,
   }
 })

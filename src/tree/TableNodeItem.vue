@@ -1,8 +1,5 @@
 <template>
-  <template
-    v-for="(child, idx) in state.currentEntry['_nodes']"
-    :key="child['key']"
-  >
+  <template v-for="(child, idx) in state.currentEntry['_nodes']" :key="child['key']">
     <tr
       :draggable="child['_dragging'] && treeState.dragging"
       :data-layer="state.layer"
@@ -11,7 +8,7 @@
         dropin: child['_isover'] && child['_drop'] === 'in',
         dropafter: child['_isover'] && child['_drop'] === 'after',
         dropbefore: child['_isover'] && child['_drop'] === 'before',
-        active: isactive(idx)
+        active: isactive(idx),
       }"
       @dragstart="tree.onDragStart($event, idx)"
       @dragenter.prevent="tree.onDragEnter($event, idx)"
@@ -19,24 +16,15 @@
       @dragleave="tree.onDragLeave($event, idx)"
       @drop.stop="tree.onDrop($event, idx)"
     >
-      <td
-        class="expand-cell"
-        @click="clickToExpand(idx)"
-      >
-        <div
-          class="chevron"
-          :style="{ marginLeft: path.concat([idx]).length - 2 + 'em' }"
-        >
+      <td class="expand-cell" @click="clickToExpand(idx)">
+        <div class="chevron" :style="{ marginLeft: path.concat([idx]).length - 2 + 'em' }">
           <sl-icon
             name="caret-right-fill"
             :class="{ disabled: child['_disabled'], expanded: child['_expanded'] }"
           ></sl-icon>
         </div>
 
-        <div
-          v-if="child['_status'] === 'loading'"
-          class="loading"
-        >
+        <div v-if="child['_status'] === 'loading'" class="loading">
           <sl-spinner-viur></sl-spinner-viur>
         </div>
       </td>
@@ -53,22 +41,14 @@
       </td>
 
       <template v-for="name in treeState.selectedBones">
-        <td
-          v-if="!name?.startsWith('_')"
-          @click="selectChild(idx)"
-          @dblclick="openEditor"
-        >
+        <td v-if="!name?.startsWith('_')" @click="selectChild(idx)" @dblclick="openEditor">
           <div class="ellipsis">
             {{ getBoneViewer(child, name) }}
           </div>
         </td>
       </template>
     </tr>
-    <table-node-item
-      v-if="child['_expanded']"
-      :module="module"
-      :path="path.concat([idx])"
-    ></table-node-item>
+    <table-node-item v-if="child['_expanded']" :module="module" :path="path.concat([idx])"></table-node-item>
   </template>
 </template>
 
@@ -79,135 +59,133 @@ import { useDBStore } from "../stores/db"
 import { Request, boneLogic } from "@viur/vue-utils"
 import useTree from "./tree.js"
 
-  const props = defineProps({
-    module: {
-      type: String,
-      required: true
-    },
-    path: {
-      type: Array
+const props = defineProps({
+  module: {
+    type: String,
+    required: true,
+  },
+  path: {
+    type: Array,
+  },
+})
+const emit = defineEmits(["loaded"])
+const treeState = inject("handlerState")
+const closeSelector = inject("closeSelector")
+const dbStore = useDBStore()
+const router = useRouter()
+const state = reactive({
+  currentEntry: {},
+  layer: computed(() => props.path.length),
+  nodes: [],
+})
+const tree = useTree(props.module, treeState, state)
+
+function structureToDict(structure) {
+  if (Array.isArray(structure)) {
+    let struct = {}
+    for (const idx in structure) {
+      struct[structure[idx][0]] = structure[idx][1]
+    }
+    return struct
+  } else {
+    return structure
+  }
+}
+
+function fetchAll(cursor = null) {
+  let params = {
+    skelType: "node",
+    orderby: "sortindex",
+    parententry: state.currentEntry["key"],
+    limit: 99,
+    ...treeState.params,
+  }
+  if (cursor) {
+    params["cursor"] = cursor
+  }
+
+  Request.get(`/vi/${props.module}/list`, {
+    dataObj: params,
+  }).then(async (resp) => {
+    let data = await resp.json()
+    if (!treeState.structure || Object.keys(treeState.structure).length === 0) {
+      let structure = data["structure"]
+      if (!data["structure"]) {
+        const moduleStructure = await Request.getStructure(treeState.module).then((structureResponse) =>
+          structureResponse.json().then((_structure) => _structure)
+        )
+        structure = moduleStructure["viewNodeSkel"]
+      }
+      treeState.structure = structureToDict(structure)
+    }
+    state.nodes = state.nodes.concat(data["skellist"])
+    if (data["cursor"]) {
+      fetchAll(data["cursor"])
+    } else {
+      //finished fetching
+      state.currentEntry["_nodes"] = state.nodes
+      state.currentEntry["_disabled"] = false
+      state.currentEntry["_status"] = "loaded" //loading, loaded
+      state.currentEntry["_dragging"] = false
+      state.currentEntry["_isover"] = false
+      state.currentEntry["_drop"] = null
+      emit("loaded")
     }
   })
-  const emit = defineEmits(["loaded"])
-    const treeState = inject("handlerState")
-    const closeSelector = inject("closeSelector")
-    const dbStore = useDBStore()
-    const router = useRouter()
-    const state = reactive({
-      currentEntry: {},
-      layer: computed(() => props.path.length),
-      nodes:[]
-    })
-    const tree = useTree(props.module, treeState, state)
+}
 
-    function structureToDict(structure) {
-      if (Array.isArray(structure)) {
-        let struct = {}
-        for (const idx in structure) {
-          struct[structure[idx][0]] = structure[idx][1]
-        }
-        return struct
-      } else {
-        return structure
-      }
-    }
+onMounted(() => {
+  state.currentEntry = tree.EntryFromPath(props.path)
+  if (props.path && props.path.length === 1 && props.path[0] === 0) {
+    // prefetch rootnode childs
+    state.currentEntry["_status"] = "loading"
+    fetchAll()
+  }
+})
 
-    function fetchAll(cursor=null){
-      let params = {
-            skelType: "node",
-            orderby: "sortindex",
-            parententry: state.currentEntry["key"],
-            limit: 99,
-            ...treeState.params
-          }
-      if (cursor){
-        params["cursor"] = cursor
-      }
+function selectChild(idx) {
+  treeState.selectedPath = props.path.concat([idx])
+}
 
-      Request.get(`/vi/${props.module}/list`, {
-          dataObj: params
-        }).then(async (resp) => {
-          let data = await resp.json()
-          if (!treeState.structure || Object.keys(treeState.structure).length === 0) {
-            let structure = data["structure"]
-            if (!data["structure"]) {
-              const moduleStructure = await Request.getStructure(treeState.module).then((structureResponse) =>
-                structureResponse.json().then((_structure) => _structure)
-              )
-              structure = moduleStructure["viewNodeSkel"]
-            }
-            treeState.structure = structureToDict(structure)
-          }
-          state.nodes = state.nodes.concat(data["skellist"])
-          if (data["cursor"]){
-            fetchAll(data['cursor'])
-          }else{
-            //finished fetching
-            state.currentEntry["_nodes"] = state.nodes
-            state.currentEntry["_disabled"] = false
-            state.currentEntry["_status"] = "loaded" //loading, loaded
-            state.currentEntry["_dragging"] = false
-            state.currentEntry["_isover"] = false
-            state.currentEntry["_drop"] = null
-            emit("loaded")
-          }
+function isactive(idx) {
+  return treeState.selectedPath.toString() === props.path.concat([idx]).toString()
+}
 
-        })
-    }
+function clickToExpand(idx) {
+  console.log("expand")
+  if (state.currentEntry["_nodes"][idx]["_loading"] === true) return 0 //wait
 
+  if (!Object.keys(state.currentEntry["_nodes"][idx]).includes("_nodes")) {
+    tree.requestChildren(idx).then(() => expandChildren(idx))
+  } else {
+    expandChildren(idx)
+  }
+}
 
-    onMounted(() => {
-      state.currentEntry = tree.EntryFromPath(props.path)
-      if (props.path && props.path.length === 1 && props.path[0] === 0) {
-        // prefetch rootnode childs
-        state.currentEntry["_status"] = "loading"
-        fetchAll()
-      }
-    })
+function expandChildren(idx) {
+  let clickedEntry = state.currentEntry["_nodes"][idx]
+  if (Object.keys(clickedEntry).includes("_expanded")) {
+    clickedEntry["_expanded"] = !clickedEntry["_expanded"]
+  } else {
+    clickedEntry["_expanded"] = true
+  }
+}
 
-    function selectChild(idx) {
-      treeState.selectedPath = props.path.concat([idx])
-    }
+function getBoneViewer(skel, boneName) {
+  const { getBoneValue, bones_state } = boneLogic(skel, treeState.structure)
+  return getBoneValue(boneName, (skel = skel))
+}
 
-    function isactive(idx) {
-      return treeState.selectedPath.toString() === props.path.concat([idx]).toString()
-    }
+function openEditor(e) {
+  if (treeState.selector) {
+    closeSelector()
+    return 0
+  }
 
-    function clickToExpand(idx) {
-      console.log("expand")
-      if (state.currentEntry["_nodes"][idx]["_loading"] === true) return 0 //wait
-
-      if (!Object.keys(state.currentEntry["_nodes"][idx]).includes("_nodes")) {
-        tree.requestChildren(idx).then(() => expandChildren(idx))
-      } else {
-        expandChildren(idx)
-      }
-    }
-
-    function expandChildren(idx) {
-      let clickedEntry = state.currentEntry["_nodes"][idx]
-      if (Object.keys(clickedEntry).includes("_expanded")) {
-        clickedEntry["_expanded"] = !clickedEntry["_expanded"]
-      } else {
-        clickedEntry["_expanded"] = true
-      }
-    }
-
-    function getBoneViewer(skel, boneName) {
-      const { getBoneValue, bones_state } = boneLogic(skel, treeState.structure)
-      return getBoneValue(boneName, (skel = skel))
-    }
-
-    function openEditor(e) {
-      if (treeState.selector) {
-        closeSelector()
-        return 0
-      }
-
-      const url = `/db/${treeState.module}/edit/node/${treeState.currentSelection[0]["key"]}`
-      let route = router.resolve(unref(url))
-      dbStore.addOpened(route, treeState.module, treeState.view)
-    }
+  const url = `/db/${treeState.module}/edit/node/${treeState.currentSelection[0]["key"]}`
+  let route = router.resolve(unref(url))
+  dbStore.addOpened(route, treeState.module, treeState.view)
+}
 </script>
 
 <style scoped>

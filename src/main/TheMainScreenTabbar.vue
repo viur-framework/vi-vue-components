@@ -3,7 +3,11 @@
     size="small"
     variant="flap"
     @sl-tab-show="onTabShown"
-    @contextmenu.prevent="()=>{return 0}"
+    @contextmenu.prevent="
+      () => {
+        return 0
+      }
+    "
   >
     <the-main-screen-tabbar-item
       v-for="(entry, idx) in dbStore.state['handlers.opened']"
@@ -18,7 +22,7 @@
       :name="entry['name']"
       :title="entry['_name']"
     >
-      {{ Utils.unescape(entry["name"])}}
+      {{ Utils.unescape(entry["name"]) }}
     </the-main-screen-tabbar-item>
   </sl-tab-group>
 </template>
@@ -28,13 +32,13 @@ import { reactive, defineComponent } from "vue"
 import { useDBStore } from "../stores/db"
 import TheMainScreenTabbarItem from "./TheMainScreenTabbarItem.vue"
 import Utils from "../utils"
-    const dbStore = useDBStore()
+const dbStore = useDBStore()
 
-    const state = reactive({})
+const state = reactive({})
 
-    function onTabShown(e) {
-      dbStore.state["handlers.active"] = parseInt(e.target.activeTab.dataset.id)
-    }
+function onTabShown(e) {
+  dbStore.state["handlers.active"] = parseInt(e.target.activeTab.dataset.id)
+}
 </script>
 
 <style scoped>

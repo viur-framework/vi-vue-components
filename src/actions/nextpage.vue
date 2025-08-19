@@ -1,11 +1,13 @@
 <template>
   <sl-button-group v-if="!state.disable">
-    <sl-button
-      size="small"
-      disabled
-      class=""
-    >
-      {{ $t("actions.nextpage_stats", {n:handlerState.currentSelection.length, amount: currentlist?.state.skellist.length, selection: handlerState.currentSelection.length}) }}
+    <sl-button size="small" disabled class="">
+      {{
+        $t("actions.nextpage_stats", {
+          n: handlerState.currentSelection.length,
+          amount: currentlist?.state.skellist.length,
+          selection: handlerState.currentSelection.length,
+        })
+      }}
     </sl-button>
     <sl-button
       :loading="state.loading"
@@ -14,10 +16,7 @@
       :title="$t('actions.nextpage', { amount: currentlist?.state.skellist.length })"
       @click="fetchAction"
     >
-      <sl-icon
-        slot="prefix"
-        name="list"
-      ></sl-icon>
+      <sl-icon slot="prefix" name="list"></sl-icon>
       {{ $t("actions.nextpage", { amount: currentlist?.state.skellist.length }) }}
     </sl-button>
     <sl-select
@@ -32,58 +31,58 @@
       <sl-option value="10">10</sl-option>
     </sl-select>
   </sl-button-group>
-  <sl-button
-    v-else
-      size="small"
-      disabled
-      class=""
-    >
-      {{ $t("actions.nextpage_stats", {n:handlerState.currentSelection.length, amount: currentlist?.state.skellist.length, selection: handlerState.currentSelection.length}) }}
-    </sl-button>
+  <sl-button v-else size="small" disabled class="">
+    {{
+      $t("actions.nextpage_stats", {
+        n: handlerState.currentSelection.length,
+        amount: currentlist?.state.skellist.length,
+        selection: handlerState.currentSelection.length,
+      })
+    }}
+  </sl-button>
 </template>
 
 <script setup>
-
 import { reactive, defineComponent, inject, computed } from "vue"
 
-    const state = reactive({
-      disable: computed(() => {
-        if (!currentlist) return true
-        return currentlist.state.state === 2
-      }),
-      loading: false,
-      fetchamount: 0,
-      pageselection: 1
-    })
+const state = reactive({
+  disable: computed(() => {
+    if (!currentlist) return true
+    return currentlist.state.state === 2
+  }),
+  loading: false,
+  fetchamount: 0,
+  pageselection: 1,
+})
 
-    const nextpage = inject("nextpage")
-    const currentlist = inject("currentlist")
-    const handlerState = inject("handlerState")
+const nextpage = inject("nextpage")
+const currentlist = inject("currentlist")
+const handlerState = inject("handlerState")
 
-    function loadnextpage() {
-      state.loading = true
-      try {
-        nextpage().then((resp) => {
-          state.loading = false
-          state.fetchamount = state.fetchamount - 1
-          if (state.fetchamount > 0) {
-            loadnextpage()
-          }
-        })
-      } catch (e) {
-        state.loading = false
+function loadnextpage() {
+  state.loading = true
+  try {
+    nextpage().then((resp) => {
+      state.loading = false
+      state.fetchamount = state.fetchamount - 1
+      if (state.fetchamount > 0) {
+        loadnextpage()
       }
-    }
+    })
+  } catch (e) {
+    state.loading = false
+  }
+}
 
-    function fetchAction() {
-      state.fetchamount = state.pageselection
-      loadnextpage()
-    }
-    function amountChange(e) {
-      state.pageselection = parseInt(e.target.value)
-      state.fetchamount = state.pageselection
-      loadnextpage()
-    }
+function fetchAction() {
+  state.fetchamount = state.pageselection
+  loadnextpage()
+}
+function amountChange(e) {
+  state.pageselection = parseInt(e.target.value)
+  state.fetchamount = state.pageselection
+  loadnextpage()
+}
 </script>
 
 <style scoped>

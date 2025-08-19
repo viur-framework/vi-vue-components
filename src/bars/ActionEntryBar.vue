@@ -6,16 +6,15 @@
 </template>
 
 <script setup>
-
 import { reactive, defineComponent, inject } from "vue"
 import Save from "../actions/save.vue"
 import Debugentry from "../actions/debugentry.vue"
 import Reloadentry from "../actions/reloadentry.vue"
 import { useAppStore } from "../stores/app"
 
-    const appStore = useAppStore()
-    const state = reactive({})
-    const handlerState = inject("handlerState")
+const appStore = useAppStore()
+const state = reactive({})
+const handlerState = inject("handlerState")
 </script>
 
 <style scoped>

@@ -16,15 +16,14 @@
 import { reactive, defineComponent, inject, onBeforeMount } from "vue"
 import { useLocalStore } from "../stores/local"
 
-    const state = reactive({})
-    const localStore = useLocalStore()
+const state = reactive({})
+const localStore = useLocalStore()
 
-    const setLimit = inject("setLimit")
-    function amoutChange(e) {
-      setLimit(e.target.value)
-      localStore.state.listamount = e.target.value
-    }
-
+const setLimit = inject("setLimit")
+function amoutChange(e) {
+  setLimit(e.target.value)
+  localStore.state.listamount = e.target.value
+}
 </script>
 
 <style scoped>

@@ -1,29 +1,26 @@
 import { useDBStore } from "../../stores/db"
 
-
 import TopBarWidget from "./TopBarWidget.vue"
 import ScriptorEditor from "./ScriptorEditor.vue"
-
 
 export const appRoutes = [
   {
     path: "/scriptor/view",
     name: "ScriptorView",
-    component: ScriptorEditor
-  }
+    component: ScriptorEditor,
+  },
 ]
-
 
 export default function application() {
   const dbStore = useDBStore()
-  function topbar(){
+  function topbar() {
     dbStore.state["topbar.actions"].push(TopBarWidget)
   }
 
-  function register(){
+  function register() {
     topbar()
   }
   return {
-    register
+    register,
   }
 }

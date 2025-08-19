@@ -13,35 +13,15 @@
       class="delete-btn"
       @click="removeMultipleEntries(index, lang)"
     >
-      <sl-icon
-        slot="prefix"
-        name="x-lg"
-      ></sl-icon>
+      <sl-icon slot="prefix" name="x-lg"></sl-icon>
     </sl-button>
 
-    <div
-      v-if="state.droparea"
-      class="droparea"
-    >
-      Dateien hier hinziehen
-    </div>
+    <div v-if="state.droparea" class="droparea">Dateien hier hinziehen</div>
 
-    <input
-      ref="uploadinput"
-      hidden
-      type="file"
-      :multiple="boneState.multiple"
-      @change="handleUpload"
-    />
+    <input ref="uploadinput" hidden type="file" :multiple="boneState.multiple" @change="handleUpload" />
     <div class="upload-btn">
-      <sl-button
-        v-if="!boneState.readonly"
-        @click="openSelector"
-      >
-        <sl-icon
-          slot="prefix"
-          name="list-ul"
-        ></sl-icon>
+      <sl-button v-if="!boneState.readonly" @click="openSelector">
+        <sl-icon slot="prefix" name="list-ul"></sl-icon>
       </sl-button>
 
       <sl-button
@@ -49,18 +29,12 @@
         variant="success"
         outline
         :title="$t('bone.upload')"
-        @click="uploadinput.click()"
         :loading="state.loading"
+        @click="uploadinput.click()"
       >
-        <sl-icon
-          slot="prefix"
-          name="upload"
-        ></sl-icon>
+        <sl-icon slot="prefix" name="upload"></sl-icon>
         {{ $t("bone.upload") }}
-        <sl-spinner
-          v-if="state.loading"
-          slot="suffix"
-        ></sl-spinner>
+        <sl-spinner v-if="state.loading" slot="suffix"></sl-spinner>
       </sl-button>
     </div>
   </div>
@@ -73,8 +47,7 @@
     :module="boneState?.bonestructure['module']"
     :rowselect="2"
     @close="relationCloseAction"
-  >
-  </relational-selector>
+  ></relational-selector>
 </template>
 
 <script setup>
@@ -83,67 +56,63 @@ import { Request } from "@viur/vue-utils"
 import relationalSelector from "../components/relationalSelector.vue"
 import { useDBStore } from "../../stores/db"
 
-  const props = defineProps({
-    name: String,
-    value: Object,
-    index: Number,
-    lang: String,
-    readonly: Boolean,
-    params: Object
-  })
+const props = defineProps({
+  name: String,
+  value: Object,
+  index: Number,
+  lang: String,
+  readonly: Boolean,
+  params: Object,
+})
 
-  const emit = defineEmits(["change"])
+const emit = defineEmits(["change"])
 
-    const boneState = inject("boneState")
-    const handlerState = inject("handlerState")
-    const addMultipleEntry = inject("addMultipleEntry")
-    const removeMultipleEntries = inject("removeMultipleEntries")
-    const dbStore = useDBStore()
-    const formatString = inject("formatString")
-    const uploadinput = ref()
-    const state = reactive({
-      skels: {},
-      uploadinput: null,
-      loading: false,
-      droparea: false,
-      moduleInfo: computed(() => dbStore.getConf(boneState?.bonestructure["module"])),
-      hasUsing: computed(() => boneState?.bonestructure["using"]),
-      openedSelection: false
-    })
+const boneState = inject("boneState")
+const handlerState = inject("handlerState")
+const addMultipleEntry = inject("addMultipleEntry")
+const removeMultipleEntries = inject("removeMultipleEntries")
+const dbStore = useDBStore()
+const formatString = inject("formatString")
+const uploadinput = ref()
+const state = reactive({
+  skels: {},
+  uploadinput: null,
+  loading: false,
+  droparea: false,
+  moduleInfo: computed(() => dbStore.getConf(boneState?.bonestructure["module"])),
+  hasUsing: computed(() => boneState?.bonestructure["using"]),
+  openedSelection: false,
+})
 
-    function uploadFile(file) {
-      const filedata = {
-        fileName: file.name,
-        mimeType: file.type || "application/octet-stream",
-        size: file.size.toString()
-      }
-      return new Promise((resolve, reject) => {
-        Request.securePost("/vi/file/getUploadURL", { dataObj: filedata })
-          .then(async (resp) => {
-            let uploadURLdata = await resp.json()
-            fetch(uploadURLdata["values"]["uploadUrl"], {
-              body: file,
-              method: "POST",
-              mode: "no-cors"
-            })
-              .then(async (uploadresp) => {
-                const addData = {
-                  key: uploadURLdata["values"]["uploadKey"],
-                  node: undefined,
-                  skelType: "leaf"
+function uploadFile(file) {
+  const filedata = {
+    fileName: file.name,
+    mimeType: file.type || "application/octet-stream",
+    size: file.size.toString(),
+  }
+  return new Promise((resolve, reject) => {
+    Request.securePost("/vi/file/getUploadURL", { dataObj: filedata })
+      .then(async (resp) => {
+        let uploadURLdata = await resp.json()
+        fetch(uploadURLdata["values"]["uploadUrl"], {
+          body: file,
+          method: "POST",
+          mode: "no-cors",
+        })
+          .then(async (uploadresp) => {
+            const addData = {
+              key: uploadURLdata["values"]["uploadKey"],
+              node: undefined,
+              skelType: "leaf",
+            }
+            Request.securePost("/vi/file/add", { dataObj: addData })
+              .then(async (addresp) => {
+                let addData = await addresp.json()
+                if (addData["action"] === "addSuccess") {
+                  resolve(addData["values"])
+                } else {
+                  reject(addData)
                 }
-                Request.securePost("/vi/file/add", { dataObj: addData })
-                  .then(async (addresp) => {
-                    let addData = await addresp.json()
-                    if (addData["action"] === "addSuccess") {
-                      resolve(addData["values"])
-                    } else {
-                      reject(addData)
-                    }
-                  })
-                  .catch((error) => {
-                    reject(error)
-                  })
               })
               .catch((error) => {
                 reject(error)
@@ -153,59 +122,63 @@ import { useDBStore } from "../../stores/db"
             reject(error)
           })
       })
+      .catch((error) => {
+        reject(error)
+      })
+  })
+}
+
+async function handleUpload(event) {
+  state.loading = true
+  for (let file of event.target.files) {
+    let fileresult = await uploadFile(file)
+    // uploadinput.value.value = null
+    let relDefault = null
+    if (state.hasUsing) {
+      relDefault = undefined
     }
 
-    async function handleUpload(event) {
-      state.loading = true
-      for (let file of event.target.files) {
-        let fileresult = await uploadFile(file)
-        // uploadinput.value.value = null
-        let relDefault = null
-        if (state.hasUsing) {
-          relDefault = undefined
-        }
+    addMultipleEntry(props.lang, { dest: fileresult, rel: relDefault })
+  }
+  state.loading = false
+}
 
-        addMultipleEntry(props.lang, { dest: fileresult, rel: relDefault })
+async function handleDrop(event) {
+  state.loading = true
+  state.droparea = false
+  for (let file of event.dataTransfer.files) {
+    let fileresult = await uploadFile(file)
+    let relDefault = null
+    if (state.hasUsing) {
+      relDefault = undefined
+    }
+    addMultipleEntry(props.lang, { dest: fileresult, rel: relDefault })
+  }
+  state.loading = false
+}
+
+function openSelector() {
+  state.openedSelection = true
+}
+
+function relationCloseAction(selection) {
+  state.openedSelection = false
+  if (selection) {
+    for (let entry of selection) {
+      let relDefault = null
+      if (state.hasUsing) {
+        relDefault = undefined
       }
-      state.loading = false
+      addMultipleEntry(props.lang, { dest: entry, rel: relDefault })
     }
+  }
+}
 
-    async function handleDrop(event) {
-      state.loading = true
-      state.droparea = false
-      for (let file of event.dataTransfer.files) {
-        let fileresult = await uploadFile(file)
-        let relDefault = null
-        if (state.hasUsing) {
-          relDefault = undefined
-        }
-        addMultipleEntry(props.lang, { dest: fileresult, rel: relDefault })
-      }
-      state.loading = false
-    }
-
-    function openSelector() {
-      state.openedSelection = true
-    }
-
-    function relationCloseAction(selection) {
-      state.openedSelection = false
-      if (selection) {
-        for (let entry of selection) {
-          let relDefault = null
-          if (state.hasUsing) {
-            relDefault = undefined
-          }
-          addMultipleEntry(props.lang, { dest: entry, rel: relDefault })
-        }
-      }
-    }
-
-    onMounted(() => {
-      if (!props.value || props.value.length === 0) {
-        emit("change", props.name, [], props.lang) //init
-      }
-    })
+onMounted(() => {
+  if (!props.value || props.value.length === 0) {
+    emit("change", props.name, [], props.lang) //init
+  }
+})
 </script>
 
 <style scoped>

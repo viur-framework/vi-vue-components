@@ -10,7 +10,7 @@
       :class="{
         dropin: child['_isover'] && child['_drop'] === 'in',
         dropafter: child['_isover'] && child['_drop'] === 'after',
-        dropbefore: child['_isover'] && child['_drop'] === 'before'
+        dropbefore: child['_isover'] && child['_drop'] === 'before',
       }"
       @dragstart="tree.onDragStart($event, idx)"
       @dragenter.prevent="tree.onDragEnter($event, idx)"
@@ -28,42 +28,26 @@
         <sl-icon name="grip-vertical"></sl-icon>
       </div>
 
-      <div
-        class="chevron"
-        @click="clickToExpand(idx)"
-      >
+      <div class="chevron" @click="clickToExpand(idx)">
         <sl-icon
           name="caret-right-fill"
           :class="{ disabled: child['_disabled'], expanded: child['_expanded'] }"
         ></sl-icon>
       </div>
 
-      <div
-        v-if="child['_status'] === 'loading'"
-        class="loading"
-      >
+      <div v-if="child['_status'] === 'loading'" class="loading">
         <sl-spinner-viur></sl-spinner-viur>
       </div>
 
-      <div
-        class="item"
-        :class="{ active: isactive(idx) }"
-      >
-        <sl-icon
-          name="folder"
-          class="item-icon"
-        ></sl-icon>
+      <div class="item" :class="{ active: isactive(idx) }">
+        <sl-icon name="folder" class="item-icon"></sl-icon>
 
         <div class="title">
           {{ child["name"] }}
         </div>
       </div>
     </div>
-    <tree-folder-item
-      v-if="child['_expanded']"
-      :module="module"
-      :path="path.concat([idx])"
-    ></tree-folder-item>
+    <tree-folder-item v-if="child['_expanded']" :module="module" :path="path.concat([idx])"></tree-folder-item>
   </li>
 </template>
 
@@ -72,87 +56,86 @@ import { reactive, defineComponent, inject, onBeforeMount, watch, computed, onMo
 import { Request } from "@viur/vue-utils"
 import useTree from "./tree.js"
 
+const props = defineProps({
+  module: {
+    type: String,
+    required: true,
+  },
+  path: {
+    type: Array,
+  },
+})
 
-  const props = defineProps( {
-    module: {
-      type: String,
-      required: true
-    },
-    path: {
-      type: Array
-    }
-  })
+const treeState = inject("handlerState")
+const state = reactive({
+  currentEntry: {},
+  currentRootNode: null,
+})
+const tree = useTree(props.module, treeState, state)
 
-    const treeState = inject("handlerState")
-    const state = reactive({
-      currentEntry: {},
-      currentRootNode: null
-    })
-    const tree = useTree(props.module, treeState, state)
-
-    onMounted(() => {
+onMounted(() => {
+  buildCurrentEntry()
+})
+watch(
+  () => props.path,
+  (newVal, oldVal) => {
+    if (!newVal.every((x) => oldVal.includes(x))) {
       buildCurrentEntry()
+    } else if (props.path.length === 1 && state.currentRootNode != treeState.tree?.[0]?.["key"]) {
+      buildCurrentEntry()
+    }
+  }
+)
+function selectChild(idx) {
+  treeState.selectedPath = props.path.concat([idx])
+}
+
+function isactive(idx) {
+  return treeState.selectedPath.toString() === props.path.concat([idx]).toString()
+}
+
+function clickToExpand(idx) {
+  if (state.currentEntry["_nodes"][idx]["_loading"] === true) return 0 //wait
+
+  if (!Object.keys(state.currentEntry["_nodes"][idx]).includes("_nodes")) {
+    tree.requestChildren(idx).then(() => expandChildren(idx))
+  } else {
+    expandChildren(idx)
+  }
+}
+
+function expandChildren(idx) {
+  let clickedEntry = state.currentEntry["_nodes"][idx]
+  if (Object.keys(clickedEntry).includes("_expanded")) {
+    clickedEntry["_expanded"] = !clickedEntry["_expanded"]
+  } else {
+    clickedEntry["_expanded"] = true
+  }
+}
+function buildCurrentEntry() {
+  state.currentEntry = tree.EntryFromPath(props.path)
+  if (props.path && props.path.length === 1 && props.path[0] === 0) {
+    // prefetch rootnode childs
+    state.currentRootNode = state.currentEntry["key"]
+    state.currentEntry["_status"] = "loading"
+    Request.get(`/vi/${props.module}/list`, {
+      dataObj: {
+        skelType: "node",
+        orderby: "sortindex",
+        parententry: state.currentEntry["key"],
+        ...treeState.params,
+      },
+    }).then(async (resp) => {
+      let data = await resp.json()
+      state.currentEntry["_nodes"] = data["skellist"]
+      state.currentEntry["_disabled"] = false
+      state.currentEntry["_status"] = "loaded" //loading, loaded
+      state.currentEntry["_dragging"] = false
+      state.currentEntry["_isover"] = false
+      state.currentEntry["_drop"] = null
     })
-    watch(
-      () => props.path,
-      (newVal, oldVal) => {
-        if (!newVal.every((x) => oldVal.includes(x))) {
-          buildCurrentEntry()
-        } else if (props.path.length === 1 && state.currentRootNode != treeState.tree?.[0]?.["key"]) {
-          buildCurrentEntry()
-        }
-      }
-    )
-    function selectChild(idx) {
-      treeState.selectedPath = props.path.concat([idx])
-    }
-
-    function isactive(idx) {
-      return treeState.selectedPath.toString() === props.path.concat([idx]).toString()
-    }
-
-    function clickToExpand(idx) {
-      if (state.currentEntry["_nodes"][idx]["_loading"] === true) return 0 //wait
-
-      if (!Object.keys(state.currentEntry["_nodes"][idx]).includes("_nodes")) {
-        tree.requestChildren(idx).then(() => expandChildren(idx))
-      } else {
-        expandChildren(idx)
-      }
-    }
-
-    function expandChildren(idx) {
-      let clickedEntry = state.currentEntry["_nodes"][idx]
-      if (Object.keys(clickedEntry).includes("_expanded")) {
-        clickedEntry["_expanded"] = !clickedEntry["_expanded"]
-      } else {
-        clickedEntry["_expanded"] = true
-      }
-    }
-    function buildCurrentEntry() {
-      state.currentEntry = tree.EntryFromPath(props.path)
-      if (props.path && props.path.length === 1 && props.path[0] === 0) {
-        // prefetch rootnode childs
-        state.currentRootNode = state.currentEntry["key"]
-        state.currentEntry["_status"] = "loading"
-        Request.get(`/vi/${props.module}/list`, {
-          dataObj: {
-            skelType: "node",
-            orderby: "sortindex",
-            parententry: state.currentEntry["key"],
-            ...treeState.params
-          }
-        }).then(async (resp) => {
-          let data = await resp.json()
-          state.currentEntry["_nodes"] = data["skellist"]
-          state.currentEntry["_disabled"] = false
-          state.currentEntry["_status"] = "loaded" //loading, loaded
-          state.currentEntry["_dragging"] = false
-          state.currentEntry["_isover"] = false
-          state.currentEntry["_drop"] = null
-        })
-      }
-    }
+  }
+}
 </script>
 
 <style scoped>

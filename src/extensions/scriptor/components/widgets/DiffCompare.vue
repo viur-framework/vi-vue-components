@@ -1,13 +1,7 @@
 <template>
   <sl-card class="interaction">
-    <div
-      v-if="imageURL"
-      class="interaction-img"
-    >
-      <img
-        :src="imageURL"
-        class=""
-      />
+    <div v-if="imageURL" class="interaction-img">
+      <img :src="imageURL" class="" />
     </div>
 
     <div slot="header">
@@ -16,10 +10,7 @@
     </div>
 
     <div class="extended-inter">
-      <div
-        v-for="(value, index) in entry.data.changes"
-        :key="index"
-      >
+      <div v-for="(value, index) in entry.data.changes" :key="index">
         <div class="container">
           <div class="child-start">{{ value[0] }}</div>
           <div class="child-end">
@@ -46,8 +37,8 @@ const scriptorStore = useScriptorStore()
 
 const props = defineProps({
   entry: {
-    type: Object
-  }
+    type: Object,
+  },
 })
 </script>
 

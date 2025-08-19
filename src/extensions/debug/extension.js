@@ -1,6 +1,5 @@
 const routes = []
 
-
 /*
 
  "list":{
@@ -11,17 +10,14 @@ const routes = []
 
 */
 
-export default function extensionInfo(){
-
-    function init(){
-       // console.log("Init Debug")
-    }
-    return {
-        name:"debug",
-        routes:routes,
-        init:init,
-        subhandlers:{
-
-        }
-    }
+export default function extensionInfo() {
+  function init() {
+    // console.log("Init Debug")
+  }
+  return {
+    name: "debug",
+    routes: routes,
+    init: init,
+    subhandlers: {},
+  }
 }

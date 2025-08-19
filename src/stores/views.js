@@ -6,7 +6,7 @@ export const useViewStore = defineStore("viewStore", () => {
   const route = useRoute()
   const state = reactive({
     cacheList: {},
-    cacheListNames: computed(() => Object.keys(state.cacheList))
+    cacheListNames: computed(() => Object.keys(state.cacheList)),
   })
 
   function getView(component) {
@@ -17,7 +17,7 @@ export const useViewStore = defineStore("viewStore", () => {
         name: route.fullPath,
         render() {
           return component
-        }
+        },
       }
       state.cacheList[route.fullPath] = wrapped
       return wrapped
@@ -35,6 +35,6 @@ export const useViewStore = defineStore("viewStore", () => {
   return {
     state,
     wrap,
-    destroy
+    destroy,
   }
 })

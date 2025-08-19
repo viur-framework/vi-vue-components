@@ -8,5 +8,5 @@ export default {
   fluidpagehandler,
   treehandler,
   hierarchyhandler,
-  listhandler
+  listhandler,
 }

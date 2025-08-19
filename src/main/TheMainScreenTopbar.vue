@@ -1,14 +1,8 @@
 <template>
   <header>
-    <router-link
-      to="/"
-      class="head"
-    >
+    <router-link to="/" class="head">
       <div class="logo">
-        <sl-icon
-          v-once
-          :src="appStore.state['admin.logo']"
-        ></sl-icon>
+        <sl-icon v-once :src="appStore.state['admin.logo']"></sl-icon>
       </div>
       <h1 class="main-headline">
         {{ appStore.state["admin.name"] }}
@@ -17,11 +11,7 @@
     </router-link>
 
     <div class="main-group">
-      <component
-        :is="action"
-        v-for="action in dbStore.state['topbar.actions']"
-      >
-      </component>
+      <component :is="action" v-for="action in dbStore.state['topbar.actions']"></component>
     </div>
   </header>
 </template>
@@ -29,13 +19,13 @@
 <script setup>
 import { useAppStore } from "../stores/app"
 import { useDBStore } from "../stores/db"
-import fun from './components/fun.vue'
+import fun from "./components/fun.vue"
 import { defineComponent, reactive, computed } from "vue"
 import router from "../routes"
 
-    const appStore = useAppStore()
-    const dbStore = useDBStore()
-    const state = reactive({})
+const appStore = useAppStore()
+const dbStore = useDBStore()
+const state = reactive({})
 </script>
 
 <style scoped>

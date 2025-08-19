@@ -8,7 +8,6 @@ import { useRoute } from "vue-router"
 
 const route = useRoute()
 const state = reactive({})
-
 </script>
 
 <style scoped></style>
