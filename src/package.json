@@ -1,12 +1,17 @@
 {
   "name": "@viur/vue-components",
   "version": "2.3.0",
+  "type": "module",
   "description": "a collection of complex components to build uis",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "node ../scripts/lint.mjs",
+    "check": "node ../scripts/check.mjs"
   },
   "author": "Andreas H. Kelch",
   "license": "MIT",
+  "engines": {
+    "node": ">=22.12"
+  },
   "dependencies": {
     "@codemirror/lang-python": "^6.1.6",
     "@viur/vue-utils": "^3.1.7",
@@ -20,14 +25,11 @@
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
-    "@rushstack/eslint-patch": "^1.10.5",
-    "@vue/eslint-config-prettier": "^10.1.0",
-    "eslint": "^9.17.0",
+    "eslint": "^9.4.0",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.2.1",
-    "eslint-plugin-vue": "^9.32.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "eslint-plugin-vue": "^9.26.0",
     "postcss-custom-media": "^11.0.5",
-    "postcss-nesting": "^13.0.1",
-    "prettier": "^3.4.2"
+    "postcss-nesting": "^13.0.1"
   }
 }
