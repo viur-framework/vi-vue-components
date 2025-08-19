@@ -16,19 +16,19 @@ jobs:
         node-version: [22.x]
 
     steps:
-    - uses: actions/checkout@v4
-      with:
-        submodules: true
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        cache-dependency-path: src/package-lock.json
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci --prefix=src
-    #- run: npm run build
-    - uses: JS-DevTools/npm-publish@v3
-      with:
-        access: "public"
-        token: ${{ secrets.NPM_TOKEN }}
-        package: ./src/package.json
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          cache-dependency-path: src/package-lock.json
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+      - run: npm ci --prefix=src
+      #- run: npm run build
+      - uses: JS-DevTools/npm-publish@v3
+        with:
+          access: "public"
+          token: ${{ secrets.NPM_TOKEN }}
+          package: ./src/package.json

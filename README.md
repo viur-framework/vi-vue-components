@@ -12,10 +12,11 @@
 </div>
 
 ## What does it do?
+
 ViUR Vue Components is a library to build Complex applications with ViUR
 
-
 ## Installation
+
 ```bash
 $ npm i @viur/vue-components
 ```
@@ -24,15 +25,14 @@ $ npm i @viur/vue-components
 
 ```js
 
-
 ```
 
 ## Dependencies
 
 ViUR Vue Components depends on
 
-* [Vue](https://vuejs.org/)
-* [Pinia](https://pinia.vuejs.org/)
+- [Vue](https://vuejs.org/)
+- [Pinia](https://pinia.vuejs.org/)
 
 ## License
 
