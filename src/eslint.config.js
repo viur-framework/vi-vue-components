@@ -40,7 +40,7 @@ export default [
       "vue/attributes-order": "warn",
       "vue/multiline-html-element-content-newline": "warn",
       "vue/html-self-closing": "warn",
-      "vue/no-side-effects-in-computed-properties": "off",
+      "vue/no-side-effects-in-computed-properties": "warn",
       "vue/max-attributes-per-line": [
         "warn",
         {
