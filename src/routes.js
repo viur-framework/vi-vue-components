@@ -45,7 +45,15 @@ const default_routes = [
     name: "edit",
     meta: { action: "edit" },
     props: true,
-    component: () => import("./views/edit.vue"),
+    children: [
+      {
+        path: "",
+        name: "editroot",
+        meta: { action: "edit" },
+        props: true,
+        component: () => import("./views/edit.vue"),
+      },
+    ],
   },
   {
     path: "/db/:module/add/:group?",
@@ -64,6 +72,7 @@ const default_routes = [
   {
     path: "/db/:module/edit/:skeltype/:skelkey",
     props: true,
+    name: "edit2",
     meta: { action: "edit" },
     children: [
       {

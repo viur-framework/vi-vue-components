@@ -60,11 +60,11 @@ const router = useRouter()
 const state = reactive({
   validHandlers: computed(() => {
     let validHandlers = []
-    let match = true
 
     for (const [extname, ext] of Object.entries(extensionsStore.state.extensions)) {
       if (ext?.["subhandlers"]) {
         for (const [hname, handler] of Object.entries(ext["subhandlers"])) {
+          let match = true
           if (handler?.["routeMatches"]) {
             for (const [k, v] of Object.entries(handler?.["routeMatches"])) {
               if (route.params[k] !== v && route.meta[k] !== v) {
