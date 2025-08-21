@@ -38,6 +38,7 @@ onMounted(() => {
 const props = defineProps({
   entry: { type: Object },
   inMultiple: { type: Boolean, default: false },
+  dataKey:{type:String},
 })
 
 async function buttonCallback(event, option) {
@@ -60,5 +61,5 @@ const state = reactive({
     }
   }),
 })
-defineExpose({ state })
+defineExpose({ state,props })
 </script>
