@@ -17,6 +17,7 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  dataKey:{type:String},
 })
 
 const state = reactive({
