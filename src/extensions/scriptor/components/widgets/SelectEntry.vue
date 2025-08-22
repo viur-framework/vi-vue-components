@@ -84,7 +84,7 @@ const props = defineProps({
     type: Object,
   },
   inMultiple: { type: Boolean, default: false },
-  dataKey:{type:String},
+  dataKey: { type: String },
 })
 
 onMounted(() => {
@@ -139,7 +139,7 @@ async function sendMultipleOptions() {
   }
 }
 
-defineExpose({ state ,props})
+defineExpose({ state, props })
 </script>
 <style scoped>
 .wrapper-multi-select {

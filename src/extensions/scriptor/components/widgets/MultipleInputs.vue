@@ -11,7 +11,7 @@
       </div>
     </div>
     <div v-else>
-      <div v-for="(_entry,key) in entry.data.components">
+      <div v-for="(_entry, key) in entry.data.components">
         <component
           :is="getWidget(_entry['type'])"
           ref="elements"
@@ -22,7 +22,6 @@
       </div>
     </div>
 
-
     <sl-button :disabled="state.buttonDisabled || !state.sendable" @click="buttonCallback">
       {{ entry.data.buttonText || "Send" }}
     </sl-button>
@@ -30,8 +29,8 @@
 </template>
 
 <script setup>
-import {computed, reactive, ref} from "vue"
-import {useScriptorStore} from "../../store/scriptor"
+import { computed, reactive, ref } from "vue"
+import { useScriptorStore } from "../../store/scriptor"
 import widgets from "./index"
 
 const elements = ref([])
@@ -58,7 +57,6 @@ const state = reactive({
 })
 
 async function buttonCallback() {
-
   if (Array.isArray(props.entry.data.components)) {
     const result = []
     for (const element of elements.value) {
