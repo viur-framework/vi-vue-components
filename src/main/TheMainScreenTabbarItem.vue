@@ -100,7 +100,6 @@ function onIconError() {
 }
 
 function onTabClose() {
-  // @ts-ignore
   dbStore.removeOpened(props.to)
 }
 //close tab with middel mouse click.

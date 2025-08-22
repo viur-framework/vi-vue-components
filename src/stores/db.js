@@ -561,7 +561,7 @@ export const useDBStore = defineStore("db", () => {
         state["handlers.active"] = idx - 1
       })
     } else if (idx < state["handlers.active"]) {
-      router.push(state["handlers.opened"][state["handlers.active"] - 1]["to"]).then(() => {
+      router.push(state["handlers.opened"][state["handlers.active"]]["to"]).then(() => {
         state["handlers.opened"].splice(idx, 1)
         viewStore.destroy(url)
         state["handlers.active"] = state["handlers.active"] - 1 //update to new idx
