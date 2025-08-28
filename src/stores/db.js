@@ -454,7 +454,7 @@ export const useDBStore = defineStore("db", () => {
     }
 
     if (!Object.keys(route.query).includes("_")) {
-      route.query["_"] = new Date().getTime()
+      route.query["_"] = new Date().getTime() + Math.floor(Math.random() * 1000)
     }
     if (contextInheritance) {
       contextStore.copyLocalContext(currentRoute.query["_"], route.query["_"])
@@ -552,6 +552,7 @@ export const useDBStore = defineStore("db", () => {
       idx = state["handlers.opened"].findIndex((e) => e["id"] === parseInt(route.query?.["_"])) //use id fallback
       if (idx === -1) return
     }
+
     if (idx === 0) {
       return 0
     } else if (idx === state["handlers.active"]) {
