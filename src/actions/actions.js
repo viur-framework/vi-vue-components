@@ -26,6 +26,7 @@ import move_action from "./move.vue"
 import fluidpagepreview_action from "./fluidpagepreview.vue"
 import formutils_action from "./formutils.vue"
 import userfilter_action from "./userfilter.vue"
+import deleteentry_action from "./deleteentry.vue"
 
 export default {
   add_action,
@@ -56,4 +57,5 @@ export default {
   fluidpagepreview_action,
   formutils_action,
   userfilter_action,
+  deleteentry_action,
 }

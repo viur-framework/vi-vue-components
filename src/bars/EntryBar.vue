@@ -1,6 +1,7 @@
 <template>
   <div class="bar" style="z-index: 50">
     <formutils></formutils>
+    <deleteentry></deleteentry>
     <reloadentry></reloadentry>
 
     <template v-if="appStore.state.debug">
@@ -22,6 +23,7 @@ import Save from "../actions/save.vue"
 import Debugentry from "../actions/debugentry.vue"
 import Reloadentry from "../actions/reloadentry.vue"
 import Formutils from "../actions/formutils.vue"
+import Deleteentry from "../actions/deleteentry.vue"
 import { useAppStore } from "../stores/app"
 
 const appStore = useAppStore()

@@ -76,14 +76,6 @@ export default {
     local: "Suche wird in der Liste ausgeführt",
     database: "Suche wird online ausgeführt",
   },
-  login: {
-    email: "E-Mail",
-    password: "Passwort",
-    login: "Einloggen",
-    logout: "Ausloggen",
-    with_google: "Mit Google einloggen",
-    or: "oder",
-  },
   noaccess: {
     title: "Nicht genügend Berechtigungen",
     descr: "Dieser Nutzer hat nicht genügend Berechtigungen.",
