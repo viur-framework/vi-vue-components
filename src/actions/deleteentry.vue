@@ -1,8 +1,8 @@
 <template>
   <sl-button
+    v-if="state.canDelete"
     variant="danger"
     size="small"
-    :disabled="!state.canDelete"
     :title="$t('actions.delete.text')"
     style="margin-left: 5px"
     outline
