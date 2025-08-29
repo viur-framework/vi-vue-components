@@ -18,7 +18,7 @@
       :label="$t('actions.delete.text')"
       @sl-after-hide="state.opened = false"
     >
-      {{ $t("actions.delete.msg", { n: state.count }) }}
+      {{ $t("actions.delete.msg", { n: 1 }) }}
       <!--TODO Translate-->
       <sl-button slot="footer" variant="primary" :title="$t('actions.delete.text')" @click="deleteEntries">
         {{ $t("actions.delete.text") }}
