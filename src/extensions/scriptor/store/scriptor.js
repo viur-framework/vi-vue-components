@@ -134,7 +134,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
       selectedEntries = { __selected_entries: selectedEntries }
     }
     const params = Object.assign(selectedEntries, scriptParams)
-
+    params["__is_dev__"] = import.meta.env.DEV
     if (state.workerObject) {
       return new Promise((resolve) => {
         state.runningActions.set("setParams", resolve)
