@@ -11,7 +11,7 @@
           :disabled="state.isDisabled"
           @click="selectSingleOption(option)"
         >
-          {{ option.key }}
+          {{ option.value }}
         </sl-button>
       </div>
 
@@ -23,7 +23,7 @@
           :checked="option.selected"
           @sl-change="toggleSelection(option)"
         >
-          {{ option.key }}
+          {{ option.value }}
         </sl-checkbox>
       </div>
     </div>
@@ -48,7 +48,7 @@
         :disabled="state.isDisabled"
         @click="selectSingleOption(option)"
       >
-        {{ option.key }}
+        {{ option.value }}
       </sl-button>
     </div>
 
@@ -60,7 +60,7 @@
         :checked="option.selected"
         @sl-change="toggleSelection(option)"
       >
-        {{ option.key }}
+        {{ option.value }}
       </sl-checkbox>
     </div>
 
@@ -88,15 +88,11 @@ const props = defineProps({
 })
 
 onMounted(() => {
-  let opts = []
+  const opts = []
   for (const [key, value] of Object.entries(props.entry.data.choices)) {
-    let nopt = { key: key, selected: false }
-    opts.push(nopt)
+    opts.push({key: key, value: value, selected: state.selectedOptions.includes(key)})
   }
   state.options = opts
-  for (const option of state.options) {
-    option.selected = state.selectedOptions.includes(option["key"])
-  }
 })
 
 const state = reactive({

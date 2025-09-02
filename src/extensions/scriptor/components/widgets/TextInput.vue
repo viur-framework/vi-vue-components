@@ -7,8 +7,14 @@
       v-model="state.value"
       :disabled="state.buttonDisabled"
       :type="state.inputType"
+      :placeholder="props.entry.data.placeholder"
     ></sl-input>
-    <sl-textarea v-if="state.multiline" v-model="state.value" :disabled="state.buttonDisabled"></sl-textarea>
+    <sl-textarea
+      v-if="state.multiline"
+      v-model="state.value"
+      :disabled="state.buttonDisabled"
+      :placeholder="props.entry.data.placeholder"
+    ></sl-textarea>
     <br />
     <sl-button :disabled="state.buttonDisabled || !state.sendable" @click="buttonCallback">send</sl-button>
   </sl-alert>
@@ -20,8 +26,14 @@
       v-model="state.value"
       :disabled="state.buttonDisabled"
       :type="state.inputType"
+      :placeholder="props.entry.data.placeholder"
     ></sl-input>
-    <sl-textarea v-if="state.multiline" v-model="state.value" :disabled="state.buttonDisabled"></sl-textarea>
+    <sl-textarea
+      v-if="state.multiline"
+      v-model="state.value"
+      :disabled="state.buttonDisabled"
+      :placeholder="props.entry.data.placeholder"
+    ></sl-textarea>
   </div>
 </template>
 
@@ -33,6 +45,7 @@ const scriptorStore = useScriptorStore()
 
 onMounted(() => {
   state.value = props.entry.data.default_value ?? ""
+  console.log("mount text",props.entry)
 })
 
 const props = defineProps({
