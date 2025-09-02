@@ -27,7 +27,7 @@
 </template>
 
 <script setup>
-import { reactive, defineComponent, computed, inject } from "vue"
+import { reactive, defineComponent, computed, inject, watch, onMounted } from "vue"
 import { useDBStore } from "../stores/db"
 import { useRoute } from "vue-router"
 
@@ -65,130 +65,141 @@ const state = reactive({
       name: "Optionen",
     },
   },
-  actions: computed(() => {
-    let listActions = {
-      ":options": [["selectfields", "overlay"]],
-      default: [["selectfields"], ["search", "preview", "delete", "clone", "edit", "add"]], //":options"
-    }
+  actions: {},
+})
 
-    const hierarchyActions = {
-      ":options": [["selectfields", "overlay"]],
-      default: [
-        ["selectfields", "rootnodelist"],
-        ["preview", "delete", "clone", "edit", "addnode"],
-      ],
-    }
+function getActions() {
+  let listActions = {
+    ":options": [["selectfields", "overlay"]],
+    default: [["selectfields"], ["search", "preview", "delete", "clone", "edit", "add"]], //":options"
+  }
 
-    const fileActions = {
-      ":options": [["selectfields", "overlay"]],
-      default: [
-        ["selectfields", "rootnodelist", "reload"],
-        ["overlay", "preview", "delete", "clone", "edit", "move", "addfolder", "addfile"],
-      ],
-    }
+  const hierarchyActions = {
+    ":options": [["selectfields", "overlay"]],
+    default: [
+      ["selectfields", "rootnodelist"],
+      ["preview", "delete", "clone", "edit", "addnode"],
+    ],
+  }
 
-    const treeActions = {
-      ":options": [["selectfields", "overlay"]],
-      default: [
-        ["selectfields", "rootnodelist", "reload"],
-        ["preview", "delete", "clone", "edit", "move", "addnode", "addleaf"],
-      ],
-    }
+  const fileActions = {
+    ":options": [["selectfields", "overlay"]],
+    default: [
+      ["selectfields", "rootnodelist", "reload"],
+      ["overlay", "preview", "delete", "clone", "edit", "move", "addfolder", "addfile"],
+    ],
+  }
 
-    let fluidpageActions = {
-      ":options": [["selectfields", "overlay"]],
-      default: [["selectfields"], ["search", "preview", "fluidpage", "delete", "clone", "edit", "add"]],
-    }
+  const treeActions = {
+    ":options": [["selectfields", "overlay"]],
+    default: [
+      ["selectfields", "rootnodelist", "reload"],
+      ["preview", "delete", "clone", "edit", "move", "addnode", "addleaf"],
+    ],
+  }
 
-    let fluidpagecontentActions = {
-      ":options": [],
-      default: [["reload"], ["fluidpagepreview", "preview", "add"]],
-    }
+  let fluidpageActions = {
+    ":options": [["selectfields", "overlay"]],
+    default: [["selectfields"], ["search", "preview", "fluidpage", "delete", "clone", "edit", "add"]],
+  }
 
-    //given props overrides calculation
-    if (props.actions?.length > 0) return props.actions
+  let fluidpagecontentActions = {
+    ":options": [],
+    default: [["reload"], ["fluidpagepreview", "preview", "add"]],
+  }
 
-    // find matching conf
-    let actions = { ...listActions }
-    let conf = dbStore.getConf(handlerState.module, handlerState.view)
-    let handler = conf?.["handler"]
+  //given props overrides calculation
+  if (props.actions?.length > 0) return props.actions
 
-    if (!handler && props.handler) {
-      handler = props.handler
-    }
+  // find matching conf
+  let actions = { ...listActions }
+  let conf = dbStore.getConf(handlerState.module, handlerState.view)
+  let handler = conf?.["handler"]
 
-    if (!conf) return actions
-    if (handler.startsWith("tree.node")) {
-      actions = { ...hierarchyActions }
-    } else if (handler.startsWith("tree.file") || handler.startsWith("tree.simple.file")) {
-      actions = { ...fileActions }
-    } else if (handler.startsWith("tree")) {
-      actions = { ...treeActions }
-    } else if (handler.startsWith("list.fluidpage") && handler !== "list.fluidpage.content") {
-      actions = { ...fluidpageActions }
-    } else if (handler.startsWith("list.fluidpage.content")) {
-      actions = { ...fluidpagecontentActions }
-    }
+  if (!handler && props.handler) {
+    handler = props.handler
+  }
 
-    //remove disabledActions from all objects
-    if (Object.keys(conf).includes("disabledActions") && conf["disabledActions"]?.length > 0) {
-      // remove actions
-      for (let rmAction of conf["disabledActions"]) {
-        for (let actiongroup in actions) {
-          let actionlists = actions[actiongroup]
-          for (let actionlist of actionlists) {
-            for (let action of actionlist) {
-              if (rmAction === action) {
-                delete actionlist[action]
-                actionlist.splice(actionlist.indexOf(action), 1)
-              }
+  if (!conf) return actions
+  if (handler.startsWith("tree.node")) {
+    actions = { ...hierarchyActions }
+  } else if (handler.startsWith("tree.file") || handler.startsWith("tree.simple.file")) {
+    actions = { ...fileActions }
+  } else if (handler.startsWith("tree")) {
+    actions = { ...treeActions }
+  } else if (handler.startsWith("list.fluidpage") && handler !== "list.fluidpage.content") {
+    actions = { ...fluidpageActions }
+  } else if (handler.startsWith("list.fluidpage.content")) {
+    actions = { ...fluidpagecontentActions }
+  }
+
+  //remove disabledActions from all objects
+  if (Object.keys(conf).includes("disabledActions") && conf["disabledActions"]?.length > 0) {
+    // remove actions
+    for (let rmAction of conf["disabledActions"]) {
+      for (let actiongroup in actions) {
+        let actionlists = actions[actiongroup]
+        for (let actionlist of actionlists) {
+          for (let action of actionlist) {
+            if (rmAction === action) {
+              delete actionlist[action]
+              actionlist.splice(actionlist.indexOf(action), 1)
             }
           }
         }
       }
     }
+  }
 
-    if (conf["actions"]) {
-      //build listed structure
-      let actiongroups = conf["actions"]
-        .join(" ")
-        .replace("$", "")
-        .replace("=", "")
-        .replace(/\n\s/g, "")
-        .replace(/\n\s/g, "")
-        .replace(/\n/g, "")
-        .replace(/\|\s/g, "space")
-      //add after the first group
-      //actions["default"].splice(1, 0, actiongroups.split(" "))
-      //add to the first group
-      actions["default"][0] = actions["default"][0].concat(actiongroups.split(" "))
+  if (conf["actions"]) {
+    //build listed structure
+    let actiongroups = conf["actions"]
+      .join(" ")
+      .replace("$", "")
+      .replace("=", "")
+      .replace(/\n\s/g, "")
+      .replace(/\n\s/g, "")
+      .replace(/\n/g, "")
+      .replace(/\|\s/g, "space")
+    //add after the first group
+    //actions["default"].splice(1, 0, actiongroups.split(" "))
+    //add to the first group
+    actions["default"][0] = actions["default"][0].concat(actiongroups.split(" "))
+  }
+
+  if (modulesStore.state.modules?.[props.module]?.["scripts"]) {
+    for (const script of modulesStore.state.modules[props.module]["scripts"]) {
+      actions["default"][0].push("scriptor_" + script["dest"]["key"])
     }
+  }
 
-    if (modulesStore.state.modules?.[props.module]?.["scripts"]) {
-      for (const script of modulesStore.state.modules[props.module]["scripts"]) {
-        actions["default"][0].push("scriptor_" + script["dest"]["key"])
-      }
+  if (Object.keys(conf).includes("actionGroups")) {
+    for (const [groupName, config] of Object.entries(conf["actionGroups"])) {
+      state.actionGroups[groupName] = config
+      actions[":" + groupName] = [
+        config["actions"]
+          .join(" ")
+          .replace("$", "")
+          .replace("=", "")
+          .replace(/\n\s/g, "")
+          .replace(/\n/g, "")
+          .replace(/\|\s/g, "space")
+          .split(" "),
+      ]
     }
+  }
 
-    if (Object.keys(conf).includes("actionGroups")) {
-      for (const [groupName, config] of Object.entries(conf["actionGroups"])) {
-        state.actionGroups[groupName] = config
-        actions[":" + groupName] = [
-          config["actions"]
-            .join(" ")
-            .replace("$", "")
-            .replace("=", "")
-            .replace(/\n\s/g, "")
-            .replace(/\n/g, "")
-            .replace(/\|\s/g, "space")
-            .split(" "),
-        ]
-      }
-    }
-
-    return actions
-  }),
+  return actions
+}
+onMounted(() => {
+  state.actions = getActions()
 })
+watch(
+  () => modulesStore.state.modules?.[props.module]?.["scripts"],
+  (newVal, oldVal) => {
+    state.actions = getActions()
+  }
+)
 </script>
 
 <style scoped>
