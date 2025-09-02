@@ -1,7 +1,7 @@
 <template>
   <div class="bar" style="z-index: 50">
     <formutils></formutils>
-    <deleteentry></deleteentry>
+    <deleteentry v-if="['edit'].includes(handlerState.action)"></deleteentry>
     <reloadentry></reloadentry>
 
     <template v-if="appStore.state.debug">
