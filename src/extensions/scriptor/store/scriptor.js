@@ -1,15 +1,17 @@
 // @ts-nocheck
-import { computed, reactive } from "vue"
-import { defineStore } from "pinia"
-import { useBrowserLocation, useWebWorker, useUrlSearchParams } from "@vueuse/core"
-import { useContextStore } from "../../../stores/context"
-import { Request } from "@viur/vue-utils"
+import {computed, reactive} from "vue"
+import {defineStore} from "pinia"
+import {useBrowserLocation, useWebWorker, useUrlSearchParams} from "@vueuse/core"
+import {useContextStore} from "../../../stores/context"
+import {Request} from "@viur/vue-utils"
 
 export const useScriptorStore = defineStore("scriptorStore", () => {
   const instanceTemplate = {
     scriptKey: null,
     scriptCode: "#### scriptor ####\nfrom viur.scriptor import *\n\nasync def main():\n    logger.info('Hello World')",
     messages: [],
+    messageBuffer: [],
+    messageBufferFluscher: null,
     internalMessages: [],
     hideInternalMessages: false,
   }
@@ -55,7 +57,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
   function createNewInstance(id = null) {
     const instanceId = id || new Date().getTime().toString()
     if (!Object.keys(state.instances).includes(instanceId)) {
-      state.instances[instanceId] = reactive({ ...instanceTemplate })
+      state.instances[instanceId] = reactive({...instanceTemplate})
     }
 
     return instanceId
@@ -71,12 +73,24 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
 
     const nativWorker = state.workerObject.worker
     nativWorker.onmessage = async (event) => {
-      const { id, ...data } = event.data
+      const {id, ...data} = event.data
       handleWebWorkerMessages(id, data)
     }
     nativWorker.onmessageerror = async (error) => {
       console.log(error)
     }
+    window.setInterval(() => {
+      const instance = state.instances[state.currentInstance];
+      if(!instance)
+      {
+        return
+      }
+      if (instance.messageBuffer.length) {
+        instance.messages = instance.messages.concat([...instance.messageBuffer]);
+        instance.messageBuffer = [];
+      }
+    }, 100)
+    //Flush only all messages after 100ms
   }
 
   async function load(pyoPackages = [], packages = [], initCode = "") {
@@ -97,7 +111,8 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
       if (response.status === 200) {
         importable = await response.arrayBuffer()
       }
-    } catch (e) {}
+    } catch (e) {
+    }
 
     if (state.workerObject) {
       return new Promise((resolve) => {
@@ -131,7 +146,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     if (!selectedEntries) {
       selectedEntries = {}
     } else {
-      selectedEntries = { __selected_entries: selectedEntries }
+      selectedEntries = {__selected_entries: selectedEntries}
     }
     const params = Object.assign(selectedEntries, scriptParams)
     params["__is_dev__"] = import.meta.env.DEV
@@ -156,6 +171,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     state.currentInstance = currentId
     let currentState = state.instances[currentId]
     currentState.messages = []
+    currentState.messageBuffer = [];
     currentState.internalMessages = []
 
     if (!state.isReady && !state.isLoading) {
@@ -185,10 +201,11 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
   function handleCallback(id, data) {
     let callback = state.runningActions.get(id)
     if (callback) {
-      callback({ results: data.res, error: null })
+      callback({results: data.res, error: null})
       state.runningActions.delete(id)
     }
   }
+
   function preload() {
     //start empty script for preloading all libraries
     execute()
@@ -197,7 +214,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
   function addMessageEntry(type, id, data) {
     let currentState = state.instances[id]
     data["unique_id"] = new Date().getTime().toString()
-    currentState.messages.push({ type: type, data: data })
+    currentState.messageBuffer.push({type: type, data: data})
   }
 
   function addInternalMessageEntry(type, id, data) {
@@ -267,14 +284,16 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
             multiple: false,
             types: types,
           })
-        } catch (e) {}
+        } catch (e) {
+        }
         await sendResult("showOpenFilePickerResult", openhandle)
         break
       case "showSaveFilePicker":
         let savehandle = -1
         try {
           savehandle = await window.showSaveFilePicker()
-        } catch (e) {}
+        } catch (e) {
+        }
         await sendResult("showSaveFilePickerResult", savehandle)
         break
       case "showDirectoryPicker":
@@ -338,13 +357,14 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
 
         const data = await response.json()
         const versions = Object.keys(data.releases)
-        versions.sort((a, b) => b.localeCompare(a, undefined, { numeric: true }))
+        versions.sort((a, b) => b.localeCompare(a, undefined, {numeric: true}))
         return versions.filter((x) => x.startsWith("1."))
       } catch (error) {
         console.error("Fehler beim Abrufen der Daten:", error)
         return []
       }
     }
+
     return get()
   }
 

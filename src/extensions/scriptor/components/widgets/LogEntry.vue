@@ -34,3 +34,9 @@ const state = reactive({
   }),
 })
 </script>
+
+<style>
+sl-alert::part(base) {
+  word-break: break-word;
+}
+</style>
