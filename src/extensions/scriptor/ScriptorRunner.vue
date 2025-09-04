@@ -21,7 +21,6 @@
       id="dialog-delete"
       ref="runnerDialog"
       style="--width: 85%"
-      class="tabpopup"
       :open="state.opened"
       :label="current['rel']['name']"
       @sl-after-hide="exitScriptor"
