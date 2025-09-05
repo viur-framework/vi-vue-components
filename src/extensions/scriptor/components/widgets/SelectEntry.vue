@@ -11,7 +11,7 @@
           :disabled="state.isDisabled"
           @click="selectSingleOption(option)"
         >
-          {{ option.value }}
+          {{ state.showValue ? option.value : option.key }}
         </sl-button>
       </div>
 
@@ -23,7 +23,7 @@
           :checked="option.selected"
           @sl-change="toggleSelection(option)"
         >
-          {{ option.value }}
+          {{ state.showValue ? option.value : option.key }}
         </sl-checkbox>
       </div>
     </div>
@@ -48,7 +48,7 @@
         :disabled="state.isDisabled"
         @click="selectSingleOption(option)"
       >
-        {{ option.value }}
+        {{ state.showValue ? option.value : option.key }}
       </sl-button>
     </div>
 
@@ -60,7 +60,7 @@
         :checked="option.selected"
         @sl-change="toggleSelection(option)"
       >
-        {{ option.value }}
+        {{ state.showValue ? option.value : option.key }}
       </sl-checkbox>
     </div>
 
@@ -104,6 +104,7 @@ const state = reactive({
   sendable: computed(() => {
     return state.value.length !== 0
   }),
+  showValue: computed(() => props.entry.data["show_values"])
 })
 
 function toggleSelection(option) {
