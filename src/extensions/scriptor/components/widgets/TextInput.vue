@@ -1,7 +1,8 @@
 <template>
   <sl-alert v-if="!inMultiple" variant="neutral" open>
-    {{ entry.data.text }}
-    <br />
+    <div>
+      {{ entry.data.text }}
+    </div>
     <sl-input
       v-if="!state.multiline"
       v-model="state.value"
@@ -15,12 +16,13 @@
       :disabled="state.buttonDisabled"
       :placeholder="props.entry.data.placeholder"
     ></sl-textarea>
-    <br />
     <sl-button :disabled="state.buttonDisabled || !state.sendable" @click="buttonCallback">send</sl-button>
   </sl-alert>
-  <div v-else>
+  <div class="alert-text-input-wrap" v-else>
     <!--pack in one -->
-    {{ entry.data.text }}
+    <div>
+      {{ entry.data.text }}
+    </div>
     <sl-input
       v-if="!state.multiline"
       v-model="state.value"
@@ -76,3 +78,10 @@ const state = reactive({
 })
 defineExpose({ state, props })
 </script>
+<style scoped>
+.alert-text-input-wrap{
+  display: flex;
+  flex-direction: column;
+  gap: var(--sl-spacing-x-small)
+}
+</style>

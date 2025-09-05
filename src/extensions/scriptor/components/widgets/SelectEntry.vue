@@ -1,9 +1,9 @@
 <template>
-  <div v-if="inMultiple">
+  <div v-if="inMultiple" class="alert-wrapper">
     {{ entry.data["title"] || entry.data["text"] }} :
-    <div class="alert-wrapper">
+    <div>
       <v-image v-if="entry['data']['image']" class="img" :src="entry['data']['image']"></v-image>
-      <div v-if="!state.isMultiple">
+      <div class="alert-btn-wrap" v-if="!state.isMultiple">
         <sl-button
           v-for="option in state.options"
           :key="option.key"
@@ -142,16 +142,30 @@ defineExpose({ state, props })
 .wrapper-multi-select {
   display: flex;
   flex-direction: column;
+  gap: var(--sl-spacing-2x-small);
+
+  sl-checkbox{
+    &::part(base){
+      font-size: 1em;
+    }
+  }
 }
+
 .alert-wrapper {
   display: flex;
-  flex-direction: row;
-  gap: 10px;
+  flex-direction: column;
+  gap: var(--sl-spacing-2x-small);
 
   & :deep(.image-wrap) {
     width: 100px;
     height: 100px;
     margin-bottom: 10px;
   }
+}
+
+.alert-btn-wrap{
+  display: flex;
+  flex-direction: row;
+  gap: var(--sl-spacing-x-small);
 }
 </style>

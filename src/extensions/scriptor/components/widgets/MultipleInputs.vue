@@ -1,7 +1,7 @@
 <template>
   <sl-alert variant="neutral" open>
-    <div v-if="Array.isArray(entry.data.components)">
-      <div v-for="_entry in entry.data.components">
+    <div class="alert-array-wrap" v-if="Array.isArray(entry.data.components)">
+      <div class="alert-data-wrap" v-for="_entry in entry.data.components">
         <component
           :is="getWidget(_entry['type'])"
           ref="elements"
@@ -10,8 +10,8 @@
         ></component>
       </div>
     </div>
-    <div v-else>
-      <div v-for="(_entry, key) in entry.data.components">
+    <template v-else>
+      <div class="alert-data-wrap" v-for="(_entry, key) in entry.data.components">
         <component
           :is="getWidget(_entry['type'])"
           ref="elements"
@@ -20,9 +20,9 @@
           :data-key="key"
         ></component>
       </div>
-    </div>
+    </template>
 
-    <sl-button :disabled="state.buttonDisabled || !state.sendable" @click="buttonCallback">
+    <sl-button class="alert-footer-btn" :disabled="state.buttonDisabled || !state.sendable" @click="buttonCallback">
       {{ entry.data.buttonText || "Send" }}
     </sl-button>
   </sl-alert>
@@ -97,3 +97,23 @@ function getWidget(type) {
   return widgets.debugEntry
 }
 </script>
+
+<style scoped>
+
+.alert-data-wrap{
+  & + .alert-data-wrap{
+    margin-top: var(--sl-spacing-small);
+  }
+}
+
+.alert-array-wrap{
+  display: flex;
+  flex-direction: column;
+  gap: var(--sl-spacing-small)
+}
+
+.alert-footer-btn{
+  margin-top: var(--sl-spacing-medium);
+}
+
+</style>
