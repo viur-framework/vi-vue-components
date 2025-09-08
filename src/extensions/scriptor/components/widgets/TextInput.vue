@@ -18,7 +18,7 @@
     ></sl-textarea>
     <sl-button :disabled="state.buttonDisabled || !state.sendable" @click="buttonCallback">send</sl-button>
   </sl-alert>
-  <div class="alert-text-input-wrap" v-else>
+  <div v-else class="alert-text-input-wrap">
     <!--pack in one -->
     <div>
       {{ entry.data.text }}
@@ -47,7 +47,7 @@ const scriptorStore = useScriptorStore()
 
 onMounted(() => {
   state.value = props.entry.data.default_value ?? ""
-  console.log("mount text",props.entry)
+  console.log("mount text", props.entry)
 })
 
 const props = defineProps({
@@ -79,9 +79,9 @@ const state = reactive({
 defineExpose({ state, props })
 </script>
 <style scoped>
-.alert-text-input-wrap{
+.alert-text-input-wrap {
   display: flex;
   flex-direction: column;
-  gap: var(--sl-spacing-x-small)
+  gap: var(--sl-spacing-x-small);
 }
 </style>

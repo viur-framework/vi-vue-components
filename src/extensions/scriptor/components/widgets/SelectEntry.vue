@@ -3,7 +3,7 @@
     {{ entry.data["title"] || entry.data["text"] }} :
     <div>
       <v-image v-if="entry['data']['image']" class="img" :src="entry['data']['image']"></v-image>
-      <div class="alert-btn-wrap" v-if="!state.isMultiple">
+      <div v-if="!state.isMultiple" class="alert-btn-wrap">
         <sl-button
           v-for="option in state.options"
           :key="option.key"
@@ -90,7 +90,7 @@ const props = defineProps({
 onMounted(() => {
   const opts = []
   for (const [key, value] of Object.entries(props.entry.data.choices)) {
-    opts.push({key: key, value: value, selected: state.selectedOptions.includes(key)})
+    opts.push({ key: key, value: value, selected: state.selectedOptions.includes(key) })
   }
   state.options = opts
 })
@@ -104,7 +104,7 @@ const state = reactive({
   sendable: computed(() => {
     return state.value.length !== 0
   }),
-  showValue: computed(() => props.entry.data["show_values"])
+  showValue: computed(() => props.entry.data["show_values"]),
 })
 
 function toggleSelection(option) {
@@ -144,8 +144,8 @@ defineExpose({ state, props })
   flex-direction: column;
   gap: var(--sl-spacing-2x-small);
 
-  sl-checkbox{
-    &::part(base){
+  sl-checkbox {
+    &::part(base) {
       font-size: 1em;
     }
   }
@@ -163,7 +163,7 @@ defineExpose({ state, props })
   }
 }
 
-.alert-btn-wrap{
+.alert-btn-wrap {
   display: flex;
   flex-direction: row;
   gap: var(--sl-spacing-x-small);

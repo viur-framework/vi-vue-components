@@ -1,7 +1,7 @@
 <template>
   <sl-alert variant="neutral" open>
-    <div class="alert-array-wrap" v-if="Array.isArray(entry.data.components)">
-      <div class="alert-data-wrap" v-for="_entry in entry.data.components">
+    <div v-if="Array.isArray(entry.data.components)" class="alert-array-wrap">
+      <div v-for="_entry in entry.data.components" class="alert-data-wrap">
         <component
           :is="getWidget(_entry['type'])"
           ref="elements"
@@ -11,7 +11,7 @@
       </div>
     </div>
     <template v-else>
-      <div class="alert-data-wrap" v-for="(_entry, key) in entry.data.components">
+      <div v-for="(_entry, key) in entry.data.components" class="alert-data-wrap">
         <component
           :is="getWidget(_entry['type'])"
           ref="elements"
@@ -99,21 +99,19 @@ function getWidget(type) {
 </script>
 
 <style scoped>
-
-.alert-data-wrap{
-  & + .alert-data-wrap{
+.alert-data-wrap {
+  & + .alert-data-wrap {
     margin-top: var(--sl-spacing-small);
   }
 }
 
-.alert-array-wrap{
+.alert-array-wrap {
   display: flex;
   flex-direction: column;
-  gap: var(--sl-spacing-small)
+  gap: var(--sl-spacing-small);
 }
 
-.alert-footer-btn{
+.alert-footer-btn {
   margin-top: var(--sl-spacing-medium);
 }
-
 </style>

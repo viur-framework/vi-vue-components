@@ -89,7 +89,7 @@ const state = reactive({
 function startScriptor(params = {}) {
   if (!state.id) {
     state.id = scriptorStore.createNewInstance()
-    Request.view("script", props.current?.["dest"]?.["key"], {group: "leaf"}).then(async (resp) => {
+    Request.view("script", props.current?.["dest"]?.["key"], { group: "leaf" }).then(async (resp) => {
       const data = await resp.json()
       state.scriptor.scriptCode = data["values"]["script"].replace(/\/\/n/g, "\n")
       state.scriptReady = true
