@@ -88,8 +88,8 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
         instance.messages = instance.messages.concat([...instance.messageBuffer])
         instance.messageBuffer = []
       }
-    }, 100)
-    //Flush only all messages after 100ms
+    }, 50)
+    //Flush only all messages after 50ms
   }
 
   async function load(pyoPackages = [], packages = [], initCode = "") {

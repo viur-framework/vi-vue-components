@@ -35,14 +35,15 @@
 </template>
 
 <script setup>
-import { onBeforeMount, reactive, ref, computed, inject, watch } from "vue"
+import {onBeforeMount, reactive, ref, computed, inject, watch} from "vue"
 import WidgetList from "./components/WidgetList.vue"
 import StatusBar from "./components/StatusBar.vue"
 import Status from "./components/Status.vue"
-import { useScriptorStore } from "./store/scriptor"
-import { Request } from "@viur/vue-utils"
+import {useScriptorStore} from "./store/scriptor"
+import {Request} from "@viur/vue-utils"
 import Utils from "../../utils"
-import { useDebounceFn } from "@vueuse/core"
+import {useDebounceFn} from "@vueuse/core"
+
 const messagewrapper = ref(null)
 const scriptorAction = ref(null)
 const runnerDialog = ref(null)
@@ -87,20 +88,21 @@ const state = reactive({
 })
 
 function startScriptor(params = {}) {
+  state.opened = true
+  params = {...params, ...props.scriptParams}
   if (!state.id) {
     state.id = scriptorStore.createNewInstance()
-    Request.view("script", props.current?.["dest"]?.["key"], { group: "leaf" }).then(async (resp) => {
+    Request.view("script", props.current?.["dest"]?.["key"], {group: "leaf"}).then(async (resp) => {
       const data = await resp.json()
       state.scriptor.scriptCode = data["values"]["script"].replace(/\/\/n/g, "\n")
       state.scriptReady = true
+      scriptorAction.value.executeScript(params)
     })
+    return
   }
-
-  state.opened = true
-  params = { ...params, ...props.scriptParams }
   if (import.meta.env.DEV) {
     //Reload the script on DEV Mode everytime
-    Request.view("script", props.current?.["dest"]?.["key"], { group: "leaf" }).then(async (resp) => {
+    Request.view("script", props.current?.["dest"]?.["key"], {group: "leaf"}).then(async (resp) => {
       const data = await resp.json()
       state.scriptor.scriptCode = data["values"]["script"].replace(/\/\/n/g, "\n")
       state.scriptReady = true
@@ -110,10 +112,12 @@ function startScriptor(params = {}) {
     scriptorAction.value.executeScript(params)
   }
 }
+
 function exitScriptor() {
   state.opened = false
   scriptorAction.value.exitScript()
 }
+
 watch(
   () => state.scriptor?.messages.length,
   (newVal, oldVal) => {
@@ -125,13 +129,14 @@ watch(
     }
   }
 )
-defineExpose({ startScriptor, exitScriptor })
+defineExpose({startScriptor, exitScriptor})
 </script>
 
 <style scoped>
 .wrapper-widgets {
   overflow-y: auto;
 }
+
 .tabpopup {
   &::part(base) {
     position: absolute;
