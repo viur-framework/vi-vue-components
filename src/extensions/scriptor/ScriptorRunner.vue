@@ -49,7 +49,7 @@ const scriptorAction = ref(null)
 const runnerDialog = ref(null)
 
 const handlerState = inject("handlerState")
-
+const emit = defineEmits(["start", "exit"])
 const props = defineProps({
   canAccess: {
     type: Boolean,
@@ -88,6 +88,7 @@ const state = reactive({
 })
 
 function startScriptor(params = {}) {
+  emit("start")
   state.opened = true
   params = {...params, ...props.scriptParams}
   if (!state.id) {
@@ -114,6 +115,7 @@ function startScriptor(params = {}) {
 }
 
 function exitScriptor() {
+  emit("exit");
   state.opened = false
   scriptorAction.value.exitScript()
 }

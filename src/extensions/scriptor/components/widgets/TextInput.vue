@@ -47,7 +47,6 @@ const scriptorStore = useScriptorStore()
 
 onMounted(() => {
   state.value = props.entry.data.default_value ?? ""
-  console.log("mount text", props.entry)
 })
 
 const props = defineProps({
