@@ -90,6 +90,9 @@ function uploadFile(file) {
     mimeType: file.type || "application/octet-stream",
     size: file.size.toString(),
   }
+  if (boneState?.bonestructure["public"]) {
+    filedata["public"] = true
+  }
   return new Promise((resolve, reject) => {
     Request.securePost("/vi/file/getUploadURL", { dataObj: filedata })
       .then(async (resp) => {
