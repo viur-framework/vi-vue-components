@@ -192,7 +192,7 @@ import {
   toRaw,
 } from "vue"
 import HandlerBar from "../bars/HandlerBar.vue"
-import { ListRequest, boneLogic, Request } from "@viur/vue-utils"
+import {Request } from "@viur/vue-utils"
 import { useDBStore } from "../stores/db"
 import { useMessageStore } from "../stores/message"
 import { useModulesStore } from "../stores/modules"
@@ -201,8 +201,6 @@ import Loader from "@viur/vue-utils/generic/Loader.vue"
 import FloatingBar from "../bars/FloatingBar.vue"
 import { useContextStore } from "../stores/context"
 import { useLocalStore } from "../stores/local"
-import WidgetSmall from "../dashboard/WidgetSmall.vue"
-import BoneView from "../bones/boneView.vue"
 import { useHandlerLogic } from "./handlerLogic"
 import treeItem from "../tree/TreeItem.vue"
 import Utils from "../utils"
@@ -273,6 +271,9 @@ const state = reactive({
   sortindexBonename: null,
   entryUpdate: false,
   skellist: [],
+  pathName: computed(() => {
+    return "__currentPath" + state.tabId + props.module
+  })
 })
 provide("handlerState", state)
 
@@ -304,6 +305,8 @@ watch(
 watch(
   () => state.currentPath,
   (newVal, oldVal) => {
+    //update path in store
+    contextStore.setContext(state.pathName, newVal, state.tabId)
     if (
       oldVal.length > 0 &&
       (newVal.length !== oldVal.length ||
@@ -311,7 +314,7 @@ watch(
         newVal[newVal.length - 1]["key"] !== oldVal[oldVal.length - 1]["key"])
     ) {
       handlerLogic
-        .reloadAction({ parententry: state.currentPath[state.currentPath.length - 1]["key"] }, state.needUpdate)
+        .reloadAction({parententry: state.currentPath[state.currentPath.length - 1]["key"]}, state.needUpdate)
         .then((resp) => {
           handlerLogic.setSelectedBones()
         })
@@ -323,8 +326,12 @@ onMounted(() => {
   if (props.columns && props.columns.length > 0) {
     state.selectedBones = props.columns
   }
+  const oldPath = toRaw(contextStore.getLocalContext(state.tabId, true)[state.pathName])
   handlerLogic.reloadAction().then((resp) => {
     handlerLogic.setSelectedBones()
+    if (oldPath) {
+      state.currentPath = oldPath;
+    }
   })
 })
 
@@ -333,7 +340,6 @@ onActivated(() => {
   let tabData = dbStore.getTabById(route.query["_"])
 
   if (tabData?.["update"]) {
-    console.log("activate")
     handlerLogic.reloadAction()
     tabData["update"] = false
   }
@@ -451,9 +457,7 @@ function nodeSelection(e) {
 
 function goToPath(value) {
   let currentIndex = state.currentPath.findIndex((x) => x["key"] === value)
-  console.log(currentIndex)
   if (currentIndex === -1) {
-    console.log(state.currentSelection[0])
     state.currentPath = state.currentPath.concat([state.currentSelection[0]])
     return 0
   }
@@ -478,10 +482,11 @@ function itemMeta(item, skelType = "leaf") {
 
   return currentMeta
 }
+
 provide("itemMeta", itemMeta)
 
 function listItemMeta(item, skelType = "leaf") {
-  let currentMeta = { ...itemMeta(item, skelType) }
+  let currentMeta = {...itemMeta(item, skelType)}
   let mimeBaseMatch = {
     image: "file-earmark-image",
     audio: "file-earmark-music",
@@ -567,6 +572,7 @@ function dragChange(event) {
 sl-breadcrumb {
   margin: 10px;
 }
+
 .main-wrapper {
   flex: 1;
   display: flex;
@@ -733,6 +739,7 @@ table {
     border-radius: 3px;
   }
 }
+
 .stick-header {
   position: sticky;
   top: 0;
