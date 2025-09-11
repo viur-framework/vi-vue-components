@@ -29,6 +29,7 @@ import { useDBStore } from "../stores/db"
 const handlerState = inject("handlerState")
 const currentlist = inject("currentlist")
 const updateAction = inject("updateAction")
+const reloadAction = inject("reloadAction")
 const state = reactive({
   structure: {},
   active: [],
@@ -87,6 +88,10 @@ function saveConfig() {
   handlerState.selectedBones = state.active
   conf["columns"] = handlerState.selectedBones
   localStorage.setItem(handlerState.module + "__selectedBones", JSON.stringify(handlerState.selectedBones))
+  if (!updateAction) {
+    reloadAction(true)
+    return
+  }
   updateAction()
 }
 </script>
