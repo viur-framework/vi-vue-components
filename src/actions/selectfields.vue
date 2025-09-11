@@ -24,19 +24,16 @@
 </template>
 
 <script setup>
-import { reactive, defineComponent, inject, onMounted } from "vue"
+import { reactive, inject } from "vue"
 import { useDBStore } from "../stores/db"
-import { useRoute } from "vue-router"
-
 const handlerState = inject("handlerState")
 const currentlist = inject("currentlist")
-const reloadAction = inject("reloadAction")
+const updateAction = inject("updateAction")
 const state = reactive({
   structure: {},
   active: [],
 })
 const dbStore = useDBStore()
-const route = useRoute()
 
 function openSelectDialog() {
   if (handlerState.structure) {
@@ -46,7 +43,10 @@ function openSelectDialog() {
   }
 
   const conf = dbStore.getConf(handlerState.module)
-  if (conf && conf?.["columns"]) {
+  const selectedBones = localStorage.getItem(handlerState.module + "__selectedBones")
+  if (selectedBones) {
+    state.active = JSON.parse(selectedBones)
+  } else if (conf && conf?.["columns"]) {
     state.active = conf["columns"]
   } else {
     state.active = Object.keys(Object.fromEntries(Object.entries(state.structure).filter(([, v]) => v["visible"])))
@@ -68,27 +68,26 @@ function visibleChange(boneName) {
       selectedBones.push(name)
     }
   }
-  handlerState.selectedBones = selectedBones
 }
 
 function selectall() {
-  handlerState.selectedBones = Object.keys(state.structure)
   state.active = Object.keys(state.structure)
 }
 
 function unselectall() {
-  handlerState.selectedBones = []
   state.active = []
 }
 
 function invertselect() {
   state.active = Object.keys(state.structure).filter((i) => !state.active.includes(i))
-  handlerState.selectedBones = state.active
 }
 function saveConfig() {
+
   const conf = dbStore.getConf(handlerState.module)
+  handlerState.selectedBones = state.active
   conf["columns"] = handlerState.selectedBones
-  reloadAction(true)
+  localStorage.setItem(handlerState.module + "__selectedBones", JSON.stringify(handlerState.selectedBones))
+  updateAction()
 }
 </script>
 
