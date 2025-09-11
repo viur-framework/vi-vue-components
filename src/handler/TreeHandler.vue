@@ -272,8 +272,8 @@ const state = reactive({
   entryUpdate: false,
   skellist: [],
   pathName: computed(() => {
-    return "__currentPath" + state.tabId + props.module
-  })
+    return "__currentPath" + props.module
+  }),
 })
 provide("handlerState", state)
 
