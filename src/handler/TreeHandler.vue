@@ -426,6 +426,10 @@ function primaryAction(skel, skelType = "leaf") {
   if (skelType === "node") {
     goToPath(skel["key"])
   } else {
+    if (props.selector) {
+      emit("closeSelector", state.currentSelection)
+      return 0
+    }
     handlerLogic.openEditor(null)
   }
 }
