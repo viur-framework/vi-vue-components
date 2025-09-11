@@ -141,8 +141,17 @@ onMounted(() => {
 })
 
 function downloadFile() {
-  console.log(Request.downloadUrlFor(props.value))
-  window.open(Request.downloadUrlFor(props.value))
+  Request.get(Request.downloadUrlFor(props.value))
+    .then((response) => response.blob())
+    .then((blob) => {
+      const link = document.createElement("a")
+      link.href = URL.createObjectURL(blob)
+      link.download = props.value["dest"]["name"]
+      link.click()
+    })
+    .catch(()=>{
+      window.open(Request.downloadUrlFor(props.value))
+    })
 }
 
 function createBackgroundImage() {
