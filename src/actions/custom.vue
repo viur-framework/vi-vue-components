@@ -81,7 +81,6 @@ const appStore = useAppStore()
 const messageStore = useMessageStore()
 const userStore = useUserStore()
 const tableReload = inject("reloadAction")
-
 const state = reactive({
   confirm: false,
   info: computed(() => {
@@ -256,7 +255,8 @@ function handleFetch(selection) {
             return 0
           }
         } catch (e) {}
-
+        //clear cache
+        Request.resetState()
         if (state.info?.["then"] === "reload-module") {
           tableReload()
         } else if (state.info?.["then"] === "reload-vi") {
