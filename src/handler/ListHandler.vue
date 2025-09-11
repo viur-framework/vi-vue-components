@@ -276,12 +276,23 @@ function reloadAction(existsCheck = false) {
 provide("reloadAction", reloadAction)
 
 function updateAction() {
-  for (const bone of state.selectedBones) {
-    if (currentlist.state.skellist.length > 0 && !Object.keys(currentlist.state.skellist[0]).includes(bone)) {
+  if (currentlist.state.skellist.length === 0) {
+    reloadAction()
+  } else {
+    let boneAllBones = true;
+    for (const bone of state.selectedBones) {
+      if (!Object.keys(currentlist.state.skellist[0]).includes(bone)) {
+        boneAllBones = false;
+        break
+      }
+    }
+    if (boneAllBones) {
       reloadAction(true)
       return
     }
   }
+
+
   const currentlistUpdate = ListRequest(state.storeName + "_update", {
     module: props.module,
     params: {},
