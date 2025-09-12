@@ -66,6 +66,7 @@ import { useLocalStore } from "../stores/local"
 import { useRoute } from "vue-router"
 import Loader from "@viur/vue-utils/generic/Loader.vue"
 import FluidpageElement from "../fluidpage/element.vue"
+import { useContextStore } from "../stores/context.js"
 
 const props = defineProps({
   module: {
@@ -85,6 +86,7 @@ const route = useRoute()
 const messageStore = useMessageStore()
 const modulesStore = useModulesStore()
 const localStore = useLocalStore()
+const contextStore = useContextStore()
 
 const tableInst = ref(null)
 
@@ -140,7 +142,7 @@ const currentlist = ListRequest(state.storeName, {
   module: props.module,
   params: {
     limit: 99,
-    "fluidpage.dest.key": route.params["key"],
+    ...contextStore.getContext(state.tabId),
   },
   group: props.group,
   renderer: "vi",

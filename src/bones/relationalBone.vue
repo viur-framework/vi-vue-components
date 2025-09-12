@@ -53,12 +53,13 @@
       @change="changeEventNested"
     ></Wrapper_nested>
   </div>
+
   <relational-selector
     :open="state.openedSelection"
     :name="boneState.bonestructure['descr']"
     :tab-id="handlerState.tabId"
     :filter="state.filter"
-    :handler="state.moduleInfo?.['handlerComponent']"
+    :handler="state.selectionHandler"
     :module="boneState?.bonestructure['module']"
     @close="relationCloseAction"
   ></relational-selector>
@@ -70,7 +71,6 @@ import { Request } from "@viur/vue-utils"
 import Wrapper_nested from "@viur/vue-utils/bones/edit/wrapper_nested.vue"
 import { useRoute, useRouter } from "vue-router"
 import { useDBStore } from "../stores/db"
-import handlers from "../handler/handlers"
 import relationalSelector from "./components/relationalSelector.vue"
 
 defineOptions({
@@ -120,6 +120,13 @@ const state = reactive({
       return ret
     }
     return {}
+  }),
+  selectionHandler: computed(() => {
+    if (state.moduleInfo?.["handlerComponent"] === "fluidpagehandler") {
+      return "listhandler"
+    }
+
+    return state.moduleInfo?.["handlerComponent"]
   }),
 })
 

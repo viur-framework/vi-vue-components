@@ -34,7 +34,7 @@
     :open="state.openedSelection"
     :name="boneState.bonestructure['descr']"
     :tab-id="handlerState.tabId"
-    :handler="state.moduleInfo?.['handlerComponent']"
+    :handler="state.selectionHandler"
     :module="boneState?.bonestructure['module']"
     :filter="state.filter"
     :rowselect="2"
@@ -82,6 +82,13 @@ const state = reactive({
       return ret
     }
     return {}
+  }),
+  selectionHandler: computed(() => {
+    if (state.moduleInfo?.["handlerComponent"] === "fluidpagehandler") {
+      return "listhandler"
+    }
+
+    return state.moduleInfo?.["handlerComponent"]
   }),
 })
 
