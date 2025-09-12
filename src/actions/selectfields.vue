@@ -5,16 +5,20 @@
   </sl-button>
 
   <sl-dialog id="dialog-selectfields" :label="$t('actions.selectfields')" @sl-hide="saveConfig">
-    <sl-checkbox
-      v-for="(bone, boneName) in state.structure"
-      :key="boneName"
-      :checked="state.active.includes(boneName)"
-      class="selectfieldswitch"
-      @sl-change="visibleChange(boneName)"
-    >
-      {{ bone["descr"] !== "" ? bone["descr"] : boneName }}
-    </sl-checkbox>
-
+    <sl-input clearable @sl-input="filterBones">
+      <sl-icon name="search" slot="prefix"></sl-icon>
+    </sl-input>
+    <div v-for="(bone, boneName) in state.structure">
+      <sl-checkbox
+        :key="boneName"
+        :checked="state.active.includes(boneName)"
+        class="selectfieldswitch"
+        @sl-change="visibleChange(boneName)"
+        v-show="bone['__bone_select_visible']"
+      >
+        {{ bone["descr"] !== "" ? bone["descr"] : boneName }}
+      </sl-checkbox>
+    </div>
     <sl-button-group slot="footer">
       <sl-button size="small" @click="selectall">{{ $t("selectfields.selectall") }}</sl-button>
       <sl-button size="small" @click="unselectall">{{ $t("selectfields.unselectall") }}</sl-button>
@@ -24,19 +28,17 @@
 </template>
 
 <script setup>
-import { reactive, defineComponent, inject, onMounted } from "vue"
+import { reactive, inject } from "vue"
 import { useDBStore } from "../stores/db"
-import { useRoute } from "vue-router"
-
 const handlerState = inject("handlerState")
 const currentlist = inject("currentlist")
+const updateAction = inject("updateAction")
 const reloadAction = inject("reloadAction")
 const state = reactive({
   structure: {},
   active: [],
 })
 const dbStore = useDBStore()
-const route = useRoute()
 
 function openSelectDialog() {
   if (handlerState.structure) {
@@ -44,9 +46,15 @@ function openSelectDialog() {
   } else {
     state.structure = currentlist.structure
   }
+  for (const [k,bone] of Object.entries(state.structure)) {
+    bone["__bone_select_visible"] = true;
+  }
 
   const conf = dbStore.getConf(handlerState.module)
-  if (conf && conf?.["columns"]) {
+  const selectedBones = localStorage.getItem(handlerState.module + "__selectedBones")
+  if (selectedBones) {
+    state.active = JSON.parse(selectedBones)
+  } else if (conf && conf?.["columns"]) {
     state.active = conf["columns"]
   } else {
     state.active = Object.keys(Object.fromEntries(Object.entries(state.structure).filter(([, v]) => v["visible"])))
@@ -68,27 +76,39 @@ function visibleChange(boneName) {
       selectedBones.push(name)
     }
   }
-  handlerState.selectedBones = selectedBones
 }
 
 function selectall() {
-  handlerState.selectedBones = Object.keys(state.structure)
   state.active = Object.keys(state.structure)
 }
 
 function unselectall() {
-  handlerState.selectedBones = []
   state.active = []
 }
 
 function invertselect() {
   state.active = Object.keys(state.structure).filter((i) => !state.active.includes(i))
-  handlerState.selectedBones = state.active
 }
 function saveConfig() {
+
   const conf = dbStore.getConf(handlerState.module)
+  handlerState.selectedBones = state.active
   conf["columns"] = handlerState.selectedBones
-  reloadAction(true)
+  localStorage.setItem(handlerState.module + "__selectedBones", JSON.stringify(handlerState.selectedBones))
+  if (!updateAction) {
+    reloadAction(true)
+    return
+  }
+  updateAction()
+}
+function filterBones(e)
+{
+  for (const [boneName, bone] of Object.entries(state.structure)) {
+    bone["__bone_select_visible"] = (
+      boneName.toLowerCase().includes(e.target.value.toLowerCase()) ||
+      bone["descr"].toLowerCase().includes(e.target.value.toLowerCase())
+    )
+  }
 }
 </script>
 

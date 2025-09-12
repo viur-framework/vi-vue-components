@@ -275,6 +275,51 @@ function reloadAction(existsCheck = false) {
 
 provide("reloadAction", reloadAction)
 
+function updateAction() {
+  if (currentlist.state.skellist.length === 0) {
+    reloadAction()
+  } else {
+    let boneAllBones = true;
+    for (const bone of state.selectedBones) {
+      if (!Object.keys(currentlist.state.skellist[0]).includes(bone)) {
+        boneAllBones = false;
+        break
+      }
+    }
+    if (boneAllBones) {
+      reloadAction(true)
+      return
+    }
+  }
+
+
+  const currentlistUpdate = ListRequest(state.storeName + "_update", {
+    module: props.module,
+    params: {},
+    group: props.group,
+    renderer: "vi",
+    cached: localStore.state.cache,
+  })
+  currentlistUpdate.state.params = currentlist.state.params;
+  currentlistUpdate.state.headers = {"x-viur-bonelist": state.selectedBones.join(",")}
+
+  //fetch till cursor are equal
+  function fetchBatch() {
+    currentlistUpdate.fetch().then(() => {
+      if (currentlistUpdate.state.cursor !== currentlist.state.cursor) {
+        fetchBatch()
+      } else {
+        currentlist.state.skellist = currentlistUpdate.state.skellist
+      }
+    })
+  }
+
+  fetchBatch()
+
+}
+
+provide("updateAction", updateAction)
+
 function setLimit(limit) {
   currentlist.state.params["limit"] = limit
   currentlist.reset()
@@ -461,6 +506,16 @@ function checkBoneExists() {
 }
 
 function setSelectedBones() {
+  const selectedBones = localStorage.getItem(state.module + "__selectedBones")
+  state.conf = dbStore.getConf(props.module, props.view)
+  if (selectedBones) {
+    state.selectedBones = JSON.parse(selectedBones);
+    if (appStore.state.preflights && state.conf?.["bonelist"]) {
+      currentlist.state.headers = {"x-viur-bonelist": state.selectedBones.join(",")}
+      checkBoneExists()
+    }
+    return 0;
+  }
   if (props.columns && props.columns.length > 0) {
     state.selectedBones = props.columns
     if (appStore.state.preflights && state.conf?.["bonelist"]) {
@@ -470,7 +525,6 @@ function setSelectedBones() {
 
     return 0
   }
-  state.conf = dbStore.getConf(props.module, props.view)
   if (state.conf && state.conf?.["columns"] && state.conf?.["columns"].length > 0) {
     state.selectedBones = state.conf["columns"]
     if (appStore.state.preflights && state.conf?.["bonelist"]) {

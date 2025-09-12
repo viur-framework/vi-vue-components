@@ -310,6 +310,11 @@ export function useHandlerLogic(props, handler_state) {
   }
 
   function setSelectedBones() {
+    const selectedBones = localStorage.getItem(handler_state.module + "__selectedBones")
+    if (selectedBones) {
+      handler_state.selectedBones = JSON.parse(selectedBones)
+      return
+    }
     if (props.columns && props.columns.length > 0) {
       handler_state.selectedBones = props.columns
       return 0
