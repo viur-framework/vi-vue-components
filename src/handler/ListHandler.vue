@@ -279,10 +279,10 @@ function updateAction() {
   if (currentlist.state.skellist.length === 0) {
     reloadAction()
   } else {
-    let boneAllBones = true;
+    let boneAllBones = true
     for (const bone of state.selectedBones) {
       if (!Object.keys(currentlist.state.skellist[0]).includes(bone)) {
-        boneAllBones = false;
+        boneAllBones = false
         break
       }
     }
@@ -292,7 +292,6 @@ function updateAction() {
     }
   }
 
-
   const currentlistUpdate = ListRequest(state.storeName + "_update", {
     module: props.module,
     params: {},
@@ -300,8 +299,8 @@ function updateAction() {
     renderer: "vi",
     cached: localStore.state.cache,
   })
-  currentlistUpdate.state.params = currentlist.state.params;
-  currentlistUpdate.state.headers = {"x-viur-bonelist": state.selectedBones.join(",")}
+  currentlistUpdate.state.params = currentlist.state.params
+  currentlistUpdate.state.headers = { "x-viur-bonelist": state.selectedBones.join(",") }
 
   //fetch till cursor are equal
   function fetchBatch() {
@@ -315,7 +314,6 @@ function updateAction() {
   }
 
   fetchBatch()
-
 }
 
 provide("updateAction", updateAction)
@@ -458,7 +456,7 @@ function primaryAction(e) {
     let module = conf["handler"].split(".").at(-1).replace("/", ".")
     let url = `/db/${module}/fluidpage/${state.module}/${state.currentSelection[0]["key"]}`
     let route = router.resolve(unref(url))
-    contextStore.setContext("fluidpage", state.currentSelection[0]["key"], state.tabId)
+    contextStore.setContext("fluidpage.dest.key", state.currentSelection[0]["key"], state.tabId)
     dbStore.addOpened(route, module, null, state.currentSelection[0]["name"])
     return 0
   }
@@ -509,12 +507,12 @@ function setSelectedBones() {
   const selectedBones = localStorage.getItem(state.module + "__selectedBones")
   state.conf = dbStore.getConf(props.module, props.view)
   if (selectedBones) {
-    state.selectedBones = JSON.parse(selectedBones);
+    state.selectedBones = JSON.parse(selectedBones)
     if (appStore.state.preflights && state.conf?.["bonelist"]) {
-      currentlist.state.headers = {"x-viur-bonelist": state.selectedBones.join(",")}
+      currentlist.state.headers = { "x-viur-bonelist": state.selectedBones.join(",") }
       checkBoneExists()
     }
-    return 0;
+    return 0
   }
   if (props.columns && props.columns.length > 0) {
     state.selectedBones = props.columns
