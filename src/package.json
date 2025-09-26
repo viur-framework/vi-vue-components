@@ -1,6 +1,6 @@
 {
   "name": "@viur/vue-components",
-  "version": "2.4.0-rc1",
+  "version": "2.4.0",
   "type": "module",
   "description": "a collection of complex components to build uis",
   "scripts": {
