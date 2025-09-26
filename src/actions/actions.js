@@ -27,6 +27,7 @@ import fluidpagepreview_action from "./fluidpagepreview.vue"
 import formutils_action from "./formutils.vue"
 import userfilter_action from "./userfilter.vue"
 import deleteentry_action from "./deleteentry.vue"
+import resave_action from "./resave.vue"
 
 export default {
   add_action,
@@ -58,4 +59,5 @@ export default {
   formutils_action,
   userfilter_action,
   deleteentry_action,
+  resave_action,
 }

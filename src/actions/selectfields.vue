@@ -6,15 +6,15 @@
 
   <sl-dialog id="dialog-selectfields" :label="$t('actions.selectfields')" @sl-hide="saveConfig">
     <sl-input clearable @sl-input="filterBones">
-      <sl-icon name="search" slot="prefix"></sl-icon>
+      <sl-icon slot="prefix" name="search"></sl-icon>
     </sl-input>
     <div v-for="(bone, boneName) in state.structure">
       <sl-checkbox
+        v-show="bone['__bone_select_visible']"
         :key="boneName"
         :checked="state.active.includes(boneName)"
         class="selectfieldswitch"
         @sl-change="visibleChange(boneName)"
-        v-show="bone['__bone_select_visible']"
       >
         {{ bone["descr"] !== "" ? bone["descr"] : boneName }}
       </sl-checkbox>
@@ -46,8 +46,8 @@ function openSelectDialog() {
   } else {
     state.structure = currentlist.structure
   }
-  for (const [k,bone] of Object.entries(state.structure)) {
-    bone["__bone_select_visible"] = true;
+  for (const [k, bone] of Object.entries(state.structure)) {
+    bone["__bone_select_visible"] = true
   }
 
   const conf = dbStore.getConf(handlerState.module)
@@ -90,7 +90,6 @@ function invertselect() {
   state.active = Object.keys(state.structure).filter((i) => !state.active.includes(i))
 }
 function saveConfig() {
-
   const conf = dbStore.getConf(handlerState.module)
   handlerState.selectedBones = state.active
   conf["columns"] = handlerState.selectedBones
@@ -101,13 +100,11 @@ function saveConfig() {
   }
   updateAction()
 }
-function filterBones(e)
-{
+function filterBones(e) {
   for (const [boneName, bone] of Object.entries(state.structure)) {
-    bone["__bone_select_visible"] = (
+    bone["__bone_select_visible"] =
       boneName.toLowerCase().includes(e.target.value.toLowerCase()) ||
       bone["descr"].toLowerCase().includes(e.target.value.toLowerCase())
-    )
   }
 }
 </script>

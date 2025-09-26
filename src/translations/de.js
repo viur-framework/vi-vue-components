@@ -39,6 +39,10 @@ export default {
     clear_log: "Log löschen",
     clear_cache: "Zwischenspeicher löschen",
     translate: "Übersetzen",
+    resave: {
+      text: "Speichern",
+      msg: "Wollen Sie keinen Eintrag neu speichern? | Wollen Sie den Eintrag neu speichern? | Wollen Sie {n} Einträge neu speichern?",
+    },
   },
   sidebar: {
     workspace: "Arbeitsbereich",

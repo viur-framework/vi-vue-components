@@ -49,7 +49,7 @@ const props = defineProps({
   },
   actions: {
     type: Array,
-    default: [],
+    default: () => [],
   },
   handler: null,
 })
@@ -71,7 +71,7 @@ const state = reactive({
 function getActions() {
   let listActions = {
     ":options": [["selectfields", "overlay"]],
-    default: [["selectfields"], ["search", "preview", "delete", "clone", "edit", "add"]], //":options"
+    default: [["selectfields"], ["search", "resave", "preview", "delete", "clone", "edit", "add"]], //":options"
   }
 
   const hierarchyActions = {
