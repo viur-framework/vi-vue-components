@@ -48,6 +48,7 @@ const state = reactive({
 
 function createAndNavigate(route) {
   contextStore.setContext("fluidpage.dest.key", handlerState.currentSelection[0]["key"], currentRoute.query["_"])
+  contextStore.setContext("fluidpage", handlerState.currentSelection[0]["key"], currentRoute.query["_"])
   dbStore.addOpened(route, state.contentModule, null, handlerState.currentSelection[0]["name"])
 }
 </script>
