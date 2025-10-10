@@ -61,6 +61,7 @@ const emit = defineEmits(["change", "delete"])
 
 const boneState = inject("boneState")
 const handlerState = inject("handlerState")
+const formState = inject("formState")
 const addMultipleEntry = inject("addMultipleEntry")
 const removeMultipleEntries = inject("removeMultipleEntries")
 const formatString = inject("formatString")
@@ -75,9 +76,11 @@ const state = reactive({
     if (boneState?.bonestructure["params"]?.["context"] && state.viform) {
       let ret = {}
       for (const [queryparameter, fieldname] of Object.entries(boneState?.bonestructure?.["params"]["context"])) {
-        //ret[queryparameter] = state.viform.state.skel[fieldname]
-        //contexts are a mess...
-        ret[queryparameter] = fieldname
+        if (fieldname.includes("$(")) {
+          ret[queryparameter] = formatString(fieldname, formState.skel)
+        } else {
+          ret[queryparameter] = fieldname
+        }
       }
       return ret
     }
@@ -105,7 +108,15 @@ function getList(search) {
   if (!search || search.length < 2) {
     filter = ""
   }
-
+  if (props.bone["context"]) {
+    for (const [queryparameter, fieldname] of Object.entries(props.bone["context"])) {
+      if (fieldname.includes("$(")) {
+        params += `${queryparameter}=${formatString(fieldname, formState.skel)}&`
+      } else {
+        params += `${queryparameter}=${fieldname}&`
+      }
+    }
+  }
   return Request.get(`/vi/${boneState.bonestructure["module"]}/list?${params}limit=99${filter}`).then(async (resp) => {
     const data = await resp.json()
     state.skels = data["skellist"].reduce((acc, curr) => ((acc[curr["key"]] = curr), acc), {})

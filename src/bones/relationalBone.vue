@@ -90,6 +90,7 @@ const emit = defineEmits(["change"])
 const boneState = inject("boneState")
 const handlerState = inject("handlerState")
 const formatString = inject("formatString")
+const formState = inject("formState")
 const route = useRoute()
 const router = useRouter()
 const dbStore = useDBStore()
@@ -113,9 +114,11 @@ const state = reactive({
     if (props.bone["params"]?.["context"] && state.viform) {
       let ret = {}
       for (const [queryparameter, fieldname] of Object.entries(props.bone["params"]["context"])) {
-        //ret[queryparameter] = state.viform.state.skel[fieldname]
-        //contexts are a mess...
-        ret[queryparameter] = fieldname
+        if (fieldname.includes("$(")) {
+          ret[queryparameter] = formatString(fieldname, formState.skel)
+        } else {
+          ret[queryparameter] = fieldname
+        }
       }
       return ret
     }
@@ -141,7 +144,11 @@ function getList(search) {
 
   if (props.bone["context"]) {
     for (const [queryparameter, fieldname] of Object.entries(props.bone["context"])) {
-      params += `${queryparameter}=${fieldname}&`
+      if (fieldname.includes("$(")) {
+        params += `${queryparameter}=${formatString(fieldname, formState.skel)}&`
+      } else {
+        params += `${queryparameter}=${fieldname}&`
+      }
     }
   }
   return Request.get(`/vi/${props.bone["module"]}/list?${params}limit=99`).then(async (resp) => {
