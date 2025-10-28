@@ -114,7 +114,7 @@ const state = reactive({
     if (props.bone["params"]?.["context"] && state.viform) {
       let ret = {}
       for (const [queryparameter, fieldname] of Object.entries(props.bone["params"]["context"])) {
-        if (fieldname.includes("$(")) {
+        if (typeof fieldname === "string" && fieldname.includes("$(")) {
           ret[queryparameter] = formatString(fieldname, formState.skel)
         } else {
           ret[queryparameter] = fieldname
