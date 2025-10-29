@@ -3,6 +3,7 @@ import { computed, reactive } from "vue"
 import { defineStore } from "pinia"
 import { useBrowserLocation, useWebWorker, useUrlSearchParams } from "@vueuse/core"
 import { useContextStore } from "../../../stores/context"
+import { useMessageStore } from "../../../stores/message"
 import { Request } from "@viur/vue-utils"
 
 export const useScriptorStore = defineStore("scriptorStore", () => {
@@ -312,6 +313,10 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
         break
       case "clear":
         currentState.messages.length = data["length"]
+        break
+      case "system-message":
+        const messageStore = useMessageStore()
+        messageStore.addMessage(data["_type"], data["title"], data["text"])
         break
       default:
         if (["select", "input", "diffcmp", "table", "stdout", "stderr", "raw_html"].includes(data.type)) {
