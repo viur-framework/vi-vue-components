@@ -144,7 +144,7 @@ function getList(search) {
 
   if (props.bone["context"]) {
     for (const [queryparameter, fieldname] of Object.entries(props.bone["context"])) {
-      if (fieldname.includes("$(")) {
+      if (typeof fieldname == "string" && fieldname.includes("$(")) {
         params += `${queryparameter}=${formatString(fieldname, formState.skel)}&`
       } else {
         params += `${queryparameter}=${fieldname}&`
