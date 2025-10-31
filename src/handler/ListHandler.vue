@@ -102,6 +102,7 @@ import {
   onBeforeMount,
   onUpdated,
   onMounted,
+  onUnmounted,
   ref,
   watch,
   onActivated,
@@ -111,7 +112,7 @@ import {
   toRaw,
 } from "vue"
 import HandlerBar from "../bars/HandlerBar.vue"
-import { ListRequest, boneLogic, Request } from "@viur/vue-utils"
+import { ListRequest, boneLogic, Request, destroyStore } from "@viur/vue-utils"
 import { useDBStore } from "../stores/db"
 import { useAppStore } from "../stores/app"
 import { useMessageStore } from "../stores/message"
@@ -388,6 +389,10 @@ watch(
 
 onDeactivated(() => {
   state.active = false
+})
+
+onUnmounted(() => {
+  destroyStore(currentlist)
 })
 
 function entrySelected(idx, action = "replace") {
