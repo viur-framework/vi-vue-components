@@ -7,26 +7,33 @@
           :disabled="true"
           :value="value ? formatString(state.format, state.selection) : ''"
         ></sl-input>
-        <sl-button v-if="!boneState.isEmpty" variant="info" outline class="square-btn" @click="editSelection">
+        <sl-button
+          v-if="!boneState.isEmpty"
+          variant="info"
+          outline
+          class="square-btn"
+          :disabled="boneState.readonly"
+          @click="editSelection"
+        >
           <sl-icon name="pencil-fill"></sl-icon>
         </sl-button>
       </sl-button-group>
       <sl-combobox
         v-else
-        :disabled="bone.readonly"
+        :disabled="boneState.readonly"
         :source="getList"
         hoist
         :placeholder="boneState.label === 'placeholder' ? boneState?.bonestructure?.descr : undefined"
         @sl-item-select="changeEvent"
       ></sl-combobox>
 
-      <sl-button class="square-btn" :disabled="bone.readonly" @click="openRelationalSelection">
+      <sl-button class="square-btn" :disabled="boneState.readonly" @click="openRelationalSelection">
         <sl-icon name="list-ul"></sl-icon>
       </sl-button>
 
       <sl-button
         v-if="!bone.multiple && !boneState.isEmpty"
-        :disabled="bone.readonly"
+        :disabled="boneState.readonly"
         variant="danger"
         outline
         :title="$t('bone.del')"
@@ -50,6 +57,7 @@
       :lang="lang"
       :bone="bone"
       :disabled="bone['readonly']"
+      :readonly="formState.readonly"
       @change="changeEventNested"
     ></Wrapper_nested>
   </div>

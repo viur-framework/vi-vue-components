@@ -38,6 +38,8 @@
         :collapsed-categories="state.conf?.['collapsedCategories'] || []"
         :fetch-url="state.fetchurl"
         :params="state.params"
+        :debug="appStore.state.debug"
+        :readonly="!state.canEdit"
       ></vi-form>
       <template v-for="handler in state.conf?.['editViews']" :key="handler['module']">
         <sl-details
