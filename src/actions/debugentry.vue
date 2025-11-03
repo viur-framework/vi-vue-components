@@ -5,9 +5,13 @@
   </sl-button>
 
   <teleport v-if="state.opened" to="#dialogs" :disabled="!state.opened">
-    <sl-drawer open @sl-after-hide="crossClicked">
-      <!--<vue-json-pretty :data="handlerState.skel"></vue-json-pretty>-->
-      {{ handlerState.skel }}
+    <sl-drawer open label="Debuggen" @sl-after-hide="crossClicked">
+      <sl-details summary="Struktur">
+        <pre>{{ viform.state.structure }}</pre>
+      </sl-details>
+      <sl-details summary="Eintrag">
+        <pre>{{ viform.state.skel }}</pre>
+      </sl-details>
     </sl-drawer>
   </teleport>
 </template>
@@ -21,6 +25,7 @@ import { useUserStore } from "@viur/vue-utils/login/stores/user"
 import "vue-json-pretty/lib/styles.css"
 
 const handlerState = inject("handlerState")
+const viform = inject("viform")
 const dbStore = useDBStore()
 const userStore = useUserStore()
 const route = useRoute()
