@@ -14,7 +14,7 @@
       </div>
       <entry-bar :module="module" :action="action" :skelkey="skelkey" skeltype="skeltype"></entry-bar>
     </div>
-    <loader v-if="state.loading" size="3"></loader>
+    <loader v-if="viform?.state?.loading" size="3"></loader>
     <sl-details
       v-if="modulesStore.state.loaded && modulesStore.state.modules[module]?.[`help_text_${action}`]"
       open
@@ -22,7 +22,6 @@
     >
       <p v-html="modulesStore.state.modules[module][`help_text_${action}`]"></p>
     </sl-details>
-
     <div v-if="!state.loading" class="scroll-content">
       <vi-form
         ref="viform"
@@ -179,10 +178,25 @@ const state = reactive({
   renderer: computed(() => props.renderer),
   relation_opened: [],
   loading: false,
+  canEdit: computed(() => {
+    if (userStore.state.user.access.indexOf("root") !== -1) {
+      return true
+    }
+    if (handlerState.group) {
+      return userStore.state.user.access.indexOf(`${handlerState.module}-${handlerState.group}-edit`) > -1
+    } else {
+      return userStore.state.user.access.indexOf(`${handlerState.module}-edit`) > -1
+    }
+  }),
   fetchurl: computed(() => {
-    let url = `/${props.renderer}/${props.module}/${props.action}`
+    let action = props.action
+    if (!state.canEdit) {
+      action = "view"
+    }
+
+    let url = `/${props.renderer}/${props.module}/${action}`
     if (
-      props.action === "clone" &&
+      action === "clone" &&
       appStore.state["core.version"] &&
       appStore.state["core.version"]?.[0] >= 3 &&
       appStore.state["core.version"]?.[1] <= 5
@@ -198,7 +212,7 @@ const state = reactive({
       url += `/${props.skeltype}`
     }
 
-    if (["edit", "clone"].includes(props.action) || (isTree && props.action === "add")) {
+    if (["edit", "clone", "view"].includes(action) || (isTree && action === "add")) {
       url += `/${props.skelkey}`
     }
     return url
