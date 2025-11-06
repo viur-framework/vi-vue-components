@@ -179,13 +179,14 @@ const state = reactive({
   relation_opened: [],
   loading: false,
   canEdit: computed(() => {
+    //todo use includes
     if (userStore.state.user.access.indexOf("root") !== -1) {
       return true
     }
-    if (handlerState.group) {
-      return userStore.state.user.access.indexOf(`${handlerState.module}-${handlerState.group}-edit`) > -1
+    if (state.group) {
+      return userStore.state.user.access.indexOf(`${state.module}-${state.group}-edit`) > -1
     } else {
-      return userStore.state.user.access.indexOf(`${handlerState.module}-edit`) > -1
+      return userStore.state.user.access.indexOf(`${state.module}-edit`) > -1
     }
   }),
   fetchurl: computed(() => {
