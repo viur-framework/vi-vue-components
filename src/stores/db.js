@@ -642,6 +642,19 @@ export const useDBStore = defineStore("db", () => {
       e["update"] = true
     }
   }
+  function closeAllTabs()
+  {
+    state["handlers.opened"] = [
+      {
+        to: {name: "home", fullPath: "/"},
+        url: "/",
+        name: "Dashboard",
+        icon: "grid-3x3-gap-fill",
+        closeable: false,
+        id: 0,
+      }
+    ]
+  }
 
   return {
     state,
@@ -661,5 +674,6 @@ export const useDBStore = defineStore("db", () => {
     updateActiveTabName,
     markHandlersToUpdate,
     module_access,
+    closeAllTabs
   }
 })

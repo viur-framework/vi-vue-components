@@ -245,6 +245,7 @@ function logout() {
   state.logoutloading = true
   userStore.logout().then(async (resp) => {
     state.logoutloading = false
+    dbStore.closeAllTabs()
   })
 }
 
