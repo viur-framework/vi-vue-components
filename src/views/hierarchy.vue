@@ -28,7 +28,7 @@ const state = reactive({
 })
 
 onBeforeRouteUpdate(async (to, from) => {
-  userstore.updateUser()
+  userStore.updateUser()
 })
 </script>
 
