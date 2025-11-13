@@ -1,4 +1,14 @@
 <template>
+  <div ref="cmenu" popover class="cmenu">
+    <sl-menu  style="max-width: 200px;" >
+      <sl-menu-item value="copy"><sl-copy-button :value="state.cellvalues['rendered']" hoist></sl-copy-button></sl-menu-item>
+      <!--<sl-menu-item value="redo">Zelle öffnen</sl-menu-item>
+      <sl-divider></sl-divider>
+      <sl-menu-item value="cut"><edit_action>bearbeiten</edit_action></sl-menu-item>
+      <sl-menu-item value="copy"><clone_action>klonen</clone_action></sl-menu-item>
+      <sl-menu-item value="paste"><delete_action>Löschen</delete_action></sl-menu-item>-->
+    </sl-menu>
+  </div>
   <div class="main-wrapper">
     <handler-bar v-if="!noTopbar" :module="module" handler="listhandler"></handler-bar>
     <sl-details
@@ -67,7 +77,7 @@
               @click.shift="entrySelected(idx, 'range')"
             >
               <template v-for="name in state.selectedBones">
-                <td v-if="currentlist.structure?.[name]">
+                <td v-if="currentlist.structure?.[name]" @contextmenu.prevent="contextMenu($event,idx,name,skel[name])">
                   <component
                     :is="getWidget(skel, name, idx)"
                     :skel="currentlist.state.skellist[idx]"
@@ -91,6 +101,7 @@
     </div>
     <floating-bar></floating-bar>
   </div>
+
 </template>
 
 <script setup>
@@ -130,6 +141,9 @@ import { VueDraggable } from "vue-draggable-plus"
 import { useCachedRequestsStore } from "@viur/vue-utils/utils/request"
 import { useUserStore } from "@viur/vue-utils/login/stores/user"
 import Utils from "../utils"
+import delete_action from "../actions/delete.vue"
+import edit_action from "../actions/edit.vue"
+import clone_action from "../actions/clone.vue"
 
 const props = defineProps({
   module: {
@@ -166,6 +180,7 @@ const userStore = useUserStore()
 const cachedRequestsStore = useCachedRequestsStore()
 
 const datatable = ref(null)
+const cmenu = ref(null)
 
 const state = reactive({
   type: "listhandler",
@@ -231,6 +246,7 @@ const state = reactive({
       return userStore.state.user.access.indexOf(`${state.module}-edit`) > -1
     }
   }),
+  cellvalues:{rendered:""}
 })
 provide("handlerState", state)
 const currentlist = ListRequest(state.storeName, {
@@ -669,9 +685,25 @@ function dragChange(event) {
       state.entryUpdate = false
     })
 }
+
+function contextMenu(e,idx,name,rendered){
+  state.cellvalues = {"idx":idx,"name":name,"rendered":rendered}
+  cmenu.value.style.left = e.clientX + 'px';
+  cmenu.value.style.top = e.clientY + 'px';
+
+  cmenu.value.showPopover();
+}
+
 </script>
 
 <style scoped>
+.cmenu{
+  background:transparent;
+  sl-menu{
+    background-color: var(--sl-color-neutral-50);
+  }
+}
+
 .main-wrapper {
   flex: 1;
   display: flex;
