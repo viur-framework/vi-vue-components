@@ -34,7 +34,8 @@
               <th
                 v-if="currentlist.structure?.[bone]"
                 :class="{ 'stick-header': state.sticky }"
-                :style="{ width: currentlist.structure?.[bone]['params']['column_width'] || state.tableWidth }"
+                :style="{ width: getColumnWidth(bone) }"
+                v-resize-observer="(e)=>{onResizeObserver(e,bone)}"
               >
                 {{ currentlist.structure?.[bone]?.["descr"] }}
                 <div v-if="currentlist.state.state === 2" class="sort-arrow-wrap">
@@ -144,6 +145,7 @@ import Utils from "../utils"
 import delete_action from "../actions/delete.vue"
 import edit_action from "../actions/edit.vue"
 import clone_action from "../actions/clone.vue"
+import { vResizeObserver } from '@vueuse/components'
 
 const props = defineProps({
   module: {
@@ -246,7 +248,8 @@ const state = reactive({
       return userStore.state.user.access.indexOf(`${state.module}-edit`) > -1
     }
   }),
-  cellvalues:{rendered:""}
+  cellvalues: {rendered: ""},
+  columnWidths: {}
 })
 provide("handlerState", state)
 const currentlist = ListRequest(state.storeName, {
@@ -411,6 +414,19 @@ onUnmounted(() => {
   destroyStore(currentlist)
 })
 
+function onResizeObserver(e, bone) {
+  if (e[0].target.tagName === "TH") {
+    state.columnWidths[bone] = e[0].borderBoxSize[0].inlineSize
+  }
+}
+
+function getColumnWidth(bone) {
+  if (bone in state.columnWidths) {
+    return state.columnWidths[bone]
+  }
+  return currentlist.structure?.[bone]['params']['column_width'] || state.tableWidth
+}
+
 function entrySelected(idx, action = "replace") {
   if (action === "append" && props.rowselect > 1) {
     if (state.selectedRows.includes(idx)) {
@@ -489,6 +505,7 @@ function primaryAction(e) {
 function nextpage() {
   return currentlist.next()
 }
+
 provide("nextpage", nextpage)
 provide("currentlist", currentlist)
 
