@@ -416,13 +416,15 @@ onUnmounted(() => {
 
 function onResizeObserver(e, bone) {
   if (e[0].target.tagName === "TH") {
-    state.columnWidths[bone] = e[0].borderBoxSize[0].inlineSize
+    contextStore.setContext(`_${bone}-width`, e[0].borderBoxSize[0].inlineSize, state.tabId)
   }
 }
 
 function getColumnWidth(bone) {
-  if (bone in state.columnWidths) {
-    return state.columnWidths[bone]
+  const key = `_${bone}-width`;
+  const localContext = contextStore.getLocalContext(state.tabId,true);
+  if (key in localContext) {
+    return localContext[key]
   }
   return currentlist.structure?.[bone]['params']['column_width'] || state.tableWidth
 }
