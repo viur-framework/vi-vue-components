@@ -15,7 +15,7 @@ import Utils from "../utils"
 function adminTreeLayer(itemList, parent) {
   const userStore = useUserStore()
 
-  function module_access(modulename, group = null) {
+  function module_access(modulename, group = null,showWithViewAccess=false) {
     const userStore = useUserStore()
     if (userStore.userAccess.includes("root")) {
       return true
@@ -25,12 +25,16 @@ function adminTreeLayer(itemList, parent) {
         userStore.userAccess.includes(`${modulename}-${group}-add`) ||
         userStore.userAccess.includes(`${modulename}-${group}-edit`) ||
         userStore.userAccess.includes(`${modulename}-${group}-delete`)
+      ) || (
+        showWithViewAccess && userStore.userAccess.includes(`${modulename}-${group}-view`)
       )
     } else {
       return (
         userStore.userAccess.includes(`${modulename}-add`) ||
         userStore.userAccess.includes(`${modulename}-edit`) ||
         userStore.userAccess.includes(`${modulename}-delete`)
+      ) || (
+        showWithViewAccess && userStore.userAccess.includes(`${modulename}-view`)
       )
     }
   }
@@ -47,11 +51,7 @@ function adminTreeLayer(itemList, parent) {
       conf["display"] = "visible"
     }
     if (conf["handler"] && conf["display"] !== "group") {
-      if (module_access(conf["module"], conf["group"])) {
-        conf["hasAccess"] = true
-      } else {
-        conf["hasAccess"] = false
-      }
+      conf["hasAccess"] = !!module_access(conf["module"], conf["group"],conf["showWithViewAccess"]);
     }
 
     if (conf["nodeType"] === "group" && conf["moduleGroups"]?.length === 0) {
