@@ -421,12 +421,12 @@ function onResizeObserver(e, bone) {
 }
 
 function getColumnWidth(bone) {
-  const key = `_${bone}-width`;
-  const localContext = contextStore.getLocalContext(state.tabId,true);
-  if (key in localContext) {
+  const key = `_${bone}-width`
+  const localContext = contextStore.getLocalContext(state.tabId, true)
+  if (Object.keys(localContext).includes(key)) {
     return localContext[key]
   }
-  return currentlist.structure?.[bone]['params']['column_width'] || state.tableWidth
+  return currentlist.structure?.[bone]["params"]["column_width"] || state.tableWidth
 }
 
 function entrySelected(idx, action = "replace") {
