@@ -49,7 +49,10 @@ const state = reactive({
 
   access: computed(() => {
     let access = userStore.state.user["access"] === null ? [] : userStore.state.user["access"]
-    if (userStore.state.user && access.includes("user-view") && (access.includes("root") || access.includes("admin"))) {
+    if (
+      userStore.state.user &&
+      (access.includes("root") || (access.includes("admin") && access.includes("user-view")))
+    ) {
       return true
     }
     return false
