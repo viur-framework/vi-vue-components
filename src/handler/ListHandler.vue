@@ -1,7 +1,9 @@
 <template>
   <div ref="cmenu" popover class="cmenu">
-    <sl-menu  style="max-width: 200px;" >
-      <sl-menu-item value="copy"><sl-copy-button :value="state.cellvalues['rendered']" hoist></sl-copy-button></sl-menu-item>
+    <sl-menu style="max-width: 200px">
+      <sl-menu-item value="copy">
+        <sl-copy-button :value="state.cellvalues['rendered']" hoist></sl-copy-button>
+      </sl-menu-item>
       <!--<sl-menu-item value="redo">Zelle öffnen</sl-menu-item>
       <sl-divider></sl-divider>
       <sl-menu-item value="cut"><edit_action>bearbeiten</edit_action></sl-menu-item>
@@ -33,9 +35,13 @@
             <template v-for="bone in state.selectedBones">
               <th
                 v-if="currentlist.structure?.[bone]"
+                v-resize-observer="
+                  (e) => {
+                    onResizeObserver(e, bone)
+                  }
+                "
                 :class="{ 'stick-header': state.sticky }"
                 :style="{ width: getColumnWidth(bone) }"
-                v-resize-observer="(e)=>{onResizeObserver(e,bone)}"
               >
                 {{ currentlist.structure?.[bone]?.["descr"] }}
                 <div v-if="currentlist.state.state === 2" class="sort-arrow-wrap">
@@ -78,7 +84,10 @@
               @click.shift="entrySelected(idx, 'range')"
             >
               <template v-for="name in state.selectedBones">
-                <td v-if="currentlist.structure?.[name]" @contextmenu.prevent="contextMenu($event,idx,name,skel[name])">
+                <td
+                  v-if="currentlist.structure?.[name]"
+                  @contextmenu.prevent="contextMenu($event, idx, name, skel[name])"
+                >
                   <component
                     :is="getWidget(skel, name, idx)"
                     :skel="currentlist.state.skellist[idx]"
@@ -102,7 +111,6 @@
     </div>
     <floating-bar></floating-bar>
   </div>
-
 </template>
 
 <script setup>
@@ -145,7 +153,7 @@ import Utils from "../utils"
 import delete_action from "../actions/delete.vue"
 import edit_action from "../actions/edit.vue"
 import clone_action from "../actions/clone.vue"
-import { vResizeObserver } from '@vueuse/components'
+import { vResizeObserver } from "@vueuse/components"
 
 const props = defineProps({
   module: {
@@ -248,8 +256,8 @@ const state = reactive({
       return userStore.state.user.access.indexOf(`${state.module}-edit`) > -1
     }
   }),
-  cellvalues: {rendered: ""},
-  columnWidths: {}
+  cellvalues: { rendered: "" },
+  columnWidths: {},
 })
 provide("handlerState", state)
 const currentlist = ListRequest(state.storeName, {
@@ -705,20 +713,19 @@ function dragChange(event) {
     })
 }
 
-function contextMenu(e,idx,name,rendered){
-  state.cellvalues = {"idx":idx,"name":name,"rendered":rendered}
-  cmenu.value.style.left = e.clientX + 'px';
-  cmenu.value.style.top = e.clientY + 'px';
+function contextMenu(e, idx, name, rendered) {
+  state.cellvalues = { idx: idx, name: name, rendered: rendered }
+  cmenu.value.style.left = e.clientX + "px"
+  cmenu.value.style.top = e.clientY + "px"
 
-  cmenu.value.showPopover();
+  cmenu.value.showPopover()
 }
-
 </script>
 
 <style scoped>
-.cmenu{
-  background:transparent;
-  sl-menu{
+.cmenu {
+  background: transparent;
+  sl-menu {
     background-color: var(--sl-color-neutral-50);
   }
 }
