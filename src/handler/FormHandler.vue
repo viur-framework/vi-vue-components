@@ -22,6 +22,15 @@
     >
       <p v-html="modulesStore.state.modules[module][`help_text_${action}`]"></p>
     </sl-details>
+
+    <div v-if="state.formfailed" class="errorwrapper">
+      <sl-alert open variant="warning">
+        <sl-icon slot="icon" name="info-circle"></sl-icon>
+
+        {{ $t("error") }}
+      </sl-alert>
+    </div>
+
     <div v-if="!state.loading" class="scroll-content">
       <vi-form
         ref="viform"
@@ -39,6 +48,7 @@
         :params="state.params"
         :debug="appStore.state.debug"
         :readonly="!state.canEdit"
+        @failed="formfailed"
       ></vi-form>
       <template v-for="handler in state.conf?.['editViews']" :key="handler['module']">
         <sl-details
@@ -225,6 +235,7 @@ const state = reactive({
     }
     return params
   }),
+  formfailed: null,
 })
 
 const viform = ref(null)
@@ -334,6 +345,10 @@ function getEditView(handler) {
     return "listhandler"
   }
   return currentModule["handlerComponent"]
+}
+
+function formfailed(error) {
+  state.formfailed = error
 }
 
 watch(
@@ -454,5 +469,9 @@ sl-details {
   :deep(.main) {
     height: auto;
   }
+}
+
+.errorwrapper {
+  padding: 20px;
 }
 </style>
