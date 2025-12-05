@@ -46,11 +46,10 @@ const userStore = useUserStore()
 
 const state = reactive({
   backgroundImage: computed(() => `url('${appStore.state["admin.login.background"]}'`),
+
   access: computed(() => {
-    if (
-      userStore.state.user &&
-      (userStore.state.user["access"].includes("root") || userStore.state.user["access"].includes("admin"))
-    ) {
+    let access = userStore.state.user["access"] === null ? [] : userStore.state.user["access"]
+    if (userStore.state.user && access.includes("user-view") && (access.includes("root") || access.includes("admin"))) {
       return true
     }
     return false

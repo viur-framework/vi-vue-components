@@ -92,4 +92,5 @@ export default {
   scriptor: {
     no_messages: "Keine Nachrichten",
   },
+  "viur.core.modules.user.btn.login": "Anmelden",
 }
