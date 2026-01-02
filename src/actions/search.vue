@@ -4,7 +4,7 @@
       ref="searchinput"
       size="small"
       :disabled="state.disabled || state.loading"
-      placeholder="Suche"
+      :placeholder="$t('actions.search')"
       clearable
       :value="state.searchValue"
       @sl-input="debouncedSearch"

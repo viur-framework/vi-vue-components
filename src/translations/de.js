@@ -43,6 +43,7 @@ export default {
       text: "Speichern",
       msg: "Wollen Sie keinen Eintrag neu speichern? | Wollen Sie den Eintrag neu speichern? | Wollen Sie {n} Einträge neu speichern?",
     },
+    search: "Suche",
   },
   sidebar: {
     workspace: "Arbeitsbereich",
@@ -54,6 +55,10 @@ export default {
     section_general_name: "Allgemein",
     section_system_name: "Servertasks",
     section_tools: "Tools",
+    search: "Suche",
+    module_config: "Einstellungen",
+    module_info: "Informationen",
+    module_open: "Öffnen",
   },
   skeldrawer: {
     noentry: "Kein Eintrag ausgewählt",
