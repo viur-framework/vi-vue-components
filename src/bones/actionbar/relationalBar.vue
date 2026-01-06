@@ -55,6 +55,7 @@ const props = defineProps({
   lang: String,
   readonly: Boolean,
   params: Object,
+  bone: Object,
 })
 
 const emit = defineEmits(["change", "delete"])
@@ -98,9 +99,9 @@ const state = reactive({
 function getList(search) {
   if (!search) return []
   let params = ""
-  if (boneState.bonestructure["type"] === "relational.tree.leaf.file") {
+  if (boneState.bonestructure["type"].startsWith("relational.tree.leaf")) {
     params = "skelType=leaf&"
-  } else if (boneState.bonestructure["type"] === "relational.tree.node.file") {
+  } else if (boneState.bonestructure["type"].startsWith("relational.tree.node")) {
     params = "skelType=node&"
   }
   let filter = `&search=${search.toLowerCase()}`
@@ -108,8 +109,8 @@ function getList(search) {
   if (!search || search.length < 2) {
     filter = ""
   }
-  if (props.bone["context"]) {
-    for (const [queryparameter, fieldname] of Object.entries(props.bone["context"])) {
+  if (boneState.params["context"]) {
+    for (const [queryparameter, fieldname] of Object.entries(boneState.params["context"])) {
       if (typeof fieldname == "string" && fieldname.includes("$(")) {
         params += `${queryparameter}=${formatString(fieldname, formState.skel)}&`
       } else {
