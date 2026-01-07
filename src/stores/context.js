@@ -38,9 +38,9 @@ export const useContextStore = defineStore("contextStore", () => {
     let context = {}
     if (Object.keys(state.localContext).includes(handlerId)) {
       context = toRaw(state.localContext[handlerId])
-      if (includePrivate && Object.keys(state.localPrivateContext).includes(handlerId)) {
-        context = { ...context, ...toRaw(state.localPrivateContext[handlerId]) }
-      }
+    }
+    if (includePrivate && Object.keys(state.localPrivateContext).includes(handlerId)) {
+      context = {...context, ...toRaw(state.localPrivateContext[handlerId])}
     }
     return context
   }
