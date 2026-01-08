@@ -27,7 +27,10 @@
       <sl-alert open variant="warning">
         <sl-icon slot="icon" name="info-circle"></sl-icon>
 
-        {{ $t("error") }}
+        <span> <b>Status</b>:{{ state.formfailed.status }}</span><br>
+        <span><b>{{ $t("title") }}</b>: {{ state.formfailed.title }}</span><br>
+        <span><b>{{ $t("descr") }}</b>: {{ state.formfailed.descr }}</span>
+
       </sl-alert>
     </div>
 
@@ -347,8 +350,8 @@ function getEditView(handler) {
   return currentModule["handlerComponent"]
 }
 
-function formfailed(error) {
-  state.formfailed = error
+async function formfailed(error) {
+  state.formfailed = await error.response.json()
 }
 
 watch(

@@ -93,4 +93,6 @@ export default {
     no_messages: "Keine Nachrichten",
   },
   "viur.core.modules.user.btn.login": "Anmelden",
+  title:"Titel",
+  descr:"Beschreibung",
 }

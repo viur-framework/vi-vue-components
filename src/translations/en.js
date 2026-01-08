@@ -88,4 +88,6 @@ export default {
     header: "Connection not found.",
     message: "No connection to the ViUR Core could be established.",
   },
+  title:"Title",
+  descr:"Description",
 }
