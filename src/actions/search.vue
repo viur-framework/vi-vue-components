@@ -71,7 +71,7 @@ const state = reactive({
   searchTypeOpened: false,
   loading: false,
   isLarge: false,
-  cooldown:0
+  cooldown: 0,
 })
 
 watch(
@@ -102,7 +102,6 @@ const debouncedSearch = useDebounceFn((event) => {
     state.loading = true
     search_input(event)
   }
-
 }, 2000)
 
 function search_input(event) {
