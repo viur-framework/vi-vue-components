@@ -77,7 +77,7 @@ function getActions() {
   const hierarchyActions = {
     ":options": [["selectfields", "overlay"]],
     default: [
-      ["selectfields", "rootnodelist"],
+      ["selectfields", "rootnodelist", "searchtree"],
       ["preview", "delete", "clone", "edit", "addnode"],
     ],
   }
@@ -93,7 +93,7 @@ function getActions() {
   const treeActions = {
     ":options": [["selectfields", "overlay"]],
     default: [
-      ["selectfields", "rootnodelist", "reload"],
+      ["selectfields", "rootnodelist", "searchtree", "reload"],
       ["preview", "delete", "clone", "edit", "move", "addnode", "addleaf"],
     ],
   }

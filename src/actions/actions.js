@@ -21,6 +21,7 @@ import nextpage_action from "./nextpage.vue"
 import group_action from "./group.vue"
 import groupdivider_action from "./group-divider.vue"
 import search_action from "./search.vue"
+import searchtree_action from "./searchtree.vue"
 import script_action from "./script.vue"
 import move_action from "./move.vue"
 import fluidpagepreview_action from "./fluidpagepreview.vue"
@@ -53,6 +54,7 @@ export default {
   group_action,
   groupdivider_action,
   search_action,
+  searchtree_action,
   script_action,
   move_action,
   fluidpagepreview_action,

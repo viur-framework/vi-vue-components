@@ -128,7 +128,7 @@ export function useHandlerLogic(props, handler_state) {
                   ...params,
                 })
                 .catch((error) => {
-                  if (error.code !== 20 && typeof error !== "string") {
+                  if (error.code !== 200 && typeof error !== "string") {
                     messageStore.addMessage("error", `${error.message}`, error.response?.url)
                   }
                   console.log(error)

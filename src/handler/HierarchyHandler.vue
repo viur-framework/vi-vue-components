@@ -129,6 +129,7 @@ const state = reactive({
   selector: computed(() => props.selector),
   ready: false,
   conf: null,
+  params: {},
 })
 provide("handlerState", state) // expose to components
 const tree = useTree(props.module, state, state)
