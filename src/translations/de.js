@@ -62,6 +62,7 @@ export default {
     selectall: "Alle auswählen",
     unselectall: "Alle abwählen",
     invertselect: "Auswahl umkehren",
+    resetselect: "Auswahl zurücksetzen",
   },
   relation: {
     select: "Auswählen",

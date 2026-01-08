@@ -55,6 +55,7 @@ export default {
     selectall: "Select all",
     unselectall: "Unselect all",
     invertselect: "Invert selection",
+    resetselect: "Reset selection",
   },
   relation: {
     select: "Select",
