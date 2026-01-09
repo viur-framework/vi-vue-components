@@ -7,6 +7,10 @@
     "lint": "node ../scripts/lint.mjs",
     "check": "node ../scripts/check.mjs"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/viur-framework/vi-vue-components"
+  },
   "author": "Andreas H. Kelch",
   "license": "MIT",
   "engines": {
