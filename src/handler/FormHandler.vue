@@ -27,10 +27,20 @@
       <sl-alert open variant="warning">
         <sl-icon slot="icon" name="info-circle"></sl-icon>
 
-        <span> <b>Status</b>:{{ state.formfailed.status }}</span><br>
-        <span><b>{{ $t("title") }}</b>: {{ state.formfailed.title }}</span><br>
-        <span><b>{{ $t("descr") }}</b>: {{ state.formfailed.descr }}</span>
-
+        <span>
+          <b>Status</b>
+          :{{ state.formfailed.status }}
+        </span>
+        <br />
+        <span>
+          <b>{{ $t("title") }}</b>
+          : {{ state.formfailed.title }}
+        </span>
+        <br />
+        <span>
+          <b>{{ $t("descr") }}</b>
+          : {{ state.formfailed.descr }}
+        </span>
       </sl-alert>
     </div>
 
@@ -192,15 +202,22 @@ const state = reactive({
   relation_opened: [],
   loading: false,
   canEdit: computed(() => {
-    //todo use includes
-    if (userStore.state.user.access.indexOf("root") !== -1) {
+    let accessflag = `${state.module}-edit`
+    if (state.group) {
+      accessflag = `${state.module}-${state.group}-edit`
+    }
+    if (
+      Object.keys(state.conf).includes("disabledActions") &&
+      state.conf["disabledActions"]?.length > 0 &&
+      state.conf["disabledActions"].includes("edit")
+    ) {
+      console.log("GGGGGG")
+      return false // if edit is disabled, open in view mode
+    }
+    if (userStore.state.user.access.includes("root")) {
       return true
     }
-    if (state.group) {
-      return userStore.state.user.access.indexOf(`${state.module}-${state.group}-edit`) > -1
-    } else {
-      return userStore.state.user.access.indexOf(`${state.module}-edit`) > -1
-    }
+    return userStore.state.user.access.includes(accessflag)
   }),
   fetchurl: computed(() => {
     let action = props.action
