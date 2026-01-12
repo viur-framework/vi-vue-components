@@ -62,6 +62,7 @@ export default {
     selectall: "Alle auswählen",
     unselectall: "Alle abwählen",
     invertselect: "Auswahl umkehren",
+    resetselect: "Auswahl zurücksetzen",
   },
   relation: {
     select: "Auswählen",
@@ -93,4 +94,6 @@ export default {
     no_messages: "Keine Nachrichten",
   },
   "viur.core.modules.user.btn.login": "Anmelden",
+  title:"Titel",
+  descr:"Beschreibung",
 }
