@@ -1,6 +1,6 @@
 <template>
   <sl-drawer
-    label="System Nachrichten"
+    :label="$t('system.messages')"
     :open="messageStore.state['opened']"
     @sl-request-close="messageStore.state['opened'] = false"
   >

@@ -1,10 +1,10 @@
 <template>
   <div class="home">
-    <h1 class="main-headline">Hallo {{ Utils.unescape(state.name) }}</h1>
+    <h1 class="main-headline">{{ $t("home.greeting", { name: Utils.unescape(state.name) }) }}</h1>
     <strong>{{ userStore.state.user.name }}</strong>
 
     <div v-if="false && userStore.favoriteModules?.length > 0" class="main-box">
-      <h2 class="headline">Deine Favoriten</h2>
+      <h2 class="headline">{{ $t("home.favorites") }}</h2>
       <div class="home-grid">
         <widget-small v-for="i in userStore.favoriteModules" :icon="i['icon']" :library="i['library']" :to="i['to']">
           {{ Utils.unescape(i["name"]) }}
@@ -14,7 +14,7 @@
 
     <div v-if="localStore.state.lastEntries.length > 0" class="main-box">
       <h2 class="headline">
-        Zuletzt bearbeitet
+        {{ $t("home.recent") }}
         <sl-icon name="x-lg" @click="localStore.removeAllEntries()"></sl-icon>
       </h2>
 

@@ -55,7 +55,9 @@
 <script setup>
 import { reactive, defineComponent, inject, onBeforeMount, watch, computed, onMounted, unref, toRaw } from "vue"
 import { useRouter } from "vue-router"
+import { i18n } from "../i18n"
 import { useDBStore } from "../stores/db"
+import { useAppStore } from "../stores/app.js"
 import { Request, boneLogic } from "@viur/vue-utils"
 import useTree from "./tree.js"
 
@@ -71,7 +73,9 @@ const props = defineProps({
 const emit = defineEmits(["loaded"])
 const treeState = inject("handlerState")
 const closeSelector = inject("closeSelector")
+const t = i18n.global.t
 const dbStore = useDBStore()
+const appStore = useAppStore()
 const router = useRouter()
 const state = reactive({
   currentEntry: {},
@@ -172,7 +176,13 @@ function expandChildren(idx) {
 }
 
 function getBoneViewer(skel, boneName) {
-  const { getBoneValue, bones_state } = boneLogic(skel, treeState.structure)
+  const { getBoneValue, bones_state } = boneLogic(
+    skel,
+    treeState.structure,
+    true,
+    appStore.state.datalanguage === "selected" ? appStore.state.language : null,
+    t
+  )
   return getBoneValue(boneName, (skel = skel))
 }
 

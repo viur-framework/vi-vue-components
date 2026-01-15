@@ -26,12 +26,14 @@
 import { reactive, defineComponent } from "vue"
 import { useDBStore } from "../stores/db"
 import { boneLogic } from "@viur/vue-utils"
+import { i18n } from "../i18n"
 
 const state = reactive({})
+const t = i18n.global.t
 const dbStore = useDBStore()
 
 function getBoneViewer(skel, boneName) {
-  const { getBoneValue, bones_state } = boneLogic(skel, dbStore.state["skeldrawer.structure"])
+  const { getBoneValue, bones_state } = boneLogic(skel, dbStore.state["skeldrawer.structure"], false, null, t)
   return getBoneValue(boneName, (skel = skel))
 }
 

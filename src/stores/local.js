@@ -9,6 +9,8 @@ export const useLocalStore = defineStore(
       listamount: "30",
       lastEntries: [],
       cache: true,
+      language: null,
+      datalanguage: null,
     })
     function addEntries(handler) {
       let exists = state.lastEntries.filter((x) => x["key"] === handler["key"])

@@ -1,8 +1,8 @@
 <template>
   <div class="main-wrapper">
     <div style="height: 100%; padding: 20px">
-      <h1 class="headline">Modulebeschreibung {{ dbStore.getConf(module)["name"] }}</h1>
-      <sl-details summary="Datenmodel">
+      <h1 class="headline">{{ $t("moduleinfo.label") }} {{ dbStore.getConf(module)["name"] }}</h1>
+      <sl-details :summary="$t('moduleinfo.model')">
         <div class="wrapper">
           <div v-for="(bone, boneName) in state.skels[Object.keys(state.skels)[0]]" class="model-wrap">
             <div class="model-entry">
@@ -12,18 +12,18 @@
             <vue-json-pretty :deep="2" :data="bone" />
           </div>
 
-          <sl-details v-for="(data, name) in state.skels" :summary="'Model: ' + name">
+          <sl-details v-for="(data, name) in state.skels" :summary="$t('moduleinfo.model') + ': ' + name">
             <vue-json-pretty :deep="1" :data="data" />
           </sl-details>
         </div>
       </sl-details>
 
-      <sl-details summary="Funktionen" open>
+      <sl-details :summary="$t('moduleinfo.functions')" open>
         <div class="wrapper">
           <sl-card v-for="(method, name) in dbStore.getConf(module)['methods']">
-            <h2 class="subline">Endpunkt: {{ name }}</h2>
+            <h2 class="subline">{{ $t("moduleinfo.endpoint") }}: {{ name }}</h2>
             <span class="doc" v-html="optimizeText(method['docs'])"></span>
-            <sl-details summary="Parameter" open>
+            <sl-details :summary="$t('moduleinfo.parameter')" open>
               <ul>
                 <li v-for="(arg, arg_name) in method['args']">
                   <template v-if="!arg['type']">

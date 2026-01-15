@@ -8,6 +8,7 @@ import { createI18n } from "vue-i18n"
 import local_de_translations from "@/translations/de.js"
 import local_en_translations from "@/translations/en.js"
 import { useTranslations } from "@viur/vue-utils/utils/translations.js"
+export { languageMap } from "@viur/vue-utils/bones/view/boneLogic"
 
 export const i18n = createI18n({
   legacy: false,
@@ -15,6 +16,10 @@ export const i18n = createI18n({
   fallbackLocale: "de",
   messages: { de: de_utils_translations, en: en_utils_translations },
   missing: (locale, key, instance, values) => {
+    if (key.includes(" ")) {
+      //keys haben kein Space, dann einfach so ausgeben
+      return key
+    }
     console.error(`Missing translation key: "${key}" for locale "${locale}"`)
     return `[[${key}]]`
   },

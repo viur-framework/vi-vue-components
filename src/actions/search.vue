@@ -4,7 +4,7 @@
       ref="searchinput"
       size="small"
       :disabled="state.disabled || state.loading"
-      :placeholder="$t('actions.search')"
+      :placeholder="$t('actions.search.label')"
       clearable
       :value="state.searchValue"
       @sl-input="debouncedSearch"
@@ -26,17 +26,17 @@
       <sl-menu @sl-select="typeSelection">
         <sl-menu-item title="Wenn alle Einträge geladen wurden wird lokal gesucht" value="auto">
           <sl-icon slot="prefix" name="robot"></sl-icon>
-          Automatisch
+          {{ $t("actions.search.auto") }}
         </sl-menu-item>
 
         <sl-menu-item :title="$t('search.local')" value="local">
           <sl-icon slot="prefix" name="list-ul"></sl-icon>
-          Lokale Suche
+          {{ $t("actions.search.local") }}
         </sl-menu-item>
 
         <sl-menu-item :title="$t('search.database')" value="database">
           <sl-icon slot="prefix" name="database"></sl-icon>
-          Datenbank Suche
+          {{ $t("actions.search.remote") }}
         </sl-menu-item>
       </sl-menu>
     </sl-dropdown>

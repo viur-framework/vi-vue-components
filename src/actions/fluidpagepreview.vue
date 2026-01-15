@@ -10,7 +10,7 @@
     @sl-hide="state.opened = false"
   >
     <div slot="label" class="label-wrapper">
-      Vorschau
+      {{ $t("actions.preview") }}
       <div class="button-wrapper">
         <sl-button-group>
           <sl-button size="small" title="Smartphone: Breite 480px" @click="state.currentWidth = '480px'">

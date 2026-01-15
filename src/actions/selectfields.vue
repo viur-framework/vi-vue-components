@@ -5,7 +5,7 @@
   </sl-button>
 
   <sl-dialog id="dialog-selectfields" :label="$t('actions.selectfields')" @sl-hide="saveConfig">
-    <sl-input clearable @sl-input="filterBones">
+    <sl-input clearable size="small" style="margin-bottom: 10px" @sl-input="filterBones">
       <sl-icon slot="prefix" name="search"></sl-icon>
     </sl-input>
     <div v-for="(bone, boneName) in state.structure">
@@ -20,16 +20,15 @@
       </sl-checkbox>
     </div>
     <div slot="footer">
-      <sl-button-group>
+      <sl-button-group style="margin-bottom: 10px">
         <sl-button size="small" @click="selectall">{{ $t("selectfields.selectall") }}</sl-button>
         <sl-button size="small" @click="unselectall">{{ $t("selectfields.unselectall") }}</sl-button>
         <sl-button size="small" @click="invertselect">{{ $t("selectfields.invertselect") }}</sl-button>
         <sl-button size="small" @click="resetselect">{{ $t("selectfields.resetselect") }}</sl-button>
       </sl-button-group>
       <sl-button-group slot="footer">
-        <sl-button id="closeButton" size="small" @click="saveConfig" variant="success">{{
-            $t("actions.save")
-          }}
+        <sl-button id="closeButton" size="small" variant="success" @click="saveConfig">
+          {{ $t("actions.save") }}
         </sl-button>
       </sl-button-group>
     </div>
@@ -37,7 +36,7 @@
 </template>
 
 <script setup>
-import {reactive, inject, onMounted} from "vue"
+import { reactive, inject, onMounted } from "vue"
 import { useDBStore } from "../stores/db"
 const handlerState = inject("handlerState")
 const currentlist = inject("currentlist")
@@ -48,10 +47,10 @@ const state = reactive({
   active: [],
 })
 const dbStore = useDBStore()
-onMounted(()=>{
+onMounted(() => {
   const dialog = document.querySelector("#dialog-selectfields")
   const closeButton = dialog.querySelector("#closeButton")
-  closeButton.addEventListener('click', () => dialog.hide())
+  closeButton.addEventListener("click", () => dialog.hide())
 })
 function openSelectDialog() {
   if (handlerState.structure) {

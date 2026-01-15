@@ -2,7 +2,9 @@
   <div ref="cmenu" popover class="cmenu">
     <sl-menu style="max-width: 200px">
       <sl-menu-item value="copy">
-        <sl-copy-button :value="state.cellvalues['rendered']" hoist></sl-copy-button>
+        <sl-copy-button :value="state.cellvalues['rendered']" hoist :title="$t('listhandler.copy_value')">
+          <sl-icon slot="copy-icon" name="copy"></sl-icon>
+        </sl-copy-button>
       </sl-menu-item>
       <!--<sl-menu-item value="redo">Zelle öffnen</sl-menu-item>
       <sl-divider></sl-divider>
@@ -138,6 +140,7 @@ import { useAppStore } from "../stores/app"
 import { useMessageStore } from "../stores/message"
 import { useModulesStore } from "../stores/modules"
 import { useRoute, useRouter } from "vue-router"
+import { i18n } from "../i18n"
 import Loader from "@viur/vue-utils/generic/Loader.vue"
 import FloatingBar from "../bars/FloatingBar.vue"
 import { useContextStore } from "../stores/context"
@@ -177,6 +180,7 @@ const props = defineProps({
 })
 const emit = defineEmits(["currentSelection", "closeSelector"])
 
+const t = i18n.global.t
 const dbStore = useDBStore()
 const route = useRoute()
 const router = useRouter()
@@ -519,7 +523,13 @@ provide("nextpage", nextpage)
 provide("currentlist", currentlist)
 
 function getBoneViewer(skel, boneName) {
-  const { getBoneValue, bones_state } = boneLogic(skel, currentlist.structure)
+  const { getBoneValue, bones_state } = boneLogic(
+    skel,
+    currentlist.structure,
+    true,
+    appStore.state.datalanguage === "selected" ? appStore.state.language : null,
+    t
+  )
   let option = null
   if (currentlist.structure?.[boneName]?.["type"] === "date") {
     if (currentlist.structure[boneName]["date"] && !currentlist.structure[boneName]["time"]) {

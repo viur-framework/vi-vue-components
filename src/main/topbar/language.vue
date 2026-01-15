@@ -1,46 +1,50 @@
 <template>
-  <sl-select
-    v-if="appStore.state.languages && appStore.state.languages?.length > 1"
-    size="small"
-    :value="appStore.state.language"
-    @sl-change="updateLanguage"
-  >
-    <sl-option v-for="lang in appStore.state.languages" :key="lang" :value="lang">
-      {{ getLanguageInfo(lang)?.flag }} {{ getLanguageInfo(lang)?.label }}
-    </sl-option>
-  </sl-select>
+  <sl-dropdown hoist>
+    <sl-button slot="trigger" size="small" caret>
+      <span slot="prefix">{{ getLanguageInfo(appStore.state.language)?.flag }}</span>
+      {{ getLanguageInfo(appStore.state.language)?.label }}
+    </sl-button>
+    <sl-menu @sl-select="updateLanguage">
+      <sl-menu-item disabled>{{ $t("topbar.language.ui") }}</sl-menu-item>
+      <sl-menu-item
+        v-for="lang in appStore.state.languages"
+        :key="lang"
+        type="checkbox"
+        :checked="appStore.state.language === lang"
+        :data-lang="lang"
+      >
+        <span slot="prefix">{{ getLanguageInfo(lang)?.flag }}</span>
+        {{ getLanguageInfo(lang)?.label }}
+      </sl-menu-item>
+      <sl-divider></sl-divider>
+      <sl-menu-item disabled>
+        <div style="display: flex; align-items: center; gap: 0.5rem">
+          {{ $t("topbar.language.data.label") }}
+          <sl-tooltip hoist :content="$t('topbar.language.data.descr')" placement="left">
+            <sl-icon name="info-circle"></sl-icon>
+          </sl-tooltip>
+        </div>
+      </sl-menu-item>
+
+      <sl-menu-item type="checkbox" :checked="appStore.state.datalanguage === 'all'" data-datalanguage="all">
+        {{ $t("topbar.language.data.all") }}
+      </sl-menu-item>
+      <sl-menu-item type="checkbox" :checked="appStore.state.datalanguage === 'selected'" data-datalanguage="selected">
+        {{ $t("topbar.language.data.selected") }}
+      </sl-menu-item>
+    </sl-menu>
+  </sl-dropdown>
 </template>
 
 <script setup>
 import { reactive, defineComponent, onMounted, computed } from "vue"
 import { Request } from "@viur/vue-utils"
 import { useAppStore } from "../../stores/app"
-import { i18n } from "../../i18n"
-
-const languageMap = [
-  { lang: "en", country: "US", label: "English", flag: "\ud83c\uddfa\ud83c\uddf8" },
-  { lang: "de", country: "DE", label: "Deutsch", flag: "\ud83c\udde9\ud83c\uddea" },
-  { lang: "fr", country: "FR", label: "Français", flag: "\ud83c\uddeb\ud83c\uddf7" },
-  { lang: "es", country: "ES", label: "Español", flag: "\ud83c\uddea\ud83c\uddf8" },
-  { lang: "pt", country: "BR", label: "Português", flag: "\ud83c\udde7\ud83c\uddf7" },
-  { lang: "it", country: "IT", label: "Italiano", flag: "\ud83c\uddee\ud83c\uddf9" },
-  { lang: "nl", country: "NL", label: "Nederlands", flag: "\ud83c\uddf3\ud83c\uddf1" },
-  { lang: "pl", country: "PL", label: "Polski", flag: "\ud83c\uddf5\ud83c\uddf1" },
-  { lang: "ru", country: "RU", label: "Русский", flag: "\ud83c\uddf7\ud83c\uddfa" },
-  { lang: "tr", country: "TR", label: "Türkçe", flag: "\ud83c\uddf9\ud83c\uddf7" },
-  { lang: "zh", country: "CN", label: "中文", flag: "\ud83c\udde8\ud83c\uddf3" },
-  { lang: "ja", country: "JP", label: "日本語", flag: "\ud83c\uddef\ud83c\uddf5" },
-  { lang: "ko", country: "KR", label: "한국어", flag: "\ud83c\uddf0\ud83c\uddf7" },
-  { lang: "ar", country: "SA", label: "العربية", flag: "\ud83c\uddf8\ud83c\udde6" },
-  { lang: "hi", country: "IN", label: "हिन्दी", flag: "\ud83c\uddee\ud83c\uddf3" },
-  { lang: "sv", country: "SE", label: "Svenska", flag: "\ud83c\uddf8\ud83c\uddea" },
-  { lang: "no", country: "NO", label: "Norsk", flag: "\ud83c\uddf3\ud83c\uddf4" },
-  { lang: "da", country: "DK", label: "Dansk", flag: "\ud83c\udde9\ud83c\uddf0" },
-  { lang: "fi", country: "FI", label: "Suomi", flag: "\ud83c\uddeb\ud83c\uddee" },
-  { lang: "cs", country: "CZ", label: "Čeština", flag: "\ud83c\udde8\ud83c\uddff" },
-]
+import { useLocalStore } from "../../stores/local"
+import { i18n, languageMap } from "../../i18n"
 
 const appStore = useAppStore()
+const localStore = useLocalStore()
 
 const state = reactive({})
 
@@ -58,13 +62,30 @@ function requestLanguages() {
 }
 
 function updateLanguage(e) {
-  console.log(i18n)
-
-  appStore.state.language = e.target.value
-  i18n.global.locale.value = e.target.value
+  const { lang, datalanguage } = e.detail.item.dataset
+  if (lang) {
+    appStore.state.language = lang
+    i18n.global.locale.value = lang
+    localStore.state.language = lang
+  }
+  if (datalanguage) {
+    appStore.state.datalanguage = datalanguage
+    localStore.state.datalanguage = datalanguage
+  }
 }
 
 onMounted(() => {
+  if (localStore.state.language) {
+    appStore.state.language = localStore.state.language
+    i18n.global.locale.value = localStore.state.language
+  } else {
+    localStore.state.language = appStore.state.language
+  }
+  if (localStore.state.datalanguage) {
+    appStore.state.datalanguage = localStore.state.datalanguage
+  } else {
+    localStore.state.datalanguage = appStore.state.datalanguage
+  }
   requestLanguages()
 })
 </script>

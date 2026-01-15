@@ -3,9 +3,9 @@
     <div v-if="!noTopbar" class="topbar">
       <div class="top-headline" style="display: flex; gap: 10px; align-items: center">
         <div>
-          <span v-if="['clone', 'add'].includes(action)">Neuer</span>
-          <span v-else-if="['edit'].includes(action)">Bearbeite</span>
-          {{ Utils.unescape(state.conf?.["name"]) }} Eintrag
+          <span v-if="['clone', 'add'].includes(action)">{{ $t("form.new") }}</span>
+          <span v-else-if="['edit'].includes(action)">{{ $t("form.edit") }}</span>
+          {{ Utils.unescape(state.conf?.["name"]) }} {{ $t("form.entry") }}
           <span v-if="state.formValues?.['name']?.[0]['name']">
             : {{ Utils.unescape(state.formValues["name"][0]["name"]) }}
           </span>
