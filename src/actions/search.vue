@@ -71,6 +71,7 @@ const state = reactive({
   searchTypeOpened: false,
   loading: false,
   isLarge: false,
+  cooldown: 0,
 })
 
 watch(
@@ -97,11 +98,14 @@ onMounted(() => {
 })
 
 const debouncedSearch = useDebounceFn((event) => {
-  state.loading = true
-  search_input(event)
+  if (new Date().getTime() - state.cooldown > 2000) {
+    state.loading = true
+    search_input(event)
+  }
 }, 2000)
 
 function search_input(event) {
+  state.cooldown = new Date().getTime()
   state.loading = true
   state.searchValue = event.target.value
 

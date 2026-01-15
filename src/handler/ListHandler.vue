@@ -475,7 +475,6 @@ function entrySelected(idx, action = "replace") {
 }
 
 function openEditor(e) {
-  if (!state.canEdit) return 0
   if (props.selector) {
     emit("closeSelector", state.currentSelection)
     return 0

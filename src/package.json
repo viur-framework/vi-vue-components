@@ -1,11 +1,15 @@
 {
   "name": "@viur/vue-components",
-  "version": "2.5.1",
+  "version": "2.5.2",
   "type": "module",
   "description": "a collection of complex components to build uis",
   "scripts": {
     "lint": "node ../scripts/lint.mjs",
     "check": "node ../scripts/check.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/viur-framework/vi-vue-components"
   },
   "author": "Andreas H. Kelch",
   "license": "MIT",
@@ -14,7 +18,7 @@
   },
   "dependencies": {
     "@codemirror/lang-python": "^6.1.6",
-    "@viur/vue-utils": "^3.3.1",
+    "@viur/vue-utils": "^3.3.2",
     "@vueuse/components": "^14.0.0",
     "@vueuse/core": "^12.4.0",
     "codemirror": "^6.0.1",

@@ -19,16 +19,25 @@
         {{ bone["descr"] !== "" ? bone["descr"] : boneName }}
       </sl-checkbox>
     </div>
-    <sl-button-group slot="footer">
-      <sl-button size="small" @click="selectall">{{ $t("selectfields.selectall") }}</sl-button>
-      <sl-button size="small" @click="unselectall">{{ $t("selectfields.unselectall") }}</sl-button>
-      <sl-button size="small" @click="invertselect">{{ $t("selectfields.invertselect") }}</sl-button>
-    </sl-button-group>
+    <div slot="footer">
+      <sl-button-group>
+        <sl-button size="small" @click="selectall">{{ $t("selectfields.selectall") }}</sl-button>
+        <sl-button size="small" @click="unselectall">{{ $t("selectfields.unselectall") }}</sl-button>
+        <sl-button size="small" @click="invertselect">{{ $t("selectfields.invertselect") }}</sl-button>
+        <sl-button size="small" @click="resetselect">{{ $t("selectfields.resetselect") }}</sl-button>
+      </sl-button-group>
+      <sl-button-group slot="footer">
+        <sl-button id="closeButton" size="small" @click="saveConfig" variant="success">{{
+            $t("actions.save")
+          }}
+        </sl-button>
+      </sl-button-group>
+    </div>
   </sl-dialog>
 </template>
 
 <script setup>
-import { reactive, inject } from "vue"
+import {reactive, inject, onMounted} from "vue"
 import { useDBStore } from "../stores/db"
 const handlerState = inject("handlerState")
 const currentlist = inject("currentlist")
@@ -39,7 +48,11 @@ const state = reactive({
   active: [],
 })
 const dbStore = useDBStore()
-
+onMounted(()=>{
+  const dialog = document.querySelector("#dialog-selectfields")
+  const closeButton = dialog.querySelector("#closeButton")
+  closeButton.addEventListener('click', () => dialog.hide())
+})
 function openSelectDialog() {
   if (handlerState.structure) {
     state.structure = handlerState.structure
@@ -89,10 +102,17 @@ function unselectall() {
 function invertselect() {
   state.active = Object.keys(state.structure).filter((i) => !state.active.includes(i))
 }
-function saveConfig() {
+
+function resetselect() {
   const conf = dbStore.getConf(handlerState.module)
+  if (conf && conf?.["columns"]) {
+    state.active = conf["columns"]
+  } else {
+    state.active = Object.keys(Object.fromEntries(Object.entries(state.structure).filter(([, v]) => v["visible"])))
+  }
+}
+function saveConfig() {
   handlerState.selectedBones = state.active
-  conf["columns"] = handlerState.selectedBones
   localStorage.setItem(handlerState.module + "__selectedBones", JSON.stringify(handlerState.selectedBones))
   if (!updateAction) {
     reloadAction(true)
