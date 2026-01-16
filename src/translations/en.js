@@ -3,6 +3,7 @@ export default {
     add: "Add",
     addnode: "Add node",
     clone: "Clone",
+    download: "Download",
     delete: {
       text: "Delete",
       msg: "`Do you want to delete these {count} entries`",
