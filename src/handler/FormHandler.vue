@@ -61,6 +61,7 @@
         :params="state.params"
         :debug="appStore.state.debug"
         :readonly="!state.canEdit"
+        :default-language="appStore.state.language"
         @failed="formfailed"
       ></vi-form>
       <template v-for="handler in state.conf?.['editViews']" :key="handler['module']">
