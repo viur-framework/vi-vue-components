@@ -6,6 +6,7 @@ export default {
     addfile: "Datei hinzufügen",
     addleaf: "Eintrag hinzufügen",
     clone: "Klonen",
+    download: "Download",
     delete: {
       text: "Löschen",
       msg: "Wollen Sie keinen Eintrag löschen? | Wollen Sie den Eintrag löschen? | Wollen Sie {n} Einträge löschen?",

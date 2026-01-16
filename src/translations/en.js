@@ -6,6 +6,7 @@ export default {
     addfile: "Add file",
     addleaf: "Add entry",
     clone: "Clone",
+    download: "Download",
     delete: {
       text: "Delete",
       msg: "Do you want to delete no entries? | Do you want to delete the entry? | Do you want to delete {n} entries?",

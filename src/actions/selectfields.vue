@@ -5,8 +5,8 @@
   </sl-button>
 
   <sl-dialog id="dialog-selectfields" :label="$t('actions.selectfields')" @sl-hide="saveConfig">
-    <sl-input clearable size="small" style="margin-bottom: 10px" @sl-input="filterBones">
-      <sl-icon slot="prefix" name="search"></sl-icon>
+    <sl-input clearable @sl-input="filterBones" class="search-input">
+      <sl-icon slot="suffix" name="search"></sl-icon>
     </sl-input>
     <div v-for="(bone, boneName) in state.structure">
       <sl-checkbox
@@ -129,6 +129,10 @@ function filterBones(e) {
 </script>
 
 <style scoped>
+.search-input{
+  margin-bottom: var(--sl-spacing-large);
+}
+
 .selectfieldswitch {
   display: flex;
   margin-bottom: 5px;
