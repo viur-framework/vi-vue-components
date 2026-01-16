@@ -108,6 +108,11 @@ function getActions() {
     default: [["reload"], ["fluidpagepreview", "preview", "add"]],
   }
 
+  let translationActions = {
+    ...listActions,
+    default: [["selectfields", "translationlanguage"], ["search", "resave", "preview", "delete", "clone", "edit", "add"]],
+  }
+
   //given props overrides calculation
   if (props.actions?.length > 0) return props.actions
 
@@ -119,7 +124,7 @@ function getActions() {
   if (!handler && props.handler) {
     handler = props.handler
   }
-
+  console.log(handler)
   if (!conf) return actions
   if (handler.startsWith("tree.node")) {
     actions = { ...hierarchyActions }
@@ -131,6 +136,8 @@ function getActions() {
     actions = { ...fluidpageActions }
   } else if (handler.startsWith("list.fluidpage.content")) {
     actions = { ...fluidpagecontentActions }
+  } else if (handler.startsWith("list.translation")) {
+    actions = { ...translationActions }
   }
 
   //remove disabledActions from all objects

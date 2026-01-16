@@ -28,6 +28,7 @@ import formutils_action from "./formutils.vue"
 import userfilter_action from "./userfilter.vue"
 import deleteentry_action from "./deleteentry.vue"
 import resave_action from "./resave.vue"
+import translationlanguage_action from "./translationlanguage.vue"
 
 export default {
   add_action,
@@ -60,4 +61,5 @@ export default {
   userfilter_action,
   deleteentry_action,
   resave_action,
+  translationlanguage_action,
 }

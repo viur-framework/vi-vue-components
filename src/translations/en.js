@@ -39,6 +39,7 @@ export default {
     clear_log: "Clear log",
     clear_cache: "Clear cache",
     translate: "Translate",
+    translate_language_placeholder: "Language",
     resave: {
       text: "Save",
       msg: "Do you want to re-save no entries? | Do you want to re-save the entry? | Do you want to re-save {n} entries?",

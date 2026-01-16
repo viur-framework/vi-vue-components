@@ -105,6 +105,12 @@ const default_routes = [
     component: () => import("./views/fluidpage.vue"),
   },
   {
+    path: "/db/:module/translation",
+    name: "translation",
+    props: true,
+    component: () => import("./views/translation.vue"),
+  },
+  {
     path: "/db/scriptor/frame/:key",
     name: "script",
     props: true,
