@@ -35,6 +35,7 @@ import { useTitle } from "@vueuse/core"
 //default top actions
 import ViAction from "../main/topbar/vi.vue"
 import LogAction from "../main/topbar/log.vue"
+import LanguageAction from "../main/topbar/language.vue"
 import MessageDrawer from "../main/messages/MessageDrawer.vue"
 import { useUserStore } from "@viur/vue-utils/login/stores/user"
 
@@ -109,6 +110,7 @@ function collectViurConfig() {
 }
 
 function initTopBarActions() {
+  dbStore.addTopBarAction(LanguageAction)
   dbStore.addTopBarAction(LogAction)
   dbStore.addTopBarAction(ViAction)
 }

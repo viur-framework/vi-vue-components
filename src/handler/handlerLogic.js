@@ -2,18 +2,22 @@ import { useDBStore } from "../stores/db"
 import { useContextStore } from "../stores/context"
 import { useMessageStore } from "../stores/message"
 import { useLocalStore } from "../stores/local"
+import { useAppStore } from "../stores/app"
 import SortindexView from "../bones/sortindexView.vue"
 import { ListRequest, destroyStore, boneLogic, Request } from "@viur/vue-utils"
 import { onMounted, watch, onUnmounted, computed, reactive, unref } from "vue"
 import BoneView from "../bones/boneView.vue"
 import { useRoute, useRouter } from "vue-router"
+import { i18n } from "../i18n"
 
 export function useHandlerLogic(props, handler_state) {
   const dbStore = useDBStore()
   const contextStore = useContextStore()
   const messageStore = useMessageStore()
   const localStore = useLocalStore()
+  const appStore = useAppStore()
   const router = useRouter()
+  const t = i18n.global.t
 
   const time = new Date().getTime()
   let currentConf = dbStore.getConf(props.module, props.view) //needed
@@ -291,7 +295,13 @@ export function useHandlerLogic(props, handler_state) {
   }
 
   function getTextWidget(skel, boneName, handler) {
-    const { getBoneValue, bones_state } = boneLogic(skel, handler.structure)
+    const { getBoneValue, bones_state } = boneLogic(
+      skel,
+      handler.structure,
+      true,
+      appStore.state.datalanguage === "selected" ? appStore.state.language : null,
+      t
+    )
     return getBoneValue(boneName, (skel = skel))
   }
 

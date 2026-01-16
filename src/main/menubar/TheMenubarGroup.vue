@@ -18,7 +18,7 @@
       <sl-input
         v-model="state.searchValue"
         size="small"
-        placeholder="Suche"
+        :placeholder="$t('sidebar.search')"
         class="modulesearch"
         clearable
         @sl-clear="state.searchValue = ''"

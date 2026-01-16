@@ -40,15 +40,15 @@
               @click="openConfig()"
             >
               <sl-icon slot="prefix" name="gear" sprite></sl-icon>
-              Einstellungen
+              {{ $t("sidebar.module_config") }}
             </sl-menu-item>
             <sl-menu-item @click="openInfo">
               <sl-icon slot="prefix" name="info-circle" sprite></sl-icon>
-              Informationen
+              {{ $t("sidebar.module_info") }}
             </sl-menu-item>
             <sl-menu-item @click="openItem(route, true)">
               <sl-icon slot="prefix" name="plus-lg" sprite></sl-icon>
-              Öffnen
+              {{ $t("sidebar.module_open") }}
             </sl-menu-item>
           </sl-menu>
         </sl-dropdown>

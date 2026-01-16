@@ -11,11 +11,12 @@ import { useUserStore } from "@viur/vue-utils/login/stores/user"
 import { useContextStore } from "./context"
 import { destroyStore } from "@viur/vue-utils/utils/handlers"
 import Utils from "../utils"
+import { i18n } from "../i18n"
 
 function adminTreeLayer(itemList, parent) {
   const userStore = useUserStore()
 
-  function module_access(modulename, group = null,showWithViewAccess=false) {
+  function module_access(modulename, group = null, showWithViewAccess = false) {
     const userStore = useUserStore()
     if (userStore.userAccess.includes("root")) {
       return true
@@ -24,17 +25,15 @@ function adminTreeLayer(itemList, parent) {
       return (
         userStore.userAccess.includes(`${modulename}-${group}-add`) ||
         userStore.userAccess.includes(`${modulename}-${group}-edit`) ||
-        userStore.userAccess.includes(`${modulename}-${group}-delete`)
-      ) || (
-        showWithViewAccess && userStore.userAccess.includes(`${modulename}-${group}-view`)
+        userStore.userAccess.includes(`${modulename}-${group}-delete`) ||
+        (showWithViewAccess && userStore.userAccess.includes(`${modulename}-${group}-view`))
       )
     } else {
       return (
         userStore.userAccess.includes(`${modulename}-add`) ||
         userStore.userAccess.includes(`${modulename}-edit`) ||
-        userStore.userAccess.includes(`${modulename}-delete`)
-      ) || (
-        showWithViewAccess && userStore.userAccess.includes(`${modulename}-view`)
+        userStore.userAccess.includes(`${modulename}-delete`) ||
+        (showWithViewAccess && userStore.userAccess.includes(`${modulename}-view`))
       )
     }
   }
@@ -51,7 +50,7 @@ function adminTreeLayer(itemList, parent) {
       conf["display"] = "visible"
     }
     if (conf["handler"] && conf["display"] !== "group") {
-      conf["hasAccess"] = !!module_access(conf["module"], conf["group"],conf["showWithViewAccess"]);
+      conf["hasAccess"] = !!module_access(conf["module"], conf["group"], conf["showWithViewAccess"])
     }
 
     if (conf["nodeType"] === "group" && conf["moduleGroups"]?.length === 0) {
@@ -123,10 +122,10 @@ function adminTreeLayer(itemList, parent) {
       }
       if (!Object.keys(conf).includes("kinds")) {
         conf["kinds"] = {
-          node: { icon: "folder", name: "Ordner", allowedChildren: ["leaf", "node"] },
+          node: { icon: "folder", name: i18n.global.t("folder"), allowedChildren: ["leaf", "node"] },
           leaf: {
             icon: "file-earmark",
-            name: "Datei",
+            name: i18n.global.t("file"),
             allowedChildren: null,
           },
         }
@@ -136,13 +135,13 @@ function adminTreeLayer(itemList, parent) {
       conf["handlerComponent"] = "hierarchyhandler"
       if (!Object.keys(conf).includes("kinds")) {
         conf["kinds"] = {
-          node: { icon: "diagram-2-fill", name: "Knoten", library: "default", allowedChildren: ["node"] },
+          node: { icon: "diagram-2-fill", name: i18n.global.t("node"), library: "default", allowedChildren: ["node"] },
         }
       }
       if (!Object.keys(conf["kinds"]).includes("node")) {
         conf["kinds"]["node"] = {
           icon: "diagram-2-fill",
-          name: "Knoten",
+          name: i18n.global.t("node"),
           library: "default",
           allowedChildren: ["node"],
         }
@@ -158,10 +157,10 @@ function adminTreeLayer(itemList, parent) {
       if (!Object.keys(conf).includes("kinds")) {
         if (conf["module"] === "script") {
           conf["kinds"] = {
-            node: { icon: "folder", name: "Ordner", allowedChildren: ["leaf", "node"] },
+            node: { icon: "folder", name: i18n.global.t("folder"), allowedChildren: ["leaf", "node"] },
             leaf: {
               icon: "file-earmark",
-              name: "Skript",
+              name: i18n.global.t("script"),
               allowedChildren: null,
             },
           }
@@ -642,17 +641,16 @@ export const useDBStore = defineStore("db", () => {
       e["update"] = true
     }
   }
-  function closeAllTabs()
-  {
+  function closeAllTabs() {
     state["handlers.opened"] = [
       {
-        to: {name: "home", fullPath: "/"},
+        to: { name: "home", fullPath: "/" },
         url: "/",
         name: "Dashboard",
         icon: "grid-3x3-gap-fill",
         closeable: false,
         id: 0,
-      }
+      },
     ]
   }
 
@@ -674,6 +672,6 @@ export const useDBStore = defineStore("db", () => {
     updateActiveTabName,
     markHandlersToUpdate,
     module_access,
-    closeAllTabs
+    closeAllTabs,
   }
 })

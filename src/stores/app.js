@@ -7,6 +7,8 @@ export const useAppStore = defineStore("appStore", () => {
     debug: false,
     "vi.version": [4, 0, 7],
     language: "de",
+    languages: ["de", "en"],
+    datalanguage: "all",
     //core section
     "core.version": null,
     "core.version.min": [3, 5, 0],

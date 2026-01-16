@@ -44,6 +44,14 @@ export default {
       text: "Speichern",
       msg: "Wollen Sie keinen Eintrag neu speichern? | Wollen Sie den Eintrag neu speichern? | Wollen Sie {n} Einträge neu speichern?",
     },
+    search: {
+      label: "Suche",
+      auto: "Automatisch",
+      local: "Lokale Suche",
+      remote: "Datenbank Suche",
+    },
+    expand: "Vergrößern",
+    shrink: "Verkleinern",
   },
   sidebar: {
     workspace: "Arbeitsbereich",
@@ -55,6 +63,21 @@ export default {
     section_general_name: "Allgemein",
     section_system_name: "Servertasks",
     section_tools: "Tools",
+    search: "Suche",
+    module_config: "Einstellungen",
+    module_info: "Informationen",
+    module_open: "Öffnen",
+  },
+  topbar: {
+    language: {
+      ui: "Sprache",
+      data: {
+        label: "Datenauswahl",
+        all: "Alle",
+        selected: "Aktiv",
+        descr: "Zeige nur Daten in der ausgewählten Sprache an",
+      },
+    },
   },
   skeldrawer: {
     noentry: "Kein Eintrag ausgewählt",
@@ -63,6 +86,7 @@ export default {
     selectall: "Alle auswählen",
     unselectall: "Alle abwählen",
     invertselect: "Auswahl umkehren",
+    resetselect: "Auswahl zurücksetzen",
   },
   relation: {
     select: "Auswählen",
@@ -94,4 +118,33 @@ export default {
     no_messages: "Keine Nachrichten",
   },
   "viur.core.modules.user.btn.login": "Anmelden",
+  title: "Titel",
+  descr: "Beschreibung",
+  form: {
+    new: "Neuer",
+    entry: "Eintrag",
+    edit: "Bearbeite",
+  },
+  folder: "Ordner",
+  file: "Datei",
+  node: "Knoten",
+  script: "Skript",
+  system: {
+    messages: "System Nachrichten",
+  },
+  moduleinfo: {
+    label: "Modulebeschreibung",
+    model: "Datenmodel",
+    functions: "Funktionen",
+    endpoint: "Endpunkt",
+    parameter: "Parameter",
+  },
+  home: {
+    greeting: "Hallo {name}",
+    favorites: "Deine Favoriten",
+    recent: "Zuletzt bearbeitet",
+  },
+  listhandler: {
+    copy_value: "Wert kopieren",
+  },
 }

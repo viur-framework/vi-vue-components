@@ -68,7 +68,7 @@
         <sl-button
           v-if="skel['width'] !== 'fullwidth'"
           class="square-btn expand"
-          title="Expand"
+          :title="$t('actions.expand')"
           size="small"
           @click="expandContent"
         >
@@ -77,7 +77,7 @@
         <sl-button
           v-if="skel['width'] !== '1'"
           class="square-btn shrink"
-          title="Shrink"
+          :title="$t('actions.shrink')"
           size="small"
           @click="shrinkContent"
         >
