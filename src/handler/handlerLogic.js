@@ -120,13 +120,21 @@ export function useHandlerLogic(props, handler_state) {
             let aPromise = new Promise((resolve, reject) => {
               handler.state.cached = localStore.state.cache
               handler.reset()
+              const filters = {
+                ...handler.state.params,
+                ...contextStore.getContext(),
+                ...params,
+              }
+              if (Object.keys(params).includes("search")) {
+                filters["parentrepo"] = handler_state.currentPath.slice(-1)[0]?.["key"]
+                delete filters["parententry"]
+              } else {
+                if (!Object.keys(filters).includes("parententry")) {
+                  filters["parententry"] = handler_state.currentPath.slice(-1)[0]?.["key"]
+                }
+              }
               handler
-                .filter({
-                  ...handler.state.params,
-                  ...contextStore.getContext(),
-                  parententry: handler_state.currentPath.slice(-1)[0]?.["key"],
-                  ...params,
-                })
+                .filter(filters)
                 .catch((error) => {
                   if (error.code !== 200 && typeof error !== "string") {
                     messageStore.addMessage("error", `${error.message}`, error.response?.url)

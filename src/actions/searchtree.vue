@@ -63,6 +63,7 @@ const state = reactive({
   searchTypeOpened: false,
   loading: false,
   isLarge: false,
+  cooldown: 0,
 })
 
 onMounted(() => {
@@ -73,15 +74,16 @@ onMounted(() => {
 })
 
 const debouncedSearch = useDebounceFn((event) => {
-  state.loading = true
-  search_input(event)
+  if (new Date().getTime() - state.cooldown > 2000) {
+    state.loading = true
+    search_input(event)
+  }
 }, 2000)
 
 function search_input(event) {
-  //state.loading = true //todo insert later
+  state.loading = true //todo insert later
   state.searchValue = event.target.value
-  console.log("handler",handlerState)
-  console.log("search",state.searchValue)
+  state.cooldown = new Date().getTime()
 
   if (handlerState.type === "treehandler") {
     reloadAction(false, {"search": state.searchValue,})
@@ -89,47 +91,8 @@ function search_input(event) {
     handlerState.params["search"] = state.searchValue
     reloadAction()
   }
-  return
+  state.loading = false
 
-  //todo auto and database ?
-  let currentSearchType = state.searchType
-  if (currentSearchType === "auto") {
-    currentSearchType = state.searchTypeAuto
-  }
-
-  if (currentSearchType === "local") {
-    handlerState.filter = event.target.value
-    state.loading = false
-    setTimeout(() => searchinput.value.focus(), 500)
-    try {
-      //delete currentlist.state.params["search"]
-    } catch (e) {}
-  } else {
-    if (event.target.value === "" || event.target.value.length === 1) {
-      reset_filter()
-      state.loading = false
-      setTimeout(() => searchinput.value.focus(), 500)
-
-      return 0
-    }
-/*
-    currentlist.state.params["search"] = event.target.value
-    currentlist
-      .fetch()
-      .catch((error) => {
-        state.loading = false
-        setTimeout(() => searchinput.value.focus(), 500)
-        if (error.statusCode && typeof error !== "string") {
-          messageStore.addMessage("error", `${error.message}`, error.response.url)
-        }
-      })
-      .then((resp) => {
-        state.loading = false
-        setTimeout(() => searchinput.value.focus(), 500)
-      })
-
- */
-  }
 }
 function reset_filter() {
   state.loading = false
