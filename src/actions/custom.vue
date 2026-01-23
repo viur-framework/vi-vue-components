@@ -120,14 +120,7 @@ const state = reactive({
       let disabled = true
 
       for (let selection of handlerState.currentSelection) {
-        if (
-          ex
-            .run({
-              skel: selection,
-              additionalEvalData: state.info?.["additionalEvalData"],
-            })
-            .toBool()
-        ) {
+        if (ex.run({ ...selection, ...state.info?.["additionalEvalData"] }).toBool()) {
           disabled = false
           break
         }
