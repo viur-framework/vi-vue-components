@@ -20,7 +20,7 @@
       open
       summary="Modul Info"
     >
-      <div v-html="modulesStore.state.modules[module]['help_text']"></div>
+      <div class="modulinfo" v-html="modulesStore.state.modules[module]['help_text']"></div>
     </sl-details>
 
     <div class="table-wrapper" @scroll="stickyHeader">
@@ -928,5 +928,17 @@ sl-details {
   overflow: hidden;
   justify-content: center;
   padding: 20px 20px 15px 20px;
+}
+
+:deep(.modulinfo) {
+  & h1 {
+    font-size: 1.5rem;
+  }
+  & h2 {
+    font-size: 1.35rem;
+  }
+  & h3 {
+    font-size: 1.2rem;
+  }
 }
 </style>
