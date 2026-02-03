@@ -21,6 +21,11 @@ import { useDBStore } from "../stores/db"
 import { useCachedRequestsStore } from "@viur/vue-utils/utils/request"
 import { Request } from "@viur/vue-utils"
 
+const props = defineProps({
+  local: {
+    default: false,
+  }
+})
 const cachedRequestsStore = useCachedRequestsStore()
 
 const tableReload = inject("reloadAction")
@@ -32,7 +37,7 @@ const state = reactive({
 
 function reload() {
   state.loading = true
-  tableReload()
+  tableReload(props.local)
     .then(() => {
       state.loading = false
     })

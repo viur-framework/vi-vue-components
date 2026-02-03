@@ -6,7 +6,7 @@
 
     <next-page v-if="['listhandler', 'treehandler'].includes(handerState['type'])"></next-page>
     <set-amount v-if="['listhandler'].includes(handerState['type'])"></set-amount>
-    <reload></reload>
+    <reload :local="['treehandler'].includes(handerState['type'])"></reload>
   </div>
 </template>
 
