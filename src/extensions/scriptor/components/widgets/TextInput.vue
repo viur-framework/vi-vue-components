@@ -66,7 +66,7 @@ async function buttonCallback(event, option) {
 
 const state = reactive({
   sendable: computed(() => {
-    return state.value !== ""
+    return state.value !== "" || props.entry.empty
   }),
   value: "",
   multiline: computed(() => props.entry.data.input_type === "text"),
