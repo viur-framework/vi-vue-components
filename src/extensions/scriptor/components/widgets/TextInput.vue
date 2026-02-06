@@ -9,12 +9,14 @@
       :disabled="state.buttonDisabled"
       :type="state.inputType"
       :placeholder="props.entry.data.placeholder"
+      :label="entry.data.title"
     ></sl-input>
     <sl-textarea
       v-if="state.multiline"
       v-model="state.value"
       :disabled="state.buttonDisabled"
       :placeholder="props.entry.data.placeholder"
+      :label="entry.data.title"
     ></sl-textarea>
     <sl-button :disabled="state.buttonDisabled || !state.sendable" @click="buttonCallback">send</sl-button>
   </sl-alert>
@@ -29,12 +31,14 @@
       :disabled="state.buttonDisabled"
       :type="state.inputType"
       :placeholder="props.entry.data.placeholder"
+      :label="entry.data.title"
     ></sl-input>
     <sl-textarea
       v-if="state.multiline"
       v-model="state.value"
       :disabled="state.buttonDisabled"
       :placeholder="props.entry.data.placeholder"
+      :label="entry.data.title"
     ></sl-textarea>
   </div>
 </template>
