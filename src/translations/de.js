@@ -17,6 +17,7 @@ export default {
     preview: "Ansicht",
     reload: "Neuladen",
     selectfields: "Felder",
+    fluidpageoverlay: "Seiteninformationen",
     setamount: "Anzahl",
     save: "Speichern",
     save_close: "Speichern und Schließen",
@@ -129,6 +130,9 @@ export default {
   folder: "Ordner",
   file: "Datei",
   node: "Knoten",
+  leaf: "Blatt",
+  group: "Gruppe",
+  entry: "Eintrag",
   script: "Skript",
   system: {
     messages: "System Nachrichten",

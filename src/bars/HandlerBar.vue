@@ -105,7 +105,7 @@ function getActions() {
 
   let fluidpagecontentActions = {
     ":options": [],
-    default: [["reload"], ["fluidpagepreview", "preview", "add"]],
+    default: [["reload"], ["fluidpageoverlay", "fluidpagepreview", "preview", "add"]],
   }
 
   let translationActions = {

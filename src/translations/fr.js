@@ -16,6 +16,7 @@ export default {
     preview: "Vue",
     reload: "Recharger",
     selectfields: "Champs",
+    fluidpageoverlay: "Informations de la page",
     setamount: "Quantité",
     save: "Enregistrer",
     save_close: "Enregistrer et fermer",

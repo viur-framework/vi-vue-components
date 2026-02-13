@@ -16,6 +16,7 @@ export default {
     overlay: "Preview",
     preview: "View",
     reload: "Reload",
+    fluidpageoverlay: "Page Information",
     selectfields: "Fields",
     setamount: "Amount",
     save: "Save",

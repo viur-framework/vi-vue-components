@@ -29,6 +29,7 @@ import userfilter_action from "./userfilter.vue"
 import deleteentry_action from "./deleteentry.vue"
 import resave_action from "./resave.vue"
 import translationlanguage_action from "./translationlanguage.vue"
+import fluidpageoverlay_action from "./fluidpageoverlay.vue"
 
 export default {
   add_action,
@@ -62,4 +63,5 @@ export default {
   deleteentry_action,
   resave_action,
   translationlanguage_action,
+  fluidpageoverlay_action,
 }
