@@ -214,7 +214,8 @@ function adminTreeLayer(itemList, parent) {
       conf["children"] = conf["children"].concat(adminTreeLayer(conf["moduleGroups"], conf))
       let groupVisible = false
       for (let m of conf["children"]) {
-        if (m["hasAccess"] || m["nodeType"] === "group") {
+        const isVisibleGroup = m["nodeType"] === "group" && m["display"] !== "hidden"
+        if (m["hasAccess"] || isVisibleGroup) {
           groupVisible = true
           break
         }
