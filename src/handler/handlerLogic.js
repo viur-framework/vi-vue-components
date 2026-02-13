@@ -73,9 +73,18 @@ export function useHandlerLogic(props, handler_state) {
     })
   }
 
+  function getRequestContext() {
+    const handlerId = handler_state?.tabId
+    const context = handlerId ? contextStore.getContext(handlerId) : contextStore.getContext()
+    return { ...context, ...props.filter }
+  }
+
   function fetchRoots(update = true) {
     let context = contextStore.getCurrentContext()
-    return Request.get(`/vi/${props.module}/listRootNodes`, { cached: localStore.state.cache })
+    return Request.get(`/vi/${props.module}/listRootNodes`, {
+      cached: localStore.state.cache,
+      dataObj: getRequestContext(),
+    })
       .then(async (resp) => {
         let data = await resp.json()
         handler_state.availableRootNodes = data
@@ -127,7 +136,7 @@ export function useHandlerLogic(props, handler_state) {
               handler
                 .filter({
                   ...handler.state.params,
-                  ...contextStore.getContext(),
+                  ...getRequestContext(),
                   parententry: handler_state.currentPath.slice(-1)[0]?.["key"],
                   ...params,
                 })
@@ -160,7 +169,7 @@ export function useHandlerLogic(props, handler_state) {
         let aPromise = new Promise((resolve, reject) => {
           handler.reset()
           handler
-            .filter({ ...handler.state.params, ...params, ...contextStore.getContext() })
+            .filter({ ...handler.state.params, ...params, ...getRequestContext() })
             .catch((error) => {
               if (error.statusCode && typeof error !== "string") {
                 messageStore.addMessage("error", `${error.message}`, error.response?.url)
