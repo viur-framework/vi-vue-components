@@ -553,10 +553,9 @@ function dragChange(event) {
 
   let currentEntry = event.data
 
-  Request.securePost(`/vi/${listhandler.module}/move/${skeltype}/${currentEntry["key"]}`, {
+  Request.securePost(`/vi/${listhandler.module}/edit/${skeltype}/${currentEntry["key"]}`, {
     dataObj: {
-      [state.sortindexBonename]: newsortindex,
-      parentNode: currentEntry["parententry"],
+      [state.sortindexBonename]: newsortindex
     },
   })
     .then(async (resp) => {
