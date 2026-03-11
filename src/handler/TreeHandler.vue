@@ -419,7 +419,7 @@ function entrySelected(idx, action = "replace", skelType = "leaf") {
 
 function primaryAction(skel, skelType = "leaf") {
   //fluidpage injection - rework
-  if (state.conf["handler"].startsWith("list.fluidpage")) {
+  if (state.conf?.["handler"]?.startsWith("list.fluidpage")) {
     let conf = dbStore.getConf(state.module)
     let module = conf["handler"].split(".").at(-1).replace("/", ".")
     let url = `/db/${module}/fluidpage/${state.module}/${state.currentSelection[0]["key"]}`
