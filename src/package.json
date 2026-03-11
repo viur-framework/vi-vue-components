@@ -23,6 +23,7 @@
     "@vueuse/components": "^14.0.0",
     "@vueuse/core": "^12.4.0",
     "codemirror": "^6.0.1",
+    "exceljs": "^4.4.0",
     "logics-js": "^0.4.1",
     "pinia-plugin-persistedstate": "^4.2.0",
     "vue-draggable-plus": "^0.6.0",

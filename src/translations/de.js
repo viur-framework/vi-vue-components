@@ -15,6 +15,7 @@ export default {
     edit: "Bearbeiten",
     overlay: "Vorschau",
     preview: "Ansicht",
+    export: "Export",
     reload: "Neuladen",
     selectfields: "Felder",
     fluidpageoverlay: "Seiteninformationen",
@@ -89,6 +90,40 @@ export default {
     unselectall: "Alle abwählen",
     invertselect: "Auswahl umkehren",
     resetselect: "Auswahl zurücksetzen",
+  },
+  export: {
+    dialog: {
+      title: "Export",
+    },
+    columns: "Spalten",
+    rows: "Zeilen",
+    allRows: "Alle",
+    objectModeLabel: "Darstellung",
+    formatLabel: "Format",
+    previewTitle: "Vorschau",
+    start: "Export starten",
+    selectionTypeLabel: "Eintragstyp",
+    objectMode: {
+      string: "Textformat",
+      json: "Json-Format",
+    },
+    format: {
+      json: "JSON",
+      excel: "Excel-Format",
+      csvSemicolon: "CSV (;)-Format",
+      csvComma: "CSV (,)-Format",
+    },
+    loading: {
+      preview: "Vorschau wird geladen",
+      export: "Export läuft",
+    },
+    preview: {
+      empty: "Keine Vorschau verfügbar",
+    },
+    selectionType: {
+      nodes: "Nodes",
+      leafs: "Leafs",
+    },
   },
   relation: {
     select: "Auswählen",

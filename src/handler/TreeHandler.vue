@@ -282,6 +282,7 @@ provide("reloadAction", reloadAction)
 provide("setLimit", handlerLogic.limitAction)
 provide("nextpage", handlerLogic.nextPageAction)
 provide("currentlist", handlerLogic.currentlist)
+provide("currentNodeList", handlerLogic.currentNodeList)
 provide("changeRootNode", handlerLogic.changeRootNode)
 
 function reloadAction(folderUpdate = false, params = {}) {
