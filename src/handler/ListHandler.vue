@@ -427,7 +427,7 @@ onUnmounted(() => {
 })
 
 function onResizeObserver(e, bone) {
-  if (e[0].target.tagName === "TH") {
+  if (e[0].target.tagName === "TH" && e[0].borderBoxSize[0].inlineSize > 0) {
     contextStore.setContext(`_${bone}-width`, e[0].borderBoxSize[0].inlineSize, state.tabId)
   }
 }
