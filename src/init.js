@@ -18,6 +18,7 @@ import fileBar from "./bones/actionbar/fileBar.vue"
 import relationalBar from "./bones/actionbar/relationalBar.vue"
 
 import { useExtensionsStore } from "./stores/extensions"
+import {useLocalStore} from "./stores/local.js";
 
 export function useInitConnection() {
   const userStore = useUserStore()
@@ -25,6 +26,7 @@ export function useInitConnection() {
   const colorStore = useColorStore()
   const extensionStore = useExtensionsStore()
   const boneStore = useBoneStore()
+  const localStore = useLocalStore()
 
   const route = useRoute()
   useModulesStore().setmodules()
@@ -32,9 +34,9 @@ export function useInitConnection() {
   onBeforeMount(() => {
     initBones() // init CustomBones
     initExtensions() // init Extensions
-    Request.get("/vi/settings")
+    Request.get("/vi/config")
       .then(async (resp) => {
-        let data = await resp.json()
+        const data = (await resp.json())["configuration"]
 
         for (const key in data) {
           if (data[key] !== undefined || data[key] !== null) {
@@ -50,6 +52,12 @@ export function useInitConnection() {
             }
             if (key === "admin.color.secondary") {
               colorStore.state.secondaryColor = appStore.state[key]
+            }
+            if (key === "admin.language") {
+              localStore.state.language = data[key]
+            }
+            if (key === "admin.languages") {
+              appStore.state.languages = data[key]
             }
           }
         }
