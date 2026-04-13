@@ -15,6 +15,9 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     messageBufferFluscher: null,
     internalMessages: [],
     hideInternalMessages: false,
+    chatHistory: [],       // [{ role: "user"|"assistant", content: string }]
+    previousCode: null,    // string | null — Code vor dem letzten Einfügen (für Undo)
+    pendingInsert: null,   // string | null — wird von CodeEditor überwacht
   }
 
   const state = reactive({
