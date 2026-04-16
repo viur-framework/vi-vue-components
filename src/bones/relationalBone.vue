@@ -212,6 +212,10 @@ function editSelection() {
   const mod = props.bone["module"]
 
   let url = `/db/${mod}/edit`
+
+  if (props.value["dest"]?.listgroup) {
+    url += `/${props.value["dest"].listgroup}`
+  }
   if (props.bone["type"].startsWith("relational.tree.leaf")) {
     url += "/leaf"
   } else if (props.bone["type"].startsWith("relational.tree.node")) {
