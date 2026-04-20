@@ -23,6 +23,12 @@ export default {
     save: "Save",
     save_close: "Save and close",
     save_next: "Save and copy",
+    save_confirm: {
+      title: "Confirm changes",
+      text: "Do you really want to save these changes or discard them?",
+      save: "Save",
+      discard: "Discard",
+    },
     filter: {
       text: "Filter",
       nofilter: "There are no filters for this module",

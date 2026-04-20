@@ -23,6 +23,12 @@ export default {
     save: "Speichern",
     save_close: "Speichern und Schließen",
     save_next: "Speichern und Kopie",
+    save_confirm: {
+      title: "Änderungen bestätigen",
+      text: "Sollen die Änderungen wirklich gespeichert werden oder verworfen werden?",
+      save: "Speichern",
+      discard: "Verwerfen",
+    },
     filter: {
       text: "Filter",
       nofilter: "Für dieses Modul sind keine Filter vorhanden",

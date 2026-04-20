@@ -21,6 +21,12 @@ export default {
     save: "Enregistrer",
     save_close: "Enregistrer et fermer",
     save_next: "Enregistrer et copier",
+    save_confirm: {
+      title: "Confirmer les modifications",
+      text: "Voulez-vous vraiment enregistrer ces modifications ou les ignorer ?",
+      save: "Enregistrer",
+      discard: "Ignorer",
+    },
     filter: {
       text: "Filtre",
       nofilter: "Aucun filtre n'est disponible pour ce module",
