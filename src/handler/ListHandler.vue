@@ -280,7 +280,6 @@ function reloadAction(existsCheck = false) {
     return 0
   }
 
-  state.selectedBones = []
   currentlist.state.cached = localStore.state.cache
   currentlist.reset()
   let ctx = {}
@@ -438,7 +437,7 @@ function getColumnWidth(bone) {
   if (Object.keys(localContext).includes(key)) {
     return localContext[key]
   }
-  return currentlist.structure?.[bone]["params"]["column_width"] || state.tableWidth
+  return currentlist.structure?.[bone]?.["params"]?.["column_width"] || state.tableWidth
 }
 
 function entrySelected(idx, action = "replace") {
@@ -797,7 +796,7 @@ function contextMenu(e, idx, name, rendered) {
 }
 
 table {
-  width: 100%;
+  min-width: 100%;
   table-layout: fixed;
 
   & tbody {
