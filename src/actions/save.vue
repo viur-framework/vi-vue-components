@@ -201,12 +201,15 @@ async function submitSave() {
     }
   } catch (error) {
     state.loading = false
-    if (typeof error !== "string" && error.response) {
-      const errorData = await error.response.json()
-
-      if (errorData.descr && errorData.reason) {
-        messageStore.addMessage("error", errorData.reason, errorData.descr)
-      } else {
+    if (typeof error !== "string" && error.response && typeof error.response.json === "function") {
+      try {
+        const errorData = await error.response.json()
+        if (errorData.descr && errorData.reason) {
+          messageStore.addMessage("error", errorData.reason, errorData.descr)
+        } else {
+          messageStore.addMessage("error", `Error on Save`, "Error on Save")
+        }
+      } catch {
         messageStore.addMessage("error", `Error on Save`, "Error on Save")
       }
     } else {
