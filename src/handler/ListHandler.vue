@@ -478,13 +478,14 @@ function entrySelected(idx, action = "replace") {
 }
 
 function openEditor(e) {
+  console.log(state.group)
   if (props.selector) {
     emit("closeSelector", state.currentSelection)
     return 0
   }
   let url = `/db/${state.module}/edit/${state.currentSelection[0]["key"]}`
   if (state.group) {
-    url = `/db/${state.module}/edit/${state.group}/${state.currentSelection[0]["key"]}`
+    url = `/db/${state.module}/edit/${state.currentSelection[0]["listgroup"]}/${state.currentSelection[0]["key"]}`
   }
   if (dbStore.state["editor.url"][state.module]) {
     const customUrl = dbStore.state["editor.url"][state.module]
