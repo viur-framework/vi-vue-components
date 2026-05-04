@@ -66,6 +66,7 @@ const props = defineProps({
   },
   view: null,
   selector: false,
+  filter: {},
 })
 const emit = defineEmits(["currentSelection", "closeSelector"])
 const contextStore = useContextStore()
@@ -164,8 +165,9 @@ onDeactivated(() => {
 })
 
 function fetchRoots() {
-  let context = contextStore.getCurrentContext()
-  return Request.get(`/vi/${props.module}/listRootNodes`).then(async (resp) => {
+  let context = contextStore.getContext(state.tabId)
+  return Request.get(`/vi/${props.module}/listRootNodes`, { dataObj: { ...context, ...props.filter } }).then(
+    async (resp) => {
     let data = await resp.json()
     state.availableRootNodes = data
     if (!state.currentRootNode) {

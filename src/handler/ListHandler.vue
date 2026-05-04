@@ -280,7 +280,6 @@ function reloadAction(existsCheck = false) {
     return 0
   }
 
-  state.selectedBones = []
   currentlist.state.cached = localStore.state.cache
   currentlist.reset()
   let ctx = {}
@@ -427,7 +426,7 @@ onUnmounted(() => {
 })
 
 function onResizeObserver(e, bone) {
-  if (e[0].target.tagName === "TH") {
+  if (e[0].target.tagName === "TH" && e[0].borderBoxSize[0].inlineSize > 0) {
     contextStore.setContext(`_${bone}-width`, e[0].borderBoxSize[0].inlineSize, state.tabId)
   }
 }
@@ -438,7 +437,7 @@ function getColumnWidth(bone) {
   if (Object.keys(localContext).includes(key)) {
     return localContext[key]
   }
-  return currentlist.structure?.[bone]["params"]["column_width"] || state.tableWidth
+  return currentlist.structure?.[bone]?.["params"]?.["column_width"] || state.tableWidth
 }
 
 function entrySelected(idx, action = "replace") {
@@ -479,13 +478,14 @@ function entrySelected(idx, action = "replace") {
 }
 
 function openEditor(e) {
+  console.log(state.group)
   if (props.selector) {
     emit("closeSelector", state.currentSelection)
     return 0
   }
   let url = `/db/${state.module}/edit/${state.currentSelection[0]["key"]}`
   if (state.group) {
-    url = `/db/${state.module}/edit/${state.group}/${state.currentSelection[0]["key"]}`
+    url = `/db/${state.module}/edit/${state.currentSelection[0]["listgroup"]}/${state.currentSelection[0]["key"]}`
   }
   if (dbStore.state["editor.url"][state.module]) {
     const customUrl = dbStore.state["editor.url"][state.module]
@@ -797,7 +797,7 @@ function contextMenu(e, idx, name, rendered) {
 }
 
 table {
-  width: 100%;
+  min-width: 100%;
   table-layout: fixed;
 
   & tbody {

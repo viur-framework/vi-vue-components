@@ -8,7 +8,7 @@
       {{ $t("skeldrawer.noentry") }}
     </div>
     <template v-else>
-      <div class="image-wrap">
+      <div class="image-wrap" v-if="dbStore.state['skeldrawer.entry']['mimetype']">
         <img :src="getImageUrl()"
           v-if="
             Object.keys(dbStore.state['skeldrawer.entry']).includes('downloadUrl') &&

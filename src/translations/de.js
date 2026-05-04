@@ -15,12 +15,20 @@ export default {
     edit: "Bearbeiten",
     overlay: "Vorschau",
     preview: "Ansicht",
+    export: "Export",
     reload: "Neuladen",
     selectfields: "Felder",
+    fluidpageoverlay: "Seiteninformationen",
     setamount: "Anzahl",
     save: "Speichern",
     save_close: "Speichern und Schließen",
     save_next: "Speichern und Kopie",
+    save_confirm: {
+      title: "Änderungen bestätigen",
+      text: "Sollen die Änderungen wirklich gespeichert werden oder verworfen werden?",
+      save: "Speichern",
+      discard: "Verwerfen",
+    },
     filter: {
       text: "Filter",
       nofilter: "Für dieses Modul sind keine Filter vorhanden",
@@ -89,6 +97,40 @@ export default {
     invertselect: "Auswahl umkehren",
     resetselect: "Auswahl zurücksetzen",
   },
+  export: {
+    dialog: {
+      title: "Export",
+    },
+    columns: "Spalten",
+    rows: "Zeilen",
+    allRows: "Alle",
+    objectModeLabel: "Darstellung",
+    formatLabel: "Format",
+    previewTitle: "Vorschau",
+    start: "Export starten",
+    selectionTypeLabel: "Eintragstyp",
+    objectMode: {
+      string: "Textformat",
+      json: "Json-Format",
+    },
+    format: {
+      json: "JSON",
+      excel: "Excel-Format",
+      csvSemicolon: "CSV (;)-Format",
+      csvComma: "CSV (,)-Format",
+    },
+    loading: {
+      preview: "Vorschau wird geladen",
+      export: "Export läuft",
+    },
+    preview: {
+      empty: "Keine Vorschau verfügbar",
+    },
+    selectionType: {
+      nodes: "Nodes",
+      leafs: "Leafs",
+    },
+  },
   relation: {
     select: "Auswählen",
     abort: "Abbrechen",
@@ -129,6 +171,9 @@ export default {
   folder: "Ordner",
   file: "Datei",
   node: "Knoten",
+  leaf: "Blatt",
+  group: "Gruppe",
+  entry: "Eintrag",
   script: "Skript",
   system: {
     messages: "System Nachrichten",

@@ -17,7 +17,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [22.x]
+        node-version: [22.22.1]
 
     steps:
       - uses: actions/checkout@v4
@@ -30,10 +30,10 @@ jobs:
           cache-dependency-path: src/package-lock.json
           node-version: ${{ matrix.node-version }}
           cache: "npm"
-          
+
       - name: Ensure npm supports trusted publishing
         run: npm install -g npm@latest
-        
+
       - run: npm ci --prefix=src
 
       - name: Determine npm tag
