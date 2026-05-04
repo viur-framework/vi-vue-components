@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, reactive, computed } from "vue"
+import { onMounted, ref, reactive, computed, watch } from "vue"
 import { basicSetup } from "codemirror"
 import { EditorView, keymap, drawSelection } from "@codemirror/view"
 import { python } from "@codemirror/lang-python"
@@ -80,6 +80,19 @@ onMounted(() => {
     changes: { from: 0, to: view.value.state.doc.length, insert: state.scriptor.scriptCode },
   })
 })
+
+watch(
+  () => state.scriptor?.pendingInsert,
+  (newCode) => {
+    if (newCode !== null && newCode !== undefined && view.value) {
+      view.value.dispatch({
+        changes: { from: 0, to: view.value.state.doc.length, insert: newCode },
+      })
+      state.scriptor.scriptCode = newCode
+      state.scriptor.pendingInsert = null
+    }
+  }
+)
 </script>
 <style scoped>
 .wrapper {

@@ -12,8 +12,19 @@
         </sl-button>
       </status-bar>
       <div class="wrapper-editor">
-        <code-editor v-if="state.script" :id="state.id"></code-editor>
-        <sl-spinner v-else></sl-spinner>
+        <sl-split-panel class="editor-split" style="--min: 150px;" position="75">
+          <div slot="start" class="editor-split__pane">
+            <code-editor v-if="state.script" :id="state.id"></code-editor>
+            <sl-spinner v-else></sl-spinner>
+          </div>
+          <div slot="end" class="editor-split__pane">
+            <ai-panel
+              v-if="state.script"
+              :instance-id="state.id"
+              :current-code="state.scriptor?.scriptCode ?? ''"
+            ></ai-panel>
+          </div>
+        </sl-split-panel>
       </div>
     </div>
     <div slot="end" ref="messagewrapper" class="wrapper-widgets">
@@ -27,6 +38,7 @@ import { reactive, onMounted, onBeforeMount, computed, watch, ref } from "vue"
 import WidgetList from "./components/WidgetList.vue"
 import StatusBar from "./components/StatusBar.vue"
 import CodeEditor from "./components/CodeEditor.vue"
+import AiPanel from "./components/AiPanel.vue"
 import { useScriptorStore } from "./store/scriptor"
 import { Request } from "@viur/vue-utils"
 import { useDebounceFn } from "@vueuse/core/index"
@@ -102,13 +114,22 @@ watch(
 </script>
 <style scoped>
 .wrapper-editor {
-  display: flex;
   height: calc(100% - 50px);
   width: 100%;
+}
+
+.editor-split {
+  width: 100%;
+  height: 100%;
+}
+
+.editor-split__pane {
+  height: 100%;
+  overflow: hidden;
 
   sl-spinner {
-    align-self: center;
-    margin: 0 auto;
+    display: block;
+    margin: 2em auto;
     font-size: 2em;
     --track-width: 0.1em;
   }

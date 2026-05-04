@@ -61,7 +61,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
   function createNewInstance(id = null) {
     const instanceId = id || new Date().getTime().toString()
     if (!Object.keys(state.instances).includes(instanceId)) {
-      state.instances[instanceId] = reactive({ ...instanceTemplate })
+      state.instances[instanceId] = reactive({ ...instanceTemplate, chatHistory: [] })
     }
 
     return instanceId
