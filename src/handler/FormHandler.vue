@@ -212,11 +212,14 @@ const state = reactive({
       state.conf["disabledActions"]?.length > 0 &&
       state.conf["disabledActions"].includes("edit")
     ) {
-      console.log("GGGGGG")
       return false // if edit is disabled, open in view mode
     }
     if (userStore.state.user.access.includes("root")) {
       return true
+    }
+    let access = userStore.state.user.access.includes(accessflag)
+    if (!access && state.group) {
+      accessflag = `${state.module}-all-edit`
     }
     return userStore.state.user.access.includes(accessflag)
   }),
