@@ -346,11 +346,21 @@ function editViewFilter(handler) {
   //todo set Context on routing
   if (typeof handler["context"] === "object") {
     for (const [k, v] of Object.entries(handler["context"])) {
-      if (Object.keys(viform.value.state.skel).includes(v)) {
-        if (k.startsWith("@")) {
-          contextStore.setContext(k, viform.value.state.skel[v], state.tabId) //recursion error ,we need a tabid rework
+      let resolved = viform.value.state.skel
+      let found = true
+      for (const part of String(v).split(".")) {
+        if (resolved && typeof resolved === "object" && part in resolved) {
+          resolved = resolved[part]
+        } else {
+          found = false
+          break
         }
-        filter[k] = viform.value.state.skel[v]
+      }
+      if (found) {
+        if (k.startsWith("@")) {
+          contextStore.setContext(k, resolved, state.tabId) //recursion error ,we need a tabid rework
+        }
+        filter[k] = resolved
       }
     }
   } else {
