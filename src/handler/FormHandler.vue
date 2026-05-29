@@ -212,11 +212,14 @@ const state = reactive({
       state.conf["disabledActions"]?.length > 0 &&
       state.conf["disabledActions"].includes("edit")
     ) {
-      console.log("GGGGGG")
       return false // if edit is disabled, open in view mode
     }
     if (userStore.state.user.access.includes("root")) {
       return true
+    }
+    let access = userStore.state.user.access.includes(accessflag)
+    if (!access && state.group) {
+      accessflag = `${state.module}-all-edit`
     }
     return userStore.state.user.access.includes(accessflag)
   }),
@@ -343,11 +346,21 @@ function editViewFilter(handler) {
   //todo set Context on routing
   if (typeof handler["context"] === "object") {
     for (const [k, v] of Object.entries(handler["context"])) {
-      if (Object.keys(viform.value.state.skel).includes(v)) {
-        if (k.startsWith("@")) {
-          contextStore.setContext(k, viform.value.state.skel[v], state.tabId) //recursion error ,we need a tabid rework
+      let resolved = viform.value.state.skel
+      let found = true
+      for (const part of String(v).split(".")) {
+        if (resolved && typeof resolved === "object" && part in resolved) {
+          resolved = resolved[part]
+        } else {
+          found = false
+          break
         }
-        filter[k] = viform.value.state.skel[v]
+      }
+      if (found) {
+        if (k.startsWith("@")) {
+          contextStore.setContext(k, resolved, state.tabId) //recursion error ,we need a tabid rework
+        }
+        filter[k] = resolved
       }
     }
   } else {

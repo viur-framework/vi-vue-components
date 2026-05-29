@@ -80,7 +80,9 @@ export function useHandlerLogic(props, handler_state) {
   }
 
   function fetchRoots(update = true) {
-    let context = contextStore.getCurrentContext()
+    // Merge contextStore + props.filter so values passed via :filter (e.g. parentrepo
+    // from FormHandler context without an @-prefix) participate in root selection too.
+    let context = { ...contextStore.getCurrentContext(), ...props.filter }
     return Request.get(`/vi/${props.module}/listRootNodes`, {
       cached: localStore.state.cache,
       dataObj: getRequestContext(),
@@ -122,9 +124,16 @@ export function useHandlerLogic(props, handler_state) {
     }
   }
 
+  let inFlightReload = null
   function reloadAction(params = {}, all = false) {
+    // Coalesce concurrent reloads: if a reload is already running, return that
+    // promise instead of starting a second one. Prevents duplicate list entries
+    // when multiple triggers (onMounted + watchers) fire in the same tick.
+    if (inFlightReload) return inFlightReload
+
+    let promise
     if (handler_state.availableRootNodes.length === 0 || all || handler_state.needUpdate) {
-      return new Promise((resolve, reject) => {
+      promise = new Promise((resolve, reject) => {
         let requestPromises = []
         fetchRoots(!all).then((resp) => {
           handler_state.needUpdate = false
@@ -133,11 +142,12 @@ export function useHandlerLogic(props, handler_state) {
             let aPromise = new Promise((resolve, reject) => {
               handler.state.cached = localStore.state.cache
               handler.reset()
+              const requestContext = getRequestContext()
               handler
                 .filter({
                   ...handler.state.params,
-                  ...getRequestContext(),
-                  parententry: handler_state.currentPath.slice(-1)[0]?.["key"],
+                  ...requestContext,
+                  parententry: handler_state.currentPath.slice(-1)[0]?.["key"] ?? requestContext["parentrepo"],
                   ...params,
                 })
                 .catch((error) => {
@@ -183,10 +193,15 @@ export function useHandlerLogic(props, handler_state) {
         requestPromises.push(aPromise)
       }
 
-      return Promise.all(requestPromises).then((resp) => {
+      promise = Promise.all(requestPromises).then((resp) => {
         //messageStore.addMessage("success", `Reload`, "Liste neu geladen")
       })
     }
+
+    inFlightReload = promise.finally(() => {
+      inFlightReload = null
+    })
+    return inFlightReload
   }
 
   function limitAction() {
