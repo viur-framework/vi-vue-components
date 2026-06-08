@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@codemirror/lang-python": "^6.1.6",
-    "@viur/vue-utils": "^3.3.8",
+    "@viur/vue-utils": "^3.3.9",
     "@vue-flow/core": "^1.48.2",
     "@vueuse/components": "^14.0.0",
     "@vueuse/core": "^12.4.0",
