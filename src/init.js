@@ -7,7 +7,6 @@ import { useModulesStore } from "./stores/modules"
 import { useRoute } from "vue-router"
 import Utils from "./utils"
 // custom Bones
-
 import { addBoneWidget, addBoneActionbar, useBoneStore } from "@viur/vue-utils/bones/edit/index"
 
 import selectaccessBone from "./bones/selectaccessBone.vue"

@@ -154,4 +154,31 @@ export default {
   listhandler: {
     copy_value: "Copier la valeur",
   },
+  shop: {
+    order: {
+      title: "Commande",
+      status: "Statut",
+      shipping_address: "Adresse de livraison",
+      billing_address: "Adresse de facturation",
+      shipping_billing_address: "Adresse de livraison et de facturation",
+      cart: {
+        title: "Panier",
+        quantity: "Quantité",
+        art_no: "Réf. / GTIN",
+        name: "Nom",
+        unit_price: "Prix unitaire",
+        total_price: "Prix total",
+        loading: "Chargement du panier...",
+        load_failed: "Le panier n'a pas pu être chargé.",
+        empty: "Aucun article dans le panier.",
+        subtotal: "Sous-total",
+        shipping_cost: "Frais de livraison",
+        delivery_time: "Délai de livraison : {range} jours",
+        total: "Total",
+      },
+      relation: {
+        selection: "Sélection : {descr}",
+      },
+    },
+  },
 }

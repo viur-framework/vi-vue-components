@@ -7,7 +7,7 @@ export const useExtensionsStore = defineStore("extensionsStore", () => {
 
   const state = reactive({
     extensions: {},
-    activeExtensions: ["debug", "scriptor"],
+    activeExtensions: ["debug", "scriptor", "shop"],
   })
 
   function addExtension(extension) {

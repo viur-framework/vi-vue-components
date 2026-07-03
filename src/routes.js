@@ -53,6 +53,13 @@ const default_routes = [
         props: true,
         component: () => import("./views/edit.vue"),
       },
+      {
+        path: "__/shop.order/edit",
+        name: "editshoporder",
+        meta: { action: "edit" },
+        props: true,
+        component: () => import("./extensions/shop/OrderEditor.vue"),
+      },
     ],
   },
   {
