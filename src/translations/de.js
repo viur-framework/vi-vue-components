@@ -193,4 +193,31 @@ export default {
   listhandler: {
     copy_value: "Wert kopieren",
   },
+  shop: {
+    order: {
+      title: "Bestellung",
+      status: "Status",
+      shipping_address: "Lieferadresse",
+      billing_address: "Rechnungsadresse",
+      shipping_billing_address: "Liefer- und Rechnungsadresse",
+      cart: {
+        title: "Warenkorb",
+        quantity: "Menge",
+        art_no: "Art.-Nr. / GTIN",
+        name: "Name",
+        unit_price: "Einzelpreis",
+        total_price: "Gesamtpreis",
+        loading: "Warenkorb wird geladen...",
+        load_failed: "Warenkorb konnte nicht geladen werden.",
+        empty: "Keine Warenkorbpositionen vorhanden.",
+        subtotal: "Zwischensumme",
+        shipping_cost: "Versandkosten",
+        delivery_time: "Lieferzeit: {range} Tage",
+        total: "Summe",
+      },
+      relation: {
+        selection: "Auswahl: {descr}",
+      },
+    },
+  },
 }

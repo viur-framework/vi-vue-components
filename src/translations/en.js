@@ -189,4 +189,31 @@ export default {
   listhandler: {
     copy_value: "Copy value",
   },
+  shop: {
+    order: {
+      title: "Order",
+      status: "Status",
+      shipping_address: "Shipping address",
+      billing_address: "Billing address",
+      shipping_billing_address: "Shipping and billing address",
+      cart: {
+        title: "Cart",
+        quantity: "Quantity",
+        art_no: "Item no. / GTIN",
+        name: "Name",
+        unit_price: "Unit price",
+        total_price: "Total price",
+        loading: "Loading cart...",
+        load_failed: "Cart could not be loaded.",
+        empty: "No cart items available.",
+        subtotal: "Subtotal",
+        shipping_cost: "Shipping costs",
+        delivery_time: "Delivery time: {range} days",
+        total: "Total",
+      },
+      relation: {
+        selection: "Selection: {descr}",
+      },
+    },
+  },
 }
