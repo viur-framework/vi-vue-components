@@ -422,6 +422,11 @@ onDeactivated(() => {
 })
 
 onUnmounted(() => {
+  if (props.selector) {
+    // reset search state so reopening the relation selector starts with an empty search field
+    delete currentlist.state.params["search"]
+    state.filter = null
+  }
   destroyStore(currentlist)
 })
 
