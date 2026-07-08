@@ -10,5 +10,5 @@ export default {
   treehandler,
   hierarchyhandler,
   listhandler,
-  translationhandler
+  translationhandler,
 }

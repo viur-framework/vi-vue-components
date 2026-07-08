@@ -22,16 +22,16 @@ const state = reactive({
 
 async function openDrawer() {
   let data
-  try{
+  try {
     const req = await Request.view(route.params.parentmodule, route.params.key)
     data = await req.json()
     console.log(data)
-  }catch(e){
+  } catch (e) {
     console.log(e)
   }
 
-  dbStore.state["skeldrawer.entry"] = data['values']
-  dbStore.state["skeldrawer.structure"] =  data['structure']
+  dbStore.state["skeldrawer.entry"] = data["values"]
+  dbStore.state["skeldrawer.structure"] = data["structure"]
   dbStore.state["skeldrawer.opened"] = !dbStore.state["skeldrawer.opened"]
 }
 </script>

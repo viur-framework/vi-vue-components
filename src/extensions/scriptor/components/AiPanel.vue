@@ -3,49 +3,27 @@
     <!-- Header -->
     <div class="ai-panel__header">
       <span class="ai-panel__title">✨ KI-Assistent</span>
-      <sl-button size="small" variant="neutral" outline @click="clearChat">
-        ↺ Neu
-      </sl-button>
+      <sl-button size="small" variant="neutral" outline @click="clearChat">↺ Neu</sl-button>
     </div>
 
     <!-- Chat-Verlauf -->
     <div ref="chatContainer" class="ai-panel__chat">
-      <div v-if="chat.length === 0" class="ai-panel__empty">
-        Beschreibe was das Script tun soll…
-      </div>
+      <div v-if="chat.length === 0" class="ai-panel__empty">Beschreibe was das Script tun soll…</div>
 
       <div v-for="(msg, idx) in chat" :key="idx" class="ai-panel__message-wrap" :class="msg.role">
-        <!-- User-Nachricht -->
-        <div v-if="msg.role === 'user'" class="ai-panel__bubble ai-panel__bubble--user">
+        <div
+          class="ai-panel__bubble"
+          :class="msg.role === 'user' ? 'ai-panel__bubble--user' : 'ai-panel__bubble--assistant'"
+        >
           {{ msg.content }}
-        </div>
-
-        <!-- Assistenten-Nachricht -->
-        <div v-else class="ai-panel__bubble ai-panel__bubble--assistant">
-          <pre class="ai-panel__code">{{ msg.content }}</pre>
-
-          <!-- Einfügen / Undo -->
-          <div v-if="insertedIdx === idx" class="ai-panel__insert-actions">
-            <span class="ai-panel__inserted-label">✓ Eingefügt</span>
-            <sl-button size="small" variant="neutral" outline @click="undoInsert">
-              ↩ Rückgängig
-            </sl-button>
-          </div>
-          <sl-button
-            v-else
-            size="small"
-            variant="success"
-            class="ai-panel__insert-btn"
-            @click="insertScript(msg.content, idx)"
-          >
-            ↙ In Editor einfügen
-          </sl-button>
         </div>
       </div>
 
       <!-- Typing-Indikator -->
       <div v-if="loading" class="ai-panel__bubble ai-panel__bubble--assistant ai-panel__bubble--loading">
-        <span></span><span></span><span></span>
+        <span></span>
+        <span></span>
+        <span></span>
       </div>
     </div>
 
@@ -78,6 +56,7 @@
 <script setup>
 import { ref, computed, nextTick } from "vue"
 import { useScriptorStore } from "../store/scriptor"
+import { isScriptorCode } from "../aiResponse"
 
 const props = defineProps({
   instanceId: { type: String, required: true },
@@ -90,9 +69,7 @@ const chat = computed(() => instance.value?.chatHistory ?? [])
 
 const prompt = ref("")
 const loading = ref(false)
-const insertedIdx = ref(null)   // Index der zuletzt eingefügten Assistenten-Nachricht
 const chatContainer = ref(null)
-
 
 async function scrollToBottom() {
   await nextTick()
@@ -105,19 +82,17 @@ async function send() {
   const text = prompt.value.trim()
   if (!text || loading.value || !instance.value) return
 
-  // User-Nachricht anhängen
+  // Append the user message.
   instance.value.chatHistory.push({ role: "user", content: text })
   prompt.value = ""
   loading.value = true
-  insertedIdx.value = null
   await scrollToBottom()
 
   try {
     const formData = new FormData()
     formData.append("messages", JSON.stringify(instance.value.chatHistory))
-    formData.append("current_code", props.currentCode)
 
-    const resp = await fetch(`${scriptorStore.state.apiUrl}/json/script/generate`, {
+    const resp = await fetch(`${scriptorStore.state.apiUrl}/json/assistant/generate_script`, {
       method: "POST",
       credentials: "include",
       body: formData,
@@ -129,7 +104,22 @@ async function send() {
     }
 
     const data = await resp.json()
-    instance.value.chatHistory.push({ role: "assistant", content: data.script })
+
+    if (isScriptorCode(data.code)) {
+      // Open the suggestion as a diff in the editor instead of dumping code
+      // into the chat.
+      instance.value.pendingDiff = {
+        original: props.currentCode,
+        modified: data.code,
+      }
+      instance.value.chatHistory.push({
+        role: "assistant",
+        content: "✅ Code-Vorschlag im Editor geöffnet – bitte prüfen und übernehmen oder verwerfen.",
+      })
+    } else {
+      // Conversational reply: show it as plain chat text.
+      instance.value.chatHistory.push({ role: "assistant", content: data.code })
+    }
   } catch (e) {
     instance.value.chatHistory.push({
       role: "assistant",
@@ -141,26 +131,10 @@ async function send() {
   }
 }
 
-function insertScript(script, idx) {
-  if (!instance.value) return
-  instance.value.previousCode = props.currentCode
-  instance.value.pendingInsert = script
-  insertedIdx.value = idx
-}
-
-function undoInsert() {
-  if (!instance.value || instance.value.previousCode === null) return
-  instance.value.pendingInsert = instance.value.previousCode
-  instance.value.previousCode = null
-  insertedIdx.value = null
-}
-
 function clearChat() {
   if (!instance.value) return
   instance.value.chatHistory = []
-  instance.value.previousCode = null
-  instance.value.pendingInsert = null
-  insertedIdx.value = null
+  instance.value.pendingDiff = null
 }
 </script>
 
@@ -224,6 +198,7 @@ function clearChat() {
   border-radius: 10px;
   line-height: 1.5;
   word-break: break-word;
+  white-space: pre-wrap;
 }
 
 .ai-panel__bubble--user {
@@ -236,37 +211,6 @@ function clearChat() {
   background: var(--sl-color-neutral-0, #fff);
   border: 1px solid var(--sl-color-neutral-200, #dee2e6);
   border-bottom-left-radius: 3px;
-  width: 100%;
-}
-
-.ai-panel__code {
-  font-family: monospace;
-  font-size: 11px;
-  white-space: pre-wrap;
-  word-break: break-all;
-  margin: 0 0 8px 0;
-  max-height: 200px;
-  overflow-y: auto;
-  background: var(--sl-color-neutral-50, #f8f9fa);
-  padding: 6px;
-  border-radius: 4px;
-}
-
-.ai-panel__insert-btn {
-  width: 100%;
-}
-
-.ai-panel__insert-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.ai-panel__inserted-label {
-  color: var(--sl-color-success-600, #198754);
-  font-size: 12px;
-  font-weight: 500;
 }
 
 /* Typing-Indikator */
@@ -285,12 +229,24 @@ function clearChat() {
   animation: typing 1.2s infinite ease-in-out;
 }
 
-.ai-panel__bubble--loading span:nth-child(2) { animation-delay: 0.2s; }
-.ai-panel__bubble--loading span:nth-child(3) { animation-delay: 0.4s; }
+.ai-panel__bubble--loading span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.ai-panel__bubble--loading span:nth-child(3) {
+  animation-delay: 0.4s;
+}
 
 @keyframes typing {
-  0%, 80%, 100% { transform: scale(0.7); opacity: 0.5; }
-  40% { transform: scale(1); opacity: 1; }
+  0%,
+  80%,
+  100% {
+    transform: scale(0.7);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .ai-panel__input-area {

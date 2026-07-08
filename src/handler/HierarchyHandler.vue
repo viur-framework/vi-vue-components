@@ -168,16 +168,20 @@ function fetchRoots() {
   let context = contextStore.getContext(state.tabId)
   return Request.get(`/vi/${props.module}/listRootNodes`, { dataObj: { ...context, ...props.filter } }).then(
     async (resp) => {
-    let data = await resp.json()
-    state.availableRootNodes = data
-    if (!state.currentRootNode) {
-      if (Object.keys(context).includes("@rootNode") && data.map((x) => x["key"] === context["@rootNode"]).length > 0) {
-        state.currentRootNode = data.filter((x) => x["key"] === context["@rootNode"])[0]
-      } else {
-        state.currentRootNode = data[0]
+      let data = await resp.json()
+      state.availableRootNodes = data
+      if (!state.currentRootNode) {
+        if (
+          Object.keys(context).includes("@rootNode") &&
+          data.map((x) => x["key"] === context["@rootNode"]).length > 0
+        ) {
+          state.currentRootNode = data.filter((x) => x["key"] === context["@rootNode"])[0]
+        } else {
+          state.currentRootNode = data[0]
+        }
       }
     }
-  })
+  )
 }
 
 onBeforeMount(() => {

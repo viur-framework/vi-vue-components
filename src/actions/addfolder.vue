@@ -16,12 +16,14 @@
     :label="$t('actions.addfolder')"
     @sl-request-close="closeAction($event)"
   >
-    <sl-input v-model="state.foldername"
-              autofocus
-              :placeholder="$t('actions.addfolder')"
-              @keydown.enter="createNode($event)"></sl-input>
+    <sl-input
+      v-model="state.foldername"
+      autofocus
+      :placeholder="$t('actions.addfolder')"
+      @keydown.enter="createNode($event)"
+    ></sl-input>
 
-    <div class="btn-footer" slot="footer">
+    <div slot="footer" class="btn-footer">
       <sl-button variant="danger" outline @click="closeAction($event)">
         {{ $t("abort") }}
       </sl-button>
@@ -88,9 +90,9 @@ function createNode(e) {
 </script>
 
 <style scoped>
-  .btn-footer{
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-  }
+.btn-footer {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
 </style>

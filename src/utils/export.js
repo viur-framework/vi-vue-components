@@ -68,10 +68,7 @@ function formatSingleStringValue(value, boneStructure, row, boneName, lang = nul
   const boneType = boneStructure?.type || ""
 
   const isFileLikeType =
-    boneType === "file" ||
-    boneType.startsWith("file.") ||
-    boneType.endsWith(".file") ||
-    boneType.includes(".file.")
+    boneType === "file" || boneType.startsWith("file.") || boneType.endsWith(".file") || boneType.includes(".file.")
 
   if (isFileLikeType) {
     if (value?.dest?.name) {
@@ -83,8 +80,8 @@ function formatSingleStringValue(value, boneStructure, row, boneName, lang = nul
   }
 
   if (boneType === "spatial" || boneType.startsWith("spatial.")) {
-    const lat = Array.isArray(value) ? value[0] : value?.lat ?? value?.latitude ?? null
-    const lng = Array.isArray(value) ? value[1] : value?.lng ?? value?.long ?? value?.longitude ?? null
+    const lat = Array.isArray(value) ? value[0] : (value?.lat ?? value?.latitude ?? null)
+    const lng = Array.isArray(value) ? value[1] : (value?.lng ?? value?.long ?? value?.longitude ?? null)
 
     if (lat === null || lng === null || lat === undefined || lng === undefined) {
       return "-"
@@ -93,7 +90,13 @@ function formatSingleStringValue(value, boneStructure, row, boneName, lang = nul
     return `long: ${lng}, lat: ${lat}`
   }
 
-  return getBoneLogicValue(row, boneName, structureWithColumnLanguage(structureFromBone(boneName, boneStructure), boneName, lang), lang, t)
+  return getBoneLogicValue(
+    row,
+    boneName,
+    structureWithColumnLanguage(structureFromBone(boneName, boneStructure), boneName, lang),
+    lang,
+    t
+  )
 }
 
 function structureFromBone(boneName, boneStructure) {
@@ -219,7 +222,14 @@ export function formatExportValue({
 
   const listValue = Array.isArray(rawValue) ? rawValue : rawValue ? [rawValue] : []
   const formattedList = listValue.map((entry) =>
-    formatSingleStringValue(entry, { ...boneStructure, multiple: false }, { ...row, [column.boneName]: entry }, column.boneName, column.lang, t)
+    formatSingleStringValue(
+      entry,
+      { ...boneStructure, multiple: false },
+      { ...row, [column.boneName]: entry },
+      column.boneName,
+      column.lang,
+      t
+    )
   )
 
   if (multipleMode === "list") {

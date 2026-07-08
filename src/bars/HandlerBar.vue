@@ -110,7 +110,10 @@ function getActions() {
 
   let translationActions = {
     ...listActions,
-    default: [["selectfields", "translationlanguage"], ["search", "resave", "preview", "delete", "clone", "edit", "add"]],
+    default: [
+      ["selectfields", "translationlanguage"],
+      ["search", "resave", "preview", "delete", "clone", "edit", "add"],
+    ],
   }
 
   //given props overrides calculation

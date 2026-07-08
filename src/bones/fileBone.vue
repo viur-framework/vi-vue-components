@@ -149,7 +149,7 @@ function downloadFile() {
       link.download = props.value["dest"]["name"]
       link.click()
     })
-    .catch(()=>{
+    .catch(() => {
       window.open(Request.downloadUrlFor(props.value))
     })
 }

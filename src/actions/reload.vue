@@ -24,7 +24,7 @@ import { Request } from "@viur/vue-utils"
 const props = defineProps({
   local: {
     default: false,
-  }
+  },
 })
 const cachedRequestsStore = useCachedRequestsStore()
 

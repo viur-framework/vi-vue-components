@@ -192,7 +192,7 @@ import {
   toRaw,
 } from "vue"
 import HandlerBar from "../bars/HandlerBar.vue"
-import {Request } from "@viur/vue-utils"
+import { Request } from "@viur/vue-utils"
 import { useDBStore } from "../stores/db"
 import { useMessageStore } from "../stores/message"
 import { useModulesStore } from "../stores/modules"
@@ -315,7 +315,7 @@ watch(
         newVal[newVal.length - 1]["key"] !== oldVal[oldVal.length - 1]["key"])
     ) {
       handlerLogic
-        .reloadAction({parententry: state.currentPath[state.currentPath.length - 1]["key"]}, state.needUpdate)
+        .reloadAction({ parententry: state.currentPath[state.currentPath.length - 1]["key"] }, state.needUpdate)
         .then((resp) => {
           handlerLogic.setSelectedBones()
         })
@@ -331,7 +331,7 @@ onMounted(() => {
   handlerLogic.reloadAction().then((resp) => {
     handlerLogic.setSelectedBones()
     if (oldPath) {
-      state.currentPath = oldPath;
+      state.currentPath = oldPath
     }
   })
 })
@@ -491,7 +491,7 @@ function itemMeta(item, skelType = "leaf") {
 provide("itemMeta", itemMeta)
 
 function listItemMeta(item, skelType = "leaf") {
-  let currentMeta = {...itemMeta(item, skelType)}
+  let currentMeta = { ...itemMeta(item, skelType) }
   let mimeBaseMatch = {
     image: "file-earmark-image",
     audio: "file-earmark-music",

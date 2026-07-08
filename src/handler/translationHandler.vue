@@ -78,10 +78,10 @@
               </div>
             </td>
             <td
+              :key="`translation-${state.selectedLanguage}`"
               @contextmenu.prevent="
                 contextMenu($event, idx, state.selectedLanguage, getTranslationValue(skel, state.selectedLanguage))
               "
-              :key="`translation-${state.selectedLanguage}`"
             >
               <div class="translation-cell">
                 <sl-textarea
@@ -95,7 +95,10 @@
                   @sl-change="commitTranslation(skel, state.selectedLanguage, $event.target.value)"
                 ></sl-textarea>
                 <div class="translation-status-overlay">
-                  <sl-spinner v-if="isSavingTranslation(skel, state.selectedLanguage)" style="font-size: 14px"></sl-spinner>
+                  <sl-spinner
+                    v-if="isSavingTranslation(skel, state.selectedLanguage)"
+                    style="font-size: 14px"
+                  ></sl-spinner>
                   <sl-icon
                     v-else-if="isTranslationStatus(skel, state.selectedLanguage, 'success')"
                     name="check2-circle"
@@ -110,7 +113,7 @@
               </div>
             </td>
             <td @contextmenu.prevent="contextMenu($event, idx, 'fallback', getFallbackValue(skel))">
-              {{ getFallbackValue(skel) || '—' }}
+              {{ getFallbackValue(skel) || "—" }}
             </td>
             <td>
               <sl-badge :variant="isTranslationComplete(skel) ? 'success' : 'warning'" pill class="status-badge">
@@ -333,13 +336,11 @@ onMounted(() => {
 
   currentlist.state.params = { ...currentlist.state.params, ...ctx, ...props.filter }
   currentlist.state.params["limit"] = localStore.state.listamount
-  currentlist
-    .fetch()
-    .catch((error) => {
-      if (error.statusCode && typeof error !== "string") {
-        messageStore.addMessage("error", `${error.message}`, error.response.url)
-      }
-    })
+  currentlist.fetch().catch((error) => {
+    if (error.statusCode && typeof error !== "string") {
+      messageStore.addMessage("error", `${error.message}`, error.response.url)
+    }
+  })
 })
 
 onActivated(() => {
@@ -469,7 +470,6 @@ function stickyHeader(e) {
   }
 }
 
-
 function contextMenu(e, idx, name, rendered) {
   state.cellvalues = { idx: idx, name: name, rendered: rendered }
   cmenu.value.style.left = e.clientX + "px"
@@ -539,8 +539,8 @@ function missingLanguages(skel) {
   return Array.isArray(skel.translations_missing)
     ? skel.translations_missing
     : skel.translations_missing
-    ? [skel.translations_missing].flat()
-    : []
+      ? [skel.translations_missing].flat()
+      : []
 }
 
 function isTranslationComplete(skel) {

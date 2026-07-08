@@ -12,7 +12,7 @@
         </sl-button>
       </status-bar>
       <div class="wrapper-editor">
-        <sl-split-panel class="editor-split" style="--min: 150px;" position="75">
+        <sl-split-panel v-if="hasAssistant" class="editor-split" style="--min: 150px" position="75">
           <div slot="start" class="editor-split__pane">
             <code-editor v-if="state.script" :id="state.id"></code-editor>
             <sl-spinner v-else></sl-spinner>
@@ -25,6 +25,10 @@
             ></ai-panel>
           </div>
         </sl-split-panel>
+        <template v-else>
+          <code-editor v-if="state.script" :id="state.id"></code-editor>
+          <sl-spinner v-else></sl-spinner>
+        </template>
       </div>
     </div>
     <div slot="end" ref="messagewrapper" class="wrapper-widgets">
@@ -61,6 +65,13 @@ const state = reactive({
   }),
   script: null,
   saving: false,
+})
+
+// Show the AI assistant panel only when the assistant module is available in
+// this app (the viur-assistant module is registered under the name "assistant").
+const hasAssistant = computed(() => {
+  const modules = dbStore.state["vi.modules"] || {}
+  return "assistant" in modules || "viur-assistant" in modules
 })
 
 onBeforeMount(() => {

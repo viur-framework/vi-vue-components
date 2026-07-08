@@ -5,7 +5,7 @@
   </sl-button>
 
   <sl-dialog id="dialog-selectfields" :label="$t('actions.selectfields')" @sl-hide="saveConfig">
-    <sl-input clearable @sl-input="filterBones" class="search-input">
+    <sl-input clearable class="search-input" @sl-input="filterBones">
       <sl-icon slot="suffix" name="search"></sl-icon>
     </sl-input>
     <div v-for="(bone, boneName) in state.structure">
@@ -129,7 +129,7 @@ function filterBones(e) {
 </script>
 
 <style scoped>
-.search-input{
+.search-input {
   margin-bottom: var(--sl-spacing-large);
 }
 
