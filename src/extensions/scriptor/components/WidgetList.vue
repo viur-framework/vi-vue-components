@@ -68,6 +68,8 @@ function getWidget(type) {
     return widgets.multipleInputs
   } else if (["raw_html"].includes(type)) {
     return widgets.rawHtml
+  } else if (["dragAndDrop"].includes(type)) {
+    return widgets.dropZone
   }
 
   return widgets.debugEntry

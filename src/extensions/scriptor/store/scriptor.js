@@ -307,6 +307,9 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
         }
         await sendResult("showDirectoryPickerResult", dirhandle)
         break
+      case "dragAndDrop":
+        addMessageEntry("dragAndDrop", id, data)
+        break
       case "progressbar":
         setProgress(data.total, data.step, data.max_step, data.txt)
         break

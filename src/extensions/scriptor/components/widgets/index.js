@@ -6,6 +6,7 @@ import diffCompare from "./DiffCompare.vue"
 import tableEntry from "./TableEntry.vue"
 import multipleInputs from "./MultipleInputs.vue"
 import rawHtml from "./RawHtml.vue"
+import dropZone from "./DropZone.vue"
 
 export default {
   logEntry,
@@ -16,4 +17,5 @@ export default {
   tableEntry,
   multipleInputs,
   rawHtml,
+  dropZone,
 }
