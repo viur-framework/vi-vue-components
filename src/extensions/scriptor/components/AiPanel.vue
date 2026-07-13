@@ -91,6 +91,10 @@ async function send() {
   try {
     const formData = new FormData()
     formData.append("messages", JSON.stringify(instance.value.chatHistory))
+    // Send the current editor content so the model can build on the existing script.
+    if (props.currentCode) {
+      formData.append("current_code", props.currentCode)
+    }
 
     const resp = await fetch(`${scriptorStore.state.apiUrl}/json/assistant/generate_script`, {
       method: "POST",
