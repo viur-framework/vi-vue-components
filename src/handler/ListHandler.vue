@@ -236,6 +236,7 @@ const state = reactive({
     })
   }),
   filter: null,
+  searchReset: 0, // Signal an actions/search.vue: Suche wurde extern geleert (Kontextwechsel)
   emptyList: computed(() => {
     if (state.renderedList.length === 0 && currentlist.state.state > 0) {
       return true
@@ -413,6 +414,11 @@ onActivated(() => {
 watch(
   () => Object.values(contextStore.state.globalContext),
   (newVal, oldVal) => {
+    // Kontext-/Kanalwechsel leert die Suche komplett — alte search-Parameter/Filter
+    // dürfen die Liste des neuen Kanals nicht unsichtbar leerfiltern
+    delete currentlist.state.params["search"]
+    state.filter = null
+    state.searchReset += 1
     reloadAction()
   }
 )
@@ -625,42 +631,20 @@ function sorting(field, direction) {
     return 0
   }
   state.sorting = field + "$" + direction
-  if (direction === "asc") {
-    currentlist.state.skellist.sort((a, b) => {
-      let aValue = a[field] || ""
-      let bValue = b[field] || ""
-
-      if (typeof aValue !== "string") {
-        aValue = aValue.toString()
-      }
-      if (typeof bValue !== "string") {
-        bValue = bValue.toString()
-      }
-      if (aValue.toLowerCase() > bValue.toLowerCase()) {
-        return 1
-      } else {
-        return -1
-      }
-    })
-  } else {
-    currentlist.state.skellist.sort((a, b) => {
-      let aValue = a[field] || ""
-      let bValue = b[field] || ""
-
-      if (typeof aValue !== "string") {
-        aValue = aValue.toString()
-      }
-      if (typeof bValue !== "string") {
-        bValue = bValue.toString()
-      }
-
-      if (aValue.toLowerCase() < bValue.toLowerCase()) {
-        return 1
-      } else {
-        return -1
-      }
-    })
-  }
+  const factor = direction === "asc" ? 1 : -1
+  // Über die angezeigten Werte sortieren (Rohwerte sind bei relationalen/Select-Bones
+  // Objekte -> "[object Object]"); einmal vorberechnen, getBoneViewer ist teuer
+  const rendered = new Map(
+    currentlist.state.skellist.map((skel) => [skel, getBoneViewer(skel, field).toString()])
+  )
+  currentlist.state.skellist.sort(
+    (a, b) =>
+      factor *
+      rendered.get(a).localeCompare(rendered.get(b), undefined, {
+        numeric: true,
+        sensitivity: "base",
+      })
+  )
 }
 
 function getWidget(renderedSkel, name, idx) {
