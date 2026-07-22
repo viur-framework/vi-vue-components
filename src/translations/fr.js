@@ -95,6 +95,54 @@ export default {
     invertselect: "Inverser la sélection",
     resetselect: "Réinitialiser la sélection",
   },
+  export: {
+    dialog: {
+      title: "Export",
+    },
+    columns: "Colonnes",
+    rows: "Lignes",
+    allRows: "Toutes",
+    objectModeLabel: "Affichage",
+    formatLabel: "Format",
+    previewTitle: "Aperçu",
+    start: "Démarrer l'export",
+    selectionTypeLabel: "Type d'entrée",
+    objectMode: {
+      string: "Format texte",
+      json: "Format JSON",
+    },
+    format: {
+      json: "JSON",
+      excel: "Format Excel",
+      csvSemicolon: "Format CSV (;)",
+      csvComma: "Format CSV (,)",
+    },
+    loading: {
+      preview: "Chargement de l'aperçu",
+      export: "Export en cours",
+    },
+    preview: {
+      empty: "Aucun aperçu disponible",
+    },
+    selectionType: {
+      nodes: "Nœuds",
+      leafs: "Feuilles",
+    },
+    filter: {
+      label: "Filtre",
+      selectBone: "Choisir un champ",
+      add: "Ajouter un filtre",
+      indexRequired:
+        "Cette combinaison de filtres n'est peut-être couverte par aucun index de base de données – l'export peut néanmoins être tenté, mais il pourrait échouer.",
+      unsupportedCombination: "Cette combinaison de filtres n'est actuellement pas prise en charge par le système.",
+      op: {
+        equals: "est égal à",
+        contains: "contient",
+        after: "après",
+        before: "avant",
+      },
+    },
+  },
   relation: {
     select: "Sélectionner",
     abort: "Annuler",
@@ -158,6 +206,7 @@ export default {
     order: {
       title: "Commande",
       status: "Statut",
+      note: "Commentaire",
       shipping_address: "Adresse de livraison",
       billing_address: "Adresse de facturation",
       shipping_billing_address: "Adresse de livraison et de facturation",
@@ -174,6 +223,7 @@ export default {
         subtotal: "Sous-total",
         shipping_cost: "Frais de livraison",
         delivery_time: "Délai de livraison : {range} jours",
+        discount: "Remise",
         total: "Total",
       },
       relation: {

@@ -130,6 +130,20 @@ export default {
       nodes: "Nodes",
       leafs: "Leafs",
     },
+    filter: {
+      label: "Filter",
+      selectBone: "Feld wählen",
+      add: "Filter hinzufügen",
+      indexRequired:
+        "Diese Filter-Kombination ist möglicherweise durch keinen Datenbank-Index abgedeckt – der Export kann trotzdem versucht werden, könnte aber fehlschlagen.",
+      unsupportedCombination: "Diese Filter-Kombination wird vom System aktuell nicht unterstützt.",
+      op: {
+        equals: "ist gleich",
+        contains: "enthält",
+        after: "nach",
+        before: "vor",
+      },
+    },
   },
   relation: {
     select: "Auswählen",
@@ -197,6 +211,7 @@ export default {
     order: {
       title: "Bestellung",
       status: "Status",
+      note: "Kommentar",
       shipping_address: "Lieferadresse",
       billing_address: "Rechnungsadresse",
       shipping_billing_address: "Liefer- und Rechnungsadresse",
@@ -213,6 +228,7 @@ export default {
         subtotal: "Zwischensumme",
         shipping_cost: "Versandkosten",
         delivery_time: "Lieferzeit: {range} Tage",
+        discount: "Rabatt",
         total: "Summe",
       },
       relation: {

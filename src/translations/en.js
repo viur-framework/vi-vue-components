@@ -130,6 +130,20 @@ export default {
       nodes: "Nodes",
       leafs: "Leafs",
     },
+    filter: {
+      label: "Filter",
+      selectBone: "Select field",
+      add: "Add filter",
+      indexRequired:
+        "This filter combination may not be covered by any database index – you can still try the export, but it might fail.",
+      unsupportedCombination: "This filter combination is currently not supported by the system.",
+      op: {
+        equals: "equals",
+        contains: "contains",
+        after: "after",
+        before: "before",
+      },
+    },
   },
   relation: {
     select: "Select",
@@ -193,6 +207,7 @@ export default {
     order: {
       title: "Order",
       status: "Status",
+      note: "Comment",
       shipping_address: "Shipping address",
       billing_address: "Billing address",
       shipping_billing_address: "Shipping and billing address",
@@ -209,6 +224,7 @@ export default {
         subtotal: "Subtotal",
         shipping_cost: "Shipping costs",
         delivery_time: "Delivery time: {range} days",
+        discount: "Discount",
         total: "Total",
       },
       relation: {
