@@ -1,7 +1,7 @@
 <template>
   <div v-if="Object.keys(formState.structure).length > 0" class="is-kontaktseite">
     <template v-for="(boneValue, boneName) in formState.skel" :key="boneName">
-      <template v-if="formState.structure?.[boneName] && ['order_uid', 'payment_provider', 'total'].includes(boneName)">
+      <template v-if="formState.structure?.[boneName] && ['short_number', 'order_uid', 'payment_provider', 'total'].includes(boneName)">
         <slot :bone-name="boneName" :widget="getBoneWidget(formState.structure[boneName]['type'])"></slot>
       </template>
     </template>

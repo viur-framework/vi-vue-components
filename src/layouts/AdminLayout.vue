@@ -9,7 +9,7 @@
       <router-view v-slot="mainprops">
         <div class="viewwrapper">
           <div class="wrap-for-popup">
-            <template v-for="tab in dbStore.state['handlers.opened']">
+            <template v-for="tab in dbStore.state['handlers.opened']" :key="tab?.['id']">
               <div v-show="dbStore.getActiveTab()['id'] === tab?.['id']" :id="'view_dialogs_' + tab?.['id']"></div>
             </template>
             <sl-tab-group
@@ -50,7 +50,7 @@ import ViewWrapper from "../main/ViewWrapper.vue"
 import { useDBStore } from "../stores/db"
 import { useExtensionsStore } from "../stores/extensions"
 import { useRoute, useRouter } from "vue-router"
-import { reactive, computed, unref, onMounted } from "vue"
+import { reactive, computed, unref, onMounted, watch } from "vue"
 
 const dbStore = useDBStore()
 const extensionsStore = useExtensionsStore()
@@ -82,6 +82,23 @@ const state = reactive({
     return validHandlers
   }),
 })
+
+// When a tab is opened whose matching subhandler is flagged `defaultOnOpen`, redirect once to
+// that view instead of the standard edit view. The user can still switch back via the tab bar.
+const autoRedirectedTabs = new Set()
+watch(
+  () => route.fullPath,
+  () => {
+    const tabId = route.query["_"]
+    if (!tabId || autoRedirectedTabs.has(tabId)) return
+    if (route.path.includes("__")) return // already on a subhandler route
+    const defaultHandler = state.validHandlers.find((handler) => handler["defaultOnOpen"])
+    if (!defaultHandler) return
+    autoRedirectedTabs.add(tabId)
+    navigateSubRoute(defaultHandler["route"])
+  },
+  { immediate: true }
+)
 
 function navigateSubRoute(subroute) {
   let org_path = route.path

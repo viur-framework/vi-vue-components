@@ -55,6 +55,7 @@ export default function extensionInfo() {
         name: "Details",
         icon: "basket-fill",
         route: "__/shop.order/edit",
+        defaultOnOpen: true, // show this view instead of the standard edit view when opening an entry
       },
     },
   }
