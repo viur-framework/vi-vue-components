@@ -17,5 +17,11 @@ export function describeInstanceStatus(instance) {
   if (instance.runState === "running") {
     return { text: "Skript läuft...", variant: "success", pulse: true }
   }
+  // Ein am Skript gescheiterter Lauf lässt envState auf "ready" — ohne diesen
+  // Zweig zeigte ein fehlgeschlagenes Skript denselben grünen "bereit"-Badge
+  // wie ein sauber durchgelaufenes.
+  if (instance.runState === "error") {
+    return { text: "Skript mit Fehler beendet.", variant: "danger", pulse: false }
+  }
   return { text: "Skriptor ist bereit.", variant: "success", pulse: false }
 }
