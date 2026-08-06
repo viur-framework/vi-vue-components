@@ -85,18 +85,18 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     if (!instance || instance.worker) {
       return instance?.worker || null
     }
-    const workerHandle = createInstanceWorker({
+    const workerObject = createInstanceWorker({
       path: resolveWorkerPath(useBrowserLocation().value.pathname),
       instanceId: instanceId,
       onMessage: handleMessage,
       onError: failInstance,
     })
-    if (!workerHandle) {
+    if (!workerObject) {
       // Worker nicht erzeugbar — Instanz bleibt kalt, der Aufrufer bricht ab.
       instance.envState = "failed"
       return null
     }
-    instance.worker = workerHandle
+    instance.worker = workerObject
     startBufferFlusher()
     return instance.worker
   }
@@ -358,8 +358,8 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     }
     // post() statt worker.postMessage(): useWebWorker's post() entpackt den
     // shallowRef selbst und prüft auf einen vorhandenen Worker. Der Bestandscode
-    // griff über den globalen Worker-Zustand direkt auf .worker.postMessage zu,
-    // was nur wegen der Ref-Entpackung durch reactive() funktionierte.
+    // griff über state.workerObject.worker.postMessage zu, was nur wegen der
+    // Ref-Entpackung durch reactive() funktionierte.
     instance.worker.post({
       id: "_sendDialogSignal",
       type: type,
@@ -384,7 +384,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
       // Zweiter Klick während des Ladens muss auf denselben Ladevorgang warten.
       // Ohne diesen Riegel überschreibt der zweite postEnvInstall-Aufruf den
       // "_pyinstaller"-Callback des ersten, und dessen execute()-Promise löst
-      // nie auf. Der alte Code war über ein globales Lade-Flag geschützt.
+      // nie auf. Der alte Code war über das globale isLoading-Flag geschützt.
       let envLoad = envLoads.get(currentId)
       if (!envLoad) {
         if (!acquireWorker(currentId)) {

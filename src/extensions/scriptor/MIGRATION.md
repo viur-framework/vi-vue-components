@@ -17,6 +17,14 @@ Meldung abgelehnt.
 | `state.runningActions` | `state.instances[id].pendingActions` |
 | `store.progress` | `state.instances[id].progress` |
 
+Die `state.isRunning`-Zeile ist keine reine 1:1-Entsprechung: Der alte Shim war
+*zusätzlich* wahr, solange `envState === "loading"` war, weil das den
+Ausführen-Button während der mehrere Sekunden dauernden Installation sperrte.
+Für genau diese kombinierte "Instanz ist beschäftigt"-Prüfung liefert
+`describeInstanceStatus()` (`store/instanceStatus.js`) das `pulse`-Flag, das
+`runState === "running"` und `envState === "loading"` bereits ODER-verknüpft —
+wer beide Fälle abdecken will, prüft `pulse`, nicht nur `runState`.
+
 ## Geänderte Signaturen
 
 | Vorher | Nachher |
@@ -50,6 +58,9 @@ intern von `postEnvInstall()` an `load()` zurückgegeben, das ihn in `env_failed
 
 Die aufgelöste Python-Umgebung wird als Lockfile (`micropip.freeze()`) in der
 Cache Storage unter `scriptor-env-v1` abgelegt und für weitere Worker über
-`loadPyodide({lockFileContents, packages})` wiederverwendet. Bei gesetztem
-`VITE_SCRIPTOR_URL` ist der Cache abgeschaltet, weil sich ein lokal gebautes
-Wheel bei jedem Build ändert.
+`loadPyodide({lockFileContents, packages})` wiederverwendet.
+`isEnvCacheDisabled()` schaltet den Cache in zwei Fällen ab: bei gesetztem
+`VITE_SCRIPTOR_URL`, weil sich ein lokal gebautes Wheel bei jedem Build
+ändert, und wenn keine Cache Storage API existiert
+(`!("caches" in globalThis)`, z. B. in manchen privaten Browser-Modi) — dort
+gibt es ohnehin nichts zu cachen.
