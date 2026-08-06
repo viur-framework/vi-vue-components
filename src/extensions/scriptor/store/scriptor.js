@@ -5,6 +5,7 @@ import { useBrowserLocation, useWebWorker, useUrlSearchParams } from "@vueuse/co
 import { useContextStore } from "../../../stores/context"
 import { useMessageStore } from "../../../stores/message"
 import { Request } from "@viur/vue-utils"
+import { writeEnvCache } from "./envCache"
 
 export const useScriptorStore = defineStore("scriptorStore", () => {
   const instanceTemplate = {
@@ -233,6 +234,12 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
       .replace(/\n/g, "<br />")
   }
 
+  // Cache-Schlüssel muss die Version enthalten, sonst liefert ein
+  // Versionswechsel weiterhin die alte Umgebung aus.
+  function cacheVersion() {
+    return state.scriptorVersion || "latest"
+  }
+
   async function handleWebWorkerMessages(id, data) {
     if (!id) {
       id = state.currentInstance
@@ -317,6 +324,11 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
       case "system-message":
         const messageStore = useMessageStore()
         messageStore.addMessage(data["_type"], data["title"], data["text"])
+        break
+      case "envlock":
+        // Kaltstart hat die Umgebung aufgelöst — Lockfile für weitere Worker
+        // sichern. Fehlschläge sind unkritisch, dann bleibt es beim Kaltstart.
+        await writeEnvCache(cacheVersion(), data["lock"], data["installed"])
         break
       default:
         if (["select", "input", "diffcmp", "table", "stdout", "stderr", "raw_html"].includes(data.type)) {

@@ -54,25 +54,85 @@ let manager = {
   },
 }
 
-async function loadPyodideAndPackages(id, pyoPackages, packages, initCode, transformCode, importable) {
-  installLog(id, 1, "Loading python runtime")
-  self.pyodide = await loadPyodide({
-    convertNullToNone: true,
-    stdout: stdout,
-    stderr: stderr,
-  })
-  pyoPackages.unshift("micropip")
-  //installog(2, `Installing python packages ${packages.join(", ")}`);
-  installLog(id, 2, `Creating python env`)
-  await self.pyodide.loadPackage(pyoPackages)
-  installLog(id, 3, `Installing python packages`)
-  self.parray = packages
+// Namen der tatsächlich geladenen Pakete. micropip trägt jedes installierte
+// Wheel per setattr(loadedPackages, project_name, source) ein (wheelinfo.py),
+// pyodide.loadPackage ebenso. Damit ist das die minimale Liste, die ein warmer
+// Start braucht — im Gegensatz zu micropip.list(), das laut eigenem Kommentar
+// auch alle stdlib-Distributionen mitzählt.
+function loadedPackageNames() {
+  try {
+    return Object.keys(self.pyodide.loadedPackages)
+  } catch (error) {
+    console.warn("Scriptor: could not read loadedPackages", error)
+    return []
+  }
+}
 
-  await pyodide.runPythonAsync(`
+// Nach einem Kaltstart das aufgelöste Lockfile an den Store schicken, damit er es
+// in die Cache Storage legt. Fehler hier dürfen den Start nicht abbrechen: ohne
+// Cache ist der Scriptor langsamer, aber funktionsfähig.
+async function sendEnvLock(id) {
+  try {
+    const lock = await self.pyodide.runPythonAsync(`
+import micropip
+micropip.freeze()`)
+    self.postMessage({
+      type: "envlock",
+      lock: lock,
+      installed: loadedPackageNames(),
+      id: null,
+    })
+  } catch (error) {
+    console.warn("Scriptor: could not freeze python env", error)
+  }
+}
+
+async function loadPyodideAndPackages(
+  id,
+  pyoPackages,
+  packages,
+  initCode,
+  transformCode,
+  importable,
+  envCache
+) {
+  const warmStart = Boolean(envCache?.lock && envCache?.installed?.length)
+
+  installLog(id, 1, "Loading python runtime")
+
+  if (warmStart) {
+    // Das gefreezte Lockfile beschreibt alle Pakete inklusive der per micropip
+    // nachinstallierten. Die packages-Option lädt sie während des
+    // WASM-Bootstraps — ohne PyPI-Abfrage und ohne Dependency-Auflösung.
+    self.pyodide = await loadPyodide({
+      convertNullToNone: true,
+      stdout: stdout,
+      stderr: stderr,
+      lockFileContents: envCache.lock,
+      packages: envCache.installed,
+    })
+    installLog(id, 3, `Restoring python packages from cache`)
+  } else {
+    self.pyodide = await loadPyodide({
+      convertNullToNone: true,
+      stdout: stdout,
+      stderr: stderr,
+    })
+    pyoPackages.unshift("micropip")
+    installLog(id, 2, `Creating python env`)
+    await self.pyodide.loadPackage(pyoPackages)
+    installLog(id, 3, `Installing python packages`)
+    self.parray = packages
+
+    await self.pyodide.runPythonAsync(`
   import micropip
   from js import parray
   await micropip.install(parray.to_py())
   `)
+
+    self.parray = undefined
+    await sendEnvLock(id)
+  }
 
   installLog(id, 4, `Initializing environment`)
   if (importable !== undefined) {
@@ -80,7 +140,6 @@ async function loadPyodideAndPackages(id, pyoPackages, packages, initCode, trans
     self.pyodide.pyimport("importable")
   }
 
-  self.parray = undefined
   const src = `from pyodide.code import eval_code_async
 from pyodide.ffi import to_js
 from js import console
@@ -99,10 +158,9 @@ async def pyeval(code, ns):
 
   return to_js(result)`
   await self.pyodide.registerJsModule("manager", manager)
-  //console.log("SRC EXEC", src)
-  await pyodide.runPythonAsync(src)
+  await self.pyodide.runPythonAsync(src)
   if (initCode.length > 0) {
-    await pyodide.runPythonAsync(initCode)
+    await self.pyodide.runPythonAsync(initCode)
   }
 
   installLog(id, 5, "The python env is loaded")
@@ -151,15 +209,23 @@ self.onmessageerror = (e) => {
 self.onmessage = async (event) => {
   const { id, python, ...context } = event.data
   if (id === "_pyinstaller") {
-    await loadPyodideAndPackages(
-      id,
-      context.pyoPackages,
-      context.packages,
-      context.initCode,
-      context.transformCode,
-      context.importable
-    )
-    run_end(id)
+    // Ohne dieses try/catch bleibt die _pyinstaller-Promise im Store bei einem
+    // Fehler für immer offen und der Scriptor hängt im Ladezustand.
+    try {
+      await loadPyodideAndPackages(
+        id,
+        context.pyoPackages,
+        context.packages,
+        context.initCode,
+        context.transformCode,
+        context.importable,
+        context.envCache
+      )
+      run_end(id)
+    } catch (error) {
+      console.log("PY ENV ERR", error)
+      err(id, error?.message || String(error))
+    }
   } else if (id === "_write") {
     if (context === undefined) return
 
