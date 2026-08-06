@@ -13,6 +13,7 @@ const env = {
   importable: undefined,
   importableLoaded: false,
   loadingLock: null,
+  releaseLoadingLock: null,
 }
 
 // Pyodide belegt pro Instanz grob 150–300 MB. Drei parallele Worker sind der
@@ -253,6 +254,19 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     })
   }
 
+  // Gibt ein Lock nur frei, wenn es noch das aktuelle ist. Ein zweiter
+  // Kaltstart nach Timeout legt ein eigenes an; der erste darf dieses beim
+  // Beenden nicht wegräumen. Mehrfachaufrufe sind unschädlich.
+  function finishLoadingLock(lock, entry) {
+    if (!lock || env.loadingLock !== lock) {
+      return
+    }
+    const release = env.releaseLoadingLock
+    env.loadingLock = null
+    env.releaseLoadingLock = null
+    release?.(entry)
+  }
+
   async function load(instanceId) {
     const instance = state.instances[instanceId]
     if (!instance) {
@@ -274,27 +288,32 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
       ])
     }
 
-    let releaseLock = null
+    let myLock = null
     if (!cached) {
-      env.loadingLock = new Promise((resolve) => {
-        releaseLock = resolve
+      let release = null
+      myLock = new Promise((resolve) => {
+        release = resolve
       })
+      env.loadingLock = myLock
+      env.releaseLoadingLock = release
     }
 
     let result = await postEnvInstall(instanceId, cached)
 
     if (result?.error && cached) {
+      // Veraltetes oder beschädigtes Lockfile: Eintrag verwerfen und genau
+      // einmal auf den Kaltstart zurückfallen. Ohne diesen Pfad würde ein
+      // defekter Cache den Scriptor dauerhaft blockieren.
       console.warn("Scriptor: warm start failed, falling back to cold start", result.error)
       await dropEnvCache(version)
       result = await postEnvInstall(instanceId, null)
     }
 
-    if (releaseLock) {
-      // Nachfolger bekommen den frisch geschriebenen Cache-Eintrag — oder null,
-      // wenn der Kaltstart gescheitert ist.
-      releaseLock(result?.error ? null : await readEnvCache(version))
-      env.loadingLock = null
-    }
+    // Im Erfolgsfall hat der envlock-Fall die Wartenden bereits freigegeben,
+    // sobald der Cache-Eintrag wirklich geschrieben war (siehe Step 3b). Dieser
+    // Aufruf ist dann ein No-op und deckt nur den Fall ab, dass gar kein envlock
+    // kam — also ein fehlgeschlagener Kaltstart.
+    finishLoadingLock(myLock, null)
 
     return !result?.error
   }
@@ -446,9 +465,14 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
         addInternalMessageEntry("install", instanceId, data)
         instance.envState = data["msg"]["stage"] === 5 ? "ready" : "loading"
         break
-      case "envlock":
-        await writeEnvCache(cacheVersion(), data["lock"], data["installed"])
+      case "envlock": {
+        const version = cacheVersion()
+        await writeEnvCache(version, data["lock"], data["installed"])
+        // Erst hier freigeben: die onmessage-Zustellung wartet nicht auf diesen
+        // Handler, sonst käme run_end dem Cache-Schreibvorgang zuvor.
+        finishLoadingLock(env.loadingLock, await readEnvCache(version))
         break
+      }
       case "stdout":
         addInternalMessageEntry("install", instanceId, data)
         break
