@@ -28,17 +28,6 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     pyoPackages: [],
     packages: [],
     initCode: "",
-    // TEMPORÄR bis Task 9: aggregierte Sicht für die noch nicht umgestellte UI.
-    // Nicht in 3.0.0 ausliefern.
-    isReady: computed(() => Object.values(state.instances).some((i) => i.envState === "ready")),
-    isLoading: computed(() => Object.values(state.instances).some((i) => i.envState === "loading")),
-    // isRunning schließt die Ladephase mit ein, weil die alte Semantik
-    // (runningActions.size > 0) während der Installation ebenfalls true war.
-    // Davon hängt ab, dass der Ausführen-Knopf während des Ladens deaktiviert
-    // bleibt — sonst kann der Nutzer einen zweiten Ladevorgang auslösen.
-    isRunning: computed(() =>
-      Object.values(state.instances).some((i) => i.runState === "running" || i.envState === "loading")
-    ),
     apiUrl: computed(() => {
       //api Server could be a different server
       if (import.meta.env.VITE_API_URL) {
@@ -48,12 +37,6 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     }),
     instances: reactive({}),
     scriptorVersion: "latest",
-  })
-
-  // TEMPORÄR bis Task 9.
-  const progress = computed(() => {
-    const running = Object.values(state.instances).find((i) => i.runState === "running")
-    return running?.progress || { total: 100, step: -1, max_step: -1, txt: "" }
   })
 
   function setProgress(instanceId, total, step, max_step, txt) {
@@ -102,18 +85,18 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     if (!instance || instance.worker) {
       return instance?.worker || null
     }
-    const workerObject = createInstanceWorker({
+    const workerHandle = createInstanceWorker({
       path: resolveWorkerPath(useBrowserLocation().value.pathname),
       instanceId: instanceId,
       onMessage: handleMessage,
       onError: failInstance,
     })
-    if (!workerObject) {
+    if (!workerHandle) {
       // Worker nicht erzeugbar — Instanz bleibt kalt, der Aufrufer bricht ab.
       instance.envState = "failed"
       return null
     }
-    instance.worker = workerObject
+    instance.worker = workerHandle
     startBufferFlusher()
     return instance.worker
   }
@@ -375,8 +358,8 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     }
     // post() statt worker.postMessage(): useWebWorker's post() entpackt den
     // shallowRef selbst und prüft auf einen vorhandenen Worker. Der Bestandscode
-    // griff über state.workerObject.worker.postMessage zu, was nur wegen der
-    // Ref-Entpackung durch reactive() funktionierte.
+    // griff über den globalen Worker-Zustand direkt auf .worker.postMessage zu,
+    // was nur wegen der Ref-Entpackung durch reactive() funktionierte.
     instance.worker.post({
       id: "_sendDialogSignal",
       type: type,
@@ -401,7 +384,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
       // Zweiter Klick während des Ladens muss auf denselben Ladevorgang warten.
       // Ohne diesen Riegel überschreibt der zweite postEnvInstall-Aufruf den
       // "_pyinstaller"-Callback des ersten, und dessen execute()-Promise löst
-      // nie auf. Der alte Code war über das globale isLoading-Flag geschützt.
+      // nie auf. Der alte Code war über ein globales Lade-Flag geschützt.
       let envLoad = envLoads.get(currentId)
       if (!envLoad) {
         if (!acquireWorker(currentId)) {
@@ -612,7 +595,6 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
 
   return {
     state,
-    progress,
     execute,
     exitScript,
     sendResult,
