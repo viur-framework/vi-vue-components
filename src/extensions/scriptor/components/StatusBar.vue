@@ -99,8 +99,6 @@ async function executeScript() {
 function reset() {
   scriptorStore.state.instances[props.id].messages = []
   scriptorStore.state.instances[props.id].internalMessages = []
-  scriptorStore.state.isReady = false
-  scriptorStore.state.runningActions = new Map()
 }
 function changeVersion(e) {
   scriptorStore.state.scriptorVersion = e.target.value

@@ -44,12 +44,11 @@ async function executeScript(scriptParams) {
   await scriptorStore.execute(state.scriptor.scriptCode, props.id, {}, scriptParams)
 }
 async function exitScript() {
-  await scriptorStore.exitScript()
+  await scriptorStore.exitScript(props.id)
 }
 function reset() {
   scriptorStore.state.instances[props.id].messages = []
   scriptorStore.state.instances[props.id].internalMessages = []
-  scriptorStore.state.isReady = false
 }
 
 defineExpose({

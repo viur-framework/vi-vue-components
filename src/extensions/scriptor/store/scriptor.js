@@ -24,7 +24,13 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     // Nicht in 3.0.0 ausliefern.
     isReady: computed(() => Object.values(state.instances).some((i) => i.envState === "ready")),
     isLoading: computed(() => Object.values(state.instances).some((i) => i.envState === "loading")),
-    isRunning: computed(() => Object.values(state.instances).some((i) => i.runState === "running")),
+    // isRunning schließt die Ladephase mit ein, weil die alte Semantik
+    // (runningActions.size > 0) während der Installation ebenfalls true war.
+    // Davon hängt ab, dass der Ausführen-Knopf während des Ladens deaktiviert
+    // bleibt — sonst kann der Nutzer einen zweiten Ladevorgang auslösen.
+    isRunning: computed(() =>
+      Object.values(state.instances).some((i) => i.runState === "running" || i.envState === "loading")
+    ),
     apiUrl: computed(() => {
       //api Server could be a different server
       if (import.meta.env.VITE_API_URL) {
@@ -121,6 +127,10 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     instance.worker?.terminate()
     instance.worker = null
   }
+
+  // Laufende Env-Ladevorgänge pro Instanz. Absichtlich außerhalb von
+  // state.instances, damit Vue die Promise nicht in einen reactive-Proxy wickelt.
+  const envLoads = new Map()
 
   // Ein Interval für alle Instanzen. Bisher startete jeder
   // createWebWorker()-Aufruf ein weiteres, das nie gestoppt wurde.
@@ -284,11 +294,20 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     instance.internalMessages = []
 
     if (instance.envState !== "ready") {
-      if (!attachWorker(currentId)) {
-        return { results: null, error: "no_worker" }
+      // Zweiter Klick während des Ladens muss auf denselben Ladevorgang warten.
+      // Ohne diesen Riegel überschreibt der zweite postEnvInstall-Aufruf den
+      // "_pyinstaller"-Callback des ersten, und dessen execute()-Promise löst
+      // nie auf. Der alte Code war über das globale isLoading-Flag geschützt.
+      let envLoad = envLoads.get(currentId)
+      if (!envLoad) {
+        if (!attachWorker(currentId)) {
+          return { results: null, error: "no_worker" }
+        }
+        instance.envState = "loading"
+        envLoad = load(currentId).finally(() => envLoads.delete(currentId))
+        envLoads.set(currentId, envLoad)
       }
-      instance.envState = "loading"
-      const ok = await load(currentId)
+      const ok = await envLoad
       if (!ok) {
         instance.envState = "failed"
         return { results: null, error: "env_failed" }
@@ -369,16 +388,29 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
       case "stdout":
         addInternalMessageEntry("install", instanceId, data)
         break
+      // Nur der Skriptlauf selbst beendet den Lauf. Der Worker sendet "end"
+      // auch für jedes Dialogsignal (webworker.js:325) und für jede
+      // FS-Operation; würde das runState auf "done" setzen, gälte ein Skript
+      // ab der ersten Dialogantwort als fertig. run_end wird an genau zwei
+      // Stellen gesendet (webworker.js:191 für den Lauf, :224 für den
+      // Installer), die Skript-Nachricht trägt die Instanz-ID als messageId.
       case "run_end":
-      case "end":
-        if (messageId !== "_pyinstaller" && instance.runState === "running") {
+        if (messageId === instanceId && instance.runState === "running") {
           instance.runState = "done"
         }
         handleCallback(instanceId, messageId, data)
         break
+      case "end":
+        handleCallback(instanceId, messageId, data)
+        break
       case "err":
         addMessageEntry("error", instanceId, data)
-        instance.runState = "error"
+        // Ein Installer-Fehler ist kein fehlgeschlagener Lauf — das trägt
+        // envState. Sonst meldet die Instanz einen Fehler für ein Skript, das
+        // nie gestartet ist.
+        if (messageId === instanceId) {
+          instance.runState = "error"
+        }
         handleCallback(instanceId, messageId, data)
         break
       case "log":
