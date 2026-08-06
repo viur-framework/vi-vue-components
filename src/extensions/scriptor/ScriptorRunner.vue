@@ -115,9 +115,17 @@ function startScriptor(params = {}) {
 }
 
 function exitScriptor() {
-  emit("exit");
+  emit("exit")
   state.opened = false
-  scriptorAction.value.exitScript()
+  if (state.id) {
+    scriptorStore.destroyInstance(state.id)
+  }
+  // Zurücksetzen ist zwingend: startScriptor() prüft `if (!state.id)`, um Code zu
+  // laden und eine Instanz anzulegen. Bliebe die alte ID stehen, würde der
+  // Dialog beim Wiederöffnen auf eine gelöschte Instanz zugreifen und
+  // state.scriptor wäre undefined.
+  state.id = null
+  state.scriptReady = false
 }
 
 watch(

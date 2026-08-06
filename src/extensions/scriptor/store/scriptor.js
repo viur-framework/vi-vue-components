@@ -174,6 +174,27 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
   // state.instances, damit Vue die Promise nicht in einen reactive-Proxy wickelt.
   const envLoads = new Map()
 
+  // Terminiert den Worker hart und entfernt die Instanz. Kein Warten auf einen
+  // sauberen Python-Exit: der Worker-Zustand ist flüchtig, es gibt nichts zu
+  // sichern. Für "Abbrechen, Fenster bleibt offen" ist exitScript() zuständig.
+  function destroyInstance(instanceId) {
+    const instance = state.instances[instanceId]
+    if (!instance) {
+      return
+    }
+    for (const [actionId, callback] of instance.pendingActions.entries()) {
+      callback({ results: null, error: "instance_destroyed" })
+      instance.pendingActions.delete(actionId)
+    }
+    instance.worker?.terminate()
+    instance.worker = null
+    // Einen laufenden Env-Ladevorgang mit verwerfen, sonst hält die Map einen
+    // Eintrag für eine Instanz, die es nicht mehr gibt.
+    envLoads.delete(instanceId)
+    delete state.instances[instanceId]
+    stopBufferFlusherIfIdle()
+  }
+
   // Ein Interval für alle Instanzen. Bisher startete jeder
   // createWebWorker()-Aufruf ein weiteres, das nie gestoppt wurde.
   let bufferFlusher = null
@@ -596,6 +617,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     exitScript,
     sendResult,
     createNewInstance,
+    destroyInstance,
     fetchScriptorVersions,
     preload,
   }

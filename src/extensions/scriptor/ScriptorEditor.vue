@@ -23,7 +23,7 @@
 </template>
 
 <script setup>
-import { reactive, onMounted, onBeforeMount, computed, watch, ref } from "vue"
+import { reactive, onMounted, onBeforeMount, onBeforeUnmount, computed, watch, ref } from "vue"
 import WidgetList from "./components/WidgetList.vue"
 import StatusBar from "./components/StatusBar.vue"
 import CodeEditor from "./components/CodeEditor.vue"
@@ -54,6 +54,13 @@ const state = reactive({
 onBeforeMount(() => {
   state.id = scriptorStore.createNewInstance()
   loadCode()
+})
+
+onBeforeUnmount(() => {
+  if (state.id) {
+    scriptorStore.destroyInstance(state.id)
+    state.id = null
+  }
 })
 
 function loadCode() {
