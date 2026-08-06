@@ -15,6 +15,13 @@ const env = {
   loadingLock: null,
 }
 
+// Pyodide belegt pro Instanz grob 150–300 MB. Drei parallele Worker sind der
+// Kompromiss zwischen Nutzen und Speicherverbrauch.
+const MAX_WORKERS = 3
+// So lange wartet ein zweiter Worker bei leerem Cache auf den Kaltstart des
+// ersten, bevor er selbst auflöst.
+const COLD_START_WAIT_MS = 30000
+
 export const useScriptorStore = defineStore("scriptorStore", () => {
   const state = reactive({
     pyoPackages: [],
@@ -108,6 +115,40 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     instance.worker = workerObject
     startBufferFlusher()
     return instance.worker
+  }
+
+  function activeWorkerCount() {
+    return Object.values(state.instances).filter((instance) => instance.worker).length
+  }
+
+  function acquireWorker(instanceId) {
+    const instance = state.instances[instanceId]
+    if (!instance) {
+      return false
+    }
+    if (instance.worker) {
+      return true
+    }
+    if (activeWorkerCount() >= MAX_WORKERS) {
+      useMessageStore().addMessage(
+        "error",
+        "Zu viele Skripte",
+        `Es können maximal ${MAX_WORKERS} Skripte gleichzeitig laufen. Bitte ein laufendes Skript-Fenster schließen.`
+      )
+      return false
+    }
+    if (!attachWorker(instanceId)) {
+      // Ohne diese Meldung bleibt ein fehlgeschlagener Worker-Start für den
+      // Nutzer unsichtbar: execute() gibt nur {error} zurück, und beide
+      // Aufrufstellen in der UI verwerfen den Rückgabewert.
+      useMessageStore().addMessage(
+        "error",
+        "Skriptor konnte nicht gestartet werden",
+        "Der Web Worker ließ sich nicht erzeugen. Bitte die Seite neu laden."
+      )
+      return false
+    }
+    return true
   }
 
   function failInstance(instanceId, error) {
@@ -220,16 +261,39 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     const version = cacheVersion()
     await getImportable()
 
-    const cached = await readEnvCache(version)
+    let cached = await readEnvCache(version)
+
+    // Startet der Nutzer bei leerem Cache sofort zwei Skripte, wartet der zweite
+    // auf das Lockfile des ersten statt die Auflösung doppelt zu machen. Nach
+    // COLD_START_WAIT_MS löst er selbst auf, damit ein hängender erster Worker
+    // ihn nicht blockiert.
+    if (!cached && env.loadingLock) {
+      cached = await Promise.race([
+        env.loadingLock,
+        new Promise((resolve) => window.setTimeout(() => resolve(null), COLD_START_WAIT_MS)),
+      ])
+    }
+
+    let releaseLock = null
+    if (!cached) {
+      env.loadingLock = new Promise((resolve) => {
+        releaseLock = resolve
+      })
+    }
+
     let result = await postEnvInstall(instanceId, cached)
 
     if (result?.error && cached) {
-      // Veraltetes oder beschädigtes Lockfile: Eintrag verwerfen und genau
-      // einmal auf den Kaltstart zurückfallen. Ohne diesen Pfad würde ein
-      // defekter Cache den Scriptor dauerhaft blockieren.
       console.warn("Scriptor: warm start failed, falling back to cold start", result.error)
       await dropEnvCache(version)
       result = await postEnvInstall(instanceId, null)
+    }
+
+    if (releaseLock) {
+      // Nachfolger bekommen den frisch geschriebenen Cache-Eintrag — oder null,
+      // wenn der Kaltstart gescheitert ist.
+      releaseLock(result?.error ? null : await readEnvCache(version))
+      env.loadingLock = null
     }
 
     return !result?.error
@@ -300,8 +364,8 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
       // nie auf. Der alte Code war über das globale isLoading-Flag geschützt.
       let envLoad = envLoads.get(currentId)
       if (!envLoad) {
-        if (!attachWorker(currentId)) {
-          return { results: null, error: "no_worker" }
+        if (!acquireWorker(currentId)) {
+          return { results: null, error: "worker_limit" }
         }
         instance.envState = "loading"
         envLoad = load(currentId).finally(() => envLoads.delete(currentId))
