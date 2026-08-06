@@ -6,7 +6,7 @@
     :pulse="state.userStatus['pulse']"
     @click="reset"
   >
-    <span v-if="scriptorStore.state.isReady">&nbsp;&nbsp;</span>
+    <span v-if="state.scriptor?.envState === 'ready'">&nbsp;&nbsp;</span>
     <span v-else>&nbsp;&nbsp;</span>
   </sl-badge>
   <slot :disabled="state.userStatus.pulse" :execute="executeScript"></slot>
@@ -15,6 +15,7 @@
 <script setup>
 import { reactive, computed } from "vue"
 import { useScriptorStore } from "../store/scriptor"
+import { describeInstanceStatus } from "../store/instanceStatus"
 const scriptorStore = useScriptorStore()
 
 const props = defineProps({
@@ -24,19 +25,11 @@ const props = defineProps({
 })
 
 const state = reactive({
-  userStatus: computed(() => {
-    if (scriptorStore.state.isReady && scriptorStore.state.isRunning) {
-      return { text: "Skript läuft...", variant: "success", pulse: true }
-    } else if (!scriptorStore.state.isReady && scriptorStore.state.isRunning) {
-      return { text: "Skriptor wird geladen...", variant: "warning", pulse: true }
-    } else if (scriptorStore.state.isReady && !scriptorStore.state.isRunning) {
-      return { text: "Skriptor ist bereit.", variant: "success", pulse: false }
-    } else {
-      return { text: "Skriptor nicht geladen.", variant: "danger", pulse: false }
-    }
-  }),
   scriptor: computed(() => {
     return scriptorStore.state.instances[props.id]
+  }),
+  userStatus: computed(() => {
+    return describeInstanceStatus(scriptorStore.state.instances[props.id])
   }),
 })
 
@@ -47,8 +40,12 @@ async function exitScript() {
   await scriptorStore.exitScript(props.id)
 }
 function reset() {
-  scriptorStore.state.instances[props.id].messages = []
-  scriptorStore.state.instances[props.id].internalMessages = []
+  const instance = scriptorStore.state.instances[props.id]
+  if (!instance) {
+    return
+  }
+  instance.messages = []
+  instance.internalMessages = []
 }
 
 defineExpose({
