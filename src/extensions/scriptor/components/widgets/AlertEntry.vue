@@ -25,6 +25,7 @@ const props = defineProps({
   entry: {
     type: Object,
   },
+  instanceId: { required: true },
 })
 
 const state = reactive({
@@ -32,7 +33,7 @@ const state = reactive({
 })
 
 async function pressedOk() {
-  await scriptorStore.sendResult("alertResult", {})
+  await scriptorStore.sendResult(props.instanceId, "alertResult", {})
   state.inputDisabled = true
 }
 </script>

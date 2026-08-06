@@ -18,6 +18,7 @@ const props = defineProps({
     default: false,
   },
   dataKey: { type: String },
+  instanceId: { required: true },
 })
 
 const state = reactive({
@@ -60,7 +61,7 @@ const state = reactive({
 
 onMounted(async () => {
   if (!props.inMultiple) {
-    await scriptorStore.sendResult("htmlResult", {})
+    await scriptorStore.sendResult(props.instanceId, "htmlResult", {})
   }
 })
 </script>

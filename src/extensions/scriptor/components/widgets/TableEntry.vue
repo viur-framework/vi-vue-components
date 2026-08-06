@@ -49,6 +49,7 @@ const props = defineProps({
   entry: {
     type: Object,
   },
+  instanceId: { required: true },
 })
 
 async function sendButtonClick() {
@@ -61,7 +62,7 @@ async function sendButtonClick() {
       selected.push(index)
     }
   }
-  await scriptorStore.sendResult("tableResult", selected)
+  await scriptorStore.sendResult(props.instanceId, "tableResult", selected)
 }
 
 function toggleSelectAll() {

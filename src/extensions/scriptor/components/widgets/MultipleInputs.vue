@@ -7,6 +7,7 @@
           ref="elements"
           :entry="{ data: _entry }"
           :in-multiple="true"
+          :instance-id="props.instanceId"
         ></component>
       </div>
     </div>
@@ -18,6 +19,7 @@
           :entry="{ data: _entry }"
           :in-multiple="true"
           :data-key="key"
+          :instance-id="props.instanceId"
         ></component>
       </div>
     </template>
@@ -40,6 +42,7 @@ const props = defineProps({
   entry: {
     type: Object,
   },
+  instanceId: { required: true },
 })
 
 const state = reactive({
@@ -64,7 +67,7 @@ async function buttonCallback() {
         result.push(element.state.value)
       }
     }
-    await scriptorStore.sendResult("textResult", JSON.stringify(result))
+    await scriptorStore.sendResult(props.instanceId, "textResult", JSON.stringify(result))
   } else if (typeof props.entry.data.components === "object") {
     const result = {}
 
@@ -73,7 +76,7 @@ async function buttonCallback() {
         result[element.props.dataKey] = element.state.value
       }
     }
-    await scriptorStore.sendResult("textResult", JSON.stringify(result))
+    await scriptorStore.sendResult(props.instanceId, "textResult", JSON.stringify(result))
   }
 }
 

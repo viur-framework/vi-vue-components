@@ -57,11 +57,12 @@ const props = defineProps({
   entry: { type: Object },
   inMultiple: { type: Boolean, default: false },
   dataKey: { type: String },
+  instanceId: { required: true },
 })
 
 async function buttonCallback(event, option) {
   state.buttonDisabled = true
-  await scriptorStore.sendResult("textResult", state.value)
+  await scriptorStore.sendResult(props.instanceId, "textResult", state.value)
 }
 
 const state = reactive({
