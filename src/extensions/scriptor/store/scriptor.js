@@ -1,12 +1,12 @@
 // @ts-nocheck
 import { computed, reactive } from "vue"
 import { defineStore } from "pinia"
-import { useBrowserLocation, useWebWorker, useUrlSearchParams } from "@vueuse/core"
+import { useBrowserLocation, useUrlSearchParams } from "@vueuse/core"
 import { useContextStore } from "../../../stores/context"
 import { useMessageStore } from "../../../stores/message"
 import { Request } from "@viur/vue-utils"
 import { readEnvCache, writeEnvCache, dropEnvCache } from "./envCache"
-import { resolveWorkerPath } from "./workerBridge"
+import { createInstanceWorker, resolveWorkerPath } from "./workerBridge"
 
 // Sitzungsweit geteilt: das importable-ZIP ist für alle Worker gleich.
 const env = {
@@ -16,28 +16,15 @@ const env = {
 }
 
 export const useScriptorStore = defineStore("scriptorStore", () => {
-  const instanceTemplate = {
-    scriptKey: null,
-    scriptCode: "#### scriptor ####\nfrom viur.scriptor import *\n\nasync def main():\n    logger.info('Hello World')",
-    messages: [],
-    messageBuffer: [],
-    messageBufferFluscher: null,
-    internalMessages: [],
-    hideInternalMessages: false,
-  }
-
   const state = reactive({
-    workerObject: null,
     pyoPackages: [],
     packages: [],
     initCode: "",
-    runningActions: new Map(),
-    isReady: false, //scriptor webworker ready
-    isLoading: false, //scriptor webworker ready
-    isRunning: computed(() => {
-      // user script is running
-      return state.runningActions.size > 0
-    }),
+    // TEMPORÄR bis Task 9: aggregierte Sicht für die noch nicht umgestellte UI.
+    // Nicht in 3.0.0 ausliefern.
+    isReady: computed(() => Object.values(state.instances).some((i) => i.envState === "ready")),
+    isLoading: computed(() => Object.values(state.instances).some((i) => i.envState === "loading")),
+    isRunning: computed(() => Object.values(state.instances).some((i) => i.runState === "running")),
     apiUrl: computed(() => {
       //api Server could be a different server
       if (import.meta.env.VITE_API_URL) {
@@ -45,68 +32,119 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
       }
       return useBrowserLocation().value.origin
     }),
-    currentInstance: null,
     instances: reactive({}),
     scriptorVersion: "latest",
   })
 
-  const progress = reactive({
-    total: 100,
-    step: -1,
-    max_step: -1,
-    txt: "",
+  // TEMPORÄR bis Task 9.
+  const progress = computed(() => {
+    const running = Object.values(state.instances).find((i) => i.runState === "running")
+    return running?.progress || { total: 100, step: -1, max_step: -1, txt: "" }
   })
 
-  function setProgress(total, step, max_step, txt) {
-    progress.total = total
-    progress.step = step
-    progress.max_step = max_step
-    progress.txt = txt
+  function setProgress(instanceId, total, step, max_step, txt) {
+    const instance = state.instances[instanceId]
+    if (!instance) {
+      return
+    }
+    instance.progress.total = total
+    instance.progress.step = step
+    instance.progress.max_step = max_step
+    instance.progress.txt = txt
+  }
+
+  const DEFAULT_SCRIPT_CODE =
+    "#### scriptor ####\nfrom viur.scriptor import *\n\nasync def main():\n    logger.info('Hello World')"
+
+  // Factory statt geteiltem Objektliteral: ein Spread von { messages: [] }
+  // kopiert die Array-Referenz, wodurch bisher alle Instanzen dasselbe
+  // messages-, messageBuffer- und internalMessages-Array benutzt haben.
+  function newInstanceState() {
+    return reactive({
+      scriptKey: null,
+      scriptCode: DEFAULT_SCRIPT_CODE,
+      messages: [],
+      messageBuffer: [],
+      internalMessages: [],
+      hideInternalMessages: false,
+      worker: null,
+      envState: "cold", // cold | loading | ready | failed
+      runState: "idle", // idle | running | done | error
+      progress: { total: 100, step: -1, max_step: -1, txt: "" },
+      pendingActions: new Map(),
+    })
   }
 
   function createNewInstance(id = null) {
     const instanceId = id || new Date().getTime().toString()
     if (!Object.keys(state.instances).includes(instanceId)) {
-      state.instances[instanceId] = reactive({ ...instanceTemplate })
+      state.instances[instanceId] = newInstanceState()
     }
-
     return instanceId
   }
 
-  // Zwischenstufe bis Task 5: alle Instanzen zeigen auf denselben Worker.
-  function createWebWorker(instanceId) {
-    if (state.workerObject) {
-      state.workerObject.terminate()
+  function attachWorker(instanceId) {
+    const instance = state.instances[instanceId]
+    if (!instance || instance.worker) {
+      return instance?.worker || null
     }
-    const path = resolveWorkerPath(useBrowserLocation().value.pathname)
-    state.workerObject = useWebWorker(path)
+    const workerObject = createInstanceWorker({
+      path: resolveWorkerPath(useBrowserLocation().value.pathname),
+      instanceId: instanceId,
+      onMessage: handleMessage,
+      onError: failInstance,
+    })
+    if (!workerObject) {
+      // Worker nicht erzeugbar — Instanz bleibt kalt, der Aufrufer bricht ab.
+      instance.envState = "failed"
+      return null
+    }
+    instance.worker = workerObject
+    startBufferFlusher()
+    return instance.worker
+  }
 
-    if (instanceId && state.instances[instanceId]) {
-      state.instances[instanceId].worker = state.workerObject
-      if (!state.instances[instanceId].pendingActions) {
-        state.instances[instanceId].pendingActions = new Map()
-      }
+  function failInstance(instanceId, error) {
+    console.error("Scriptor worker error", instanceId, error)
+    const instance = state.instances[instanceId]
+    if (!instance) {
+      return
     }
+    instance.envState = "failed"
+    instance.runState = "error"
+    addMessageEntry("error", instanceId, { msg: error?.message || String(error) })
+    // Callbacks auflösen, damit niemand endlos auf den toten Worker wartet.
+    for (const [actionId, callback] of instance.pendingActions.entries()) {
+      callback({ results: null, error: "worker_error" })
+      instance.pendingActions.delete(actionId)
+    }
+    instance.worker?.terminate()
+    instance.worker = null
+  }
 
-    const nativWorker = state.workerObject.worker
-    nativWorker.onmessage = async (event) => {
-      const { id, ...data } = event.data
-      handleWebWorkerMessages(id, data)
+  // Ein Interval für alle Instanzen. Bisher startete jeder
+  // createWebWorker()-Aufruf ein weiteres, das nie gestoppt wurde.
+  let bufferFlusher = null
+
+  function startBufferFlusher() {
+    if (bufferFlusher !== null) {
+      return
     }
-    nativWorker.onmessageerror = async (error) => {
-      console.log(error)
-    }
-    window.setInterval(() => {
-      const instance = state.instances[state.currentInstance]
-      if (!instance) {
-        return
-      }
-      if (instance.messageBuffer.length) {
-        instance.messages = instance.messages.concat([...instance.messageBuffer])
-        instance.messageBuffer = []
+    bufferFlusher = window.setInterval(() => {
+      for (const instance of Object.values(state.instances)) {
+        if (instance.messageBuffer.length) {
+          instance.messages = instance.messages.concat([...instance.messageBuffer])
+          instance.messageBuffer = []
+        }
       }
     }, 50)
-    //Flush only all messages after 50ms
+  }
+
+  function stopBufferFlusherIfIdle() {
+    if (bufferFlusher !== null && !Object.keys(state.instances).length) {
+      window.clearInterval(bufferFlusher)
+      bufferFlusher = null
+    }
   }
 
   // Paketliste für den Kaltstart. Im Dev-Modus wird eine direkte Wheel-URL
@@ -187,9 +225,12 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     return !result?.error
   }
 
-  async function setParams(scriptParams = {}) {
+  async function setParams(instanceId, scriptParams = {}) {
+    const instance = state.instances[instanceId]
+    if (!instance?.worker) {
+      return
+    }
     const contextStore = useContextStore()
-    //Use window object, because useRoute not work outside module.
     const urlData = (window.location.hash || "").replace(/^#/, "").split("_")
     const tabId = urlData[urlData.length - 1].replace("=", "")
     let selectedEntries = contextStore.getLocalContext(tabId, true)["_selectedEntries"]
@@ -199,80 +240,87 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     if (!scriptParams) {
       scriptParams = {}
     }
-    if (!selectedEntries) {
-      selectedEntries = {}
-    } else {
-      selectedEntries = { __selected_entries: selectedEntries }
-    }
+    selectedEntries = selectedEntries ? { __selected_entries: selectedEntries } : {}
     const params = Object.assign(selectedEntries, scriptParams)
     params["__is_dev__"] = import.meta.env.DEV
-    if (state.workerObject) {
-      return new Promise((resolve) => {
-        state.runningActions.set("setParams", resolve)
-        state.workerObject.post({
-          id: "setParams",
-          python: "",
-          params: JSON.parse(JSON.stringify(params)),
-        })
-      })
-    }
-  }
-
-  async function exitScript() {
-    sendResult("exit", "__exit__")
-  }
-
-  async function execute(code, id = null, context = {}, scriptParams = {}) {
-    let currentId = createNewInstance(id) // create needed Instance Object
-    state.currentInstance = currentId
-    let currentState = state.instances[currentId]
-    currentState.messages = []
-    currentState.messageBuffer = []
-    currentState.internalMessages = []
-
-    if (!state.isReady && !state.isLoading) {
-      state.isLoading = true
-      createWebWorker(currentId)
-      await load(currentId)
-      state.isLoading = false
-    }
-    if (code === undefined) {
-      console.log("Nothing to execute")
-      code = ""
-    }
-    await setParams(scriptParams)
-    code = `${code}\nimport viur.scriptor\nimport traceback\nawait viur.scriptor._init_modules()\nfrom viur.scriptor import *\n\ntry:\n    await main()\nexcept:\n    logger.error(traceback.format_exc())\n`
 
     return new Promise((resolve) => {
-      state.runningActions.set(currentId, resolve)
-
-      state.workerObject.post({
-        id: currentId,
-        python: code,
-        ...context,
+      instance.pendingActions.set("setParams", resolve)
+      instance.worker.post({
+        id: "setParams",
+        python: "",
+        params: JSON.parse(JSON.stringify(params)),
       })
     })
   }
 
-  function handleCallback(id, data) {
-    const payload = { results: data.res ?? null, error: data.msg ?? null }
-    let callback = state.runningActions.get(id)
-    if (callback) {
-      callback(payload)
-      state.runningActions.delete(id)
+  async function sendResult(instanceId, type, data) {
+    const instance = state.instances[instanceId]
+    if (!instance?.worker) {
+      return
     }
-    for (const instance of Object.values(state.instances)) {
-      const instanceCallback = instance.pendingActions?.get(id)
-      if (instanceCallback) {
-        instanceCallback(payload)
-        instance.pendingActions.delete(id)
+    // post() statt worker.postMessage(): useWebWorker's post() entpackt den
+    // shallowRef selbst und prüft auf einen vorhandenen Worker. Der Bestandscode
+    // griff über state.workerObject.worker.postMessage zu, was nur wegen der
+    // Ref-Entpackung durch reactive() funktionierte.
+    instance.worker.post({
+      id: "_sendDialogSignal",
+      type: type,
+      data: data,
+    })
+  }
+
+  // Bricht das laufende Skript ab, lässt den Worker aber stehen — das Fenster
+  // bleibt benutzbar. Für "Fenster zu" ist destroyInstance() zuständig.
+  async function exitScript(instanceId) {
+    await sendResult(instanceId, "exit", "__exit__")
+  }
+
+  async function execute(code, id = null, context = {}, scriptParams = {}) {
+    const currentId = createNewInstance(id)
+    const instance = state.instances[currentId]
+    instance.messages = []
+    instance.messageBuffer = []
+    instance.internalMessages = []
+
+    if (instance.envState !== "ready") {
+      if (!attachWorker(currentId)) {
+        return { results: null, error: "no_worker" }
       }
+      instance.envState = "loading"
+      const ok = await load(currentId)
+      if (!ok) {
+        instance.envState = "failed"
+        return { results: null, error: "env_failed" }
+      }
+      instance.envState = "ready"
+    }
+
+    if (code === undefined) {
+      console.log("Nothing to execute")
+      code = ""
+    }
+    await setParams(currentId, scriptParams)
+    code = `${code}\nimport viur.scriptor\nimport traceback\nawait viur.scriptor._init_modules()\nfrom viur.scriptor import *\n\ntry:\n    await main()\nexcept:\n    logger.error(traceback.format_exc())\n`
+
+    instance.runState = "running"
+    return new Promise((resolve) => {
+      instance.pendingActions.set(currentId, resolve)
+      instance.worker.post({ id: currentId, python: code, ...context })
+    })
+  }
+
+  function handleCallback(instanceId, messageId, data) {
+    const instance = state.instances[instanceId]
+    const callback = instance?.pendingActions.get(messageId)
+    if (callback) {
+      callback({ results: data.res ?? null, error: data.msg ?? null })
+      instance.pendingActions.delete(messageId)
     }
   }
 
-  function preload() {
-    //start empty script for preloading all libraries
-    execute()
+  function preload(instanceId = null) {
+    return execute(undefined, instanceId)
   }
 
   function addMessageEntry(type, id, data) {
@@ -304,124 +352,100 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     return state.scriptorVersion || "latest"
   }
 
-  async function handleWebWorkerMessages(id, data) {
-    if (!id) {
-      id = state.currentInstance
+  async function handleMessage(instanceId, messageId, data) {
+    const instance = state.instances[instanceId]
+    if (!instance) {
+      return
     }
-
-    let currentState = state.instances[id]
 
     switch (data.type) {
       case "installlog":
-        //installer status
-        addInternalMessageEntry("install", id, data)
-        if (data["msg"]["stage"] === 5) {
-          state.isReady = true
-        } else {
-          state.isReady = false
-        }
+        addInternalMessageEntry("install", instanceId, data)
+        instance.envState = data["msg"]["stage"] === 5 ? "ready" : "loading"
+        break
+      case "envlock":
+        await writeEnvCache(cacheVersion(), data["lock"], data["installed"])
         break
       case "stdout":
-        addInternalMessageEntry("install", id, data)
+        addInternalMessageEntry("install", instanceId, data)
         break
-      case "run_end": //script ended
-      case "end": //action ended
-        handleCallback(id, data)
+      case "run_end":
+      case "end":
+        if (messageId !== "_pyinstaller" && instance.runState === "running") {
+          instance.runState = "done"
+        }
+        handleCallback(instanceId, messageId, data)
         break
-      case "err": //script error
-        addMessageEntry("error", id, data)
-        handleCallback(id, data)
+      case "err":
+        addMessageEntry("error", instanceId, data)
+        instance.runState = "error"
+        handleCallback(instanceId, messageId, data)
         break
       case "log":
         data.msg = normalizeText(data.text)
-        addMessageEntry(data.level, id, data)
+        addMessageEntry(data.level, instanceId, data)
         break
       case "alert":
         data.msg = normalizeText(data.text)
-        addMessageEntry(data.type, id, data)
+        addMessageEntry(data.type, instanceId, data)
         break
-      case "download":
-        let a = document.createElement("a")
+      case "download": {
+        const a = document.createElement("a")
         a.href = window.URL.createObjectURL(data.blob)
         a.download = data.filename
         a.click()
         break
-      case "showOpenFilePicker":
+      }
+      case "showOpenFilePicker": {
         let openhandle = -1
         const types = data.types || []
         try {
-          openhandle = await window.showOpenFilePicker({
-            multiple: false,
-            types: types,
-          })
+          openhandle = await window.showOpenFilePicker({ multiple: false, types: types })
         } catch (e) {}
-        await sendResult("showOpenFilePickerResult", openhandle)
+        await sendResult(instanceId, "showOpenFilePickerResult", openhandle)
         break
-      case "showSaveFilePicker":
+      }
+      case "showSaveFilePicker": {
         let savehandle = -1
         try {
           savehandle = await window.showSaveFilePicker()
         } catch (e) {}
-        await sendResult("showSaveFilePickerResult", savehandle)
+        await sendResult(instanceId, "showSaveFilePickerResult", savehandle)
         break
-      case "showDirectoryPicker":
+      }
+      case "showDirectoryPicker": {
         let dirhandle = -1
         try {
-          dirhandle = await window.showDirectoryPicker({
-            mode: "readwrite",
-          })
+          dirhandle = await window.showDirectoryPicker({ mode: "readwrite" })
         } catch (e) {
           console.error("Failed to open the FilePicker", e)
         }
-        await sendResult("showDirectoryPickerResult", dirhandle)
+        await sendResult(instanceId, "showDirectoryPickerResult", dirhandle)
         break
+      }
       case "progressbar":
-        setProgress(data.total, data.step, data.max_step, data.txt)
+        setProgress(instanceId, data.total, data.step, data.max_step, data.txt)
         break
       case "multiple-dialog":
         data["components"] = JSON.parse(data["components"])
-        addMessageEntry(data.type, id, data)
+        addMessageEntry(data.type, instanceId, data)
         break
       case "clear":
-        currentState.messages.length = data["length"]
+        instance.messages.length = data["length"]
         break
-      case "system-message":
+      case "system-message": {
         const messageStore = useMessageStore()
         messageStore.addMessage(data["_type"], data["title"], data["text"])
         break
-      case "envlock":
-        // Kaltstart hat die Umgebung aufgelöst — Lockfile für weitere Worker
-        // sichern. Fehlschläge sind unkritisch, dann bleibt es beim Kaltstart.
-        await writeEnvCache(cacheVersion(), data["lock"], data["installed"])
-        break
+      }
       default:
         if (["select", "input", "diffcmp", "table", "stdout", "stderr", "raw_html"].includes(data.type)) {
-          addMessageEntry(data.type, id, data)
+          addMessageEntry(data.type, instanceId, data)
           break
         } else {
           throw new Error(`Unknown event type ${data.type}`)
         }
     }
-  }
-
-  async function sendResult(type, data) {
-    let messageId = "_sendDialogSignal"
-
-    let message = {}
-    //Dialogs needs type
-    if (messageId === "_sendDialogSignal") {
-      message = {
-        type: type,
-        data: data,
-      }
-    }
-    return new Promise((resolve) => {
-      state.workerObject.worker.postMessage({
-        id: messageId,
-        ...message,
-      })
-      resolve()
-    })
   }
 
   function fetchScriptorVersions() {
