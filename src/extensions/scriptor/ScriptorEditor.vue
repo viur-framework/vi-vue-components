@@ -64,14 +64,17 @@ onBeforeUnmount(() => {
 })
 
 function loadCode() {
-  console.log(props)
   if (!props.skelkey) {
     return
   }
+  const openedId = state.id
   Request.edit(props.module, props.skelkey, { group: props.skeltype }).then(async (resp) => {
+    // Tab inzwischen geschlossen: die Instanz existiert nicht mehr.
+    if (state.id !== openedId) {
+      return
+    }
     let data = await resp.json()
     state.script = data["values"]
-
     state.scriptor.scriptCode = data["values"]["script"]
     state.scriptor.scriptKey = data["values"]["key"]
   })

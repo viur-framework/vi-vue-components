@@ -93,7 +93,12 @@ function startScriptor(params = {}) {
   params = {...params, ...props.scriptParams}
   if (!state.id) {
     state.id = scriptorStore.createNewInstance()
+    const openedId = state.id
     Request.view("script", props.current?.["dest"]?.["key"], {group: "leaf"}).then(async (resp) => {
+      // Fenster inzwischen geschlossen: die Instanz existiert nicht mehr.
+      if (state.id !== openedId) {
+        return
+      }
       const data = await resp.json()
       state.scriptor.scriptCode = data["values"]["script"].replace(/\/\/n/g, "\n")
       state.scriptReady = true
@@ -102,8 +107,11 @@ function startScriptor(params = {}) {
     return
   }
   if (import.meta.env.DEV) {
-    //Reload the script on DEV Mode everytime
+    const openedId = state.id
     Request.view("script", props.current?.["dest"]?.["key"], {group: "leaf"}).then(async (resp) => {
+      if (state.id !== openedId) {
+        return
+      }
       const data = await resp.json()
       state.scriptor.scriptCode = data["values"]["script"].replace(/\/\/n/g, "\n")
       state.scriptReady = true
