@@ -5,7 +5,15 @@ import { useBrowserLocation, useWebWorker, useUrlSearchParams } from "@vueuse/co
 import { useContextStore } from "../../../stores/context"
 import { useMessageStore } from "../../../stores/message"
 import { Request } from "@viur/vue-utils"
-import { writeEnvCache } from "./envCache"
+import { readEnvCache, writeEnvCache, dropEnvCache } from "./envCache"
+import { resolveWorkerPath } from "./workerBridge"
+
+// Sitzungsweit geteilt: das importable-ZIP ist für alle Worker gleich.
+const env = {
+  importable: undefined,
+  importableLoaded: false,
+  loadingLock: null,
+}
 
 export const useScriptorStore = defineStore("scriptorStore", () => {
   const instanceTemplate = {
@@ -65,13 +73,20 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     return instanceId
   }
 
-  function createWebWorker() {
+  // Zwischenstufe bis Task 5: alle Instanzen zeigen auf denselben Worker.
+  function createWebWorker(instanceId) {
     if (state.workerObject) {
       state.workerObject.terminate()
     }
-
-    const path = `${useBrowserLocation().value.pathname.replace("/main.html", "")}/scriptor/public/webworker.js`
+    const path = resolveWorkerPath(useBrowserLocation().value.pathname)
     state.workerObject = useWebWorker(path)
+
+    if (instanceId && state.instances[instanceId]) {
+      state.instances[instanceId].worker = state.workerObject
+      if (!state.instances[instanceId].pendingActions) {
+        state.instances[instanceId].pendingActions = new Map()
+      }
+    }
 
     const nativWorker = state.workerObject.worker
     nativWorker.onmessage = async (event) => {
@@ -94,41 +109,82 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     //Flush only all messages after 50ms
   }
 
-  async function load(pyoPackages = [], packages = [], initCode = "") {
+  // Paketliste für den Kaltstart. Im Dev-Modus wird eine direkte Wheel-URL
+  // benutzt, sonst der PyPI-Name mit optionaler Versionsangabe.
+  function buildPackageList() {
+    const packages = [...state.packages]
     if (import.meta.env.DEV && import.meta.env.VITE_SCRIPTOR_URL) {
       packages.unshift(import.meta.env.VITE_SCRIPTOR_URL)
+    } else if (state.scriptorVersion === "latest") {
+      packages.unshift("viur-scriptor-api")
     } else {
-      if (state.scriptorVersion === "latest") {
-        packages.unshift("viur-scriptor-api")
-      } else {
-        packages.unshift(`viur-scriptor-api${state.scriptorVersion}`)
-      }
+      packages.unshift(`viur-scriptor-api${state.scriptorVersion}`)
     }
+    return packages
+  }
 
-    initCode = `with open("config.py", "w") as f:\n\tf.write("BASE_URL='${state.apiUrl}'")` + initCode
-    let importable = undefined
+  // Das importable-ZIP ist für alle Worker identisch. Einmal pro Sitzung holen
+  // und den ArrayBuffer weitergeben — postMessage klont ihn, überträgt ihn also
+  // nicht, sodass er mehrfach verwendbar bleibt.
+  async function getImportable() {
+    if (env.importableLoaded) {
+      return env.importable
+    }
     try {
       const response = await Request.get("/vi/script/get_importable")
       if (response.status === 200) {
-        importable = await response.arrayBuffer()
+        env.importable = await response.arrayBuffer()
       }
-    } catch (e) {}
-
-    if (state.workerObject) {
-      return new Promise((resolve) => {
-        state.runningActions.set("_pyinstaller", resolve)
-
-        state.workerObject.post({
-          id: "_pyinstaller",
-          python: "",
-          pyoPackages: pyoPackages,
-          packages: packages,
-          initCode: initCode,
-          transformCode: "", //usage?
-          importable: importable,
-        })
-      })
+    } catch (error) {
+      // Kein importable vorhanden — kein Fehlerfall.
     }
+    env.importableLoaded = true
+    return env.importable
+  }
+
+  // Schickt den Installer-Auftrag an den Worker der Instanz und wartet auf
+  // dessen Abschluss. envCache === null erzwingt den Kaltstart-Pfad.
+  function postEnvInstall(instanceId, envCache) {
+    const instance = state.instances[instanceId]
+    if (!instance?.worker) {
+      return Promise.resolve({ results: null, error: "no_worker" })
+    }
+    return new Promise((resolve) => {
+      instance.pendingActions.set("_pyinstaller", resolve)
+      instance.worker.post({
+        id: "_pyinstaller",
+        python: "",
+        pyoPackages: [...state.pyoPackages],
+        packages: buildPackageList(),
+        initCode: `with open("config.py", "w") as f:\n\tf.write("BASE_URL='${state.apiUrl}'")` + state.initCode,
+        transformCode: "",
+        importable: env.importable,
+        envCache: envCache || undefined,
+      })
+    })
+  }
+
+  async function load(instanceId) {
+    const instance = state.instances[instanceId]
+    if (!instance) {
+      return false
+    }
+    const version = cacheVersion()
+    await getImportable()
+
+    const cached = await readEnvCache(version)
+    let result = await postEnvInstall(instanceId, cached)
+
+    if (result?.error && cached) {
+      // Veraltetes oder beschädigtes Lockfile: Eintrag verwerfen und genau
+      // einmal auf den Kaltstart zurückfallen. Ohne diesen Pfad würde ein
+      // defekter Cache den Scriptor dauerhaft blockieren.
+      console.warn("Scriptor: warm start failed, falling back to cold start", result.error)
+      await dropEnvCache(version)
+      result = await postEnvInstall(instanceId, null)
+    }
+
+    return !result?.error
   }
 
   async function setParams(scriptParams = {}) {
@@ -176,8 +232,8 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
 
     if (!state.isReady && !state.isLoading) {
       state.isLoading = true
-      createWebWorker()
-      await load()
+      createWebWorker(currentId)
+      await load(currentId)
       state.isLoading = false
     }
     if (code === undefined) {
@@ -199,10 +255,18 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
   }
 
   function handleCallback(id, data) {
+    const payload = { results: data.res ?? null, error: data.msg ?? null }
     let callback = state.runningActions.get(id)
     if (callback) {
-      callback({ results: data.res, error: null })
+      callback(payload)
       state.runningActions.delete(id)
+    }
+    for (const instance of Object.values(state.instances)) {
+      const instanceCallback = instance.pendingActions?.get(id)
+      if (instanceCallback) {
+        instanceCallback(payload)
+        instance.pendingActions.delete(id)
+      }
     }
   }
 
