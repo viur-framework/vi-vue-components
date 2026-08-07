@@ -111,6 +111,15 @@ function changeVersion(e) {
 onMounted(() => {
   scriptorStore.fetchScriptorVersions().then((result) => {
     state.versions = result
+    // StatusBar hängt im Dialog und wird beim Zurückholen aus dem Minimieren
+    // neu gemountet. Eine bereits gesetzte Version (Standard oder Custom) darf
+    // dabei nicht überschrieben werden — sonst wird beim nächsten Schließen
+    // der Worker gegen die zurückgesetzte Version verglichen statt gegen die
+    // tatsächlich geladene envVersion, und das Worker-Recycling greift nicht.
+    if (scriptorStore.state.scriptorVersionInitialized) {
+      return
+    }
+    scriptorStore.state.scriptorVersionInitialized = true
     if (state.customVersion) {
       scriptorStore.state.scriptorVersion = state.customVersion
     } else {

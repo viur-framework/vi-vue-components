@@ -61,7 +61,10 @@ const props = defineProps({
 })
 
 async function buttonCallback(event, option) {
-  state.buttonDisabled = true
+  // Sperren hängt an der Nachricht im Store (state.buttonDisabled ist darauf
+  // gespiegelt), damit ein Remount nach dem Zurückholen aus dem Minimieren
+  // die Antwort nicht erneut sendbar macht.
+  scriptorStore.markMessageAnswered(props.instanceId, props.entry.data.unique_id)
   await scriptorStore.sendResult(props.instanceId, "textResult", state.value)
 }
 
@@ -71,7 +74,7 @@ const state = reactive({
   }),
   value: "",
   multiline: computed(() => props.entry.data.input_type === "text"),
-  buttonDisabled: false,
+  buttonDisabled: computed(() => !!props.entry.data.answered),
   inputType: computed(() => {
     if (props.entry.data.input_type === "date" && props.entry.data.use_time) {
       return "datetime-local"

@@ -46,7 +46,9 @@ const props = defineProps({
 })
 
 const state = reactive({
-  buttonDisabled: false,
+  // Hängt an der Nachricht im Store statt an lokalem State, damit die Sperre
+  // einen Remount nach dem Zurückholen aus dem Minimieren überlebt.
+  buttonDisabled: computed(() => !!props.entry.data.answered),
   sendable: computed(() => {
     for (const element of elements.value) {
       if (element.state && element.state.sendable !== undefined) {
@@ -60,6 +62,7 @@ const state = reactive({
 })
 
 async function buttonCallback() {
+  scriptorStore.markMessageAnswered(props.instanceId, props.entry.data.unique_id)
   if (Array.isArray(props.entry.data.components)) {
     const result = []
     for (const element of elements.value) {

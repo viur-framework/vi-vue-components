@@ -46,6 +46,7 @@ export default {
     sortdesc: "Sort descending",
     move: "Move",
     clear_log: "Clear log",
+    minimize: "Minimize",
     clear_cache: "Clear cache",
     translate: "Translate",
     translate_language_placeholder: "Language",

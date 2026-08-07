@@ -29,12 +29,14 @@ const props = defineProps({
 })
 
 const state = reactive({
-  inputDisabled: false,
+  // Hängt an der Nachricht im Store statt an lokalem State, damit die Sperre
+  // einen Remount nach dem Zurückholen aus dem Minimieren überlebt.
+  inputDisabled: computed(() => !!props.entry.data.answered),
 })
 
 async function pressedOk() {
   await scriptorStore.sendResult(props.instanceId, "alertResult", {})
-  state.inputDisabled = true
+  scriptorStore.markMessageAnswered(props.instanceId, props.entry.data.unique_id)
 }
 </script>
 

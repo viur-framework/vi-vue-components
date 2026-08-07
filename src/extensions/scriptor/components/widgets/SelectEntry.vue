@@ -99,7 +99,11 @@ onMounted(() => {
 const state = reactive({
   selectedOptions: props.entry.data?.default_value || [],
   isMultiple: computed(() => props.entry.data["multiple"]),
-  isDisabled: false,
+  // Hängt an der Nachricht im Store statt an lokalem State, damit die Sperre
+  // einen Remount nach dem Zurückholen aus dem Minimieren überlebt. Bei
+  // inMultiple bleibt entry.data.answered stets unbesetzt, da hier nicht
+  // selbst gesendet wird — das Verhalten ändert sich für diesen Fall nicht.
+  isDisabled: computed(() => !!props.entry.data.answered),
   options: {},
   value: props.entry.data?.default_value || [],
   sendable: computed(() => {
@@ -122,7 +126,7 @@ function toggleSelection(option) {
 async function selectSingleOption(option) {
   if (!props.inMultiple) {
     await scriptorStore.sendResult(props.instanceId, "selectResult", option.key)
-    state.isDisabled = true
+    scriptorStore.markMessageAnswered(props.instanceId, props.entry.data.unique_id)
   } else {
     state.value = option.key
     state.selectedOptions = []
@@ -132,7 +136,7 @@ async function selectSingleOption(option) {
 
 async function sendMultipleOptions() {
   if (!props.inMultiple) {
-    state.isDisabled = true
+    scriptorStore.markMessageAnswered(props.instanceId, props.entry.data.unique_id)
     await scriptorStore.sendResult(props.instanceId, "selectResult", [...state.value])
   }
 }

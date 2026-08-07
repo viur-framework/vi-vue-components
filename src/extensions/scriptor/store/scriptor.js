@@ -42,6 +42,10 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     }),
     instances: reactive({}),
     scriptorVersion: "latest",
+    // Wird true, sobald StatusBar.vue einmal eine Version voreingestellt hat.
+    // Beim Zurückholen aus dem Minimieren montiert StatusBar erneut und darf
+    // eine inzwischen bewusst gewählte Version nicht mehr überschreiben.
+    scriptorVersionInitialized: false,
   })
 
   function setProgress(instanceId, total, step, max_step, txt) {
@@ -593,6 +597,22 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     currentState.messageBuffer.push({ type: type, data: data })
   }
 
+  // Markiert eine Nachricht als beantwortet. Der Zustand hängt bewusst an der
+  // Nachricht im Store und nicht im lokalen State des Widgets: Beim
+  // Zurückholen aus dem Minimieren baut WidgetList.vue alle Widgets neu auf,
+  // ihr lokaler State würde wieder unbeantwortet starten. Eine längst
+  // beantwortete Frage wäre dann von der aktuell offenen nicht zu
+  // unterscheiden, und ein Klick darauf würde sendResult() erneut aufrufen und
+  // im Worker den einzigen globalen resultValue-Slot überschreiben, während
+  // das Skript auf die Antwort einer anderen Frage wartet.
+  function markMessageAnswered(instanceId, uniqueId) {
+    const instance = state.instances[instanceId]
+    const entry = instance?.messages.find((message) => message.data.unique_id === uniqueId)
+    if (entry) {
+      entry.data.answered = true
+    }
+  }
+
   function addInternalMessageEntry(type, id, data) {
     let currentState = state.instances[id]
     data["unique_id"] = new Date().getTime().toString()
@@ -768,5 +788,6 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     destroyInstance,
     fetchScriptorVersions,
     preload,
+    markMessageAnswered,
   }
 })

@@ -40,7 +40,7 @@
 </template>
 
 <script setup>
-import { reactive, onMounted } from "vue"
+import { reactive, computed, onMounted } from "vue"
 import { useScriptorStore } from "../../store/scriptor"
 
 const scriptorStore = useScriptorStore()
@@ -53,7 +53,10 @@ const props = defineProps({
 })
 
 async function sendButtonClick() {
-  state.dataSent = true
+  // Sperren hängt an der Nachricht im Store (state.dataSent ist darauf
+  // gespiegelt), damit ein Remount nach dem Zurückholen aus dem Minimieren
+  // die Antwort nicht erneut sendbar macht.
+  scriptorStore.markMessageAnswered(props.instanceId, props.entry.data.unique_id)
   let selected = []
   let index = -1
   for (const irow of state.rowdata) {
@@ -111,7 +114,7 @@ onMounted(() => {
 const state = reactive({
   rowdata: [],
   all_selected: false,
-  dataSent: false,
+  dataSent: computed(() => !!props.entry.data.answered),
   atLeastOneSelected: false,
 })
 </script>

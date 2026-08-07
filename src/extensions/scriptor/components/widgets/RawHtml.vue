@@ -60,8 +60,13 @@ const state = reactive({
 })
 
 onMounted(async () => {
-  if (!props.inMultiple) {
+  // entry.data.answered schützt vor einem erneuten Senden nach einem Remount
+  // beim Zurückholen aus dem Minimieren: RawHtml sendet sein Ergebnis sofort
+  // beim Mounten, ein zweites Mal würde im Worker den globalen
+  // resultValue-Slot überschreiben.
+  if (!props.inMultiple && !props.entry.data.answered) {
     await scriptorStore.sendResult(props.instanceId, "htmlResult", {})
+    scriptorStore.markMessageAnswered(props.instanceId, props.entry.data.unique_id)
   }
 })
 </script>

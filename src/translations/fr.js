@@ -44,6 +44,7 @@ export default {
     sortdesc: "Trier par ordre décroissant",
     move: "Déplacer",
     clear_log: "Effacer le journal",
+    minimize: "Réduire",
     clear_cache: "Vider le cache",
     translate: "Traduire",
     resave: {
