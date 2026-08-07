@@ -1,31 +1,30 @@
-// Cache Storage für die gefreezte Pyodide-Umgebung des Scriptors.
+// Cache Storage for Scriptor's frozen Pyodide environment.
 //
-// Beim ersten Worker löst micropip die Pakete gegen PyPI auf; das Ergebnis wird
-// als pyodide-lock.json (micropip.freeze()) hier abgelegt. Weitere Worker
-// starten damit über loadPyodide({lockFileContents, packages}) und brauchen
-// keine Abfrage mehr.
+// The first worker has micropip resolve packages against PyPI; the result is
+// stored here as pyodide-lock.json (micropip.freeze()). Further workers start
+// from that via loadPyodide({lockFileContents, packages}) and skip resolution.
 //
-// Bewusst frei von Pinia und Vue, damit die Funktionen einzeln in der
-// Browser-Konsole geprüft werden können.
+// Deliberately free of Pinia and Vue so the functions can be checked
+// individually in the browser console.
 
 const CACHE_NAME = "scriptor-env-v1"
 
-// Cache Storage verlangt eine Request-URL als Schlüssel. Die Host-Angabe ist ein
-// reiner Platzhalter und wird nie angefragt.
+// Cache Storage requires a request URL as key. The host part is a pure
+// placeholder and is never actually requested.
 export function envCacheVersionKey(scriptorVersion) {
   return `https://scriptor-env.local/lock-${encodeURIComponent(scriptorVersion || "latest")}`
 }
 
-// Im Dev-Modus zeigt VITE_SCRIPTOR_URL auf ein lokal gebautes Wheel, das sich bei
-// jedem Build ändert. Ein Cache würde dort veraltete Pakete ausliefern.
+// In dev mode VITE_SCRIPTOR_URL points at a locally built wheel that changes
+// with every build. A cache there would serve stale packages.
 export function isEnvCacheDisabled() {
   return Boolean(import.meta.env.VITE_SCRIPTOR_URL) || !("caches" in globalThis)
 }
 
-// Ein Lockfile mit relativen file_name-Einträgen ist für uns unbrauchbar: bei
-// gesetztem lockFileContents verlangt loadPyodide dann zusätzlich ein explizites
-// packageBaseUrl, sonst bricht der warme Start stumm. micropip.freeze() liefert
-// absolute URLs — wir prüfen es trotzdem, statt darauf zu vertrauen.
+// A lockfile with relative file_name entries is unusable for us: with
+// lockFileContents set, loadPyodide then also requires an explicit
+// packageBaseUrl, or the warm start fails silently. micropip.freeze() returns
+// absolute URLs — checked here rather than trusted.
 export function hasOnlyAbsoluteUrls(lock) {
   const packages = lock?.packages
   if (!packages || typeof packages !== "object") {

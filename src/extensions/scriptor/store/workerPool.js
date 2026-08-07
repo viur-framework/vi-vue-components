@@ -1,18 +1,18 @@
-// Parkplatz für genau einen warmen Scriptor-Worker.
+// Parking slot for exactly one warm Scriptor worker.
 //
-// Beim Schließen eines Fensters wird der Worker nicht mehr terminiert, sondern
-// hier abgelegt; das nächste Fenster übernimmt ihn samt geladener
-// Pyodide-Umgebung. Genau einer, weil das dem Speicherverhalten vor der
-// Umstellung auf parallele Skripte entspricht — dort lebte ebenfalls ein
-// einzelner Worker über die ganze Sitzung. Pyodide belegt grob 150–300 MB.
+// When a window closes, its worker is no longer terminated but parked here;
+// the next window adopts it along with its loaded Pyodide environment. Only
+// one slot, matching the memory footprint from before parallel scripts, where
+// a single worker likewise lived for the whole session. Pyodide uses roughly
+// 150-300 MB.
 //
-// Bewusst frei von Pinia und Vue, damit sich die Funktionen einzeln in der
-// Browser-Konsole prüfen lassen — genau wie envCache.js.
+// Deliberately free of Pinia and Vue so the functions can be checked
+// individually in the browser console — same as envCache.js.
 
 let parked = null
 
-// Legt einen Worker ab. Ein bereits geparkter wird dabei terminiert: mehr als
-// einer soll nie im Speicher stehen.
+// Parks a worker. An already-parked one is terminated first: never more than
+// one in memory at a time.
 export function parkWorker(entry) {
   if (parked) {
     parked.handle?.terminate()
@@ -20,8 +20,8 @@ export function parkWorker(entry) {
   parked = entry
 }
 
-// Nimmt den geparkten Worker heraus und leert den Parkplatz. Der Aufrufer ist
-// ab hier für terminate() zuständig, falls er ihn doch nicht übernimmt.
+// Takes the parked worker out and clears the slot. From here the caller is
+// responsible for terminate() if it doesn't adopt the worker after all.
 export function takeParkedWorker() {
   const entry = parked
   parked = null
@@ -32,11 +32,11 @@ export function hasParkedWorker() {
   return Boolean(parked)
 }
 
-// Terminiert den geparkten Worker, etwa wenn er auf dem Parkplatz gestorben ist.
+// Terminates the parked worker, e.g. if it died while parked.
 //
-// Mit handle wird nur geleert, wenn genau dieser Worker noch liegt. Ohne diese
-// Prüfung könnte ein spät eintreffender Fehler eines längst entnommenen Workers
-// den inzwischen geparkten Nachfolger terminieren.
+// With a handle, it only clears if that exact worker is still parked.
+// Without this check, a late error from a long-taken worker could terminate
+// the successor parked in the meantime.
 export function clearParkedWorker(handle = null) {
   if (handle && parked?.handle !== handle) {
     return

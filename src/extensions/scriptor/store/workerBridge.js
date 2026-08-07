@@ -1,30 +1,29 @@
 import { useWebWorker } from "@vueuse/core"
 
-// Identisch zur bisherigen Pfadbildung in createWebWorker(): der Worker liegt
-// relativ zum Admin-Bundle, nicht unter einem festen Root.
+// Same path logic as the former createWebWorker(): the worker lives relative
+// to the admin bundle, not under a fixed root.
 export function resolveWorkerPath(pathname) {
   return `${(pathname || "").replace("/main.html", "")}/scriptor/public/webworker.js`
 }
 
-// Hängt die Handler eines Worker-Handles auf eine Instanz-ID um. Beim Recyceln
-// eines geparkten Workers wechselt die Bindung, ohne dass ein neuer Worker
-// entsteht — die Pyodide-Umgebung bleibt dabei erhalten.
+// Rebinds a worker handle's handlers to an instance ID. Recycling a parked
+// worker just swaps this binding, without creating a new worker — the
+// Pyodide environment survives.
 //
-// Die Handler MÜSSEN am entpackten Worker hängen: useWebWorker() liefert
-// `worker` als shallowRef und setzt dessen .value synchron, solange ein window
-// existiert. Innerhalb eines reactive() entpackt Vue den Ref automatisch, hier
-// aber nicht. Eine Zuweisung an handle.worker.onmessage würde nur eine
-// Eigenschaft am Ref-Wrapper anlegen und niemals ausgelöst werden.
+// Handlers MUST attach to the unwrapped worker: useWebWorker() returns
+// `worker` as a shallowRef and sets its .value synchronously as long as a
+// window exists. Inside a reactive(), Vue unwraps the ref automatically;
+// here it does not. Assigning to handle.worker.onmessage directly would just
+// add a property to the ref wrapper and never fire.
 //
-// Beim Recycling eines geparkten Workers kommt der Handle allerdings aus einem
-// reactive()-Objekt (state.instances[...] bzw. der Parkplatz), nicht direkt aus
-// useWebWorker(). Dort hat Vue den Ref schon automatisch entpackt, handle.worker
-// ist dann bereits der Worker selbst und besitzt kein .value mehr. Ein echter
-// Worker hat aber nie eine .value-Eigenschaft, ein shallowRef immer — daran
-// lassen sich beide Formen sauber unterscheiden.
+// When recycling a parked worker, though, the handle comes from a reactive()
+// object (state.instances[...] or the parking slot), not straight from
+// useWebWorker(). There Vue has already unwrapped the ref, so handle.worker
+// is the worker itself with no .value. A real worker never has a .value
+// property, a shallowRef always does — that's how the two cases are told apart.
 //
-// instanceId darf null sein: der Parkplatz nutzt das, um Nachrichten eines
-// geparkten Workers abzufangen, solange keine Instanz dahintersteht.
+// instanceId may be null: the parking slot uses that to intercept messages
+// from a parked worker while no instance is behind it yet.
 export function rebindInstanceWorker(handle, instanceId, onMessage, onError) {
   const rawWorker = handle?.worker
   const worker = rawWorker && "value" in rawWorker ? rawWorker.value : rawWorker

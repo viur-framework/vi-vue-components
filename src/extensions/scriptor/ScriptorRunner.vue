@@ -90,16 +90,14 @@ const state = reactive({
     return scriptorStore.state.instances[state.id]
   }),
   scriptReady: false,
-  // Markiert, dass der Dialog absichtlich ausgeblendet wurde und die Instanz
-  // weiterleben soll. Ohne dieses Flag würde der sl-after-hide-Handler das
-  // Minimieren nicht vom Schließen unterscheiden können.
+  // Set when the dialog is hidden on purpose. Without it, the sl-after-hide
+  // handler cannot tell minimizing from closing.
   minimized: false,
 })
 
 function startScriptor(params = {}) {
-  // Minimiertes Fenster: nur wieder einblenden, nicht erneut ausführen. Das
-  // Flag wird hier ebenfalls zurückgesetzt, weil sl-after-hide beim Minimieren
-  // möglicherweise nie gefeuert hat.
+  // Minimized window: just show it again, never run anything. The flag is
+  // cleared here too, because sl-after-hide may never have fired on minimize.
   if (state.id && !state.opened) {
     state.minimized = false
     state.opened = true
@@ -112,7 +110,7 @@ function startScriptor(params = {}) {
     state.id = scriptorStore.createNewInstance()
     const openedId = state.id
     Request.view("script", props.current?.["dest"]?.["key"], { group: "leaf" }).then(async (resp) => {
-      // Fenster inzwischen geschlossen: die Instanz existiert nicht mehr.
+      // Window closed meanwhile: the instance is gone.
       if (state.id !== openedId) {
         return
       }
@@ -139,17 +137,16 @@ function startScriptor(params = {}) {
   }
 }
 
-// Blendet den Dialog aus, ohne die Instanz abzuräumen: Worker, Ausgaben und ein
-// laufendes Skript bleiben bestehen. Zurück geht es über den Skript-Button.
+// Hides the dialog without tearing down the instance: worker, output and a
+// running script stay alive. The script button brings it back.
 function minimizeScriptor() {
   state.minimized = true
   state.opened = false
 }
 
-// sl-dialog schließt von sich aus bei Klick auf das Overlay und bei Escape.
-// Beides würde über sl-after-hide die Instanz abräumen und einen laufenden
-// Skriptlauf verlieren. Der Klick daneben wird deshalb ganz unterbunden,
-// Escape minimiert. Damit ist das Schließen-X der einzige zerstörende Weg.
+// sl-dialog closes itself on an overlay click and on escape, both of which
+// would run exitScriptor and lose a running script. Overlay clicks are blocked
+// outright, escape minimizes — the close button stays the only destructive way.
 function handleRequestClose(event) {
   const source = event.detail?.source
 
@@ -164,12 +161,9 @@ function handleRequestClose(event) {
   }
 }
 
-// Auf sl-after-hide ist beim Minimieren kein Verlass: dort entfernt
-// state.opened = false den Teleport sofort per v-if, sodass der Dialog
-// verschwindet, bevor das Ereignis feuern kann. Beim Klick auf das X feuert es
-// dagegen zuverlässig, weil Shoelace erst intern schließt und erst exitScriptor
-// state.opened setzt. Deshalb wird das Flag hier UND in startScriptor
-// zurückgesetzt — auf einen der beiden Wege allein ist kein Verlass.
+// sl-after-hide is unreliable on minimize: state.opened = false drops the
+// teleport via v-if before the event can fire. On the close button it fires
+// reliably, so the flag is cleared here AND in startScriptor.
 function handleAfterHide() {
   if (state.minimized) {
     state.minimized = false
@@ -181,54 +175,45 @@ function handleAfterHide() {
 function exitScriptor() {
   emit("exit")
   state.opened = false
-  // exitScriptor ist über defineExpose auch von außen aufrufbar. Bliebe das
-  // Flag bei einem Aufruf während minimiert stehen, würde es den
-  // Zustandsautomaten (siehe handleAfterHide/startScriptor) danach blockieren.
+  // exitScriptor is exposed via defineExpose. A leftover flag would block the
+  // state machine (see handleAfterHide/startScriptor) afterwards.
   state.minimized = false
   if (state.id) {
     scriptorStore.destroyInstance(state.id)
   }
-  // Zurücksetzen ist zwingend: startScriptor() prüft `if (!state.id)`, um Code zu
-  // laden und eine Instanz anzulegen. Bliebe die alte ID stehen, würde der
-  // Dialog beim Wiederöffnen auf eine gelöschte Instanz zugreifen und
-  // state.scriptor wäre undefined.
+  // Required: startScriptor() checks `if (!state.id)` to load code and create an
+  // instance. A stale id would reopen the dialog onto a deleted one.
   state.id = null
   state.scriptReady = false
 }
 
-// Der Runner sitzt in der Aktionsleiste eines Handlers. Diese Leiste hängt in
-// einem keep-alive (main/ViewWrapper.vue, gespeist aus stores/views.js) — beim
-// Tabwechsel oder beim Öffnen eines anderen Datensatzes wird sie nur
-// deaktiviert, nicht ausgehängt. Dieser Hook feuert deshalb erst beim
-// Schließen des ViUR-Tabs selbst. Ein minimiertes Fenster soll den Tabwechsel
-// ausdrücklich überleben — käme onBeforeUnmount schon dort zum Zug, ginge das
-// verloren. Beim tatsächlichen Aushängen räumt er auf, weil state.id sonst mit
-// der Leiste verloren ginge, während Instanz und Worker im Store weiterleben
-// und über nichts mehr erreichbar sind. Der Worker geht dabei nicht verloren:
-// destroyInstance parkt ihn, sofern seine Umgebung geladen ist.
+// The action bar holding this runner is kept alive (main/ViewWrapper.vue), so a
+// tab switch only deactivates it and a minimized window survives that on
+// purpose. This fires when the vi tab itself closes, where cleanup is needed:
+// state.id would go with the component while instance and worker live on in the
+// store, unreachable. destroyInstance parks the worker, so the environment
+// itself is not lost.
 onBeforeUnmount(() => {
   if (state.id) {
     scriptorStore.destroyInstance(state.id)
   }
-  // Ohne dieses Zurücksetzen erkennt der Guard in startScriptor()
-  // (`state.id !== openedId`) einen zwischenzeitlich abgebrochenen
-  // Ladevorgang nicht mehr, und ein noch laufender Request.view-Callback
-  // schreibt später auf state.scriptor, das nach dem Abräumen undefined ist.
+  // Without this the guard in startScriptor() (`state.id !== openedId`) misses
+  // an aborted load, and a pending Request.view callback writes to
+  // state.scriptor after the instance is gone.
   state.id = null
 })
 
 watch(
   () => state.scriptor?.messages.length,
   (newVal, oldVal) => {
-    // newVal ist undefined, sobald exitScriptor() die Instanz abgeräumt und
-    // state.id genullt hat. Dann gibt es keine Nachrichten mehr zu scrollen.
+    // newVal is undefined once exitScriptor() dropped the instance and nulled
+    // state.id — nothing left to scroll.
     if (newVal === undefined || !messagewrapper.value) {
       return
     }
     const scroller = useDebounceFn((event) => {
-      // Der Dialog hängt am `v-if` des Teleports und kann zwischen dem
-      // Auslösen des Watchers und dem Ablauf des Debounce verschwunden sein —
-      // beim Schließen passiert genau das.
+      // The dialog hangs on the teleport's v-if and can vanish between the
+      // watcher firing and the debounce elapsing — closing does exactly that.
       runnerDialog.value?.shadowRoot?.querySelector(".dialog__body")?.scroll(0, 99999)
     }, 1)
     scroller()

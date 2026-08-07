@@ -2,9 +2,9 @@ importScripts("https://cdn.jsdelivr.net/pyodide/v0.28.1/full/pyodide.js")
 
 let isPyLoaded = false
 
-// Pfade, die Skripte über _write angelegt haben. Beim Recyceln eines Workers
-// müssen genau diese wieder verschwinden — das übrige Dateisystem enthält das
-// entpackte importable und die config.py, die zur Umgebung gehören.
+// Paths that scripts created via _write. Recycling a worker must remove
+// exactly these — the rest of the filesystem holds the unpacked importable
+// and config.py, which belong to the environment.
 self.writtenPaths = new Set()
 
 function stdout(msg) {
@@ -59,11 +59,10 @@ let manager = {
   },
 }
 
-// Namen der tatsächlich geladenen Pakete. micropip trägt jedes installierte
-// Wheel per setattr(loadedPackages, project_name, source) ein (wheelinfo.py),
-// pyodide.loadPackage ebenso. Damit ist das die minimale Liste, die ein warmer
-// Start braucht — im Gegensatz zu micropip.list(), das laut eigenem Kommentar
-// auch alle stdlib-Distributionen mitzählt.
+// Names of the packages actually loaded. micropip records every installed
+// wheel via setattr(loadedPackages, project_name, source) (wheelinfo.py), as
+// does pyodide.loadPackage — making this the minimal list a warm start needs,
+// unlike micropip.list(), which by its own comment also counts stdlib distributions.
 function loadedPackageNames() {
   try {
     return Object.keys(self.pyodide.loadedPackages)
@@ -73,9 +72,9 @@ function loadedPackageNames() {
   }
 }
 
-// Nach einem Kaltstart das aufgelöste Lockfile an den Store schicken, damit er es
-// in die Cache Storage legt. Fehler hier dürfen den Start nicht abbrechen: ohne
-// Cache ist der Scriptor langsamer, aber funktionsfähig.
+// After a cold start, send the resolved lockfile to the store so it's saved
+// to Cache Storage. Errors here must not abort the start: without a cache
+// Scriptor is slower but still works.
 async function sendEnvLock(id) {
   try {
     const lock = await self.pyodide.runPythonAsync(`
@@ -98,9 +97,9 @@ async function loadPyodideAndPackages(id, pyoPackages, packages, initCode, trans
   installLog(id, 1, "Loading python runtime")
 
   if (warmStart) {
-    // Das gefreezte Lockfile beschreibt alle Pakete inklusive der per micropip
-    // nachinstallierten. Die packages-Option lädt sie während des
-    // WASM-Bootstraps — ohne PyPI-Abfrage und ohne Dependency-Auflösung.
+    // The frozen lockfile describes all packages, including those installed
+    // afterward via micropip. The packages option loads them during the WASM
+    // bootstrap — no PyPI lookup, no dependency resolution.
     self.pyodide = await loadPyodide({
       convertNullToNone: true,
       stdout: stdout,
@@ -200,9 +199,9 @@ async function runScript(python, id) {
 
     manager.tasks[processId]["promise"]
       .then(() => {
-        // Ein zwischenzeitliches _reset leert manager.tasks bereits, bevor
-        // dieser Handler drankommt — der Eintrag kann hier also fehlen.
-        // empty_dict ist lokal gehalten, damit der PyProxy trotzdem freigegeben wird.
+        // An intervening _reset may already have cleared manager.tasks before
+        // this handler runs — the entry can be missing here. empty_dict is
+        // kept local so the PyProxy still gets released.
         const task = manager.tasks[processId]
         if (task) {
           task["done"] = true
@@ -212,8 +211,8 @@ async function runScript(python, id) {
         run_end(id)
       })
       .catch((error) => {
-        // Siehe Kommentar im .then()-Zweig: der Eintrag kann durch ein
-        // zwischenzeitliches _reset bereits entfernt worden sein.
+        // See the comment in the .then() branch: an intervening _reset may
+        // already have removed the entry.
         const task = manager.tasks[processId]
         if (task) {
           task["done"] = true
@@ -235,8 +234,8 @@ self.onmessageerror = (e) => {
 self.onmessage = async (event) => {
   const { id, python, ...context } = event.data
   if (id === "_pyinstaller") {
-    // Ohne dieses try/catch bleibt die _pyinstaller-Promise im Store bei einem
-    // Fehler für immer offen und der Scriptor hängt im Ladezustand.
+    // Without this try/catch, an error would leave the _pyinstaller promise
+    // in the store open forever, and Scriptor hangs in the loading state.
     try {
       await loadPyodideAndPackages(
         id,
@@ -253,10 +252,10 @@ self.onmessage = async (event) => {
       err(id, error?.message || String(error))
     }
   } else if (id === "_reset") {
-    // Setzt den Worker so weit zurück, dass ihn ein anderes Fenster übernehmen
-    // kann. Die Bestätigung kommt bewusst erst am Ende: postMessage ist pro
-    // Worker FIFO, also sind alle Nachrichten des abgebrochenen Laufs — auch
-    // das err aus dem CancelledError — vorher zugestellt.
+    // Resets the worker far enough that another window can adopt it. The
+    // confirmation is sent last on purpose: postMessage is FIFO per worker,
+    // so all messages from the aborted run — including the CancelledError's
+    // err — are delivered before it.
     try {
       if (isPyLoaded) {
         await self.pyodide.runPythonAsync("await scriptor_reset()")

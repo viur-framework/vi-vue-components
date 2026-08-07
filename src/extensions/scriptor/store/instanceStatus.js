@@ -1,6 +1,6 @@
-// Übersetzt den Zustand einer Scriptor-Instanz in die Anzeige des Badges.
-// Gemeinsam genutzt von Status.vue und StatusBar.vue, damit Badge und
-// Statusleiste nie unterschiedliche Texte für denselben Zustand zeigen.
+// Translates a Scriptor instance's state into the badge display. Shared by
+// Status.vue and StatusBar.vue so badge and status bar never show different
+// text for the same state.
 export function describeInstanceStatus(instance) {
   if (!instance) {
     return { text: "Skriptor nicht geladen.", variant: "danger", pulse: false }
@@ -17,9 +17,9 @@ export function describeInstanceStatus(instance) {
   if (instance.runState === "running") {
     return { text: "Skript läuft...", variant: "success", pulse: true }
   }
-  // Ein am Skript gescheiterter Lauf lässt envState auf "ready" — ohne diesen
-  // Zweig zeigte ein fehlgeschlagenes Skript denselben grünen "bereit"-Badge
-  // wie ein sauber durchgelaufenes.
+  // A run that fails in the script itself leaves envState at "ready" — without
+  // this branch a failed script would show the same green "ready" badge as one
+  // that completed cleanly.
   if (instance.runState === "error") {
     return { text: "Skript mit Fehler beendet.", variant: "danger", pulse: false }
   }

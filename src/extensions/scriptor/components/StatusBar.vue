@@ -98,8 +98,8 @@ function reset() {
   instance.internalMessages = []
 }
 
-// Eine neue Scriptor-Version braucht eine neue Umgebung. Nur der Worker DIESER
-// Instanz wird verworfen — parallel laufende Skripte bleiben unberührt.
+// A new Scriptor version needs a new environment. Only THIS instance's worker
+// is discarded — other scripts running in parallel are unaffected.
 function changeVersion(e) {
   scriptorStore.state.scriptorVersion = e.target.value
   reset()
@@ -111,11 +111,11 @@ function changeVersion(e) {
 onMounted(() => {
   scriptorStore.fetchScriptorVersions().then((result) => {
     state.versions = result
-    // StatusBar hängt im Dialog und wird beim Zurückholen aus dem Minimieren
-    // neu gemountet. Eine bereits gesetzte Version (Standard oder Custom) darf
-    // dabei nicht überschrieben werden — sonst wird beim nächsten Schließen
-    // der Worker gegen die zurückgesetzte Version verglichen statt gegen die
-    // tatsächlich geladene envVersion, und das Worker-Recycling greift nicht.
+    // StatusBar lives in the dialog and remounts when restoring from
+    // minimized. An already-set version (default or custom) must not be
+    // overwritten then — otherwise the next close would compare the worker
+    // against the reset version instead of the actually loaded envVersion,
+    // breaking worker recycling.
     if (scriptorStore.state.scriptorVersionInitialized) {
       return
     }

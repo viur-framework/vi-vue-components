@@ -9,7 +9,7 @@ import { readEnvCache, writeEnvCache, dropEnvCache } from "./envCache"
 import { createInstanceWorker, rebindInstanceWorker, resolveWorkerPath } from "./workerBridge"
 import { parkWorker, takeParkedWorker, clearParkedWorker } from "./workerPool"
 
-// Sitzungsweit geteilt: das importable-ZIP ist für alle Worker gleich.
+// Shared for the whole session: the importable ZIP is identical for every worker.
 const env = {
   importable: undefined,
   importableLoaded: false,
@@ -17,15 +17,15 @@ const env = {
   releaseLoadingLock: null,
 }
 
-// Pyodide belegt pro Instanz grob 150–300 MB. Drei parallele Worker sind der
-// Kompromiss zwischen Nutzen und Speicherverbrauch.
+// Pyodide uses roughly 150-300 MB per instance. Three parallel workers balance
+// usefulness against memory usage.
 const MAX_WORKERS = 3
-// So lange wartet ein zweiter Worker bei leerem Cache auf den Kaltstart des
-// ersten, bevor er selbst auflöst.
+// How long a second worker waits on the first one's cold start when the cache
+// is empty, before resolving on its own.
 const COLD_START_WAIT_MS = 30000
-// So lange wartet ein neues Fenster auf die Reset-Bestätigung eines geparkten
-// Workers. Läuft die Frist ab, hing das abgebrochene Skript in einer Schleife
-// ohne await — dann wird terminiert und regulär gestartet.
+// How long a new window waits for a parked worker's reset confirmation. On
+// timeout the aborted script was stuck in an await-less loop — the worker is
+// terminated and started normally instead.
 const RESET_WAIT_MS = 2000
 
 export const useScriptorStore = defineStore("scriptorStore", () => {
@@ -42,9 +42,8 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     }),
     instances: reactive({}),
     scriptorVersion: "latest",
-    // Wird true, sobald StatusBar.vue einmal eine Version voreingestellt hat.
-    // Beim Zurückholen aus dem Minimieren montiert StatusBar erneut und darf
-    // eine inzwischen bewusst gewählte Version nicht mehr überschreiben.
+    // Set true once StatusBar.vue has preset a version. Restoring from
+    // minimized remounts StatusBar, which must not overwrite a version chosen since.
     scriptorVersionInitialized: false,
   })
 
@@ -62,9 +61,9 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
   const DEFAULT_SCRIPT_CODE =
     "#### scriptor ####\nfrom viur.scriptor import *\n\nasync def main():\n    logger.info('Hello World')"
 
-  // Factory statt geteiltem Objektliteral: ein Spread von { messages: [] }
-  // kopiert die Array-Referenz, wodurch bisher alle Instanzen dasselbe
-  // messages-, messageBuffer- und internalMessages-Array benutzt haben.
+  // Factory instead of a shared object literal: spreading { messages: [] }
+  // only copies the array reference, which used to make all instances share
+  // the same messages/messageBuffer/internalMessages array.
   function newInstanceState() {
     return reactive({
       scriptKey: null,
@@ -75,11 +74,11 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
       hideInternalMessages: false,
       worker: null,
       envState: "cold", // cold | loading | ready | failed
-      // Version, mit der die Umgebung tatsächlich installiert wurde. Nicht über
-      // cacheVersion() ableitbar: changeVersion() in StatusBar.vue setzt
-      // state.scriptorVersion, bevor es destroyInstance() aufruft — der geparkte
-      // Worker bekäme sonst die neue Version angeheftet und liefe im nächsten
-      // Fenster still auf der falschen Scriptor-Version.
+      // Version the environment was actually installed with. Not derivable
+      // from cacheVersion(): StatusBar.vue's changeVersion() sets
+      // state.scriptorVersion before calling destroyInstance(), so the parked
+      // worker would otherwise be tagged with the new version and silently
+      // run the wrong one next time.
       envVersion: null,
       runState: "idle", // idle | running | done | error
       progress: { total: 100, step: -1, max_step: -1, txt: "" },
@@ -107,7 +106,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
       onError: failInstance,
     })
     if (!workerObject) {
-      // Worker nicht erzeugbar — Instanz bleibt kalt, der Aufrufer bricht ab.
+      // Worker could not be created — instance stays cold, caller aborts.
       instance.envState = "failed"
       return null
     }
@@ -120,8 +119,8 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     return Object.values(state.instances).filter((instance) => instance.worker).length
   }
 
-  // Versucht, den geparkten Worker für diese Instanz zu übernehmen. Gelingt das,
-  // steht die Pyodide-Umgebung bereits und load() entfällt vollständig.
+  // Tries to take over the parked worker for this instance. On success the
+  // Pyodide environment is already up and load() is skipped entirely.
   async function adoptParkedWorker(instanceId) {
     const parked = takeParkedWorker()
     if (!parked) {
@@ -134,21 +133,21 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
       return false
     }
 
-    // Eine Umgebung der falschen Scriptor-Version ist unbrauchbar — sonst liefe
-    // das Fenster still auf einer anderen Version als angezeigt.
+    // An environment with the wrong Scriptor version is unusable — otherwise
+    // the window would silently run a different version than displayed.
     if (parked.version !== cacheVersion()) {
       if (import.meta.env.DEV) {
-        console.log(`[scriptor] ${instanceId}: geparkter Worker verworfen — Version passt nicht`, {
-          geparkt: parked.version,
-          erwartet: cacheVersion(),
+        console.log(`[scriptor] ${instanceId}: dropped parked worker — version mismatch`, {
+          parked: parked.version,
+          expected: cacheVersion(),
         })
       }
       parked.handle?.terminate()
       return false
     }
 
-    // Die Frist läuft ab dem Schließen, nicht erst ab hier: liegt der Worker
-    // schon eine Weile, ist die Bestätigung längst da und es wird nicht gewartet.
+    // The timeout runs from the close, not from here: if the worker has been
+    // parked a while, the confirmation already arrived and there's no wait.
     const resetDone = await Promise.race([
       parked.resetPromise,
       new Promise((resolve) => window.setTimeout(() => resolve(false), RESET_WAIT_MS)),
@@ -156,17 +155,16 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
 
     if (!resetDone) {
       if (import.meta.env.DEV) {
-        console.log(`[scriptor] ${instanceId}: geparkter Worker verworfen — Reset nicht bestätigt`)
+        console.log(`[scriptor] ${instanceId}: dropped parked worker — reset not confirmed`)
       }
       parked.handle?.terminate()
       return false
     }
 
-    // Während der bis zu RESET_WAIT_MS langen Wartezeit kann destroyInstance()
-    // die Instanz entfernt haben (Fenster wurde inzwischen wieder geschlossen).
-    // Die vor dem await gelesene Referenz wäre dann verwaist — erneut aus
-    // state.instances lesen, sonst hängt der Worker an einem toten Objekt und
-    // bleibt unerreichbar im Speicher (Leak, siehe activeWorkerCount()).
+    // During the up-to-RESET_WAIT_MS wait, destroyInstance() may have removed
+    // the instance (window closed again meanwhile). The reference read before
+    // the await would then be stale — re-read from state.instances, otherwise
+    // the worker attaches to a dead object and leaks (see activeWorkerCount()).
     const currentInstance = state.instances[instanceId]
     if (!currentInstance) {
       parked.handle?.terminate()
@@ -184,7 +182,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     startBufferFlusher()
 
     if (import.meta.env.DEV) {
-      console.log(`[scriptor] ${instanceId}: geparkten Worker übernommen — kein Laden nötig`)
+      console.log(`[scriptor] ${instanceId}: adopted parked worker — no loading needed`)
     }
 
     return true
@@ -210,9 +208,8 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
       return false
     }
     if (!attachWorker(instanceId)) {
-      // Ohne diese Meldung bleibt ein fehlgeschlagener Worker-Start für den
-      // Nutzer unsichtbar: execute() gibt nur {error} zurück, und beide
-      // Aufrufstellen in der UI verwerfen den Rückgabewert.
+      // Without this message a failed worker start stays invisible to the
+      // user: execute() only returns {error}, and both UI call sites discard it.
       useMessageStore().addMessage(
         "error",
         "Skriptor konnte nicht gestartet werden",
@@ -232,7 +229,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     instance.envState = "failed"
     instance.runState = "error"
     addMessageEntry("error", instanceId, { msg: error?.message || String(error) })
-    // Callbacks auflösen, damit niemand endlos auf den toten Worker wartet.
+    // Resolve callbacks so nothing waits forever on the dead worker.
     for (const [actionId, callback] of instance.pendingActions.entries()) {
       callback({ results: null, error: "worker_error" })
       instance.pendingActions.delete(actionId)
@@ -241,16 +238,16 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     instance.worker = null
   }
 
-  // Laufende Env-Ladevorgänge pro Instanz. Absichtlich außerhalb von
-  // state.instances, damit Vue die Promise nicht in einen reactive-Proxy wickelt.
+  // In-flight env loads per instance. Kept outside state.instances on purpose
+  // so Vue doesn't wrap the promise in a reactive proxy.
   const envLoads = new Map()
 
-  // Schickt dem Worker den Reset-Auftrag und liefert eine Promise auf dessen
-  // Bestätigung. Die Handler zeigen ab hier auf den Parkplatz und nicht mehr auf
-  // eine Instanz: destroyInstance() entfernt die Instanz unmittelbar danach, über
-  // instance.pendingActions wäre die Bestätigung also nicht mehr zustellbar —
-  // handleMessage() steigt am fehlenden Eintrag aus. Alles außer der Bestätigung
-  // wird verworfen, darunter die letzten Ausgaben des abgebrochenen Skripts.
+  // Sends the reset command to the worker and returns a promise for its
+  // confirmation. From here the handlers point at the parking slot, not an
+  // instance: destroyInstance() removes the instance right after, so
+  // instance.pendingActions could no longer deliver it — handleMessage() bails
+  // on the missing entry. Everything but the confirmation is discarded,
+  // including the aborted script's last output.
   function resetWorker(handle) {
     return new Promise((resolve) => {
       const onPoolMessage = (_instanceId, messageId, data) => {
@@ -266,8 +263,8 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
       }
       const onPoolError = (_instanceId, error) => {
         console.warn("Scriptor: parked worker died", error)
-        // Mit handle, damit ein spät eintreffender Fehler nicht einen inzwischen
-        // geparkten Nachfolger trifft.
+        // Keyed by handle so a late-arriving error doesn't hit a successor
+        // parked in the meantime.
         clearParkedWorker(handle)
         resolve(false)
       }
@@ -281,9 +278,9 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     })
   }
 
-  // Terminiert den Worker hart und entfernt die Instanz. Kein Warten auf einen
-  // sauberen Python-Exit: der Worker-Zustand ist flüchtig, es gibt nichts zu
-  // sichern. Für "Abbrechen, Fenster bleibt offen" ist exitScript() zuständig.
+  // Hard-terminates the worker and removes the instance. No waiting for a
+  // clean Python exit — worker state is transient, nothing to preserve.
+  // exitScript() handles "cancel, window stays open" instead.
   function destroyInstance(instanceId) {
     const instance = state.instances[instanceId]
     if (!instance) {
@@ -297,27 +294,27 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     const handle = instance.worker
     instance.worker = null
 
-    // Nur eine fertig geladene Umgebung ist es wert, geparkt zu werden. Ein
-    // gescheiterter oder noch ladender Worker wird terminiert wie bisher.
+    // Only a fully loaded environment is worth parking. A failed or
+    // still-loading worker is terminated as before.
     if (handle && instance.envState === "ready") {
       const version = instance.envVersion
       parkWorker({ handle: handle, resetPromise: resetWorker(handle), version: version })
       if (import.meta.env.DEV) {
-        console.log(`[scriptor] ${instanceId}: Worker geparkt`, { version: version })
+        console.log(`[scriptor] ${instanceId}: worker parked`, { version: version })
       }
     } else {
       handle?.terminate()
     }
 
-    // Einen laufenden Env-Ladevorgang mit verwerfen, sonst hält die Map einen
-    // Eintrag für eine Instanz, die es nicht mehr gibt.
+    // Drop any in-flight env load too, otherwise the map keeps an entry for
+    // an instance that no longer exists.
     envLoads.delete(instanceId)
     delete state.instances[instanceId]
     stopBufferFlusherIfIdle()
   }
 
-  // Ein Interval für alle Instanzen. Bisher startete jeder
-  // createWebWorker()-Aufruf ein weiteres, das nie gestoppt wurde.
+  // One interval for all instances. Previously each createWebWorker() call
+  // started another one that was never stopped.
   let bufferFlusher = null
 
   function startBufferFlusher() {
@@ -341,8 +338,8 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     }
   }
 
-  // Paketliste für den Kaltstart. Im Dev-Modus wird eine direkte Wheel-URL
-  // benutzt, sonst der PyPI-Name mit optionaler Versionsangabe.
+  // Package list for the cold start. Dev mode uses a direct wheel URL,
+  // otherwise the PyPI name with an optional version.
   function buildPackageList() {
     const packages = [...state.packages]
     if (import.meta.env.DEV && import.meta.env.VITE_SCRIPTOR_URL) {
@@ -355,9 +352,9 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     return packages
   }
 
-  // Das importable-ZIP ist für alle Worker identisch. Einmal pro Sitzung holen
-  // und den ArrayBuffer weitergeben — postMessage klont ihn, überträgt ihn also
-  // nicht, sodass er mehrfach verwendbar bleibt.
+  // The importable ZIP is identical for every worker. Fetch once per session
+  // and pass the ArrayBuffer on — postMessage clones rather than transfers
+  // it, so it stays reusable.
   async function getImportable() {
     if (env.importableLoaded) {
       return env.importable
@@ -368,14 +365,14 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
         env.importable = await response.arrayBuffer()
       }
     } catch (error) {
-      // Kein importable vorhanden — kein Fehlerfall.
+      // No importable present — not an error.
     }
     env.importableLoaded = true
     return env.importable
   }
 
-  // Schickt den Installer-Auftrag an den Worker der Instanz und wartet auf
-  // dessen Abschluss. envCache === null erzwingt den Kaltstart-Pfad.
+  // Sends the installer job to the instance's worker and waits for it to
+  // finish. envCache === null forces the cold-start path.
   function postEnvInstall(instanceId, envCache) {
     const instance = state.instances[instanceId]
     if (!instance?.worker) {
@@ -396,9 +393,9 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     })
   }
 
-  // Gibt ein Lock nur frei, wenn es noch das aktuelle ist. Ein zweiter
-  // Kaltstart nach Timeout legt ein eigenes an; der erste darf dieses beim
-  // Beenden nicht wegräumen. Mehrfachaufrufe sind unschädlich.
+  // Releases a lock only if it's still the current one. A second cold start
+  // after timeout creates its own lock, which the first must not clear when
+  // it finishes. Safe to call multiple times.
   function finishLoadingLock(lock, entry) {
     if (!lock || env.loadingLock !== lock) {
       return
@@ -420,10 +417,10 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
 
     let cached = await readEnvCache(version)
 
-    // Startet der Nutzer bei leerem Cache sofort zwei Skripte, wartet der zweite
-    // auf das Lockfile des ersten statt die Auflösung doppelt zu machen. Nach
-    // COLD_START_WAIT_MS löst er selbst auf, damit ein hängender erster Worker
-    // ihn nicht blockiert.
+    // If the user starts two scripts at once with an empty cache, the second
+    // waits for the first one's lockfile instead of installing twice. After
+    // COLD_START_WAIT_MS it resolves on its own so a stuck first worker can't
+    // block it.
     if (!cached && env.loadingLock) {
       cached = await Promise.race([
         env.loadingLock,
@@ -443,26 +440,25 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
 
     if (import.meta.env.DEV) {
       console.log(
-        `[scriptor] ${instanceId}: ${cached ? "WARMSTART — Lockfile aus dem Cache" : "KALTSTART — kein Cache-Eintrag"}`,
-        cached ? { pakete: cached.installed?.length } : {}
+        `[scriptor] ${instanceId}: ${cached ? "WARM START — lockfile from cache" : "COLD START — no cache entry"}`,
+        cached ? { packages: cached.installed?.length } : {}
       )
     }
 
     let result = await postEnvInstall(instanceId, cached)
 
     if (result?.error && cached) {
-      // Veraltetes oder beschädigtes Lockfile: Eintrag verwerfen und genau
-      // einmal auf den Kaltstart zurückfallen. Ohne diesen Pfad würde ein
-      // defekter Cache den Scriptor dauerhaft blockieren.
+      // Stale or corrupt lockfile: drop the entry and fall back to a cold
+      // start exactly once. Without this, a broken cache would permanently
+      // block Scriptor.
       console.warn("Scriptor: warm start failed, falling back to cold start", result.error)
       await dropEnvCache(version)
       result = await postEnvInstall(instanceId, null)
     }
 
-    // Im Erfolgsfall hat der envlock-Fall die Wartenden bereits freigegeben,
-    // sobald der Cache-Eintrag wirklich geschrieben war (siehe Step 3b). Dieser
-    // Aufruf ist dann ein No-op und deckt nur den Fall ab, dass gar kein envlock
-    // kam — also ein fehlgeschlagener Kaltstart.
+    // On success the envlock case already released any waiters once the
+    // cache entry was actually written. This call is then a no-op, covering
+    // only the case where no envlock arrived at all — i.e. a failed cold start.
     finishLoadingLock(myLock, null)
 
     if (!result?.error) {
@@ -471,8 +467,8 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
 
     if (import.meta.env.DEV) {
       console.log(
-        `[scriptor] ${instanceId}: Umgebung nach ${Math.round(performance.now() - startedAt)} ms bereit` +
-          (result?.error ? ` — Fehler: ${result.error}` : "")
+        `[scriptor] ${instanceId}: environment ready after ${Math.round(performance.now() - startedAt)} ms` +
+          (result?.error ? ` — error: ${result.error}` : "")
       )
     }
 
@@ -513,10 +509,10 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     if (!instance?.worker) {
       return
     }
-    // post() statt worker.postMessage(): useWebWorker's post() entpackt den
-    // shallowRef selbst und prüft auf einen vorhandenen Worker. Der Bestandscode
-    // griff über state.workerObject.worker.postMessage zu, was nur wegen der
-    // Ref-Entpackung durch reactive() funktionierte.
+    // post() rather than worker.postMessage(): useWebWorker's post() unwraps
+    // the shallowRef itself and checks a worker exists. Old code accessed
+    // state.workerObject.worker.postMessage, which only worked because
+    // reactive() unwrapped the ref.
     instance.worker.post({
       id: "_sendDialogSignal",
       type: type,
@@ -524,8 +520,8 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     })
   }
 
-  // Bricht das laufende Skript ab, lässt den Worker aber stehen — das Fenster
-  // bleibt benutzbar. Für "Fenster zu" ist destroyInstance() zuständig.
+  // Aborts the running script but leaves the worker in place — the window
+  // stays usable. destroyInstance() handles "close window" instead.
   async function exitScript(instanceId) {
     await sendResult(instanceId, "exit", "__exit__")
   }
@@ -538,16 +534,16 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     instance.internalMessages = []
 
     if (instance.envState !== "ready") {
-      // Zweiter Klick während des Ladens muss auf denselben Ladevorgang warten.
-      // Ohne diesen Riegel überschreibt der zweite postEnvInstall-Aufruf den
-      // "_pyinstaller"-Callback des ersten, und dessen execute()-Promise löst
-      // nie auf. Der alte Code war über das globale isLoading-Flag geschützt.
+      // A second click during loading must wait on the same load. Without
+      // this guard, a second postEnvInstall() call would overwrite the
+      // first's "_pyinstaller" callback and its execute() promise would never
+      // resolve. The old code guarded this with a global isLoading flag.
       let envLoad = envLoads.get(currentId)
       if (!envLoad) {
         if (!(await acquireWorker(currentId))) {
           return { results: null, error: "worker_limit" }
         }
-        // Übernommener Worker: die Umgebung steht bereits, load() entfällt.
+        // Adopted worker: the environment is already up, load() is skipped.
         if (instance.envState !== "ready") {
           instance.envState = "loading"
           envLoad = load(currentId).finally(() => envLoads.delete(currentId))
@@ -597,14 +593,13 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     currentState.messageBuffer.push({ type: type, data: data })
   }
 
-  // Markiert eine Nachricht als beantwortet. Der Zustand hängt bewusst an der
-  // Nachricht im Store und nicht im lokalen State des Widgets: Beim
-  // Zurückholen aus dem Minimieren baut WidgetList.vue alle Widgets neu auf,
-  // ihr lokaler State würde wieder unbeantwortet starten. Eine längst
-  // beantwortete Frage wäre dann von der aktuell offenen nicht zu
-  // unterscheiden, und ein Klick darauf würde sendResult() erneut aufrufen und
-  // im Worker den einzigen globalen resultValue-Slot überschreiben, während
-  // das Skript auf die Antwort einer anderen Frage wartet.
+  // Marks a message as answered. State lives on the message in the store,
+  // not in the widget's local state, on purpose: restoring from minimized
+  // rebuilds all widgets in WidgetList.vue, so local state would start
+  // unanswered again. A long-answered question would then be indistinguishable
+  // from the current one, and clicking it would call sendResult() again and
+  // overwrite the worker's single global resultValue slot while the script
+  // waits on a different question's answer.
   function markMessageAnswered(instanceId, uniqueId) {
     const instance = state.instances[instanceId]
     const entry = instance?.messages.find((message) => message.data.unique_id === uniqueId)
@@ -630,8 +625,8 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
       .replace(/\n/g, "<br />")
   }
 
-  // Cache-Schlüssel muss die Version enthalten, sonst liefert ein
-  // Versionswechsel weiterhin die alte Umgebung aus.
+  // Cache key must include the version, otherwise switching versions keeps
+  // serving the old environment.
   function cacheVersion() {
     return state.scriptorVersion || "latest"
   }
@@ -645,7 +640,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     switch (data.type) {
       case "installlog":
         if (import.meta.env.DEV) {
-          console.log(`[scriptor] ${instanceId} Stufe ${data["msg"]["stage"]}: ${data["msg"]["msg"]}`)
+          console.log(`[scriptor] ${instanceId} stage ${data["msg"]["stage"]}: ${data["msg"]["msg"]}`)
         }
         addInternalMessageEntry("install", instanceId, data)
         instance.envState = data["msg"]["stage"] === 5 ? "ready" : "loading"
@@ -654,24 +649,24 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
         const version = cacheVersion()
         const written = await writeEnvCache(version, data["lock"], data["installed"])
         if (import.meta.env.DEV) {
-          console.log(`[scriptor] ${instanceId}: envlock empfangen — in den Cache geschrieben: ${written}`, {
-            pakete: data["installed"]?.length,
+          console.log(`[scriptor] ${instanceId}: envlock received — written to cache: ${written}`, {
+            packages: data["installed"]?.length,
           })
         }
-        // Erst hier freigeben: die onmessage-Zustellung wartet nicht auf diesen
-        // Handler, sonst käme run_end dem Cache-Schreibvorgang zuvor.
+        // Only released here: onmessage delivery doesn't wait for this
+        // handler, otherwise run_end could beat the cache write.
         finishLoadingLock(env.loadingLock, await readEnvCache(version))
         break
       }
       case "stdout":
         addInternalMessageEntry("install", instanceId, data)
         break
-      // Nur der Skriptlauf selbst beendet den Lauf. Der Worker sendet "end"
-      // auch für jedes Dialogsignal (webworker.js:325) und für jede
-      // FS-Operation; würde das runState auf "done" setzen, gälte ein Skript
-      // ab der ersten Dialogantwort als fertig. run_end wird an genau zwei
-      // Stellen gesendet (webworker.js:191 für den Lauf, :224 für den
-      // Installer), die Skript-Nachricht trägt die Instanz-ID als messageId.
+      // Only the script run itself ends the run. The worker also sends "end"
+      // for every dialog signal (webworker.js:325) and FS operation; setting
+      // runState to "done" there would mark a script done after its first
+      // dialog answer. run_end is sent from exactly two places
+      // (webworker.js:191 for the run, :224 for the installer); the script's
+      // message carries the instance ID as messageId.
       case "run_end":
         if (messageId === instanceId && instance.runState === "running") {
           instance.runState = "done"
@@ -683,9 +678,9 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
         break
       case "err":
         addMessageEntry("error", instanceId, data)
-        // Ein Installer-Fehler ist kein fehlgeschlagener Lauf — das trägt
-        // envState. Sonst meldet die Instanz einen Fehler für ein Skript, das
-        // nie gestartet ist.
+        // An installer error is not a failed run — envState carries that.
+        // Otherwise the instance would report an error for a script that
+        // never started.
         if (messageId === instanceId) {
           instance.runState = "error"
         }
@@ -771,7 +766,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
         versions.sort((a, b) => b.localeCompare(a, undefined, { numeric: true }))
         return versions.filter((x) => x.startsWith("1."))
       } catch (error) {
-        console.error("Fehler beim Abrufen der Daten:", error)
+        console.error("Error fetching data:", error)
         return []
       }
     }

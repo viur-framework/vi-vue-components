@@ -46,8 +46,8 @@ const props = defineProps({
 })
 
 const state = reactive({
-  // Hängt an der Nachricht im Store statt an lokalem State, damit die Sperre
-  // einen Remount nach dem Zurückholen aus dem Minimieren überlebt.
+  // Lives on the message in the store rather than local state, so the
+  // disabled flag survives a remount after restoring from minimized.
   buttonDisabled: computed(() => !!props.entry.data.answered),
   sendable: computed(() => {
     for (const element of elements.value) {
@@ -83,7 +83,7 @@ async function buttonCallback() {
   }
 }
 
-//todo zusammen fassen
+//todo: consolidate
 function getWidget(type) {
   if (["install", "err", "stdout", "stderr", "log", "info", "error", "debug", "warning"].includes(type)) {
     return widgets.logEntry

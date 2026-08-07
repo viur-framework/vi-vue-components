@@ -53,9 +53,9 @@ const props = defineProps({
 })
 
 async function sendButtonClick() {
-  // Sperren hängt an der Nachricht im Store (state.dataSent ist darauf
-  // gespiegelt), damit ein Remount nach dem Zurückholen aus dem Minimieren
-  // die Antwort nicht erneut sendbar macht.
+  // Disabling lives on the message in the store (state.dataSent mirrors it),
+  // so a remount after restoring from minimized can't make the answer
+  // sendable again.
   scriptorStore.markMessageAnswered(props.instanceId, props.entry.data.unique_id)
   let selected = []
   let index = -1
@@ -182,8 +182,8 @@ tr:hover {
 }
 
 tbody {
-  max-height: 200px; /* Setze die maximale Höhe für den Body-Container */
-  overflow-y: auto; /* Füge eine Scrollbar hinzu */
+  max-height: 200px; /* Set the maximum height of the body container */
+  overflow-y: auto; /* Add a scrollbar */
 }
 
 .sl-checkbox {

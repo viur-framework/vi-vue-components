@@ -99,10 +99,10 @@ onMounted(() => {
 const state = reactive({
   selectedOptions: props.entry.data?.default_value || [],
   isMultiple: computed(() => props.entry.data["multiple"]),
-  // Hängt an der Nachricht im Store statt an lokalem State, damit die Sperre
-  // einen Remount nach dem Zurückholen aus dem Minimieren überlebt. Bei
-  // inMultiple bleibt entry.data.answered stets unbesetzt, da hier nicht
-  // selbst gesendet wird — das Verhalten ändert sich für diesen Fall nicht.
+  // Lives on the message in the store rather than local state, so the
+  // disabled flag survives a remount after restoring from minimized. With
+  // inMultiple, entry.data.answered stays unset since nothing is sent here —
+  // behavior for that case is unchanged.
   isDisabled: computed(() => !!props.entry.data.answered),
   options: {},
   value: props.entry.data?.default_value || [],

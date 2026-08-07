@@ -61,9 +61,9 @@ const props = defineProps({
 })
 
 async function buttonCallback(event, option) {
-  // Sperren hängt an der Nachricht im Store (state.buttonDisabled ist darauf
-  // gespiegelt), damit ein Remount nach dem Zurückholen aus dem Minimieren
-  // die Antwort nicht erneut sendbar macht.
+  // Disabling lives on the message in the store (state.buttonDisabled mirrors
+  // it), so a remount after restoring from minimized can't make the answer
+  // sendable again.
   scriptorStore.markMessageAnswered(props.instanceId, props.entry.data.unique_id)
   await scriptorStore.sendResult(props.instanceId, "textResult", state.value)
 }
