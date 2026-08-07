@@ -6,24 +6,31 @@ export function resolveWorkerPath(pathname) {
   return `${(pathname || "").replace("/main.html", "")}/scriptor/public/webworker.js`
 }
 
-// Erzeugt einen Worker, dessen Nachrichten fest an eine Instanz gebunden sind.
-// Die Bindung passiert über die Closure, nicht über die Nachricht selbst — genau
-// deshalb braucht der Store keinen globalen "currentInstance"-Zustand mehr.
-// Wichtig, weil stdout/stderr im Worker immer mit id: null senden.
+// Hängt die Handler eines Worker-Handles auf eine Instanz-ID um. Beim Recyceln
+// eines geparkten Workers wechselt die Bindung, ohne dass ein neuer Worker
+// entsteht — die Pyodide-Umgebung bleibt dabei erhalten.
 //
-// useWebWorker() liefert `worker` als shallowRef und setzt dessen .value
-// synchron, solange ein window existiert. Die Handler MÜSSEN am entpackten
-// Worker hängen: innerhalb eines reactive() entpackt Vue den Ref automatisch
-// (so funktioniert der bisherige Code über state.workerObject), hier aber
-// nicht. Eine Zuweisung an workerObject.worker.onmessage würde nur eine
+// Die Handler MÜSSEN am entpackten Worker hängen: useWebWorker() liefert
+// `worker` als shallowRef und setzt dessen .value synchron, solange ein window
+// existiert. Innerhalb eines reactive() entpackt Vue den Ref automatisch, hier
+// aber nicht. Eine Zuweisung an handle.worker.onmessage würde nur eine
 // Eigenschaft am Ref-Wrapper anlegen und niemals ausgelöst werden.
-export function createInstanceWorker({ path, instanceId, onMessage, onError }) {
-  const workerObject = useWebWorker(path)
-  const worker = workerObject.worker.value
+//
+// Beim Recycling eines geparkten Workers kommt der Handle allerdings aus einem
+// reactive()-Objekt (state.instances[...] bzw. der Parkplatz), nicht direkt aus
+// useWebWorker(). Dort hat Vue den Ref schon automatisch entpackt, handle.worker
+// ist dann bereits der Worker selbst und besitzt kein .value mehr. Ein echter
+// Worker hat aber nie eine .value-Eigenschaft, ein shallowRef immer — daran
+// lassen sich beide Formen sauber unterscheiden.
+//
+// instanceId darf null sein: der Parkplatz nutzt das, um Nachrichten eines
+// geparkten Workers abzufangen, solange keine Instanz dahintersteht.
+export function rebindInstanceWorker(handle, instanceId, onMessage, onError) {
+  const rawWorker = handle?.worker
+  const worker = rawWorker && "value" in rawWorker ? rawWorker.value : rawWorker
 
   if (!worker) {
-    console.error("Scriptor: web worker could not be created", path)
-    return null
+    return false
   }
 
   worker.onmessage = (event) => {
@@ -35,6 +42,17 @@ export function createInstanceWorker({ path, instanceId, onMessage, onError }) {
   }
   worker.onerror = (error) => {
     onError(instanceId, error)
+  }
+
+  return true
+}
+
+export function createInstanceWorker({ path, instanceId, onMessage, onError }) {
+  const workerObject = useWebWorker(path)
+
+  if (!rebindInstanceWorker(workerObject, instanceId, onMessage, onError)) {
+    console.error("Scriptor: web worker could not be created", path)
+    return null
   }
 
   return workerObject

@@ -35,14 +35,14 @@
 </template>
 
 <script setup>
-import {onBeforeMount, reactive, ref, computed, inject, watch} from "vue"
+import { onBeforeMount, reactive, ref, computed, inject, watch } from "vue"
 import WidgetList from "./components/WidgetList.vue"
 import StatusBar from "./components/StatusBar.vue"
 import Status from "./components/Status.vue"
-import {useScriptorStore} from "./store/scriptor"
-import {Request} from "@viur/vue-utils"
+import { useScriptorStore } from "./store/scriptor"
+import { Request } from "@viur/vue-utils"
 import Utils from "../../utils"
-import {useDebounceFn} from "@vueuse/core"
+import { useDebounceFn } from "@vueuse/core"
 
 const messagewrapper = ref(null)
 const scriptorAction = ref(null)
@@ -90,11 +90,11 @@ const state = reactive({
 function startScriptor(params = {}) {
   emit("start")
   state.opened = true
-  params = {...params, ...props.scriptParams}
+  params = { ...params, ...props.scriptParams }
   if (!state.id) {
     state.id = scriptorStore.createNewInstance()
     const openedId = state.id
-    Request.view("script", props.current?.["dest"]?.["key"], {group: "leaf"}).then(async (resp) => {
+    Request.view("script", props.current?.["dest"]?.["key"], { group: "leaf" }).then(async (resp) => {
       // Fenster inzwischen geschlossen: die Instanz existiert nicht mehr.
       if (state.id !== openedId) {
         return
@@ -108,7 +108,7 @@ function startScriptor(params = {}) {
   }
   if (import.meta.env.DEV) {
     const openedId = state.id
-    Request.view("script", props.current?.["dest"]?.["key"], {group: "leaf"}).then(async (resp) => {
+    Request.view("script", props.current?.["dest"]?.["key"], { group: "leaf" }).then(async (resp) => {
       if (state.id !== openedId) {
         return
       }
@@ -139,15 +139,21 @@ function exitScriptor() {
 watch(
   () => state.scriptor?.messages.length,
   (newVal, oldVal) => {
-    if (messagewrapper.value) {
-      const scroller = useDebounceFn((event) => {
-        runnerDialog.value.shadowRoot.querySelector(".dialog__body").scroll(0, 99999)
-      }, 1)
-      scroller()
+    // newVal ist undefined, sobald exitScriptor() die Instanz abgeräumt und
+    // state.id genullt hat. Dann gibt es keine Nachrichten mehr zu scrollen.
+    if (newVal === undefined || !messagewrapper.value) {
+      return
     }
+    const scroller = useDebounceFn((event) => {
+      // Der Dialog hängt am `v-if` des Teleports und kann zwischen dem
+      // Auslösen des Watchers und dem Ablauf des Debounce verschwunden sein —
+      // beim Schließen passiert genau das.
+      runnerDialog.value?.shadowRoot?.querySelector(".dialog__body")?.scroll(0, 99999)
+    }, 1)
+    scroller()
   }
 )
-defineExpose({startScriptor, exitScriptor})
+defineExpose({ startScriptor, exitScriptor })
 </script>
 
 <style scoped>

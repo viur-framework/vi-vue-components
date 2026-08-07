@@ -2,6 +2,11 @@ importScripts("https://cdn.jsdelivr.net/pyodide/v0.28.1/full/pyodide.js")
 
 let isPyLoaded = false
 
+// Pfade, die Skripte über _write angelegt haben. Beim Recyceln eines Workers
+// müssen genau diese wieder verschwinden — das übrige Dateisystem enthält das
+// entpackte importable und die config.py, die zur Umgebung gehören.
+self.writtenPaths = new Set()
+
 function stdout(msg) {
   self.postMessage({ type: "stdout", msg: msg, id: null })
 }
@@ -87,15 +92,7 @@ micropip.freeze()`)
   }
 }
 
-async function loadPyodideAndPackages(
-  id,
-  pyoPackages,
-  packages,
-  initCode,
-  transformCode,
-  importable,
-  envCache
-) {
+async function loadPyodideAndPackages(id, pyoPackages, packages, initCode, transformCode, importable, envCache) {
   const warmStart = Boolean(envCache?.lock && envCache?.installed?.length)
 
   installLog(id, 1, "Loading python runtime")
@@ -144,7 +141,24 @@ async function loadPyodideAndPackages(
 from pyodide.ffi import to_js
 from js import console
 import sys
+import asyncio
+
+_current_task = None
+
+async def scriptor_reset():
+  global _current_task
+  task = _current_task
+  _current_task = None
+  if task is not None and not task.done():
+    task.cancel()
+    try:
+      await task
+    except BaseException:
+      pass
+
 async def pyeval(code, ns):
+  global _current_task
+  _current_task = asyncio.current_task()
   names = []
   for name in sys.modules.keys():
   	if name.startswith("importable.") or name == "importable":
@@ -186,15 +200,27 @@ async function runScript(python, id) {
 
     manager.tasks[processId]["promise"]
       .then(() => {
-        manager.tasks[processId]["done"] = true
-        manager.tasks[processId]["dict"].destroy()
+        // Ein zwischenzeitliches _reset leert manager.tasks bereits, bevor
+        // dieser Handler drankommt — der Eintrag kann hier also fehlen.
+        // empty_dict ist lokal gehalten, damit der PyProxy trotzdem freigegeben wird.
+        const task = manager.tasks[processId]
+        if (task) {
+          task["done"] = true
+          delete manager.tasks[processId]
+        }
+        empty_dict.destroy()
         run_end(id)
       })
       .catch((error) => {
-        manager.tasks[processId]["done"] = true
-        manager.tasks[processId]["dict"].destroy()
+        // Siehe Kommentar im .then()-Zweig: der Eintrag kann durch ein
+        // zwischenzeitliches _reset bereits entfernt worden sein.
+        const task = manager.tasks[processId]
+        if (task) {
+          task["done"] = true
+          delete manager.tasks[processId]
+        }
         console.log("PY RUN ERR", error)
-        delete manager.tasks[processId]
+        empty_dict.destroy()
 
         err(id, error.message)
       })
@@ -224,6 +250,33 @@ self.onmessage = async (event) => {
       run_end(id)
     } catch (error) {
       console.log("PY ENV ERR", error)
+      err(id, error?.message || String(error))
+    }
+  } else if (id === "_reset") {
+    // Setzt den Worker so weit zurück, dass ihn ein anderes Fenster übernehmen
+    // kann. Die Bestätigung kommt bewusst erst am Ende: postMessage ist pro
+    // Worker FIFO, also sind alle Nachrichten des abgebrochenen Laufs — auch
+    // das err aus dem CancelledError — vorher zugestellt.
+    try {
+      if (isPyLoaded) {
+        await self.pyodide.runPythonAsync("await scriptor_reset()")
+        for (const path of self.writtenPaths) {
+          try {
+            if (self.pyodide.FS.analyzePath(path).exists) {
+              self.pyodide.FS.unlink(path)
+            }
+          } catch (error) {
+            console.warn("Scriptor: could not remove", path, error)
+          }
+        }
+      }
+      self.writtenPaths.clear()
+      manager.tasks = {}
+      manager.currentProcessId = 0
+      manager.reset()
+      end(id)
+    } catch (error) {
+      console.log("PY RESET ERR", error)
       err(id, error?.message || String(error))
     }
   } else if (id === "_write") {
@@ -260,6 +313,7 @@ self.onmessage = async (event) => {
     }
 
     self.pyodide.FS.writeFile(file_path, python, { encoding: "utf-8" })
+    self.writtenPaths.add(file_path)
     end(id)
   } else if (id === "_removeFile") {
     let value = self.pyodide.FS.analyzePath(context.path)
@@ -274,6 +328,7 @@ self.onmessage = async (event) => {
     value = self.pyodide.FS.analyzePath(file_path)
     if (value.exists) {
       self.pyodide.FS.unlink(file_path)
+      self.writtenPaths.delete(file_path)
     }
 
     end(id)
