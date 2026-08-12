@@ -69,7 +69,7 @@ function loadCode() {
   }
   const openedId = state.id
   Request.edit(props.module, props.skelkey, { group: props.skeltype }).then(async (resp) => {
-    // Tab inzwischen geschlossen: die Instanz existiert nicht mehr.
+    // The tab has been closed in the meantime: the instance no longer exists.
     if (state.id !== openedId) {
       return
     }
