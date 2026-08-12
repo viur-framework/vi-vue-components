@@ -61,6 +61,10 @@ export default {
     },
     expand: "Vergrößern",
     shrink: "Verkleinern",
+    fetch: {
+      noresponse: "Es wurde keine Antwort vom Server empfangen.",
+      failed: "Die Aktion konnte nicht ausgeführt werden.",
+    },
   },
   sidebar: {
     workspace: "Arbeitsbereich",

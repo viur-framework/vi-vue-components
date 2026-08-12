@@ -67,6 +67,7 @@ import { useContextStore } from "../stores/context"
 import Logics from "logics-js"
 import { Request } from "@viur/vue-utils"
 import Utils from "../utils"
+import { useI18n } from "vue-i18n"
 
 const props = defineProps({
   name: String,
@@ -80,6 +81,7 @@ const contextStore = useContextStore()
 const appStore = useAppStore()
 const messageStore = useMessageStore()
 const userStore = useUserStore()
+const i18n = useI18n()
 const tableReload = inject("reloadAction")
 const state = reactive({
   confirm: false,
@@ -217,6 +219,34 @@ function routeOpen(i) {
 }
 
 function handleFetch(selection) {
+  // Decode a response body based on its content type: JSON is parsed, anything
+  // else falls back to plain text so non-JSON errors stay readable.
+  async function parseResponse(resp) {
+    const contentType = resp?.headers?.get?.("content-type") || ""
+    try {
+      if (contentType.includes("application/json")) {
+        return await resp.json()
+      }
+      const text = await resp.text()
+      return text.trim()
+    } catch (e) {
+      return null
+    }
+  }
+
+  function showError(payload, error = null) {
+    if (payload?.descr && payload?.reason) {
+      messageStore.addMessage("error", payload.reason, payload.descr)
+      return
+    }
+
+    // HTTPError exposes "statusCode", not "status" - a plain Response does the opposite.
+    const status = error?.statusCode ?? error?.response?.status
+    const descr = (typeof payload === "string" && payload) || error?.message || i18n.t("actions.fetch.failed")
+
+    messageStore.addMessage("error", status ? `${state.info["name"]} (${status})` : state.info["name"], descr)
+  }
+
   function triggerServersideAction(url) {
     url = buildUrl(url, selection)
     let request = Request.get
@@ -237,17 +267,17 @@ function handleFetch(selection) {
 
     request(url)
       .then(async (resp) => {
-        try {
-          let responsedata = await resp.json()
-          if (resp.status !== 200) {
-            if (responsedata.descr && responsedata.reason) {
-              messageStore.addMessage("error", responsedata.reason, responsedata.descr)
-            } else {
-              messageStore.addMessage("error", `Error`, "Error")
-            }
-            return 0
-          }
-        } catch (e) {}
+        if (!resp) {
+          messageStore.addMessage("error", state.info["name"], i18n.t("actions.fetch.noresponse"))
+          return
+        }
+
+        // Request rejects every non-2xx response, so this only guards cached
+        // or hand-built responses that never went through that check.
+        if (resp.ok === false) {
+          showError(await parseResponse(resp), { response: resp })
+          return
+        }
         //clear cache
         Request.resetState()
         if (state.info?.["then"] === "reload-module") {
@@ -260,17 +290,16 @@ function handleFetch(selection) {
         }
       })
       .catch(async (error) => {
-        if (typeof error !== "string") {
-          const errorData = await error.response.json()
-
-          if (errorData.descr && errorData.reason) {
-            messageStore.addMessage("error", errorData.reason, errorData.descr)
-          } else {
-            messageStore.addMessage("error", `Error`, "Error")
-          }
-        } else {
-          messageStore.addMessage("error", `Error`, "Error")
+        if (error?.name === "AbortError") {
+          return
         }
+        if (typeof error === "string") {
+          messageStore.addMessage("error", state.info["name"], error)
+          return
+        }
+        // Every non-2xx response arrives here as an HTTPError; its "response"
+        // still holds the unread body with the server-side reason/descr.
+        showError(error?.response ? await parseResponse(error.response) : null, error)
       })
   }
 
