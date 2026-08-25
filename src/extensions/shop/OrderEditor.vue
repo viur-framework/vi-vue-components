@@ -122,6 +122,10 @@
         </div>
       </div>
       <div class="cartinfo">
+        <sl-details v-if="orderNote" class="order-note-details" open>
+          <h2 slot="summary" class="top-headline">{{ $t("shop.order.note") }}</h2>
+          <p class="cart-note__text">{{ orderNote }}</p>
+        </sl-details>
         <h2 class="top-headline">{{ $t("shop.order.cart.title") }}</h2>
         <div class="boxwrapper">
           <table class="cart-table">
@@ -192,10 +196,19 @@
                   <sl-format-number lang="de" type="currency" currency="EUR" :value="shippingCosts"></sl-format-number>
                 </td>
               </tr>
+              <tr v-if="hasDiscount" class="cart-table__summary-discount">
+                <td colspan="4" class="cart-table__summary-label">
+                  {{ $t("shop.order.cart.discount") }}
+                  <span v-if="discountName">({{ discountName }})</span>
+                </td>
+                <td class="cart-table__price">
+                  <sl-format-number lang="de" type="currency" currency="EUR" :value="discountAmount"></sl-format-number>
+                </td>
+              </tr>
               <tr class="cart-table__summary-total">
                 <td colspan="4" class="cart-table__summary-label">{{ $t("shop.order.cart.total") }}</td>
                 <td class="cart-table__price">
-                  <sl-format-number lang="de" type="currency" currency="EUR" :value="orderTotal"></sl-format-number>
+                  <sl-format-number lang="de" type="currency" currency="EUR" :value="displayTotal"></sl-format-number>
                 </td>
               </tr>
             </tfoot>
@@ -368,6 +381,23 @@ const showCartSummary = computed(() => {
     cartRows.value.length > 0 || getOptionalNumber(orderSkel.value?.total) !== null || Boolean(shippingDetails.value)
   )
 })
+// Discount handling mirrors the shop-frontend (ShopSummary.vue): the reduction is the difference
+// between the undiscounted total and the discounted total; the final total shown is the discounted one.
+const discountAmount = computed(() => {
+  const undiscounted = getOptionalNumber(cartRoot.value?.total)
+  const discounted = getOptionalNumber(cartRoot.value?.total_discount_price)
+  if (undiscounted === null || discounted === null) {
+    return null
+  }
+  return discounted - undiscounted
+})
+const hasDiscount = computed(() => discountAmount.value !== null && discountAmount.value < 0)
+const discountName = computed(() => Utils.unescape(getCartValue(cartRoot.value?.discount?.dest?.name)))
+const displayTotal = computed(() => {
+  return hasDiscount.value ? getNumber(cartRoot.value?.total_discount_price) : orderTotal.value
+})
+// Free-text comment on the order (plain multiline text, validHtml=None on the bone).
+const orderNote = computed(() => Utils.unescape(getCartValue(orderSkel.value?.note)))
 
 const state = reactive({
   type: "formhandler",
@@ -818,6 +848,33 @@ sl-details {
   color: var(--sl-color-neutral-600);
   font-size: var(--sl-font-size-x-small);
   font-weight: 400;
+}
+
+.order-note-details {
+  margin-bottom: var(--sl-spacing-medium);
+}
+
+.order-note-details::part(base) {
+  background-color: var(--sl-color-neutral-100);
+  border: 1px solid var(--sl-color-neutral-300);
+  border-radius: 10px;
+}
+
+.order-note-details::part(header) {
+  padding: 10px;
+}
+
+.order-note-details::part(content) {
+  padding: 0 10px 10px;
+}
+
+.order-note-details .top-headline {
+  margin: 0;
+}
+
+.cart-note__text {
+  margin: 0;
+  white-space: pre-wrap;
 }
 
 .cart-table__summary-total td {

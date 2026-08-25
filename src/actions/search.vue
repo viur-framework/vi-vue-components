@@ -88,6 +88,15 @@ watch(
   }
 )
 
+watch(
+  () => handlerState.searchReset,
+  () => {
+    // Kontext-/Kanalwechsel hat die Suche geleert (ListHandler) — Eingabefeld nachziehen
+    state.searchValue = ""
+    state.loading = false
+  }
+)
+
 onMounted(() => {
   if (handlerState.filter) {
     state.searchValue = handlerState.filter
@@ -130,6 +139,7 @@ function search_input(event) {
       return 0
     }
 
+    handlerState.filter = null // Local-Filter der vorherigen Suche darf DB-Ergebnisse nicht weiterfiltern
     currentlist.state.params["search"] = event.target.value
     currentlist
       .fetch()
@@ -148,6 +158,7 @@ function search_input(event) {
 }
 function reset_filter() {
   state.loading = false
+  state.searchValue = ""
   try {
     delete currentlist.state.params["search"]
   } catch (e) {}
