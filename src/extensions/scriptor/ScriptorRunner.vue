@@ -11,9 +11,11 @@
       {{ current["rel"]["name"] }}
     </template>
 
-    <div v-show="state.id">
-      <status :id="state.id" ref="scriptorAction"></status>
-    </div>
+    <status v-if="state.id" :id="state.id" ref="scriptorAction"></status>
+    <sl-progress-bar
+      v-if="state.id && state.scriptor?.progress?.max_step > -1"
+      :value="state.scriptor.progress.total"
+    ></sl-progress-bar>
   </sl-button>
 
   <teleport v-if="state.opened" :to="`#view_dialogs_${handlerState.tabId}`" :disabled="!state.opened">
