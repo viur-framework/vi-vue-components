@@ -2,6 +2,11 @@ importScripts("https://cdn.jsdelivr.net/pyodide/v0.28.1/full/pyodide.js")
 
 let isPyLoaded = false
 
+// Paths that scripts created via _write. Recycling a worker must remove
+// exactly these — the rest of the filesystem holds the unpacked importable
+// and config.py, which belong to the environment.
+self.writtenPaths = new Set()
+
 function stdout(msg) {
   self.postMessage({ type: "stdout", msg: msg, id: null })
 }
@@ -54,25 +59,76 @@ let manager = {
   },
 }
 
-async function loadPyodideAndPackages(id, pyoPackages, packages, initCode, transformCode, importable) {
-  installLog(id, 1, "Loading python runtime")
-  self.pyodide = await loadPyodide({
-    convertNullToNone: true,
-    stdout: stdout,
-    stderr: stderr,
-  })
-  pyoPackages.unshift("micropip")
-  //installog(2, `Installing python packages ${packages.join(", ")}`);
-  installLog(id, 2, `Creating python env`)
-  await self.pyodide.loadPackage(pyoPackages)
-  installLog(id, 3, `Installing python packages`)
-  self.parray = packages
+// Names of the packages actually loaded. micropip records every installed
+// wheel via setattr(loadedPackages, project_name, source) (wheelinfo.py), as
+// does pyodide.loadPackage — making this the minimal list a warm start needs,
+// unlike micropip.list(), which by its own comment also counts stdlib distributions.
+function loadedPackageNames() {
+  try {
+    return Object.keys(self.pyodide.loadedPackages)
+  } catch (error) {
+    console.warn("Scriptor: could not read loadedPackages", error)
+    return []
+  }
+}
 
-  await pyodide.runPythonAsync(`
+// After a cold start, send the resolved lockfile to the store so it's saved
+// to Cache Storage. Errors here must not abort the start: without a cache
+// Scriptor is slower but still works.
+async function sendEnvLock(id) {
+  try {
+    const lock = await self.pyodide.runPythonAsync(`
+import micropip
+micropip.freeze()`)
+    self.postMessage({
+      type: "envlock",
+      lock: lock,
+      installed: loadedPackageNames(),
+      id: null,
+    })
+  } catch (error) {
+    console.warn("Scriptor: could not freeze python env", error)
+  }
+}
+
+async function loadPyodideAndPackages(id, pyoPackages, packages, initCode, transformCode, importable, envCache) {
+  const warmStart = Boolean(envCache?.lock && envCache?.installed?.length)
+
+  installLog(id, 1, "Loading python runtime")
+
+  if (warmStart) {
+    // The frozen lockfile describes all packages, including those installed
+    // afterward via micropip. The packages option loads them during the WASM
+    // bootstrap — no PyPI lookup, no dependency resolution.
+    self.pyodide = await loadPyodide({
+      convertNullToNone: true,
+      stdout: stdout,
+      stderr: stderr,
+      lockFileContents: envCache.lock,
+      packages: envCache.installed,
+    })
+    installLog(id, 3, `Restoring python packages from cache`)
+  } else {
+    self.pyodide = await loadPyodide({
+      convertNullToNone: true,
+      stdout: stdout,
+      stderr: stderr,
+    })
+    pyoPackages.unshift("micropip")
+    installLog(id, 2, `Creating python env`)
+    await self.pyodide.loadPackage(pyoPackages)
+    installLog(id, 3, `Installing python packages`)
+    self.parray = packages
+
+    await self.pyodide.runPythonAsync(`
   import micropip
   from js import parray
   await micropip.install(parray.to_py())
   `)
+
+    self.parray = undefined
+    await sendEnvLock(id)
+  }
 
   installLog(id, 4, `Initializing environment`)
   if (importable !== undefined) {
@@ -80,12 +136,28 @@ async function loadPyodideAndPackages(id, pyoPackages, packages, initCode, trans
     self.pyodide.pyimport("importable")
   }
 
-  self.parray = undefined
   const src = `from pyodide.code import eval_code_async
 from pyodide.ffi import to_js
 from js import console
 import sys
+import asyncio
+
+_current_task = None
+
+async def scriptor_reset():
+  global _current_task
+  task = _current_task
+  _current_task = None
+  if task is not None and not task.done():
+    task.cancel()
+    try:
+      await task
+    except BaseException:
+      pass
+
 async def pyeval(code, ns):
+  global _current_task
+  _current_task = asyncio.current_task()
   names = []
   for name in sys.modules.keys():
   	if name.startswith("importable.") or name == "importable":
@@ -99,10 +171,9 @@ async def pyeval(code, ns):
 
   return to_js(result)`
   await self.pyodide.registerJsModule("manager", manager)
-  //console.log("SRC EXEC", src)
-  await pyodide.runPythonAsync(src)
+  await self.pyodide.runPythonAsync(src)
   if (initCode.length > 0) {
-    await pyodide.runPythonAsync(initCode)
+    await self.pyodide.runPythonAsync(initCode)
   }
 
   installLog(id, 5, "The python env is loaded")
@@ -128,15 +199,27 @@ async function runScript(python, id) {
 
     manager.tasks[processId]["promise"]
       .then(() => {
-        manager.tasks[processId]["done"] = true
-        manager.tasks[processId]["dict"].destroy()
+        // An intervening _reset may already have cleared manager.tasks before
+        // this handler runs — the entry can be missing here. empty_dict is
+        // kept local so the PyProxy still gets released.
+        const task = manager.tasks[processId]
+        if (task) {
+          task["done"] = true
+          delete manager.tasks[processId]
+        }
+        empty_dict.destroy()
         run_end(id)
       })
       .catch((error) => {
-        manager.tasks[processId]["done"] = true
-        manager.tasks[processId]["dict"].destroy()
+        // See the comment in the .then() branch: an intervening _reset may
+        // already have removed the entry.
+        const task = manager.tasks[processId]
+        if (task) {
+          task["done"] = true
+          delete manager.tasks[processId]
+        }
         console.log("PY RUN ERR", error)
-        delete manager.tasks[processId]
+        empty_dict.destroy()
 
         err(id, error.message)
       })
@@ -151,15 +234,50 @@ self.onmessageerror = (e) => {
 self.onmessage = async (event) => {
   const { id, python, ...context } = event.data
   if (id === "_pyinstaller") {
-    await loadPyodideAndPackages(
-      id,
-      context.pyoPackages,
-      context.packages,
-      context.initCode,
-      context.transformCode,
-      context.importable
-    )
-    run_end(id)
+    // Without this try/catch, an error would leave the _pyinstaller promise
+    // in the store open forever, and Scriptor hangs in the loading state.
+    try {
+      await loadPyodideAndPackages(
+        id,
+        context.pyoPackages,
+        context.packages,
+        context.initCode,
+        context.transformCode,
+        context.importable,
+        context.envCache
+      )
+      run_end(id)
+    } catch (error) {
+      console.log("PY ENV ERR", error)
+      err(id, error?.message || String(error))
+    }
+  } else if (id === "_reset") {
+    // Resets the worker far enough that another window can adopt it. The
+    // confirmation is sent last on purpose: postMessage is FIFO per worker,
+    // so all messages from the aborted run — including the CancelledError's
+    // err — are delivered before it.
+    try {
+      if (isPyLoaded) {
+        await self.pyodide.runPythonAsync("await scriptor_reset()")
+        for (const path of self.writtenPaths) {
+          try {
+            if (self.pyodide.FS.analyzePath(path).exists) {
+              self.pyodide.FS.unlink(path)
+            }
+          } catch (error) {
+            console.warn("Scriptor: could not remove", path, error)
+          }
+        }
+      }
+      self.writtenPaths.clear()
+      manager.tasks = {}
+      manager.currentProcessId = 0
+      manager.reset()
+      end(id)
+    } catch (error) {
+      console.log("PY RESET ERR", error)
+      err(id, error?.message || String(error))
+    }
   } else if (id === "_write") {
     if (context === undefined) return
 
@@ -194,6 +312,7 @@ self.onmessage = async (event) => {
     }
 
     self.pyodide.FS.writeFile(file_path, python, { encoding: "utf-8" })
+    self.writtenPaths.add(file_path)
     end(id)
   } else if (id === "_removeFile") {
     let value = self.pyodide.FS.analyzePath(context.path)
@@ -208,6 +327,7 @@ self.onmessage = async (event) => {
     value = self.pyodide.FS.analyzePath(file_path)
     if (value.exists) {
       self.pyodide.FS.unlink(file_path)
+      self.writtenPaths.delete(file_path)
     }
 
     end(id)

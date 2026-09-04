@@ -25,15 +25,18 @@ const props = defineProps({
   entry: {
     type: Object,
   },
+  instanceId: { required: true },
 })
 
 const state = reactive({
-  inputDisabled: false,
+  // Lives on the message in the store rather than local state, so the
+  // disabled flag survives a remount after restoring from minimized.
+  inputDisabled: computed(() => !!props.entry.data.answered),
 })
 
 async function pressedOk() {
-  await scriptorStore.sendResult("alertResult", {})
-  state.inputDisabled = true
+  await scriptorStore.sendResult(props.instanceId, "alertResult", {})
+  scriptorStore.markMessageAnswered(props.instanceId, props.entry.data.unique_id)
 }
 </script>
 

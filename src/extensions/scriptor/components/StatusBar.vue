@@ -9,18 +9,18 @@
     </div>
 
     <div slot="center">
-      <div v-if="scriptorStore.progress.max_step > -1">
+      <div v-if="state.scriptor?.progress?.max_step > -1">
         <sl-progress-bar
           class="scriptorprogressbar"
-          :value="scriptorStore.progress.total"
+          :value="state.scriptor.progress.total"
           label="Upload progress"
         ></sl-progress-bar>
         <br />
         <div class="scriptorprogresstext">
-          {{ scriptorStore.progress.step }}/{{ scriptorStore.progress.max_step }} ({{
-            Math.floor(scriptorStore.progress.total)
+          {{ state.scriptor.progress.step }}/{{ state.scriptor.progress.max_step }} ({{
+            Math.floor(state.scriptor.progress.total)
           }}%)
-          {{ scriptorStore.progress.txt }}
+          {{ state.scriptor.progress.txt }}
         </div>
       </div>
     </div>
@@ -33,7 +33,7 @@
         :pulse="state.userStatus['pulse']"
         @click="reset"
       >
-        <span v-if="scriptorStore.state.isReady">&nbsp;&nbsp;</span>
+        <span v-if="state.scriptor?.envState === 'ready'">&nbsp;&nbsp;</span>
         <span v-else>&nbsp;&nbsp;</span>
       </sl-badge>
       <sl-select
@@ -62,6 +62,7 @@
 <script setup>
 import { reactive, computed, onMounted } from "vue"
 import { useScriptorStore } from "../store/scriptor"
+import { describeInstanceStatus } from "../store/instanceStatus"
 const scriptorStore = useScriptorStore()
 
 const props = defineProps({
@@ -74,19 +75,11 @@ const props = defineProps({
 })
 
 const state = reactive({
-  userStatus: computed(() => {
-    if (scriptorStore.state.isReady && scriptorStore.state.isRunning) {
-      return { text: "Skript läuft...", variant: "success", pulse: true }
-    } else if (!scriptorStore.state.isReady && scriptorStore.state.isRunning) {
-      return { text: "Skriptor wird geladen...", variant: "warning", pulse: true }
-    } else if (scriptorStore.state.isReady && !scriptorStore.state.isRunning) {
-      return { text: "Skriptor ist bereit.", variant: "success", pulse: false }
-    } else {
-      return { text: "Skriptor nicht geladen.", variant: "danger", pulse: false }
-    }
-  }),
   scriptor: computed(() => {
     return scriptorStore.state.instances[props.id]
+  }),
+  userStatus: computed(() => {
+    return describeInstanceStatus(scriptorStore.state.instances[props.id])
   }),
   versions: [],
   customVersion: import.meta.env.VITE_SCRIPTOR_URL,
@@ -97,18 +90,36 @@ async function executeScript() {
 }
 
 function reset() {
-  scriptorStore.state.instances[props.id].messages = []
-  scriptorStore.state.instances[props.id].internalMessages = []
-  scriptorStore.state.isReady = false
-  scriptorStore.state.runningActions = new Map()
+  const instance = scriptorStore.state.instances[props.id]
+  if (!instance) {
+    return
+  }
+  instance.messages = []
+  instance.internalMessages = []
 }
+
+// A new Scriptor version needs a new environment. Only THIS instance's worker
+// is discarded — other scripts running in parallel are unaffected.
 function changeVersion(e) {
   scriptorStore.state.scriptorVersion = e.target.value
   reset()
+  if (props.id) {
+    scriptorStore.destroyInstance(props.id)
+    scriptorStore.createNewInstance(props.id)
+  }
 }
 onMounted(() => {
   scriptorStore.fetchScriptorVersions().then((result) => {
     state.versions = result
+    // StatusBar lives in the dialog and remounts when restoring from
+    // minimized. An already-set version (default or custom) must not be
+    // overwritten then — otherwise the next close would compare the worker
+    // against the reset version instead of the actually loaded envVersion,
+    // breaking worker recycling.
+    if (scriptorStore.state.scriptorVersionInitialized) {
+      return
+    }
+    scriptorStore.state.scriptorVersionInitialized = true
     if (state.customVersion) {
       scriptorStore.state.scriptorVersion = state.customVersion
     } else {

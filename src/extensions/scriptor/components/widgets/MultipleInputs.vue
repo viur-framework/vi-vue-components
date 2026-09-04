@@ -7,6 +7,7 @@
           ref="elements"
           :entry="{ data: _entry }"
           :in-multiple="true"
+          :instance-id="props.instanceId"
         ></component>
       </div>
     </div>
@@ -18,6 +19,7 @@
           :entry="{ data: _entry }"
           :in-multiple="true"
           :data-key="key"
+          :instance-id="props.instanceId"
         ></component>
       </div>
     </template>
@@ -40,10 +42,13 @@ const props = defineProps({
   entry: {
     type: Object,
   },
+  instanceId: { required: true },
 })
 
 const state = reactive({
-  buttonDisabled: false,
+  // Lives on the message in the store rather than local state, so the
+  // disabled flag survives a remount after restoring from minimized.
+  buttonDisabled: computed(() => !!props.entry.data.answered),
   sendable: computed(() => {
     for (const element of elements.value) {
       if (element.state && element.state.sendable !== undefined) {
@@ -57,6 +62,7 @@ const state = reactive({
 })
 
 async function buttonCallback() {
+  scriptorStore.markMessageAnswered(props.instanceId, props.entry.data.unique_id)
   if (Array.isArray(props.entry.data.components)) {
     const result = []
     for (const element of elements.value) {
@@ -64,7 +70,7 @@ async function buttonCallback() {
         result.push(element.state.value)
       }
     }
-    await scriptorStore.sendResult("textResult", JSON.stringify(result))
+    await scriptorStore.sendResult(props.instanceId, "textResult", JSON.stringify(result))
   } else if (typeof props.entry.data.components === "object") {
     const result = {}
 
@@ -73,11 +79,11 @@ async function buttonCallback() {
         result[element.props.dataKey] = element.state.value
       }
     }
-    await scriptorStore.sendResult("textResult", JSON.stringify(result))
+    await scriptorStore.sendResult(props.instanceId, "textResult", JSON.stringify(result))
   }
 }
 
-//todo zusammen fassen
+//todo: consolidate
 function getWidget(type) {
   if (["install", "err", "stdout", "stderr", "log", "info", "error", "debug", "warning"].includes(type)) {
     return widgets.logEntry

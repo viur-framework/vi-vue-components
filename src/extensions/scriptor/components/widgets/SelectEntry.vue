@@ -85,6 +85,7 @@ const props = defineProps({
   },
   inMultiple: { type: Boolean, default: false },
   dataKey: { type: String },
+  instanceId: { required: true },
 })
 
 onMounted(() => {
@@ -98,7 +99,11 @@ onMounted(() => {
 const state = reactive({
   selectedOptions: props.entry.data?.default_value || [],
   isMultiple: computed(() => props.entry.data["multiple"]),
-  isDisabled: false,
+  // Lives on the message in the store rather than local state, so the
+  // disabled flag survives a remount after restoring from minimized. With
+  // inMultiple, entry.data.answered stays unset since nothing is sent here —
+  // behavior for that case is unchanged.
+  isDisabled: computed(() => !!props.entry.data.answered),
   options: {},
   value: props.entry.data?.default_value || [],
   sendable: computed(() => {
@@ -120,8 +125,8 @@ function toggleSelection(option) {
 
 async function selectSingleOption(option) {
   if (!props.inMultiple) {
-    await scriptorStore.sendResult("selectResult", option.key)
-    state.isDisabled = true
+    await scriptorStore.sendResult(props.instanceId, "selectResult", option.key)
+    scriptorStore.markMessageAnswered(props.instanceId, props.entry.data.unique_id)
   } else {
     state.value = option.key
     state.selectedOptions = []
@@ -131,8 +136,8 @@ async function selectSingleOption(option) {
 
 async function sendMultipleOptions() {
   if (!props.inMultiple) {
-    state.isDisabled = true
-    await scriptorStore.sendResult("selectResult", [...state.value])
+    scriptorStore.markMessageAnswered(props.instanceId, props.entry.data.unique_id)
+    await scriptorStore.sendResult(props.instanceId, "selectResult", [...state.value])
   }
 }
 

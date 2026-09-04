@@ -57,11 +57,15 @@ const props = defineProps({
   entry: { type: Object },
   inMultiple: { type: Boolean, default: false },
   dataKey: { type: String },
+  instanceId: { required: true },
 })
 
 async function buttonCallback(event, option) {
-  state.buttonDisabled = true
-  await scriptorStore.sendResult("textResult", state.value)
+  // Disabling lives on the message in the store (state.buttonDisabled mirrors
+  // it), so a remount after restoring from minimized can't make the answer
+  // sendable again.
+  scriptorStore.markMessageAnswered(props.instanceId, props.entry.data.unique_id)
+  await scriptorStore.sendResult(props.instanceId, "textResult", state.value)
 }
 
 const state = reactive({
@@ -70,7 +74,7 @@ const state = reactive({
   }),
   value: "",
   multiline: computed(() => props.entry.data.input_type === "text"),
-  buttonDisabled: false,
+  buttonDisabled: computed(() => !!props.entry.data.answered),
   inputType: computed(() => {
     if (props.entry.data.input_type === "date" && props.entry.data.use_time) {
       return "datetime-local"

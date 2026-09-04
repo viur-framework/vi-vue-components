@@ -6,6 +6,7 @@
         v-for="entry in state.scriptor?.internalMessages?.slice(-100)"
         :key="entry.data['unique_id']"
         :entry="entry"
+        :instance-id="props.id"
       ></component>
     </template>
     <template v-if="['all', 'script'].includes(type)">
@@ -14,11 +15,12 @@
         v-for="entry in state.scriptor?.messages?.slice(-100)"
         :key="entry.data['unique_id']"
         :entry="entry"
+        :instance-id="props.id"
       ></component>
     </template>
     <div v-if="state.isEmpty" class="wrapper-empty">
       {{ $t("scriptor.no_messages") }}
-      <sl-spinner v-if="scriptorStore.state.isLoading"></sl-spinner>
+      <sl-spinner v-if="state.scriptor?.envState === 'loading'"></sl-spinner>
     </div>
   </div>
 </template>

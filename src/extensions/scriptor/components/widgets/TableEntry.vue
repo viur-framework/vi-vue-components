@@ -40,7 +40,7 @@
 </template>
 
 <script setup>
-import { reactive, onMounted } from "vue"
+import { reactive, computed, onMounted } from "vue"
 import { useScriptorStore } from "../../store/scriptor"
 
 const scriptorStore = useScriptorStore()
@@ -49,10 +49,14 @@ const props = defineProps({
   entry: {
     type: Object,
   },
+  instanceId: { required: true },
 })
 
 async function sendButtonClick() {
-  state.dataSent = true
+  // Disabling lives on the message in the store (state.dataSent mirrors it),
+  // so a remount after restoring from minimized can't make the answer
+  // sendable again.
+  scriptorStore.markMessageAnswered(props.instanceId, props.entry.data.unique_id)
   let selected = []
   let index = -1
   for (const irow of state.rowdata) {
@@ -61,7 +65,7 @@ async function sendButtonClick() {
       selected.push(index)
     }
   }
-  await scriptorStore.sendResult("tableResult", selected)
+  await scriptorStore.sendResult(props.instanceId, "tableResult", selected)
 }
 
 function toggleSelectAll() {
@@ -110,7 +114,7 @@ onMounted(() => {
 const state = reactive({
   rowdata: [],
   all_selected: false,
-  dataSent: false,
+  dataSent: computed(() => !!props.entry.data.answered),
   atLeastOneSelected: false,
 })
 </script>
@@ -178,8 +182,8 @@ tr:hover {
 }
 
 tbody {
-  max-height: 200px; /* Setze die maximale Höhe für den Body-Container */
-  overflow-y: auto; /* Füge eine Scrollbar hinzu */
+  max-height: 200px; /* Set the maximum height of the body container */
+  overflow-y: auto; /* Add a scrollbar */
 }
 
 .sl-checkbox {

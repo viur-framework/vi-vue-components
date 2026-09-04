@@ -11,9 +11,11 @@
       {{ current["rel"]["name"] }}
     </template>
 
-    <div v-show="state.scriptStatus && state.opened">
-      <status :id="state.id" ref="scriptorAction"></status>
-    </div>
+    <status v-if="state.id" :id="state.id" ref="scriptorAction"></status>
+    <sl-progress-bar
+      v-if="state.id && state.scriptor?.progress?.max_step > -1"
+      :value="state.scriptor.progress.total"
+    ></sl-progress-bar>
   </sl-button>
 
   <teleport v-if="state.opened" :to="`#view_dialogs_${handlerState.tabId}`" :disabled="!state.opened">
@@ -23,8 +25,16 @@
       style="--width: 85%"
       :open="state.opened"
       :label="current['rel']['name']"
-      @sl-after-hide="exitScriptor"
+      @sl-after-hide="handleAfterHide"
+      @sl-request-close="handleRequestClose"
     >
+      <sl-icon-button
+        slot="header-actions"
+        name="dash"
+        :label="$t('actions.minimize')"
+        @click="minimizeScriptor"
+      ></sl-icon-button>
+
       <div ref="messagewrapper" class="wrapper-widgets">
         <status-bar :id="state.id" :filename="current['dest']['name']"></status-bar>
 
@@ -35,14 +45,14 @@
 </template>
 
 <script setup>
-import {onBeforeMount, reactive, ref, computed, inject, watch} from "vue"
+import { onBeforeMount, onBeforeUnmount, reactive, ref, computed, inject, watch } from "vue"
 import WidgetList from "./components/WidgetList.vue"
 import StatusBar from "./components/StatusBar.vue"
 import Status from "./components/Status.vue"
-import {useScriptorStore} from "./store/scriptor"
-import {Request} from "@viur/vue-utils"
+import { useScriptorStore } from "./store/scriptor"
+import { Request } from "@viur/vue-utils"
 import Utils from "../../utils"
-import {useDebounceFn} from "@vueuse/core"
+import { useDebounceFn } from "@vueuse/core"
 
 const messagewrapper = ref(null)
 const scriptorAction = ref(null)
@@ -77,23 +87,35 @@ const props = defineProps({
 const scriptorStore = useScriptorStore()
 const state = reactive({
   id: null,
-  scriptStatus: computed(() => {
-    return scriptorAction.value?.state?.userStatus?.pulse
-  }),
   opened: false,
   scriptor: computed(() => {
     return scriptorStore.state.instances[state.id]
   }),
   scriptReady: false,
+  // Set when the dialog is hidden on purpose. Without it, the sl-after-hide
+  // handler cannot tell minimizing from closing.
+  minimized: false,
 })
 
 function startScriptor(params = {}) {
+  // Minimized window: just show it again, never run anything. The flag is
+  // cleared here too, because sl-after-hide may never have fired on minimize.
+  if (state.id && !state.opened) {
+    state.minimized = false
+    state.opened = true
+    return
+  }
   emit("start")
   state.opened = true
-  params = {...params, ...props.scriptParams}
+  params = { ...params, ...props.scriptParams }
   if (!state.id) {
     state.id = scriptorStore.createNewInstance()
-    Request.view("script", props.current?.["dest"]?.["key"], {group: "leaf"}).then(async (resp) => {
+    const openedId = state.id
+    Request.view("script", props.current?.["dest"]?.["key"], { group: "leaf" }).then(async (resp) => {
+      // Window closed meanwhile: the instance is gone.
+      if (state.id !== openedId) {
+        return
+      }
       const data = await resp.json()
       state.scriptor.scriptCode = data["values"]["script"].replace(/\/\/n/g, "\n")
       state.scriptReady = true
@@ -102,8 +124,11 @@ function startScriptor(params = {}) {
     return
   }
   if (import.meta.env.DEV) {
-    //Reload the script on DEV Mode everytime
-    Request.view("script", props.current?.["dest"]?.["key"], {group: "leaf"}).then(async (resp) => {
+    const openedId = state.id
+    Request.view("script", props.current?.["dest"]?.["key"], { group: "leaf" }).then(async (resp) => {
+      if (state.id !== openedId) {
+        return
+      }
       const data = await resp.json()
       state.scriptor.scriptCode = data["values"]["script"].replace(/\/\/n/g, "\n")
       state.scriptReady = true
@@ -114,24 +139,89 @@ function startScriptor(params = {}) {
   }
 }
 
-function exitScriptor() {
-  emit("exit");
+// Hides the dialog without tearing down the instance: worker, output and a
+// running script stay alive. The script button brings it back.
+function minimizeScriptor() {
+  state.minimized = true
   state.opened = false
-  scriptorAction.value.exitScript()
 }
+
+// sl-dialog closes itself on an overlay click and on escape, both of which
+// would run exitScriptor and lose a running script. Overlay clicks are blocked
+// outright, escape minimizes — the close button stays the only destructive way.
+function handleRequestClose(event) {
+  const source = event.detail?.source
+
+  if (source === "overlay") {
+    event.preventDefault()
+    return
+  }
+
+  if (source === "keyboard") {
+    event.preventDefault()
+    minimizeScriptor()
+  }
+}
+
+// sl-after-hide is unreliable on minimize: state.opened = false drops the
+// teleport via v-if before the event can fire. On the close button it fires
+// reliably, so the flag is cleared here AND in startScriptor.
+function handleAfterHide() {
+  if (state.minimized) {
+    state.minimized = false
+    return
+  }
+  exitScriptor()
+}
+
+function exitScriptor() {
+  emit("exit")
+  state.opened = false
+  // exitScriptor is exposed via defineExpose. A leftover flag would block the
+  // state machine (see handleAfterHide/startScriptor) afterwards.
+  state.minimized = false
+  if (state.id) {
+    scriptorStore.destroyInstance(state.id)
+  }
+  // Required: startScriptor() checks `if (!state.id)` to load code and create an
+  // instance. A stale id would reopen the dialog onto a deleted one.
+  state.id = null
+  state.scriptReady = false
+}
+
+// The action bar holding this runner is kept alive (main/ViewWrapper.vue), so a
+// tab switch only deactivates it and a minimized window survives that on
+// purpose. This fires when the vi tab itself closes, where cleanup is needed:
+// state.id would go with the component while instance and worker live on in the
+// store, unreachable. destroyInstance parks the worker, so the environment
+// itself is not lost.
+onBeforeUnmount(() => {
+  if (state.id) {
+    scriptorStore.destroyInstance(state.id)
+  }
+  // Without this the guard in startScriptor() (`state.id !== openedId`) misses
+  // an aborted load, and a pending Request.view callback writes to
+  // state.scriptor after the instance is gone.
+  state.id = null
+})
 
 watch(
   () => state.scriptor?.messages.length,
   (newVal, oldVal) => {
-    if (messagewrapper.value) {
-      const scroller = useDebounceFn((event) => {
-        runnerDialog.value.shadowRoot.querySelector(".dialog__body").scroll(0, 99999)
-      }, 1)
-      scroller()
+    // newVal is undefined once exitScriptor() dropped the instance and nulled
+    // state.id — nothing left to scroll.
+    if (newVal === undefined || !messagewrapper.value) {
+      return
     }
+    const scroller = useDebounceFn((event) => {
+      // The dialog hangs on the teleport's v-if and can vanish between the
+      // watcher firing and the debounce elapsing — closing does exactly that.
+      runnerDialog.value?.shadowRoot?.querySelector(".dialog__body")?.scroll(0, 99999)
+    }, 1)
+    scroller()
   }
 )
-defineExpose({startScriptor, exitScriptor})
+defineExpose({ startScriptor, exitScriptor })
 </script>
 
 <style scoped>

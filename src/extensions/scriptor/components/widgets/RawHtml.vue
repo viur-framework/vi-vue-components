@@ -18,6 +18,7 @@ const props = defineProps({
     default: false,
   },
   dataKey: { type: String },
+  instanceId: { required: true },
 })
 
 const state = reactive({
@@ -59,8 +60,12 @@ const state = reactive({
 })
 
 onMounted(async () => {
-  if (!props.inMultiple) {
-    await scriptorStore.sendResult("htmlResult", {})
+  // entry.data.answered guards against re-sending after a remount from
+  // minimized: RawHtml sends its result immediately on mount, and a second
+  // send would overwrite the worker's global resultValue slot.
+  if (!props.inMultiple && !props.entry.data.answered) {
+    await scriptorStore.sendResult(props.instanceId, "htmlResult", {})
+    scriptorStore.markMessageAnswered(props.instanceId, props.entry.data.unique_id)
   }
 })
 </script>

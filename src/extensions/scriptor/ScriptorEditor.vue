@@ -23,7 +23,7 @@
 </template>
 
 <script setup>
-import { reactive, onMounted, onBeforeMount, computed, watch, ref } from "vue"
+import { reactive, onMounted, onBeforeMount, onBeforeUnmount, computed, watch, ref } from "vue"
 import WidgetList from "./components/WidgetList.vue"
 import StatusBar from "./components/StatusBar.vue"
 import CodeEditor from "./components/CodeEditor.vue"
@@ -56,15 +56,25 @@ onBeforeMount(() => {
   loadCode()
 })
 
+onBeforeUnmount(() => {
+  if (state.id) {
+    scriptorStore.destroyInstance(state.id)
+    state.id = null
+  }
+})
+
 function loadCode() {
-  console.log(props)
   if (!props.skelkey) {
     return
   }
+  const openedId = state.id
   Request.edit(props.module, props.skelkey, { group: props.skeltype }).then(async (resp) => {
+    // The tab has been closed in the meantime: the instance no longer exists.
+    if (state.id !== openedId) {
+      return
+    }
     let data = await resp.json()
     state.script = data["values"]
-
     state.scriptor.scriptCode = data["values"]["script"]
     state.scriptor.scriptKey = data["values"]["key"]
   })
