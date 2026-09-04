@@ -49,7 +49,7 @@ function reload() {
 function clearCache() {
   cachedRequestsStore.clearCache(Request.buildUrl(`/${currentlist.state.renderer}/${currentlist.state.module}`))
   cachedRequestsStore.clearCache(
-    Request.buildUrl(`/${currentlist.state.renderer}/getStructure/${currentlist.state.module}`)
+    Request.buildUrl(`/${currentlist.state.renderer}/${currentlist.state.module}/structure`)
   )
   reload()
 }
