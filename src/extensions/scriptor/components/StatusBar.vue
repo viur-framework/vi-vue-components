@@ -9,20 +9,6 @@
     </div>
 
     <div slot="center">
-      <div v-if="state.scriptor?.progress?.max_step > -1">
-        <sl-progress-bar
-          class="scriptorprogressbar"
-          :value="state.scriptor.progress.total"
-          label="Upload progress"
-        ></sl-progress-bar>
-        <br />
-        <div class="scriptorprogresstext">
-          {{ state.scriptor.progress.step }}/{{ state.scriptor.progress.max_step }} ({{
-            Math.floor(state.scriptor.progress.total)
-          }}%)
-          {{ state.scriptor.progress.txt }}
-        </div>
-      </div>
     </div>
 
     <div slot="right">
@@ -57,6 +43,19 @@
       <slot></slot>
     </div>
   </sl-bar>
+  <div v-if="state.scriptor?.progress?.max_step > -1"
+       class="status-bar-progress-bar">
+    <sl-progress-bar
+      :value="state.scriptor.progress.total"
+      label="Upload progress"
+    ></sl-progress-bar>
+    <div class="status-bar-progress-text">
+      {{ state.scriptor.progress.step }}/{{ state.scriptor.progress.max_step }} ({{
+        Math.floor(state.scriptor.progress.total)
+      }}%)
+      {{ state.scriptor.progress.txt }}
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -157,7 +156,34 @@ sl-badge {
   margin-right: 5px;
 }
 
-.scriptorprogressbar {
+.status-bar-progress-bar{
   width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: var(--sl-spacing-small);
+  background-color: var(--sl-color-neutral-100);
+  border: 1px solid var(--vi-border-color);
+  border-radius: var(--sl-border-radius-medium);
+  padding: var(--sl-spacing-x-small) var(--sl-spacing-small);
+  margin: 10px 0;
+
+  sl-progress-bar{
+    --height: 4px;
+    flex: 1;
+
+    &::part(base){
+      box-shadow: none;
+    }
+  }
+}
+
+.status-bar-progress-text{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  font-size: .8em;
+  font-weight: 700;
 }
 </style>

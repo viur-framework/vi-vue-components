@@ -6,8 +6,8 @@
     :pulse="state.userStatus['pulse']"
     @click="reset"
   >
-    <span v-if="state.scriptor?.envState === 'ready'">&nbsp;&nbsp;</span>
-    <span v-else>&nbsp;&nbsp;</span>
+    <span v-if="state.scriptor?.envState === 'ready'">&nbsp;</span>
+    <span v-else>&nbsp;</span>
   </sl-badge>
   <slot :disabled="state.userStatus.pulse" :execute="executeScript"></slot>
 </template>
@@ -57,8 +57,14 @@ defineExpose({
 </script>
 
 <style scoped>
-sl-badge::part(base) {
-  width: 1rem;
-  height: 1rem;
+sl-badge{
+  position: relative;
+  translate: none;
+
+  &::part(base) {
+    width: .8rem;
+    height: .8rem;
+    padding: 0;
+  }
 }
 </style>
