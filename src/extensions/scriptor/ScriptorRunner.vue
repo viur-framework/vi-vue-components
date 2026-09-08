@@ -11,8 +11,8 @@
       {{ current["rel"]["name"] }}
     </template>
 
-    <div  v-if="state.id" :id="state.id" ref="scriptorAction" slot="suffix">
-      <status ref="scriptorAction"></status>
+    <div v-if="state.id" slot="suffix">
+      <status :id="state.id" ref="scriptorAction"></status>
     </div>
     <sl-progress-bar
       class="runner-button-progress-bar"
