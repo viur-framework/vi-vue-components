@@ -11,8 +11,11 @@
       {{ current["rel"]["name"] }}
     </template>
 
-    <status v-if="state.id" :id="state.id" ref="scriptorAction"></status>
+    <div  v-if="state.id" :id="state.id" ref="scriptorAction" slot="suffix">
+      <status ref="scriptorAction"></status>
+    </div>
     <sl-progress-bar
+      class="runner-button-progress-bar"
       v-if="state.id && state.scriptor?.progress?.max_step > -1"
       :value="state.scriptor.progress.total"
     ></sl-progress-bar>
@@ -39,6 +42,24 @@
         <status-bar :id="state.id" :filename="current['dest']['name']"></status-bar>
 
         <widget-list :id="state.id"></widget-list>
+      </div>
+    </sl-dialog>
+  </teleport>
+
+  <teleport v-if="state.confirmClose" :to="`#view_dialogs_${handlerState.tabId}`" :disabled="!state.confirmClose">
+    <sl-dialog
+      :label="$t('actions.close_confirm.title')"
+      open
+      @sl-after-hide="state.confirmClose = false"
+    >
+      {{ $t("actions.close_confirm.text") }}
+      <div class="btn-wrap" slot="footer">
+        <sl-button variant="danger" @click="confirmCloseScriptor">
+          {{ $t("actions.close_confirm.close") }}
+        </sl-button>
+        <sl-button variant="default" @click="confirmMinimizeScriptor">
+          {{ $t("actions.minimize") }}
+        </sl-button>
       </div>
     </sl-dialog>
   </teleport>
@@ -95,6 +116,9 @@ const state = reactive({
   // Set when the dialog is hidden on purpose. Without it, the sl-after-hide
   // handler cannot tell minimizing from closing.
   minimized: false,
+  // Shows the close-vs-minimize confirmation when the close button is used
+  // while a script is running.
+  confirmClose: false,
 })
 
 function startScriptor(params = {}) {
@@ -148,7 +172,8 @@ function minimizeScriptor() {
 
 // sl-dialog closes itself on an overlay click and on escape, both of which
 // would run exitScriptor and lose a running script. Overlay clicks are blocked
-// outright, escape minimizes — the close button stays the only destructive way.
+// outright, escape minimizes. The close button would still abort a running
+// script outright, so it asks for confirmation instead when one is running.
 function handleRequestClose(event) {
   const source = event.detail?.source
 
@@ -160,7 +185,28 @@ function handleRequestClose(event) {
   if (source === "keyboard") {
     event.preventDefault()
     minimizeScriptor()
+    return
   }
+
+  // runState only flips to "running" once the Pyodide environment has
+  // finished loading (see store/scriptor.js execute()) — the install phase
+  // beforehand (envState "loading") can take just as long and would abort
+  // the same way, so it needs the same guard.
+  const taskRunning = state.scriptor?.runState === "running" || state.scriptor?.envState === "loading"
+  if (taskRunning) {
+    event.preventDefault()
+    state.confirmClose = true
+  }
+}
+
+function confirmCloseScriptor() {
+  state.confirmClose = false
+  exitScriptor()
+}
+
+function confirmMinimizeScriptor() {
+  state.confirmClose = false
+  minimizeScriptor()
 }
 
 // sl-after-hide is unreliable on minimize: state.opened = false drops the
@@ -227,6 +273,20 @@ defineExpose({ startScriptor, exitScriptor })
 <style scoped>
 .wrapper-widgets {
   overflow-y: auto;
+
+  &:deep(sl-bar){
+    padding: 0;
+    margin-top: -10px;
+  }
+
+  &:deep(sl-bar + .wrapper-widget){
+    margin-top: 10px;
+  }
+
+
+  &:deep(.wrapper-widget){
+    padding: 0;
+  }
 }
 
 .tabpopup {
@@ -270,5 +330,35 @@ defineExpose({ startScriptor, exitScriptor })
       color: var(--sl-color-success-500);
     }
   }
+}
+
+sl-button{
+  &::part(base){
+    overflow: hidden;
+    position: relative;
+  }
+  &::part(suffix){
+    display: flex !important;
+    margin-left: auto;
+  }
+}
+
+.runner-button-progress-bar{
+  --height: 2px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  mix-blend-mode: multiply;
+
+  &::part(base){
+    box-shadow: none;
+  }
+}
+
+.btn-wrap{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 </style>
