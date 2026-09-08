@@ -98,7 +98,9 @@ function optimizeText(txt) {
 onBeforeMount(() => {
   Request.getStructure(props.module).then(async (resp) => {
     let data = await resp.json()
-    state.skels = data
+    // the endpoint renders a single skeleton per `action`; keep the
+    // name-keyed shape this view iterates over
+    state.skels = { viewSkel: data["structure"] ?? {} }
   })
 })
 </script>

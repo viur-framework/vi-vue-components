@@ -64,6 +64,10 @@ export default {
     },
     expand: "Agrandir",
     shrink: "Réduire",
+    fetch: {
+      noresponse: "Aucune réponse n'a été reçue du serveur.",
+      failed: "L'action n'a pas pu être exécutée.",
+    },
   },
   sidebar: {
     workspace: "Espace de travail",

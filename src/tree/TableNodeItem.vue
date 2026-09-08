@@ -115,10 +115,10 @@ function fetchAll(cursor = null) {
     if (!treeState.structure || Object.keys(treeState.structure).length === 0) {
       let structure = data["structure"]
       if (!data["structure"]) {
-        const moduleStructure = await Request.getStructure(treeState.module).then((structureResponse) =>
-          structureResponse.json().then((_structure) => _structure)
+        const moduleStructure = await Request.getStructure(treeState.module, { skelType: "node" }).then(
+          (structureResponse) => structureResponse.json().then((_structure) => _structure)
         )
-        structure = moduleStructure["viewNodeSkel"]
+        structure = moduleStructure["structure"]
       }
       treeState.structure = structureToDict(structure)
     }
