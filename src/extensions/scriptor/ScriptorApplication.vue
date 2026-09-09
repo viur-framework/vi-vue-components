@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import { reactive, onMounted, onBeforeMount } from "vue"
+import { reactive, onMounted, onBeforeMount, onBeforeUnmount } from "vue"
 import WidgetList from "./components/WidgetList.vue"
 import StatusBar from "./components/StatusBar.vue"
 import CodeEditor from "./components/CodeEditor.vue"
@@ -25,6 +25,18 @@ const state = reactive({
 
 onBeforeMount(() => {
   state.id = scriptorStore.createNewInstance()
+})
+
+// Closing the vi tab drops this view from the keep-alive cache and unmounts the
+// component. Without cleanup the instance and its worker stay behind in the
+// store, unreachable, and keep occupying one of the three worker slots.
+// destroyInstance parks a ready worker, so the loaded environment is handed on
+// to the next window instead of being lost.
+onBeforeUnmount(() => {
+  if (state.id) {
+    scriptorStore.destroyInstance(state.id)
+    state.id = null
+  }
 })
 </script>
 <style scoped>

@@ -23,6 +23,11 @@ export default {
     save: "Save",
     save_close: "Save and close",
     save_next: "Save and copy",
+    close_confirm: {
+      title: "Script running",
+      text: "A script is still running. Do you really want to close the dialog (the script will be aborted) or just minimize it (the script keeps running in the background)?",
+      close: "Close",
+    },
     save_confirm: {
       title: "Confirm changes",
       text: "Do you really want to save these changes or discard them?",

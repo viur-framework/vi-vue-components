@@ -29,6 +29,11 @@ export default {
       save: "Speichern",
       discard: "Verwerfen",
     },
+    close_confirm: {
+      title: "Skript läuft",
+      text: "Es läuft noch ein Skript. Soll der Dialog wirklich geschlossen werden (das Skript wird abgebrochen) oder nur minimiert werden (das Skript läuft im Hintergrund weiter)?",
+      close: "Schließen",
+    },
     filter: {
       text: "Filter",
       nofilter: "Für dieses Modul sind keine Filter vorhanden",

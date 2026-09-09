@@ -21,6 +21,11 @@ export default {
     save: "Enregistrer",
     save_close: "Enregistrer et fermer",
     save_next: "Enregistrer et copier",
+    close_confirm: {
+      title: "Script en cours d'exécution",
+      text: "Un script est encore en cours d'exécution. Voulez-vous vraiment fermer la fenêtre (le script sera interrompu) ou simplement la réduire (le script continue en arrière-plan) ?",
+      close: "Fermer",
+    },
     save_confirm: {
       title: "Confirmer les modifications",
       text: "Voulez-vous vraiment enregistrer ces modifications ou les ignorer ?",
