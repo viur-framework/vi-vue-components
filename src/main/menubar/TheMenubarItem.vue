@@ -232,7 +232,7 @@ function toogleFavItem() {
       admin_config: userStore.state.user["adminconfig"],
     },
   }).then((resp) => {
-    console.log("Update Userconfig Succesfully")
+    console.log("Update Userconfig successfully")
   })
 }
 function handleMaxTabOpen(route) {
