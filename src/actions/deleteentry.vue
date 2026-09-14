@@ -101,7 +101,9 @@ async function deleteEntries() {
 
   if (deletionSuccess) {
     messageStore.addMessage("success", `Delete`, "Entry deleted successfully")
-    dbStore.removeOpened(route)
+    // close this handler's tab, not the active route
+    const tab = dbStore.getTabById(handlerState.tabId)
+    dbStore.removeOpened(tab ? tab["to"] : route)
   }
 }
 
