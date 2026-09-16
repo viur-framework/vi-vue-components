@@ -81,6 +81,11 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
       // run the wrong one next time.
       envVersion: null,
       runState: "idle", // idle | running | done | error
+      // Set by the running script itself (postMessage type "prevent-close").
+      // Closing the window is free by default and aborts the script right
+      // away; only a script that says so gets the close/minimize confirmation.
+      // Reset on every run so a flag never outlives the script that set it.
+      preventClose: false,
       progress: { total: 100, step: -1, max_step: -1, txt: "" },
       pendingActions: new Map(),
     })
@@ -568,6 +573,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     code = `${code}\nimport viur.scriptor\nimport traceback\nawait viur.scriptor._init_modules()\nfrom viur.scriptor import *\n\ntry:\n    await main()\nexcept:\n    logger.error(traceback.format_exc())\n`
 
     instance.runState = "running"
+    instance.preventClose = false
     return new Promise((resolve) => {
       instance.pendingActions.set(currentId, resolve)
       instance.worker.post({ id: currentId, python: code, ...context })
@@ -668,8 +674,12 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
       // (webworker.js:191 for the run, :224 for the installer); the script's
       // message carries the instance ID as messageId.
       case "run_end":
-        if (messageId === instanceId && instance.runState === "running") {
-          instance.runState = "done"
+        if (messageId === instanceId) {
+          if (instance.runState === "running") {
+            instance.runState = "done"
+          }
+          // The script is gone — whatever it asked for, closing is free again.
+          instance.preventClose = false
         }
         handleCallback(instanceId, messageId, data)
         break
@@ -683,6 +693,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
         // never started.
         if (messageId === instanceId) {
           instance.runState = "error"
+          instance.preventClose = false
         }
         handleCallback(instanceId, messageId, data)
         break
@@ -737,6 +748,12 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
         break
       case "clear":
         instance.messages.length = data["length"]
+        break
+      // A script protects itself against being closed mid-run with
+      // js.self.postMessage(type="prevent-close", value=True) and releases the
+      // protection with value=False. Without the message closing stays free.
+      case "prevent-close":
+        instance.preventClose = data["value"] === undefined ? true : Boolean(data["value"])
         break
       case "system-message": {
         const messageStore = useMessageStore()
