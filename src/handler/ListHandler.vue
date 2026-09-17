@@ -236,7 +236,6 @@ const state = reactive({
     })
   }),
   filter: null,
-  searchReset: 0, // Signal an actions/search.vue: Suche wurde extern geleert (Kontextwechsel)
   emptyList: computed(() => {
     if (state.renderedList.length === 0 && currentlist.state.state > 0) {
       return true
@@ -414,11 +413,7 @@ onActivated(() => {
 watch(
   () => Object.values(contextStore.state.globalContext),
   (newVal, oldVal) => {
-    // Kontext-/Kanalwechsel leert die Suche komplett — alte search-Parameter/Filter
-    // dürfen die Liste des neuen Kanals nicht unsichtbar leerfiltern
-    delete currentlist.state.params["search"]
-    state.filter = null
-    state.searchReset += 1
+    // keep the current search; reload it for the new context
     reloadAction()
   }
 )

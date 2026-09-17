@@ -117,7 +117,7 @@ const state = reactive({
   // handler cannot tell minimizing from closing.
   minimized: false,
   // Shows the close-vs-minimize confirmation when the close button is used
-  // while a script is running.
+  // while a script has set its preventClose flag.
   confirmClose: false,
 })
 
@@ -171,9 +171,11 @@ function minimizeScriptor() {
 }
 
 // sl-dialog closes itself on an overlay click and on escape, both of which
-// would run exitScriptor and lose a running script. Overlay clicks are blocked
-// outright, escape minimizes. The close button would still abort a running
-// script outright, so it asks for confirmation instead when one is running.
+// would run exitScriptor. Overlay clicks are blocked outright, escape
+// minimizes. The close button aborts the script — that is the default, so a
+// script can always be stopped. Only a script that asked for protection
+// (store/scriptor.js, message type "prevent-close") gets the
+// close-vs-minimize confirmation first.
 function handleRequestClose(event) {
   const source = event.detail?.source
 
@@ -187,13 +189,7 @@ function handleRequestClose(event) {
     minimizeScriptor()
     return
   }
-
-  // runState only flips to "running" once the Pyodide environment has
-  // finished loading (see store/scriptor.js execute()) — the install phase
-  // beforehand (envState "loading") can take just as long and would abort
-  // the same way, so it needs the same guard.
-  const taskRunning = state.scriptor?.runState === "running" || state.scriptor?.envState === "loading"
-  if (taskRunning) {
+  if (state.scriptor?.preventClose) {
     event.preventDefault()
     state.confirmClose = true
   }

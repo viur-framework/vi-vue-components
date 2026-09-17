@@ -81,6 +81,11 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
       // run the wrong one next time.
       envVersion: null,
       runState: "idle", // idle | running | done | error
+      // Set by the running script itself (postMessage type "prevent-close").
+      // Closing the window is free by default and aborts the script right
+      // away; only a script that says so gets the close/minimize confirmation.
+      // Reset on every run so a flag never outlives the script that set it.
+      preventClose: false,
       progress: { total: 100, step: -1, max_step: -1, txt: "" },
       pendingActions: new Map(),
     })
@@ -568,6 +573,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     code = `${code}\nimport viur.scriptor\nimport traceback\nawait viur.scriptor._init_modules()\nfrom viur.scriptor import *\n\ntry:\n    await main()\nexcept:\n    logger.error(traceback.format_exc())\n`
 
     instance.runState = "running"
+    instance.preventClose = false
     return new Promise((resolve) => {
       instance.pendingActions.set(currentId, resolve)
       instance.worker.post({ id: currentId, python: code, ...context })
@@ -606,6 +612,46 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     if (entry) {
       entry.data.answered = true
     }
+  }
+
+  // Counterpart to markMessageAnswered(): Dialog.multiple(reuse=True) shows the
+  // dialog that is already on screen again instead of sending a second one, so
+  // the answered flag has to go. Without the reset the submit button stays
+  // disabled and the script waits for an answer the user can no longer give.
+  // Only the newest multiple-dialog is unlocked — every other widget type keeps
+  // its answered guard, and older dialogs stay answered.
+  //
+  // Returns false when the dialog to unlock is not on screen anymore
+  // (clear_console() wipes the log) or when the newest one shows something else;
+  // the caller then rebuilds it from the definition the reset carries along.
+  function resetLastMultipleDialog(instanceId, definition) {
+    const instance = state.instances[instanceId]
+    if (!instance) {
+      return false
+    }
+    // messageBuffer holds the entries that the flusher has not moved into
+    // messages yet, so it carries the newer ones and is searched first.
+    for (const list of [instance.messageBuffer, instance.messages]) {
+      for (let i = list.length - 1; i >= 0; i--) {
+        if (list[i].type !== "multiple-dialog") {
+          continue
+        }
+        const entry = list[i].data
+        // Both sides are re-serialized before comparing: the definition arrives
+        // from json.dumps(), which puts a space after every separator, while
+        // JSON.stringify() does not.
+        const sameDialog =
+          entry.title === definition.title &&
+          entry.buttonText === definition.buttonText &&
+          JSON.stringify(entry.components) === JSON.stringify(definition.components)
+        if (!sameDialog) {
+          return false
+        }
+        entry.answered = false
+        return true
+      }
+    }
+    return false
   }
 
   function addInternalMessageEntry(type, id, data) {
@@ -668,8 +714,12 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
       // (webworker.js:191 for the run, :224 for the installer); the script's
       // message carries the instance ID as messageId.
       case "run_end":
-        if (messageId === instanceId && instance.runState === "running") {
-          instance.runState = "done"
+        if (messageId === instanceId) {
+          if (instance.runState === "running") {
+            instance.runState = "done"
+          }
+          // The script is gone — whatever it asked for, closing is free again.
+          instance.preventClose = false
         }
         handleCallback(instanceId, messageId, data)
         break
@@ -683,6 +733,7 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
         // never started.
         if (messageId === instanceId) {
           instance.runState = "error"
+          instance.preventClose = false
         }
         handleCallback(instanceId, messageId, data)
         break
@@ -735,8 +786,23 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
         data["components"] = JSON.parse(data["components"])
         addMessageEntry(data.type, instanceId, data)
         break
+      // Dialog.multiple(reuse=True): unlock the dialog that is already on
+      // screen instead of appending an identical one to the log.
+      case "reset-answer":
+        data["components"] = JSON.parse(data["components"])
+        if (!resetLastMultipleDialog(instanceId, data)) {
+          data.type = "multiple-dialog"
+          addMessageEntry(data.type, instanceId, data)
+        }
+        break
       case "clear":
         instance.messages.length = data["length"]
+        break
+      // A script protects itself against being closed mid-run with
+      // js.self.postMessage(type="prevent-close", value=True) and releases the
+      // protection with value=False. Without the message closing stays free.
+      case "prevent-close":
+        instance.preventClose = data["value"] === undefined ? true : Boolean(data["value"])
         break
       case "system-message": {
         const messageStore = useMessageStore()
@@ -748,7 +814,11 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
           addMessageEntry(data.type, instanceId, data)
           break
         } else {
-          throw new Error(`Unknown event type ${data.type}`)
+          // Logged instead of thrown: a script may run against a newer
+          // viur-scriptor-api than this admin knows, and an unknown message
+          // type must not tear down the run.
+          console.warn(`[scriptor] Unknown event type ${data.type}`, data)
+          break
         }
     }
   }
@@ -784,5 +854,6 @@ export const useScriptorStore = defineStore("scriptorStore", () => {
     fetchScriptorVersions,
     preload,
     markMessageAnswered,
+    resetLastMultipleDialog,
   }
 })

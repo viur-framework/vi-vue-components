@@ -70,6 +70,15 @@ const state = reactive({
   confirmOpen: false,
 })
 const messageStore = useMessageStore()
+let tabClosed = false
+
+// close this handler's tab (by tabId), once per save
+function closeTab() {
+  if (tabClosed) return
+  tabClosed = true
+  const tab = dbStore.getTabById(handlerState.tabId)
+  dbStore.removeOpened(tab ? tab["to"] : route)
+}
 
 function handleClick() {
   if (confirmOnSave.value) {
@@ -89,6 +98,7 @@ async function discardChanges() {
 async function submitSave() {
   state.confirmOpen = false
   state.loading = true
+  tabClosed = false
   let url = ""
   let obj = contextStore.getContext(handlerState.tabId)
   if (
@@ -152,7 +162,7 @@ async function submitSave() {
         //messageStore.addMessage("success", `Add`, "Entry added successfully")
         dbStore.markHandlersToUpdate(handlerState.module, handlerState.group)
         if (props.name !== "actions.save_next") {
-          dbStore.removeOpened(route)
+          closeTab()
           if (!props.close) {
             let new_route = router.resolve(`/db/${handlerState.module}/edit/${responsedata["values"]["key"]}`)
             if (handlerState.skeltype === "node") {
@@ -196,7 +206,7 @@ async function submitSave() {
 
       dbStore.markHandlersToUpdate(handlerState.module, handlerState.group)
       if (props.close) {
-        dbStore.removeOpened(route)
+        closeTab()
       }
     }
   } catch (error) {

@@ -83,17 +83,9 @@ watch(
     }
 
     if (!state.isLarge && newVal === 2) {
-      state.searchTypeAuto = "local"
+      // local search only when the unfiltered list is fully loaded
+      state.searchTypeAuto = currentlist.state.params?.["search"] ? "database" : "local"
     }
-  }
-)
-
-watch(
-  () => handlerState.searchReset,
-  () => {
-    // Kontext-/Kanalwechsel hat die Suche geleert (ListHandler) — Eingabefeld nachziehen
-    state.searchValue = ""
-    state.loading = false
   }
 )
 
