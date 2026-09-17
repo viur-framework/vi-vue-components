@@ -345,6 +345,7 @@ sl-button{
 
 .runner-button-progress-bar{
   --height: 2px;
+  --indicator-color: var(--sl-color-success-500);
   position: absolute;
   bottom: 0;
   left: 0;
