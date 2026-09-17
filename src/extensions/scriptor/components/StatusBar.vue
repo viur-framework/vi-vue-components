@@ -171,6 +171,7 @@ sl-badge {
 
   sl-progress-bar{
     --height: 4px;
+    --indicator-color: var(--sl-color-success-500);
     flex: 1;
 
     &::part(base){
