@@ -99,6 +99,8 @@ const boneState = inject("boneState")
 const handlerState = inject("handlerState")
 const formatString = inject("formatString")
 const formState = inject("formState")
+// context placeholders refer to the outer form, also from inside a record bone
+const mainformState = inject("mainformState", formState)
 const route = useRoute()
 const router = useRouter()
 const dbStore = useDBStore()
@@ -123,7 +125,8 @@ const state = reactive({
       let ret = {}
       for (const [queryparameter, fieldname] of Object.entries(props.bone["params"]["context"])) {
         if (typeof fieldname === "string" && fieldname.includes("$(")) {
-          ret[queryparameter] = formatString(fieldname, formState.skel)
+          const resolved = formatString(fieldname, mainformState.skel, "")
+          if (resolved) ret[queryparameter] = resolved // skip unresolved instead of sending "-"
         } else {
           ret[queryparameter] = fieldname
         }
@@ -150,10 +153,11 @@ function getList(search) {
     params = "skelType=node&"
   }
 
-  if (props.bone["context"]) {
-    for (const [queryparameter, fieldname] of Object.entries(props.bone["context"])) {
+  if (props.bone["params"]?.["context"]) {
+    for (const [queryparameter, fieldname] of Object.entries(props.bone["params"]["context"])) {
       if (typeof fieldname == "string" && fieldname.includes("$(")) {
-        params += `${queryparameter}=${formatString(fieldname, formState.skel)}&`
+        const resolved = formatString(fieldname, mainformState.skel, "")
+        if (resolved) params += `${queryparameter}=${resolved}&`
       } else {
         params += `${queryparameter}=${fieldname}&`
       }
