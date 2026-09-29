@@ -33,6 +33,7 @@ import { reactive, defineComponent, inject, computed } from "vue"
 import { Request } from "@viur/vue-utils"
 import { useMessageStore } from "../stores/message"
 import { useDBStore } from "../stores/db"
+import { useContextStore } from "../stores/context"
 import { useRoute } from "vue-router"
 import { useUserStore } from "@viur/vue-utils/login/stores/user"
 
@@ -41,6 +42,7 @@ const tableReload = inject("reloadAction")
 const currentlist = inject("currentlist")
 const messageStore = useMessageStore()
 const dbStore = useDBStore()
+const contextStore = useContextStore()
 const userStore = useUserStore()
 const route = useRoute()
 const state = reactive({
@@ -86,7 +88,8 @@ async function resaveEntries() {
       }
     }
 
-    let data = {}
+    // send the handler context like save.vue does, otherwise the server may resolve a different context
+    let data = contextStore.getContext(handlerState.tabId)
     for (const key of formData.keys()) {
       data[[key]] = formData.getAll(key)
     }

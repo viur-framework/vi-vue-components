@@ -30,12 +30,14 @@ import { reactive, defineComponent, inject, computed } from "vue"
 import { Request } from "@viur/vue-utils"
 import { useMessageStore } from "../stores/message"
 import { useDBStore } from "../stores/db"
+import { useContextStore } from "../stores/context"
 import { useRoute } from "vue-router"
 import { useUserStore } from "@viur/vue-utils/login/stores/user"
 
 const handlerState = inject("handlerState")
 const tableReload = inject("reloadAction")
 const messageStore = useMessageStore()
+const contextStore = useContextStore()
 const userStore = useUserStore()
 const route = useRoute()
 const state = reactive({
@@ -67,7 +69,7 @@ async function deleteEntries() {
 
   for (const entry of handlerState.currentSelection) {
     let url = `/vi/${handlerState.module}/delete`
-    let dataObj = { key: entry.key }
+    let dataObj = { ...contextStore.getContext(handlerState.tabId), key: entry.key }
     if (handlerState.type === "hierarchyhandler" || handlerState.type === "treehandler") {
       dataObj["skelType"] = handlerState?.currentSelectionType
     }

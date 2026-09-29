@@ -32,6 +32,7 @@ import { reactive, defineComponent, inject, computed } from "vue"
 import { Request } from "@viur/vue-utils"
 import { useMessageStore } from "../stores/message"
 import { useDBStore } from "../stores/db"
+import { useContextStore } from "../stores/context"
 import { useRoute } from "vue-router"
 import { useUserStore } from "@viur/vue-utils/login/stores/user"
 
@@ -39,6 +40,7 @@ const handlerState = inject("handlerState")
 const tableReload = inject("reloadAction")
 const messageStore = useMessageStore()
 const dbStore = useDBStore()
+const contextStore = useContextStore()
 const userStore = useUserStore()
 const route = useRoute()
 const state = reactive({
@@ -69,7 +71,7 @@ async function deleteEntries() {
   let deletionSuccess = true
 
   let url = `/vi/${handlerState.module}/delete`
-  let dataObj = { key: handlerState.skelkey }
+  let dataObj = { ...contextStore.getContext(handlerState.tabId), key: handlerState.skelkey }
   if (["node", "leaf"].includes(handlerState.skeltype)) {
     dataObj["skelType"] = handlerState?.skeltype
   }

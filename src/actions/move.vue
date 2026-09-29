@@ -42,10 +42,12 @@ import { useUserStore } from "@viur/vue-utils/login/stores/user"
 import treeItem from "../tree/TreeItem.vue"
 import { Request } from "@viur/vue-utils"
 import Utils from "@viur/vue-components/utils"
+import { useContextStore } from "../stores/context"
 
 const handlerState = inject("handlerState")
 const reloadAction = inject("reloadAction")
 const userStore = useUserStore()
+const contextStore = useContextStore()
 const state = reactive({
   active: computed(() => {
     return handlerState.currentSelection && handlerState.currentSelection.length > 0
@@ -81,6 +83,7 @@ function moveItems() {
   for (let item of handlerState.currentSelection) {
     Request.securePost(`/vi/${handlerState.module}/move`, {
       dataObj: {
+        ...contextStore.getContext(handlerState.tabId),
         parentNode: state.selection["key"],
         key: item["key"],
         skelType: handlerState.currentSelectionType,
