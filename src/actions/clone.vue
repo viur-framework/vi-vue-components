@@ -51,9 +51,12 @@ const state = reactive({
       return true
     }
     if (handlerState.group) {
-      return userStore.state.user.access.indexOf(`${handlerState.module}-${handlerState.group}-add`) > -1
+      return (
+        userStore.state.user.access.indexOf(`${dbStore.getAccessName(handlerState.module)}-${handlerState.group}-add`) >
+        -1
+      )
     } else {
-      return userStore.state.user.access.indexOf(`${handlerState.module}-add`) > -1
+      return userStore.state.user.access.indexOf(`${dbStore.getAccessName(handlerState.module)}-add`) > -1
     }
   }),
 })

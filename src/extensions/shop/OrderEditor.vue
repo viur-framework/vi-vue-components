@@ -424,9 +424,9 @@ const state = reactive({
   relation_opened: [],
   loading: false,
   canEdit: computed(() => {
-    let accessflag = `${state.module}-edit`
+    let accessflag = `${dbStore.getAccessName(state.module)}-edit`
     if (state.group) {
-      accessflag = `${state.module}-${state.group}-edit`
+      accessflag = `${dbStore.getAccessName(state.module)}-${state.group}-edit`
     }
     if (
       Object.keys(state.conf).includes("disabledActions") &&
@@ -440,7 +440,7 @@ const state = reactive({
     }
     let access = userStore.state.user.access.includes(accessflag)
     if (!access && state.group) {
-      accessflag = `${state.module}-all-edit`
+      accessflag = `${dbStore.getAccessName(state.module)}-all-edit`
     }
     return userStore.state.user.access.includes(accessflag)
   }),

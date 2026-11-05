@@ -43,11 +43,13 @@ import treeItem from "../tree/TreeItem.vue"
 import { Request } from "@viur/vue-utils"
 import Utils from "@viur/vue-components/utils"
 import { useContextStore } from "../stores/context"
+import { useDBStore } from "../stores/db"
 
 const handlerState = inject("handlerState")
 const reloadAction = inject("reloadAction")
 const userStore = useUserStore()
 const contextStore = useContextStore()
+const dbStore = useDBStore()
 const state = reactive({
   active: computed(() => {
     return handlerState.currentSelection && handlerState.currentSelection.length > 0
@@ -56,7 +58,7 @@ const state = reactive({
     if (userStore.state.user.access.indexOf("root") !== -1) {
       return true
     }
-    return userStore.state.user.access.indexOf(`${handlerState.module}-edit`) > -1
+    return userStore.state.user.access.indexOf(`${dbStore.getAccessName(handlerState.module)}-edit`) > -1
   }),
   opened: false,
   selection: null,

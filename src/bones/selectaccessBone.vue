@@ -60,6 +60,14 @@ const state = reactive({
       struct = Object.entries(boneState["bonestructure"]["values"])
     }
 
+    // The core exposes which access rights belong to which module, so they don't need to be guessed by their name
+    const rightOwners = {}
+    for (const [moduleKey, moduleConf] of Object.entries(dbStore.state["vi.modules"])) {
+      for (const right of moduleConf["access_rights"] || []) {
+        rightOwners[right] = moduleKey
+      }
+    }
+
     for (const [k, v] of struct) {
       let parts = k.split("-")
       let name = parts[parts.length - 1]
@@ -77,7 +85,7 @@ const state = reactive({
       //if (parts[0].startsWith("_")) continue
 
       let element = { key: k, icon: icon, name: name, module: parts[0], view: parts?.[1] }
-      let namegroup = parts.slice(0, -1).join("-")
+      let namegroup = rightOwners[k] ?? parts.slice(0, -1).join("-")
 
       if (Object.keys(mods["modules"]).includes(namegroup)) {
         mods["modules"][namegroup] = { ...mods["modules"][namegroup], ...{ [actionmap[name]]: element } }

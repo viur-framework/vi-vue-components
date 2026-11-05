@@ -242,9 +242,9 @@ const state = reactive({
       return true
     }
     if (state.group) {
-      return userStore.state.user.access.indexOf(`${state.module}-${state.group}-edit`) > -1
+      return userStore.state.user.access.indexOf(`${dbStore.getAccessName(state.module)}-${state.group}-edit`) > -1
     } else {
-      return userStore.state.user.access.indexOf(`${state.module}-edit`) > -1
+      return userStore.state.user.access.indexOf(`${dbStore.getAccessName(state.module)}-edit`) > -1
     }
   }),
   cellvalues: { rendered: "" },

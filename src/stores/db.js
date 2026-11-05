@@ -13,6 +13,20 @@ import { destroyStore } from "@viur/vue-utils/utils/handlers"
 import Utils from "../utils"
 import { i18n } from "../i18n"
 
+/**
+ * Returns the name the access rights of a module are prefixed with, e.g. "shop.order" for "shop.order-edit".
+ *
+ * The core exposes the access rights of each module in its config ("access_rights"). Older cores don't,
+ * then the module's key is used as before.
+ * @param {object|null} conf - The module's config from /vi/config
+ * @param {string} module - The module's key, used as fallback
+ * @returns {string}
+ */
+export function accessName(conf, module) {
+  const right = conf?.["access_rights"]?.[0]
+  return right ? right.slice(0, right.lastIndexOf("-")) : module
+}
+
 function adminTreeLayer(itemList, parent) {
   const userStore = useUserStore()
 
@@ -50,7 +64,7 @@ function adminTreeLayer(itemList, parent) {
       conf["display"] = "visible"
     }
     if (conf["handler"] && conf["display"] !== "group") {
-      conf["hasAccess"] = !!module_access(conf["module"], conf["group"], conf["showWithViewAccess"])
+      conf["hasAccess"] = !!module_access(accessName(conf, conf["module"]), conf["group"], conf["showWithViewAccess"])
     }
 
     if (conf["nodeType"] === "group" && conf["moduleGroups"]?.length === 0) {
@@ -313,6 +327,15 @@ export const useDBStore = defineStore("db", () => {
     //Tasks
     tasks: [],
   })
+
+  /**
+   * Returns the name the access rights of a module are prefixed with, see accessName().
+   * @param {string} module - The module's key, e.g. "shop/order" or "shop.order"
+   * @returns {string}
+   */
+  function getAccessName(module) {
+    return accessName(getConf(module), module)
+  }
 
   function module_access(modulename, group = null) {
     const userStore = useUserStore()
@@ -679,6 +702,7 @@ export const useDBStore = defineStore("db", () => {
     updateActiveTabName,
     markHandlersToUpdate,
     module_access,
+    getAccessName,
     closeAllTabs,
   }
 })

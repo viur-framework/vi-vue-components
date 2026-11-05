@@ -39,6 +39,7 @@ const tableReload = inject("reloadAction")
 const messageStore = useMessageStore()
 const contextStore = useContextStore()
 const userStore = useUserStore()
+const dbStore = useDBStore()
 const route = useRoute()
 const state = reactive({
   active: computed(() => {
@@ -55,9 +56,13 @@ const state = reactive({
       return true
     }
     if (handlerState.group) {
-      return userStore.state.user.access.indexOf(`${handlerState.module}-${handlerState.group}-delete`) > -1
+      return (
+        userStore.state.user.access.indexOf(
+          `${dbStore.getAccessName(handlerState.module)}-${handlerState.group}-delete`
+        ) > -1
+      )
     } else {
-      return userStore.state.user.access.indexOf(`${handlerState.module}-delete`) > -1
+      return userStore.state.user.access.indexOf(`${dbStore.getAccessName(handlerState.module)}-delete`) > -1
     }
   }),
   opened: false,

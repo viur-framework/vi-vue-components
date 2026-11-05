@@ -35,7 +35,7 @@
             <sl-menu-item
               v-if="
                 userStore.userAccess.includes('root') ||
-                userStore.userAccess.includes(`${moduleInfo?.['module']}-manage`)
+                userStore.userAccess.includes(`${dbStore.getAccessName(moduleInfo?.['module'])}-manage`)
               "
               @click="openConfig()"
             >

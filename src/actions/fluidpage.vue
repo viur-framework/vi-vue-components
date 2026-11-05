@@ -42,7 +42,7 @@ const state = reactive({
     if (userStore.state.user.access.indexOf("root") !== -1) {
       return true
     }
-    return userStore.state.user.access.indexOf(`${handlerState.module}-edit`) > -1
+    return userStore.state.user.access.indexOf(`${dbStore.getAccessName(handlerState.module)}-edit`) > -1
   }),
 })
 
