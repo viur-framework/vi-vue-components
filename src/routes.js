@@ -157,13 +157,12 @@ function createRouterInstance(routes, replace = false) {
     //useUserStore().addAction();
   })
 
-  router.beforeEach((to, from, next) => {
+  router.beforeEach((to) => {
     const contextStore = useContextStore()
     let localContext = {}
     let handlerId = to.query["_"]?.toString()
     if (!handlerId) {
-      next()
-      return router
+      return
     }
     if (Object.keys(contextStore.state.localContext).includes(handlerId)) {
       localContext = contextStore.state.localContext[handlerId]
@@ -177,11 +176,11 @@ function createRouterInstance(routes, replace = false) {
         (key) => to.query[key] === newQuery[key] && to.query.hasOwnProperty(key) && newQuery.hasOwnProperty(key)
       )
     ) {
-      next() // no change
-    } else {
-      to.query = newQuery
-      next(to)
+      return // no change
     }
+    // redirect to the same route with the merged context query
+    // (same as the former `to.query = newQuery; next(to)`, but without mutating `to`)
+    return { ...to, query: newQuery }
   })
   return router
 }

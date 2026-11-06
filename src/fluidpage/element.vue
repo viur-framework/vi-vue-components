@@ -503,7 +503,7 @@ sl-button {
 
   sl-button,
   sl-select {
-    &:part(base) {
+    &::part(base) {
       aspect-ratio: 1;
     }
   }
